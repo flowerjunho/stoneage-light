@@ -1,69 +1,131 @@
-# React + TypeScript + Vite
+# 🐾 스톤에이지 환수강림 라이트 펫 정보
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+스톤에이지 환수강림의 모든 펫 정보를 검색하고 필터링할 수 있는 웹 애플리케이션입니다.
 
-Currently, two official plugins are available:
+## ✨ 주요 기능
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+### 🔍 검색 및 필터링
+- **텍스트 검색**: 펫 이름, 등급, 획득처 등 모든 정보 검색
+- **속성 필터**: 지(地), 수(水), 화(火), 풍(風) 속성별 필터링
+- **스탯 필터**: 공격, 방어, 순발, 체력, 성장률 등 수치 조건 필터링
+- **실시간 검색**: 300ms 디바운싱으로 부드러운 검색 경험
 
-## Expanding the ESLint configuration
+### 🎨 사용자 인터페이스
+- **다크/라이트 테마**: 테마 토글 지원
+- **반응형 디자인**: 모바일(iPhone 16 Pro)과 데스크톱 모두 지원
+- **무한 스크롤**: 60개씩 점진적 로딩으로 성능 최적화
+- **스켈레톤 로딩**: 초기 로딩 시 부드러운 UX 제공
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+### 🎯 편의 기능
+- **플로팅 버튼**: 우측 하단 맨 위로 이동 버튼
+- **모바일 필터**: 왼쪽 하단 플로팅 필터 버튼과 바텀시트
+- **실시간 동기화**: 상단과 모바일 필터 간 실시간 상태 동기화
+- **외부 링크**: 환수강림 라이트 공식 사이트 연동
 
-```js
-export default tseslint.config([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+## 🚀 기술 스택
 
-      // Remove tseslint.configs.recommended and replace with this
-      ...tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      ...tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      ...tseslint.configs.stylisticTypeChecked,
+- **Frontend**: React 18, TypeScript
+- **Build Tool**: Vite
+- **Styling**: Tailwind CSS v3
+- **Performance**: React.memo, useMemo, useCallback
+- **State Management**: React Hooks
+- **Data**: JSON 기반 정적 데이터
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+## 📊 펫 정보
+
+### 기본 스탯
+- 공격, 방어, 순발, 체력
+- 공성장, 방성장, 순성장, 체성장, 총성장
+
+### 속성 시스템
+- **지(地)**: 초록색으로 표시
+- **수(水)**: 파란색으로 표시  
+- **화(火)**: 빨간색으로 표시
+- **풍(風)**: 노란색으로 표시
+
+### 추가 정보
+- 탑승 가능 여부
+- 판매 등급
+- 획득처 정보
+- 조합 스탯 (공+방, 공+순 등)
+
+## 🎯 성능 최적화
+
+### 렌더링 최적화
+- React.memo를 활용한 컴포넌트 메모이제이션
+- useMemo/useCallback로 불필요한 재계산 방지
+- 무한 스크롤로 초기 렌더링 부담 감소
+
+### 검색 성능
+- 300ms 디바운싱으로 API 호출 최적화
+- 메모이제이션된 필터링 로직
+- 효율적인 상태 관리
+
+### 사용자 경험
+- 스켈레톤 로딩으로 체감 성능 개선
+- 실시간 필터 상태 동기화
+- 부드러운 애니메이션과 트랜지션
+
+## 🛠️ 개발 및 배포
+
+### 로컬 개발
+```bash
+# 의존성 설치
+npm install
+
+# 개발 서버 실행 (포트 9999)
+npm run dev
+
+# 빌드
+npm run build
+
+# 빌드 미리보기
+npm run preview
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
-
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default tseslint.config([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+### 프로젝트 구조
 ```
+src/
+├── components/          # React 컴포넌트
+│   ├── Header.tsx      # 헤더와 썸네일
+│   ├── SearchBar.tsx   # 검색 입력
+│   ├── ElementFilter.tsx   # 속성 필터
+│   ├── StatFilter.tsx      # 스탯 필터
+│   ├── PetGrid.tsx         # 펫 목록 그리드
+│   ├── PetCard.tsx         # 개별 펫 카드
+│   ├── ThemeToggle.tsx     # 테마 변경
+│   ├── ScrollToTopButton.tsx    # 맨 위로 버튼
+│   └── FloatingFilterButton.tsx # 모바일 필터
+├── hooks/               # 커스텀 훅
+│   ├── useInfiniteScroll.ts     # 무한 스크롤
+│   ├── useDebounce.ts           # 디바운싱
+│   └── useIntersectionObserver.ts # 교차 관찰자
+├── data/                # 데이터
+│   └── pets.json       # 펫 정보 데이터
+├── types/               # TypeScript 타입
+│   └── index.ts        # 펫 인터페이스
+└── styles/              # 스타일
+    └── globals.css     # Tailwind 및 전역 스타일
+```
+
+## 🎨 디자인 시스템
+
+### 색상 테마
+- **다크 모드**: 기본 테마, 눈의 피로 최소화
+- **라이트 모드**: 밝은 환경에서의 가독성
+- **액센트 컬러**: 브랜드 컬러로 버튼과 링크 강조
+
+### 반응형 브레이크포인트
+- **모바일**: iPhone 16 Pro 기준 최적화
+- **태블릿**: md (768px) 이상
+- **데스크톱**: lg (1024px) 이상
+
+## 📝 라이선스
+
+이 프로젝트는 스톤에이지 환수강림 게임의 펫 정보를 정리한 비공식 도구입니다.
+
+---
+
+**공식 사이트**: [환수강림 라이트 사이트](https://www.hwansoo.top/)
+
+Made with ❤️ by 명가
