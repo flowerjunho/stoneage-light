@@ -16,6 +16,7 @@ function App() {
           <TabNavigation />
           <Routes>
             <Route path="/" element={<Navigate to="/stoneage-light/pets" replace />} />
+            <Route path="/stoneage-light" element={<Navigate to="/stoneage-light/pets" replace />} />
             <Route path="/stoneage-light/pets" element={<PetsPage />} />
             <Route path="/stoneage-light/boarding" element={<BoardingPage />} />
           </Routes>
