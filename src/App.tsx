@@ -27,7 +27,7 @@ function App() {
         
         setPets(module.default)
       } catch (error) {
-        console.error('Failed to load pets data:', error)
+        // Failed to load pets data
       }
     }
 
