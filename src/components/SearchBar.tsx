@@ -3,9 +3,10 @@ import React from 'react';
 interface SearchBarProps {
   searchTerm: string;
   onSearchChange: (value: string) => void;
+  placeholder?: string;
 }
 
-const SearchBar: React.FC<SearchBarProps> = ({ searchTerm, onSearchChange }) => {
+const SearchBar: React.FC<SearchBarProps> = ({ searchTerm, onSearchChange, placeholder = "Search pets..." }) => {
   return (
     <div className="w-full max-w-2xl mx-auto mb-8 px-4 iphone16:px-3 iphone16:mb-4">
       <div className="relative flex items-center bg-bg-secondary border border-border rounded-xl px-4 transition-all duration-200 focus-within:border-accent focus-within:shadow-lg focus-within:shadow-accent/10 iphone16:px-3 iphone16:rounded-lg">
@@ -20,7 +21,7 @@ const SearchBar: React.FC<SearchBarProps> = ({ searchTerm, onSearchChange }) => 
         </svg>
         <input
           type="text"
-          placeholder="Search pets..."
+          placeholder={placeholder}
           value={searchTerm}
           onChange={(e) => onSearchChange(e.target.value)}
           className="flex-1 bg-transparent border-none outline-none py-3.5 text-base text-text-primary placeholder-text-muted font-inherit iphone16:py-3 iphone16:text-sm"

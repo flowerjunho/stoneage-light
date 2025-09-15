@@ -7,6 +7,7 @@ import PetCardSkeleton from './PetCardSkeleton';
 import { useInfiniteScroll } from '../hooks/useInfiniteScroll';
 import { useIntersectionObserver } from '../hooks/useIntersectionObserver';
 import { useDebounce } from '../hooks/useDebounce';
+import { matchesConsonantSearch } from '../utils/korean';
 
 interface PetGridProps {
   pets: Pet[];
@@ -23,21 +24,20 @@ const PetGrid: React.FC<PetGridProps> = React.memo(({ pets, searchTerm, elementF
   const filteredPets = useMemo(() => {
     let result = pets;
 
-    // 텍스트 검색 필터링
+    // 텍스트 검색 필터링 (초성 검색 포함)
     if (debouncedSearchTerm) {
-      const searchLower = debouncedSearchTerm.toLowerCase();
       result = result.filter(pet => 
-        pet.name.toLowerCase().includes(searchLower) ||
-        pet.grade.toLowerCase().includes(searchLower) ||
-        pet.source.toLowerCase().includes(searchLower) ||
-        String(pet.attack).includes(searchLower) ||
-        String(pet.defense).includes(searchLower) ||
-        String(pet.agility).includes(searchLower) ||
-        String(pet.vitality).includes(searchLower) ||
-        String(pet.earth).includes(searchLower) ||
-        String(pet.water).includes(searchLower) ||
-        String(pet.fire).includes(searchLower) ||
-        String(pet.wind).includes(searchLower)
+        matchesConsonantSearch(pet.name, debouncedSearchTerm) ||
+        matchesConsonantSearch(pet.grade, debouncedSearchTerm) ||
+        matchesConsonantSearch(pet.source, debouncedSearchTerm) ||
+        String(pet.attack).includes(debouncedSearchTerm) ||
+        String(pet.defense).includes(debouncedSearchTerm) ||
+        String(pet.agility).includes(debouncedSearchTerm) ||
+        String(pet.vitality).includes(debouncedSearchTerm) ||
+        String(pet.earth).includes(debouncedSearchTerm) ||
+        String(pet.water).includes(debouncedSearchTerm) ||
+        String(pet.fire).includes(debouncedSearchTerm) ||
+        String(pet.wind).includes(debouncedSearchTerm)
       );
     }
 
