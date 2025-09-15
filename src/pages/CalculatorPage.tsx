@@ -348,8 +348,9 @@ const CalculatorPage: React.FC = () => {
     <div className="container mx-auto px-4 py-8">
       {/* 헤더 */}
       <div className="mb-8">
-        <div className="flex justify-between items-center mb-6">
-          <div className="flex gap-3">
+        <div className="mb-6">
+          {/* 저장/불러오기 버튼 */}
+          <div className="flex justify-center gap-3 mb-4">
             <button
               onClick={() => setShowSaveModal(true)}
               className="px-4 py-2 rounded-lg bg-blue-500 text-white font-semibold hover:bg-blue-600 transition-colors"
@@ -369,15 +370,16 @@ const CalculatorPage: React.FC = () => {
           
           {/* 현재 불러온 데이터 타이틀 표시 */}
           {currentTitle && (
-            <div className="text-center py-2">
+            <div className="text-center py-2 mb-4">
               <div className="inline-block px-4 py-2 bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 rounded-lg border border-blue-200 dark:border-blue-700">
                 <span className="font-semibold text-sm">현재 데이터: {currentTitle}</span>
               </div>
             </div>
           )}
           
-          <div className="text-lg text-text-secondary space-y-2">
-            <p>💡 <span className="font-semibold">입력 가능 항목</span>: 레벨, 체력, 완력, 건강</p>
+          {/* 설명 텍스트 */}
+          <div className="text-center text-text-secondary space-y-2">
+            <p className="text-base md:text-lg">💡 <span className="font-semibold">입력 가능 항목</span>: 레벨, 체력, 완력, 건강</p>
             <p className="text-sm text-orange-600 dark:text-orange-400">⚠️ <span className="font-semibold">환포 계산기는 환생 포인트 퀘스트를 모두 완료 했다고 가정하고 20개로 계산 됩니다</span></p>
           </div>
         </div>
