@@ -1,4 +1,5 @@
 import React from 'react';
+import saImage from '/sa.jpg';
 
 const Header: React.FC = () => {
   return (
@@ -6,7 +7,7 @@ const Header: React.FC = () => {
       <div className="max-w-6xl mx-auto p-4 relative iphone16:p-3">
         <div className="w-full h-80 rounded-xl overflow-hidden relative iphone16:h-60 iphone16:rounded-lg">
           <img 
-            src="/sa.jpg" 
+            src={saImage} 
             alt="StoneAge Light - Pet Collection" 
             className="w-full h-full object-cover brightness-75"
           />
