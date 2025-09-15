@@ -15,9 +15,9 @@ function App() {
         <main className="pb-8">
           <TabNavigation />
           <Routes>
-            <Route path="/" element={<Navigate to="/pets" replace />} />
-            <Route path="/pets" element={<PetsPage />} />
-            <Route path="/boarding" element={<BoardingPage />} />
+            <Route path="/" element={<Navigate to="/stoneage-light/pets" replace />} />
+            <Route path="/stoneage-light/pets" element={<PetsPage />} />
+            <Route path="/stoneage-light/boarding" element={<BoardingPage />} />
           </Routes>
         </main>
         <ScrollToTopButton />
