@@ -37,16 +37,6 @@ export function useScrollToBottom({
 
       const scrolledToBottom = Math.ceil(scrollTop + clientHeight) >= scrollHeight - threshold;
 
-      console.log('Scroll check:', {
-        scrollTop: Math.ceil(scrollTop),
-        clientHeight,
-        scrollHeight,
-        threshold,
-        calc: Math.ceil(scrollTop + clientHeight),
-        target: scrollHeight - threshold,
-        shouldTrigger: scrolledToBottom
-      });
-
       if (scrolledToBottom) {
         onBottom();
       }

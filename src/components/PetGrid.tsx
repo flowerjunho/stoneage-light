@@ -1,5 +1,7 @@
 import React, { useMemo, useCallback } from 'react';
 import type { Pet } from '../types';
+import type { ElementType } from './ElementFilter';
+import type { StatFilterItem } from './StatFilter';
 import PetCard from './PetCard';
 import PetCardSkeleton from './PetCardSkeleton';
 import { useInfiniteScroll } from '../hooks/useInfiniteScroll';
@@ -9,31 +11,69 @@ import { useDebounce } from '../hooks/useDebounce';
 interface PetGridProps {
   pets: Pet[];
   searchTerm: string;
+  elementFilters: ElementType[];
+  statFilters: StatFilterItem[];
 }
 
-const PetGrid: React.FC<PetGridProps> = React.memo(({ pets, searchTerm }) => {
+const PetGrid: React.FC<PetGridProps> = React.memo(({ pets, searchTerm, elementFilters, statFilters }) => {
   // 디바운싱된 검색어
   const debouncedSearchTerm = useDebounce(searchTerm, 300);
 
-  // 검색 필터링을 메모이제이션
+  // 검색 및 속성 필터링을 메모이제이션
   const filteredPets = useMemo(() => {
-    if (!debouncedSearchTerm) return pets;
-    
-    const searchLower = debouncedSearchTerm.toLowerCase();
-    return pets.filter(pet => 
-      pet.name.toLowerCase().includes(searchLower) ||
-      pet.grade.toLowerCase().includes(searchLower) ||
-      pet.source.toLowerCase().includes(searchLower) ||
-      String(pet.attack).includes(searchLower) ||
-      String(pet.defense).includes(searchLower) ||
-      String(pet.agility).includes(searchLower) ||
-      String(pet.vitality).includes(searchLower) ||
-      String(pet.earth).includes(searchLower) ||
-      String(pet.water).includes(searchLower) ||
-      String(pet.fire).includes(searchLower) ||
-      String(pet.wind).includes(searchLower)
-    );
-  }, [pets, debouncedSearchTerm]);
+    let result = pets;
+
+    // 텍스트 검색 필터링
+    if (debouncedSearchTerm) {
+      const searchLower = debouncedSearchTerm.toLowerCase();
+      result = result.filter(pet => 
+        pet.name.toLowerCase().includes(searchLower) ||
+        pet.grade.toLowerCase().includes(searchLower) ||
+        pet.source.toLowerCase().includes(searchLower) ||
+        String(pet.attack).includes(searchLower) ||
+        String(pet.defense).includes(searchLower) ||
+        String(pet.agility).includes(searchLower) ||
+        String(pet.vitality).includes(searchLower) ||
+        String(pet.earth).includes(searchLower) ||
+        String(pet.water).includes(searchLower) ||
+        String(pet.fire).includes(searchLower) ||
+        String(pet.wind).includes(searchLower)
+      );
+    }
+
+    // 속성 필터링 (선택된 속성 중 하나라도 0보다 큰 값을 가져야 함)
+    if (elementFilters.length > 0) {
+      result = result.filter(pet => {
+        return elementFilters.some(element => {
+          switch (element) {
+            case 'earth': return pet.earth > 0;
+            case 'water': return pet.water > 0;
+            case 'fire': return pet.fire > 0;
+            case 'wind': return pet.wind > 0;
+            default: return false;
+          }
+        });
+      });
+    }
+
+    // 스탯 필터링 (모든 활성화된 조건을 만족해야 함)
+    if (statFilters.length > 0) {
+      const activeFilters = statFilters.filter(filter => filter.enabled);
+      if (activeFilters.length > 0) {
+        result = result.filter(pet => {
+          return activeFilters.every(filter => {
+            const petValue = pet[filter.stat];
+            if (typeof petValue === 'number') {
+              return petValue >= filter.value;
+            }
+            return false;
+          });
+        });
+      }
+    }
+
+    return result;
+  }, [pets, debouncedSearchTerm, elementFilters, statFilters]);
 
   // 실시간 타이핑 중인지 확인
   const isTyping = searchTerm !== debouncedSearchTerm;
@@ -114,10 +154,22 @@ const PetGrid: React.FC<PetGridProps> = React.memo(({ pets, searchTerm }) => {
             </svg>
             <h3 className="text-xl mb-2 text-text-secondary iphone16:text-lg">No pets found</h3>
             <p className="text-base m-0 iphone16:text-sm">
-              {debouncedSearchTerm 
-                ? `No pets match "${debouncedSearchTerm}". Try different search terms.`
-                : "Try adjusting your search terms"
-              }
+              {(() => {
+                const hasSearch = !!debouncedSearchTerm;
+                const hasElementFilters = elementFilters.length > 0;
+                const hasStatFilters = statFilters.filter(f => f.enabled).length > 0;
+                const hasAnyFilters = hasElementFilters || hasStatFilters;
+
+                if (hasSearch && hasAnyFilters) {
+                  return `No pets match "${debouncedSearchTerm}" with current filters. Try different search terms or filters.`;
+                } else if (hasSearch) {
+                  return `No pets match "${debouncedSearchTerm}". Try different search terms.`;
+                } else if (hasAnyFilters) {
+                  return "No pets match the current filters. Try adjusting your filters.";
+                } else {
+                  return "Try adjusting your search terms";
+                }
+              })()}
             </p>
           </div>
         </div>
