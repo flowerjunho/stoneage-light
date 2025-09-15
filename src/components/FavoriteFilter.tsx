@@ -1,55 +1,55 @@
-import { useState, useEffect } from 'react'
-import { getFavorites, clearAllFavorites } from '../utils/favorites'
+import { useState, useEffect } from 'react';
+import { getFavorites, clearAllFavorites } from '../utils/favorites';
 
 interface FavoriteFilterProps {
-  onFilterChange: (showFavoritesOnly: boolean) => void
-  initialValue?: boolean
+  onFilterChange: (showFavoritesOnly: boolean) => void;
+  initialValue?: boolean;
 }
 
 const FavoriteFilter = ({ onFilterChange, initialValue = false }: FavoriteFilterProps) => {
-  const [showFavoritesOnly, setShowFavoritesOnly] = useState(initialValue)
-  const [favoriteCount, setFavoriteCount] = useState(0)
+  const [showFavoritesOnly, setShowFavoritesOnly] = useState(initialValue);
+  const [favoriteCount, setFavoriteCount] = useState(0);
 
   // 즐겨찾기 개수 업데이트
   useEffect(() => {
     const updateFavoriteCount = () => {
-      const favorites = getFavorites()
-      setFavoriteCount(favorites.length)
-    }
+      const favorites = getFavorites();
+      setFavoriteCount(favorites.length);
+    };
 
-    updateFavoriteCount()
+    updateFavoriteCount();
 
     // 주기적으로 즐겨찾기 개수 확인 (다른 탭에서 변경될 수 있음)
-    const interval = setInterval(updateFavoriteCount, 1000)
-    
-    return () => clearInterval(interval)
-  }, [])
+    const interval = setInterval(updateFavoriteCount, 1000);
+
+    return () => clearInterval(interval);
+  }, []);
 
   // 초기값 변경 시 상태 동기화
   useEffect(() => {
-    setShowFavoritesOnly(initialValue)
-  }, [initialValue])
+    setShowFavoritesOnly(initialValue);
+  }, [initialValue]);
 
   const handleToggleFilter = () => {
-    const newValue = !showFavoritesOnly
-    setShowFavoritesOnly(newValue)
-    onFilterChange(newValue)
-  }
+    const newValue = !showFavoritesOnly;
+    setShowFavoritesOnly(newValue);
+    onFilterChange(newValue);
+  };
 
   const handleClearAllFavorites = () => {
-    if (favoriteCount === 0) return
-    
+    if (favoriteCount === 0) return;
+
     if (window.confirm('모든 즐겨찾기를 삭제하시겠습니까?')) {
-      clearAllFavorites()
-      setFavoriteCount(0)
-      
+      clearAllFavorites();
+      setFavoriteCount(0);
+
       // 즐겨찾기 필터가 활성화되어 있다면 비활성화
       if (showFavoritesOnly) {
-        setShowFavoritesOnly(false)
-        onFilterChange(false)
+        setShowFavoritesOnly(false);
+        onFilterChange(false);
       }
     }
-  }
+  };
 
   return (
     <div className="px-4 mb-6">
@@ -65,22 +65,22 @@ const FavoriteFilter = ({ onFilterChange, initialValue = false }: FavoriteFilter
                          : 'text-text-secondary hover:text-text-primary border border-border-primary hover:bg-bg-secondary'
                      }`}
           >
-            <svg 
-              width="14" 
-              height="14" 
-              viewBox="0 0 24 24" 
+            <svg
+              width="14"
+              height="14"
+              viewBox="0 0 24 24"
               className={`${showFavoritesOnly ? 'fill-yellow-400' : 'fill-none'}`}
             >
-              <path 
-                d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z" 
-                stroke="currentColor" 
-                strokeWidth="2" 
+              <path
+                d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z"
+                stroke="currentColor"
+                strokeWidth="2"
                 strokeLinejoin="round"
               />
             </svg>
             즐겨찾기만 보기 ({favoriteCount})
           </button>
-          
+
           {favoriteCount > 0 && (
             <button
               onClick={handleClearAllFavorites}
@@ -107,7 +107,7 @@ const FavoriteFilter = ({ onFilterChange, initialValue = false }: FavoriteFilter
         </div>
       )}
     </div>
-  )
-}
+  );
+};
 
-export default FavoriteFilter
+export default FavoriteFilter;

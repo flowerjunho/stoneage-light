@@ -6,10 +6,10 @@ interface CharacterTabsProps {
   onCharacterSelect: (character: string | null) => void;
 }
 
-const CharacterTabs: React.FC<CharacterTabsProps> = ({ 
-  characters, 
-  selectedCharacter, 
-  onCharacterSelect 
+const CharacterTabs: React.FC<CharacterTabsProps> = ({
+  characters,
+  selectedCharacter,
+  onCharacterSelect,
 }) => {
   const scrollRef = useRef<HTMLDivElement>(null);
   const [canScrollLeft, setCanScrollLeft] = useState(false);
@@ -20,7 +20,9 @@ const CharacterTabs: React.FC<CharacterTabsProps> = ({
   useEffect(() => {
     const checkDevice = () => {
       const userAgent = navigator.userAgent.toLowerCase();
-      const isMobile = /android|webos|iphone|ipad|ipod|blackberry|iemobile|opera mini/.test(userAgent);
+      const isMobile = /android|webos|iphone|ipad|ipod|blackberry|iemobile|opera mini/.test(
+        userAgent
+      );
       const isTablet = /ipad|android(?!.*mobile)/.test(userAgent);
       setIsPC(!isMobile && !isTablet && window.innerWidth >= 1024);
     };
@@ -33,15 +35,15 @@ const CharacterTabs: React.FC<CharacterTabsProps> = ({
   // 스크롤 상태 업데이트
   const updateScrollButtons = useCallback(() => {
     if (!scrollRef.current || !isPC) return;
-    
+
     const element = scrollRef.current;
     const scrollLeft = element.scrollLeft;
     const scrollWidth = element.scrollWidth;
     const clientWidth = element.clientWidth;
-    
+
     // 스크롤 여유 공간 (10px 정도의 여유를 둠)
     const scrollTolerance = 10;
-    
+
     setCanScrollLeft(scrollLeft > scrollTolerance);
     setCanScrollRight(scrollLeft < scrollWidth - clientWidth - scrollTolerance);
   }, [isPC]);
@@ -84,8 +86,18 @@ const CharacterTabs: React.FC<CharacterTabsProps> = ({
               aria-label="Scroll left"
             >
               <div className="w-8 h-8 rounded-full bg-bg-secondary border border-border-primary shadow-md flex items-center justify-center hover:bg-bg-tertiary hover:border-accent/30 transition-colors">
-                <svg className="w-4 h-4 text-text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                <svg
+                  className="w-4 h-4 text-text-primary"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M15 19l-7-7 7-7"
+                  />
                 </svg>
               </div>
             </button>
@@ -99,14 +111,24 @@ const CharacterTabs: React.FC<CharacterTabsProps> = ({
               aria-label="Scroll right"
             >
               <div className="w-8 h-8 rounded-full bg-bg-secondary border border-border-primary shadow-md flex items-center justify-center hover:bg-bg-tertiary hover:border-accent/30 transition-colors">
-                <svg className="w-4 h-4 text-text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                <svg
+                  className="w-4 h-4 text-text-primary"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M9 5l7 7-7 7"
+                  />
                 </svg>
               </div>
             </button>
           )}
 
-          <div 
+          <div
             ref={scrollRef}
             className="flex overflow-x-auto scrollbar-hide scroll-smooth"
             style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
@@ -122,9 +144,9 @@ const CharacterTabs: React.FC<CharacterTabsProps> = ({
             >
               전체
             </button>
-            
+
             {/* 캐릭터별 탭들 */}
-            {characters.map((character) => (
+            {characters.map(character => (
               <button
                 key={character}
                 onClick={() => onCharacterSelect(character)}

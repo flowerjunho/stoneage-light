@@ -11,7 +11,7 @@ export function useIntersectionObserver({
   onIntersect,
   enabled = true,
   threshold = 0.1,
-  rootMargin = '100px'
+  rootMargin = '100px',
 }: UseIntersectionObserverProps) {
   const targetRef = useRef<HTMLDivElement>(null);
 
@@ -21,7 +21,7 @@ export function useIntersectionObserver({
     }
 
     const observer = new IntersectionObserver(
-      (entries) => {
+      entries => {
         const [entry] = entries;
         if (entry.isIntersecting && enabled) {
           onIntersect();
@@ -29,7 +29,7 @@ export function useIntersectionObserver({
       },
       {
         threshold,
-        rootMargin
+        rootMargin,
       }
     );
 

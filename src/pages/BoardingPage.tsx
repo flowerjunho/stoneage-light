@@ -60,17 +60,17 @@ const BoardingPage: React.FC = () => {
       Object.entries(result).forEach(([character, pets]) => {
         // 1. 캐릭터명 검색 - 매칭시 해당 캐릭터만 표시 (펫은 필터링하지 않음)
         const characterMatches = matchesConsonantSearch(character, debouncedSearchTerm);
-        
+
         // 2. 펫명 검색 - 매칭되는 펫들만 필터링
-        const matchingPets = pets.filter(pet => 
-          matchesConsonantSearch(pet, debouncedSearchTerm)
-        );
+        const matchingPets = pets.filter(pet => matchesConsonantSearch(pet, debouncedSearchTerm));
 
         // 디버그 로그 (개발 환경에서만)
         const isDev = typeof window !== 'undefined' && window.location?.hostname === 'localhost';
         if (isDev && debouncedSearchTerm === 'ㅁㅁ') {
           if (characterMatches || matchingPets.length > 0) {
-            console.log(`[BOARDING DEBUG] 캐릭터: "${character}" | 캐릭터 매칭: ${characterMatches} | 펫 매칭 수: ${matchingPets.length}`);
+            console.log(
+              `[BOARDING DEBUG] 캐릭터: "${character}" | 캐릭터 매칭: ${characterMatches} | 펫 매칭 수: ${matchingPets.length}`
+            );
             if (matchingPets.length > 0) {
               console.log(`[BOARDING DEBUG] 매칭된 펫들:`, matchingPets);
             }
@@ -113,7 +113,10 @@ const BoardingPage: React.FC = () => {
               <div className="h-6 bg-bg-tertiary rounded w-24 mb-4 animate-pulse"></div>
               <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
                 {Array.from({ length: 8 }, (_, petIndex) => (
-                  <div key={`pet-skeleton-${petIndex}`} className="h-8 bg-bg-tertiary rounded animate-pulse"></div>
+                  <div
+                    key={`pet-skeleton-${petIndex}`}
+                    className="h-8 bg-bg-tertiary rounded animate-pulse"
+                  ></div>
                 ))}
               </div>
             </div>
@@ -127,8 +130,8 @@ const BoardingPage: React.FC = () => {
   if (isTyping && searchTerm.trim()) {
     return (
       <div className="max-w-6xl mx-auto px-4 iphone16:px-3">
-        <SearchBar 
-          searchTerm={searchTerm} 
+        <SearchBar
+          searchTerm={searchTerm}
           onSearchChange={handleSearchChange}
           placeholder="Search characters and pets..."
         />
@@ -138,7 +141,12 @@ const BoardingPage: React.FC = () => {
         <div className="flex justify-center items-center min-h-80 p-8 iphone16:min-h-48 iphone16:p-6">
           <div className="text-center text-text-secondary">
             <div className="w-16 h-16 mx-auto mb-4 iphone16:w-12 iphone16:h-12">
-              <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-full h-full animate-spin">
+              <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+                className="w-full h-full animate-spin"
+              >
                 <path
                   d="M21 21L16.514 16.506L21 21ZM19 10.5C19 15.194 15.194 19 10.5 19C5.806 19 2 15.194 2 10.5C2 5.806 5.806 2 10.5 2C15.194 2 19 5.806 19 10.5Z"
                   stroke="currentColor"
@@ -156,7 +164,9 @@ const BoardingPage: React.FC = () => {
                 />
               </svg>
             </div>
-            <p className="text-base text-text-secondary iphone16:text-sm animate-pulse">Searching for characters and pets...</p>
+            <p className="text-base text-text-secondary iphone16:text-sm animate-pulse">
+              Searching for characters and pets...
+            </p>
           </div>
         </div>
       </div>
@@ -170,8 +180,8 @@ const BoardingPage: React.FC = () => {
   if (filteredEntries.length === 0) {
     return (
       <div className="max-w-6xl mx-auto px-4 iphone16:px-3">
-        <SearchBar 
-          searchTerm={searchTerm} 
+        <SearchBar
+          searchTerm={searchTerm}
           onSearchChange={handleSearchChange}
           placeholder="Search characters and pets..."
         />
@@ -180,7 +190,12 @@ const BoardingPage: React.FC = () => {
         </div>
         <div className="flex justify-center items-center min-h-80 p-8 iphone16:min-h-48 iphone16:p-6">
           <div className="text-center text-text-muted">
-            <svg className="w-16 h-16 mx-auto mb-4 text-text-muted iphone16:w-12 iphone16:h-12" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <svg
+              className="w-16 h-16 mx-auto mb-4 text-text-muted iphone16:w-12 iphone16:h-12"
+              viewBox="0 0 24 24"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+            >
               <path
                 d="M21 21L16.514 16.506L21 21ZM19 10.5C19 15.194 15.194 19 10.5 19C5.806 19 2 15.194 2 10.5C2 5.806 5.806 2 10.5 2C15.194 2 19 5.806 19 10.5Z"
                 stroke="currentColor"
@@ -189,12 +204,13 @@ const BoardingPage: React.FC = () => {
                 strokeLinejoin="round"
               />
             </svg>
-            <h3 className="text-xl mb-2 text-text-secondary iphone16:text-lg">No characters found</h3>
+            <h3 className="text-xl mb-2 text-text-secondary iphone16:text-lg">
+              No characters found
+            </h3>
             <p className="text-base m-0 iphone16:text-sm">
-              {debouncedSearchTerm 
+              {debouncedSearchTerm
                 ? `No characters or pets match "${debouncedSearchTerm}". Try different search terms.`
-                : "Try adjusting your search terms"
-              }
+                : 'Try adjusting your search terms'}
             </p>
           </div>
         </div>
@@ -205,19 +221,19 @@ const BoardingPage: React.FC = () => {
   return (
     <>
       <div className="max-w-6xl mx-auto px-4 iphone16:px-3">
-        <SearchBar 
-          searchTerm={searchTerm} 
+        <SearchBar
+          searchTerm={searchTerm}
           onSearchChange={handleSearchChange}
           placeholder="Search characters and pets..."
         />
       </div>
-      
-      <CharacterTabs 
+
+      <CharacterTabs
         characters={characters}
         selectedCharacter={selectedCharacter}
         onCharacterSelect={handleCharacterSelect}
       />
-      
+
       <div className="max-w-6xl mx-auto px-4 iphone16:px-3">
         <div className="mb-6 px-2 iphone16:mb-4 flex justify-between items-center">
           <span className="text-text-secondary text-sm font-medium">
@@ -229,36 +245,41 @@ const BoardingPage: React.FC = () => {
         </div>
 
         <div className="space-y-6 mb-8 iphone16:space-y-4 iphone16:mb-6">
-        {filteredEntries.map(([character, pets]) => (
-          <div key={character} className="bg-bg-secondary rounded-lg p-6 iphone16:p-4 border border-border-primary">
-            <div className="flex items-center justify-between mb-4 iphone16:mb-3">
-              <h2 className="text-xl font-bold text-text-primary iphone16:text-lg">
-                {character}
-              </h2>
-              <span className="bg-accent/10 text-accent px-3 py-1 rounded-full text-sm font-medium iphone16:text-xs iphone16:px-2">
-                {pets.length}개
-              </span>
+          {filteredEntries.map(([character, pets]) => (
+            <div
+              key={character}
+              className="bg-bg-secondary rounded-lg p-6 iphone16:p-4 border border-border-primary"
+            >
+              <div className="flex items-center justify-between mb-4 iphone16:mb-3">
+                <h2 className="text-xl font-bold text-text-primary iphone16:text-lg">
+                  {character}
+                </h2>
+                <span className="bg-accent/10 text-accent px-3 py-1 rounded-full text-sm font-medium iphone16:text-xs iphone16:px-2">
+                  {pets.length}개
+                </span>
+              </div>
+
+              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 iphone16:gap-2">
+                {pets.map((pet, index) => (
+                  <div
+                    key={`${character}-${pet}-${index}`}
+                    className="bg-bg-primary rounded-lg p-3 border border-border-primary hover:border-accent/30 transition-colors iphone16:p-2"
+                  >
+                    <span className="text-text-primary text-sm font-medium iphone16:text-xs">
+                      {pet.startsWith('⭐️') ? (
+                        <>
+                          <span className="text-yellow-400 mr-1">⭐️</span>
+                          {pet.replace('⭐️', '')}
+                        </>
+                      ) : (
+                        pet
+                      )}
+                    </span>
+                  </div>
+                ))}
+              </div>
             </div>
-            
-            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 iphone16:gap-2">
-              {pets.map((pet, index) => (
-                <div
-                  key={`${character}-${pet}-${index}`}
-                  className="bg-bg-primary rounded-lg p-3 border border-border-primary hover:border-accent/30 transition-colors iphone16:p-2"
-                >
-                  <span className="text-text-primary text-sm font-medium iphone16:text-xs">
-                    {pet.startsWith('⭐️') ? (
-                      <>
-                        <span className="text-yellow-400 mr-1">⭐️</span>
-                        {pet.replace('⭐️', '')}
-                      </>
-                    ) : pet}
-                  </span>
-                </div>
-              ))}
-            </div>
-          </div>
-        ))}
+          ))}
         </div>
       </div>
     </>

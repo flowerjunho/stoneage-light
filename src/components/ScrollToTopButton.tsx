@@ -1,35 +1,35 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect } from 'react';
 
 const ScrollToTopButton = () => {
-  const [isVisible, setIsVisible] = useState(false)
+  const [isVisible, setIsVisible] = useState(false);
 
   // 스크롤 위치에 따라 버튼 표시/숨김 결정
   useEffect(() => {
     const toggleVisibility = () => {
       if (window.pageYOffset > 300) {
-        setIsVisible(true)
+        setIsVisible(true);
       } else {
-        setIsVisible(false)
+        setIsVisible(false);
       }
-    }
+    };
 
-    window.addEventListener('scroll', toggleVisibility)
-    
+    window.addEventListener('scroll', toggleVisibility);
+
     return () => {
-      window.removeEventListener('scroll', toggleVisibility)
-    }
-  }, [])
+      window.removeEventListener('scroll', toggleVisibility);
+    };
+  }, []);
 
   // 최상단으로 스크롤하는 함수
   const scrollToTop = () => {
     window.scrollTo({
       top: 0,
-      behavior: 'smooth'
-    })
-  }
+      behavior: 'smooth',
+    });
+  };
 
   if (!isVisible) {
-    return null
+    return null;
   }
 
   return (
@@ -57,7 +57,7 @@ const ScrollToTopButton = () => {
         />
       </svg>
     </button>
-  )
-}
+  );
+};
 
-export default ScrollToTopButton
+export default ScrollToTopButton;

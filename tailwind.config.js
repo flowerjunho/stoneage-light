@@ -1,9 +1,6 @@
 /** @type {import('tailwindcss').Config} */
 export default {
-  content: [
-    "./index.html",
-    "./src/**/*.{js,ts,jsx,tsx}",
-  ],
+  content: ['./index.html', './src/**/*.{js,ts,jsx,tsx}'],
   darkMode: 'class',
   theme: {
     extend: {
@@ -14,17 +11,17 @@ export default {
         'text-primary': 'var(--text-primary)',
         'text-secondary': 'var(--text-secondary)',
         'text-muted': 'var(--text-muted)',
-        'accent': 'var(--accent)',
+        accent: 'var(--accent)',
         'accent-hover': 'var(--accent-hover)',
-        'border': 'var(--border)',
+        border: 'var(--border)',
         'border-light': 'var(--border-light)',
-        'shadow': 'var(--shadow)',
+        shadow: 'var(--shadow)',
       },
       screens: {
-        'iphone16': {'max': '430px'},
-        'xs': {'max': '320px'},
+        iphone16: { max: '430px' },
+        xs: { max: '320px' },
       },
     },
   },
   plugins: [],
-}
+};

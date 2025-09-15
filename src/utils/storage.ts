@@ -23,25 +23,29 @@ export const getSavedDataList = (): SavedData[] => {
   }
 };
 
-export const saveData = (title: string, levels: number[], stats: Array<{ con: number; wis: number; dex: number; }>): boolean => {
+export const saveData = (
+  title: string,
+  levels: number[],
+  stats: Array<{ con: number; wis: number; dex: number }>
+): boolean => {
   try {
     const existingSaves = getSavedDataList();
-    
+
     // 최대 저장 개수 체크
     if (existingSaves.length >= MAX_SAVES) {
       // 가장 오래된 것 삭제
       existingSaves.sort((a, b) => a.timestamp - b.timestamp);
       existingSaves.shift();
     }
-    
+
     const newSave: SavedData = {
       id: Date.now().toString(),
       title: title.trim() || `저장 ${Date.now()}`,
       timestamp: Date.now(),
       levels,
-      stats
+      stats,
     };
-    
+
     existingSaves.push(newSave);
     localStorage.setItem(STORAGE_KEY, JSON.stringify(existingSaves));
     return true;
@@ -80,6 +84,6 @@ export const formatTimestamp = (timestamp: number): string => {
     month: '2-digit',
     day: '2-digit',
     hour: '2-digit',
-    minute: '2-digit'
+    minute: '2-digit',
   });
 };

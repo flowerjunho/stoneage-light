@@ -10,7 +10,7 @@ export const useTheme = () => {
 
   useEffect(() => {
     const root = document.documentElement;
-    
+
     if (theme === 'dark') {
       root.classList.add('dark');
       root.classList.remove('light');
@@ -18,12 +18,12 @@ export const useTheme = () => {
       root.classList.add('light');
       root.classList.remove('dark');
     }
-    
+
     localStorage.setItem('THEME_TOGGLE_STATE', theme);
   }, [theme]);
 
   const toggleTheme = () => {
-    setTheme(prevTheme => prevTheme === 'dark' ? 'light' : 'dark');
+    setTheme(prevTheme => (prevTheme === 'dark' ? 'light' : 'dark'));
   };
 
   return { theme, toggleTheme };

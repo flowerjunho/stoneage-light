@@ -15,7 +15,7 @@ function notifyFavoriteChange() {
 // 즐겨찾기 변경 이벤트 리스너 추가
 export function addFavoriteChangeListener(listener: () => void) {
   favoriteChangeListeners.push(listener);
-  
+
   // cleanup 함수 반환
   return () => {
     const index = favoriteChangeListeners.indexOf(listener);
@@ -59,7 +59,7 @@ export function addToFavorites(pet: { name: string; attack: number; defense: num
   try {
     const favorites = getFavorites();
     const petId = getPetId(pet);
-    
+
     if (!favorites.includes(petId)) {
       favorites.push(petId);
       localStorage.setItem(FAVORITES_KEY, JSON.stringify(favorites));
@@ -78,7 +78,7 @@ export function removeFromFavorites(pet: { name: string; attack: number; defense
     const favorites = getFavorites();
     const petId = getPetId(pet);
     const updatedFavorites = favorites.filter(id => id !== petId);
-    
+
     localStorage.setItem(FAVORITES_KEY, JSON.stringify(updatedFavorites));
     notifyFavoriteChange();
   } catch (error) {
@@ -117,12 +117,12 @@ export function clearAllFavorites(): void {
  */
 export function toggleFavorite(pet: { name: string; attack: number; defense: number }): boolean {
   const wasFavorite = isFavorite(pet);
-  
+
   if (wasFavorite) {
     removeFromFavorites(pet);
   } else {
     addToFavorites(pet);
   }
-  
+
   return !wasFavorite; // 새로운 상태 반환
 }

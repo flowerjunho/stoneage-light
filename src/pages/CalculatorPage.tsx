@@ -1,5 +1,12 @@
 import React, { useState } from 'react';
-import { saveData, loadData, getSavedDataList, deleteData, formatTimestamp, type SavedData } from '../utils/storage';
+import {
+  saveData,
+  loadData,
+  getSavedDataList,
+  deleteData,
+  formatTimestamp,
+  type SavedData,
+} from '../utils/storage';
 import { useRebirthCalculation, type StatInput } from '../hooks/useRebirthCalculation';
 import RebirthCard from '../components/RebirthCard';
 import SaveModal from '../components/SaveModal';
@@ -8,19 +15,19 @@ import LoadModal from '../components/LoadModal';
 const CalculatorPage: React.FC = () => {
   // Excel에서 추출한 보너스 값들 (C26, E26, G26, I26, K26)
   const BONUSES = [10, 20, 30, 40, 50];
-  
+
   // Excel 분석에 따른 정확한 초기값 - 5환까지
   const [userInputs, setUserInputs] = useState({
     // 레벨 입력 (C6, E6, G6, I6, K6)
     levels: [140, 140, 140, 140, 140],
     // 체,완,건만 사용자 입력 (C9,C10,C11 / E9,E10,E11 / G9,G10,G11 / I9,I10,I11 / K9,K10,K11)
     stats: [
-      { con: 437, wis: 0, dex: 0 },   // 1환 (C9,C10,C11)
-      { con: 482, wis: 0, dex: 0 },   // 2환 (E9,E10,E11)
-      { con: 514, wis: 0, dex: 0 },   // 3환 (G9,G10,G11)
-      { con: 546, wis: 0, dex: 0 },   // 4환 (I9,I10,I11)
-      { con: 577, wis: 0, dex: 0 }    // 5환 (K9,K10,K11)
-    ]
+      { con: 437, wis: 0, dex: 0 }, // 1환 (C9,C10,C11)
+      { con: 482, wis: 0, dex: 0 }, // 2환 (E9,E10,E11)
+      { con: 514, wis: 0, dex: 0 }, // 3환 (G9,G10,G11)
+      { con: 546, wis: 0, dex: 0 }, // 4환 (I9,I10,I11)
+      { con: 577, wis: 0, dex: 0 }, // 5환 (K9,K10,K11)
+    ],
   });
 
   // 저장/불러오기 관련 상태
@@ -34,13 +41,17 @@ const CalculatorPage: React.FC = () => {
   const calculatedData = useRebirthCalculation(userInputs);
 
   // 입력 처리
-  const handleStatChange = (rebirthIndex: number, stat: 'con' | 'wis' | 'dex' | 'agi', value: string) => {
+  const handleStatChange = (
+    rebirthIndex: number,
+    stat: 'con' | 'wis' | 'dex' | 'agi',
+    value: string
+  ) => {
     const numValue = parseInt(value) || 0;
-    
+
     setUserInputs(prev => {
       const newStats = [...prev.stats];
       const level = prev.levels[rebirthIndex];
-      
+
       // 사용 가능한 포인트 계산 (Excel 공식 기반)
       let availablePoints: number;
       if (rebirthIndex === 0) {
@@ -60,37 +71,37 @@ const CalculatorPage: React.FC = () => {
         }
         availablePoints = previousRebirth + 3 * (level - 1);
       }
-      
+
       if (stat === 'con') {
         // 체력 직접 변경 - 최대값 제한
         const otherStats = newStats[rebirthIndex].wis + newStats[rebirthIndex].dex;
         const maxCon = availablePoints - otherStats;
-        newStats[rebirthIndex] = { 
-          ...newStats[rebirthIndex], 
-          [stat]: Math.min(Math.max(0, numValue), maxCon) 
+        newStats[rebirthIndex] = {
+          ...newStats[rebirthIndex],
+          [stat]: Math.min(Math.max(0, numValue), maxCon),
         };
       } else {
         // 완/건 변경 시 체력 자동 조정
         const currentStat = newStats[rebirthIndex];
         const otherStatValue = stat === 'wis' ? currentStat.dex : currentStat.wis;
-        
+
         // 입력된 스탯이 너무 클 경우 제한
         const maxThisStat = availablePoints - otherStatValue;
         const adjustedValue = Math.min(Math.max(0, numValue), maxThisStat);
-        
+
         // 체력 자동 조정
         const remainingForCon = availablePoints - adjustedValue - otherStatValue;
-        
+
         newStats[rebirthIndex] = {
           ...currentStat,
           [stat]: adjustedValue,
-          con: Math.max(0, remainingForCon)
+          con: Math.max(0, remainingForCon),
         };
       }
-      
+
       return {
         ...prev,
-        stats: newStats
+        stats: newStats,
       };
     });
   };
@@ -99,9 +110,7 @@ const CalculatorPage: React.FC = () => {
     const numValue = parseInt(value) || 1;
     setUserInputs(prev => ({
       ...prev,
-      levels: prev.levels.map((level, i) => 
-        i === rebirthIndex ? numValue : level
-      )
+      levels: prev.levels.map((level, i) => (i === rebirthIndex ? numValue : level)),
     }));
   };
 
@@ -126,7 +135,7 @@ const CalculatorPage: React.FC = () => {
     if (data) {
       setUserInputs({
         levels: data.levels,
-        stats: data.stats
+        stats: data.stats,
       });
       setCurrentTitle(data.title); // 현재 타이틀 설정
       setShowLoadModal(false);
@@ -180,7 +189,7 @@ const CalculatorPage: React.FC = () => {
               불러오기
             </button>
           </div>
-          
+
           {/* 현재 불러온 데이터 타이틀 표시 */}
           {currentTitle && (
             <div className="text-center py-2 mb-4">
@@ -189,11 +198,18 @@ const CalculatorPage: React.FC = () => {
               </div>
             </div>
           )}
-          
+
           {/* 설명 텍스트 */}
           <div className="text-center text-text-secondary space-y-2">
-            <p className="text-base md:text-lg">💡 <span className="font-semibold">입력 가능 항목</span>: 레벨, 체력, 완력, 건강</p>
-            <p className="text-sm text-orange-600 dark:text-orange-400">⚠️ <span className="font-semibold">환포 계산기는 환생 포인트 퀘스트를 모두 완료 했다고 가정하고 20개로 계산 됩니다</span></p>
+            <p className="text-base md:text-lg">
+              💡 <span className="font-semibold">입력 가능 항목</span>: 레벨, 체력, 완력, 건강
+            </p>
+            <p className="text-sm text-orange-600 dark:text-orange-400">
+              ⚠️{' '}
+              <span className="font-semibold">
+                환포 계산기는 환생 포인트 퀘스트를 모두 완료 했다고 가정하고 20개로 계산 됩니다
+              </span>
+            </p>
           </div>
         </div>
       </div>
@@ -217,7 +233,7 @@ const CalculatorPage: React.FC = () => {
         <h2 className="text-2xl font-bold mb-6 text-center text-text-primary">
           📈 환포적용 상세 정보
         </h2>
-          
+
         {/* 모바일 뷰 */}
         <div className="block lg:hidden">
           <div className="space-y-4">
@@ -225,7 +241,7 @@ const CalculatorPage: React.FC = () => {
               { key: 'con', label: '체력 환포적용' },
               { key: 'wis', label: '완력 환포적용' },
               { key: 'dex', label: '건강 환포적용' },
-              { key: 'agi', label: '순발 환포적용' }
+              { key: 'agi', label: '순발 환포적용' },
             ].map(({ key, label }) => (
               <div key={key} className="bg-bg-tertiary rounded-lg p-3 border border-border">
                 <h4 className="font-medium text-text-primary mb-2 text-sm">{label}</h4>
@@ -246,7 +262,7 @@ const CalculatorPage: React.FC = () => {
                 </div>
               </div>
             ))}
-            
+
             {/* 환포 총합 모바일 뷰 */}
             <div className="bg-bg-secondary rounded-lg p-3 border border-border">
               <h4 className="font-semibold text-text-primary mb-2 text-sm">환포 총합 + 보너스</h4>
@@ -256,10 +272,20 @@ const CalculatorPage: React.FC = () => {
                     <div className="text-text-secondary mb-1">{i + 1}환</div>
                     <div className="space-y-1">
                       <div className="inline-block px-1.5 py-1 rounded text-xs font-mono font-bold bg-blue-500 text-white">
-                        {data.appliedRebirth.con + data.appliedRebirth.wis + data.appliedRebirth.dex + data.appliedRebirth.agi + data.bonus}
+                        {data.appliedRebirth.con +
+                          data.appliedRebirth.wis +
+                          data.appliedRebirth.dex +
+                          data.appliedRebirth.agi +
+                          data.bonus}
                       </div>
                       <div className="inline-block px-1.5 py-0.5 rounded text-xs font-mono bg-gray-600 text-white">
-                        {(data.appliedRebirthDecimal.con + data.appliedRebirthDecimal.wis + data.appliedRebirthDecimal.dex + data.appliedRebirthDecimal.agi + data.bonus).toFixed(2)}
+                        {(
+                          data.appliedRebirthDecimal.con +
+                          data.appliedRebirthDecimal.wis +
+                          data.appliedRebirthDecimal.dex +
+                          data.appliedRebirthDecimal.agi +
+                          data.bonus
+                        ).toFixed(2)}
                       </div>
                     </div>
                   </div>
@@ -274,9 +300,15 @@ const CalculatorPage: React.FC = () => {
           <table className="w-full text-sm text-text-secondary">
             <thead>
               <tr className="bg-bg-tertiary">
-                <th className="px-4 py-3 text-left font-semibold" rowSpan={2}>스탯</th>
+                <th className="px-4 py-3 text-left font-semibold" rowSpan={2}>
+                  스탯
+                </th>
                 {calculatedData.map((_, i) => (
-                  <th key={i} className="px-2 py-2 text-center font-semibold border-l border-border" colSpan={2}>
+                  <th
+                    key={i}
+                    className="px-2 py-2 text-center font-semibold border-l border-border"
+                    colSpan={2}
+                  >
                     {i + 1}환
                   </th>
                 ))}
@@ -284,10 +316,16 @@ const CalculatorPage: React.FC = () => {
               <tr className="bg-bg-tertiary border-t border-border">
                 {calculatedData.map((_, i) => (
                   <>
-                    <th key={`${i}-applied`} className="px-2 py-2 text-center font-semibold text-xs bg-bg-tertiary text-text-secondary">
+                    <th
+                      key={`${i}-applied`}
+                      className="px-2 py-2 text-center font-semibold text-xs bg-bg-tertiary text-text-secondary"
+                    >
                       적용
                     </th>
-                    <th key={`${i}-actual`} className="px-2 py-2 text-center font-semibold text-xs bg-bg-tertiary text-text-secondary">
+                    <th
+                      key={`${i}-actual`}
+                      className="px-2 py-2 text-center font-semibold text-xs bg-bg-tertiary text-text-secondary"
+                    >
                       실제
                     </th>
                   </>
@@ -299,7 +337,7 @@ const CalculatorPage: React.FC = () => {
                 { key: 'con', label: '체력 환포적용' },
                 { key: 'wis', label: '완력 환포적용' },
                 { key: 'dex', label: '건강 환포적용' },
-                { key: 'agi', label: '순발 환포적용' }
+                { key: 'agi', label: '순발 환포적용' },
               ].map(({ key, label }) => (
                 <tr key={key} className="border-t border-border">
                   <td className="px-4 py-3 font-medium">{label}</td>
@@ -325,12 +363,22 @@ const CalculatorPage: React.FC = () => {
                   <>
                     <td key={`${i}-total-applied`} className="px-2 py-3 text-center">
                       <span className="inline-block px-3 py-2 rounded text-sm font-mono font-bold bg-blue-500 text-white shadow-lg">
-                        {data.appliedRebirth.con + data.appliedRebirth.wis + data.appliedRebirth.dex + data.appliedRebirth.agi + data.bonus}
+                        {data.appliedRebirth.con +
+                          data.appliedRebirth.wis +
+                          data.appliedRebirth.dex +
+                          data.appliedRebirth.agi +
+                          data.bonus}
                       </span>
                     </td>
                     <td key={`${i}-total-actual`} className="px-2 py-3 text-center">
                       <span className="inline-block px-2 py-1 rounded text-xs font-mono bg-gray-600 text-white">
-                        {(data.appliedRebirthDecimal.con + data.appliedRebirthDecimal.wis + data.appliedRebirthDecimal.dex + data.appliedRebirthDecimal.agi + data.bonus).toFixed(2)}
+                        {(
+                          data.appliedRebirthDecimal.con +
+                          data.appliedRebirthDecimal.wis +
+                          data.appliedRebirthDecimal.dex +
+                          data.appliedRebirthDecimal.agi +
+                          data.bonus
+                        ).toFixed(2)}
                       </span>
                     </td>
                   </>
@@ -339,20 +387,16 @@ const CalculatorPage: React.FC = () => {
             </tbody>
           </table>
         </div>
-        </div>
+      </div>
 
       {/* MAX 환포 정보 */}
       <div className="mt-6 rounded-xl shadow-lg p-6 bg-bg-secondary border border-border">
-        <h2 className="text-2xl font-bold mb-4 text-center text-text-primary">
-          🏆 MAX 환포
-        </h2>
-          
+        <h2 className="text-2xl font-bold mb-4 text-center text-text-primary">🏆 MAX 환포</h2>
+
         <div className="grid grid-cols-5 gap-4">
           {[66, 98, 130, 161, 192].map((max, i) => (
             <div key={i} className="text-center">
-              <div className="text-sm font-medium mb-2 text-text-secondary">
-                {i + 1}환
-              </div>
+              <div className="text-sm font-medium mb-2 text-text-secondary">{i + 1}환</div>
               <div className="px-4 py-2 rounded-lg font-bold text-lg bg-red-500 text-white">
                 {max}
               </div>

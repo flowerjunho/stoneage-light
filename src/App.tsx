@@ -17,7 +17,10 @@ function App() {
           <TabNavigation />
           <Routes>
             <Route path="/" element={<Navigate to="/stoneage-light/pets" replace />} />
-            <Route path="/stoneage-light" element={<Navigate to="/stoneage-light/pets" replace />} />
+            <Route
+              path="/stoneage-light"
+              element={<Navigate to="/stoneage-light/pets" replace />}
+            />
             <Route path="/stoneage-light/pets" element={<PetsPage />} />
             <Route path="/stoneage-light/boarding" element={<BoardingPage />} />
             <Route path="/stoneage-light/calculator" element={<CalculatorPage />} />
@@ -26,7 +29,7 @@ function App() {
         <ScrollToTopButton />
       </div>
     </Router>
-  )
+  );
 }
 
-export default App
+export default App;

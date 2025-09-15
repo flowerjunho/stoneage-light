@@ -13,7 +13,7 @@ const SaveModal: React.FC<SaveModalProps> = ({
   onClose,
   saveTitle,
   setSaveTitle,
-  onSave
+  onSave,
 }) => {
   if (!isOpen) return null;
 
@@ -37,11 +37,11 @@ const SaveModal: React.FC<SaveModalProps> = ({
           <input
             type="text"
             value={saveTitle}
-            onChange={(e) => setSaveTitle(e.target.value)}
+            onChange={e => setSaveTitle(e.target.value)}
             placeholder="예: 완캐/순캐"
             className="w-full px-3 py-2 rounded-lg border-2 bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white font-semibold focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
             maxLength={10}
-            onKeyPress={(e) => e.key === 'Enter' && handleSave()}
+            onKeyPress={e => e.key === 'Enter' && handleSave()}
           />
         </div>
         <div className="text-xs text-text-muted mb-4">

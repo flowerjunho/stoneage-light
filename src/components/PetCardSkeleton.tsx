@@ -18,7 +18,7 @@ const PetCardSkeleton: React.FC = () => {
           <div className="h-7 w-12 bg-bg-tertiary rounded"></div>
         </div>
       </div>
-      
+
       {/* Basic Stats */}
       <div className="mb-6">
         <div className="grid grid-cols-2 gap-3 iphone16:grid-cols-1">

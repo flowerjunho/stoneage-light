@@ -16,7 +16,7 @@ const LoadModal: React.FC<LoadModalProps> = ({
   savedDataList,
   onLoad,
   onDelete,
-  formatTimestamp
+  formatTimestamp,
 }) => {
   if (!isOpen) return null;
 
@@ -25,15 +25,16 @@ const LoadModal: React.FC<LoadModalProps> = ({
       <div className="bg-bg-secondary rounded-lg p-6 w-96 max-w-90vw border border-border max-h-80vh overflow-y-auto">
         <h3 className="text-xl font-bold mb-4 text-text-primary">저장된 데이터 불러오기</h3>
         {savedDataList.length === 0 ? (
-          <div className="text-center py-8 text-text-muted">
-            저장된 데이터가 없습니다.
-          </div>
+          <div className="text-center py-8 text-text-muted">저장된 데이터가 없습니다.</div>
         ) : (
           <div className="space-y-3 mb-4">
             {savedDataList
               .sort((a, b) => b.timestamp - a.timestamp)
-              .map((data) => (
-                <div key={data.id} className="flex items-center justify-between p-3 rounded-lg bg-bg-tertiary border border-border">
+              .map(data => (
+                <div
+                  key={data.id}
+                  className="flex items-center justify-between p-3 rounded-lg bg-bg-tertiary border border-border"
+                >
                   <div className="flex-1">
                     <div className="font-semibold text-text-primary">{data.title}</div>
                     <div className="text-xs text-text-secondary">

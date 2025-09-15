@@ -1,18 +1,18 @@
-import { useState } from 'react'
-import FilterBottomSheet from './FilterBottomSheet'
-import type { ElementType } from './ElementFilter'
-import type { GradeType } from './GradeFilter'
-import type { StatFilterItem } from './StatFilter'
+import { useState } from 'react';
+import FilterBottomSheet from './FilterBottomSheet';
+import type { ElementType } from './ElementFilter';
+import type { GradeType } from './GradeFilter';
+import type { StatFilterItem } from './StatFilter';
 
 interface FloatingFilterButtonProps {
-  elementFilters: ElementType[]
-  gradeFilters: GradeType[]
-  statFilters: StatFilterItem[]
-  showFavoritesOnly: boolean
-  onElementFilterChange: (filters: ElementType[]) => void
-  onGradeFilterChange: (filters: GradeType[]) => void
-  onStatFilterChange: (filters: StatFilterItem[]) => void
-  onFavoriteFilterChange: (favoritesOnly: boolean) => void
+  elementFilters: ElementType[];
+  gradeFilters: GradeType[];
+  statFilters: StatFilterItem[];
+  showFavoritesOnly: boolean;
+  onElementFilterChange: (filters: ElementType[]) => void;
+  onGradeFilterChange: (filters: GradeType[]) => void;
+  onStatFilterChange: (filters: StatFilterItem[]) => void;
+  onFavoriteFilterChange: (favoritesOnly: boolean) => void;
 }
 
 const FloatingFilterButton = ({
@@ -23,12 +23,16 @@ const FloatingFilterButton = ({
   onElementFilterChange,
   onGradeFilterChange,
   onStatFilterChange,
-  onFavoriteFilterChange
+  onFavoriteFilterChange,
 }: FloatingFilterButtonProps) => {
-  const [isBottomSheetOpen, setIsBottomSheetOpen] = useState(false)
+  const [isBottomSheetOpen, setIsBottomSheetOpen] = useState(false);
 
   // 활성 필터 개수 계산
-  const activeFilterCount = elementFilters.length + gradeFilters.length + statFilters.filter(f => f.enabled).length + (showFavoritesOnly ? 1 : 0)
+  const activeFilterCount =
+    elementFilters.length +
+    gradeFilters.length +
+    statFilters.filter(f => f.enabled).length +
+    (showFavoritesOnly ? 1 : 0);
 
   return (
     <>
@@ -60,9 +64,11 @@ const FloatingFilterButton = ({
 
         {/* 활성 필터 개수 배지 */}
         {activeFilterCount > 0 && (
-          <div className="absolute -top-1 -right-1 w-5 h-5 bg-red-500 text-white
+          <div
+            className="absolute -top-1 -right-1 w-5 h-5 bg-red-500 text-white
                          text-xs font-bold rounded-full flex items-center justify-center
-                         iphone16:w-4 iphone16:h-4 iphone16:text-xs">
+                         iphone16:w-4 iphone16:h-4 iphone16:text-xs"
+          >
             {activeFilterCount > 9 ? '9+' : activeFilterCount}
           </div>
         )}
@@ -82,7 +88,7 @@ const FloatingFilterButton = ({
         onFavoriteFilterChange={onFavoriteFilterChange}
       />
     </>
-  )
-}
+  );
+};
 
-export default FloatingFilterButton
+export default FloatingFilterButton;

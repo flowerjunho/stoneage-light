@@ -1,20 +1,20 @@
-import { useEffect } from 'react'
-import ElementFilter, { type ElementType } from './ElementFilter'
-import GradeFilter, { type GradeType } from './GradeFilter'
-import StatFilter, { type StatFilterItem } from './StatFilter'
-import FavoriteFilter from './FavoriteFilter'
+import { useEffect } from 'react';
+import ElementFilter, { type ElementType } from './ElementFilter';
+import GradeFilter, { type GradeType } from './GradeFilter';
+import StatFilter, { type StatFilterItem } from './StatFilter';
+import FavoriteFilter from './FavoriteFilter';
 
 interface FilterBottomSheetProps {
-  isOpen: boolean
-  onClose: () => void
-  elementFilters: ElementType[]
-  gradeFilters: GradeType[]
-  statFilters: StatFilterItem[]
-  showFavoritesOnly: boolean
-  onElementFilterChange: (filters: ElementType[]) => void
-  onGradeFilterChange: (filters: GradeType[]) => void
-  onStatFilterChange: (filters: StatFilterItem[]) => void
-  onFavoriteFilterChange: (favoritesOnly: boolean) => void
+  isOpen: boolean;
+  onClose: () => void;
+  elementFilters: ElementType[];
+  gradeFilters: GradeType[];
+  statFilters: StatFilterItem[];
+  showFavoritesOnly: boolean;
+  onElementFilterChange: (filters: ElementType[]) => void;
+  onGradeFilterChange: (filters: GradeType[]) => void;
+  onStatFilterChange: (filters: StatFilterItem[]) => void;
+  onFavoriteFilterChange: (favoritesOnly: boolean) => void;
 }
 
 const FilterBottomSheet = ({
@@ -27,62 +27,60 @@ const FilterBottomSheet = ({
   onElementFilterChange,
   onGradeFilterChange,
   onStatFilterChange,
-  onFavoriteFilterChange
+  onFavoriteFilterChange,
 }: FilterBottomSheetProps) => {
-
   // ESC 키로 닫기
   useEffect(() => {
     const handleEscape = (e: KeyboardEvent) => {
       if (e.key === 'Escape' && isOpen) {
-        onClose()
+        onClose();
       }
-    }
+    };
 
-    document.addEventListener('keydown', handleEscape)
-    return () => document.removeEventListener('keydown', handleEscape)
-  }, [isOpen, onClose])
+    document.addEventListener('keydown', handleEscape);
+    return () => document.removeEventListener('keydown', handleEscape);
+  }, [isOpen, onClose]);
 
   // 바디 스크롤 방지
   useEffect(() => {
     if (isOpen) {
-      document.body.style.overflow = 'hidden'
+      document.body.style.overflow = 'hidden';
     } else {
-      document.body.style.overflow = 'unset'
+      document.body.style.overflow = 'unset';
     }
 
     return () => {
-      document.body.style.overflow = 'unset'
-    }
-  }, [isOpen])
+      document.body.style.overflow = 'unset';
+    };
+  }, [isOpen]);
 
   const handleResetFilters = () => {
-    onElementFilterChange([])
-    onGradeFilterChange([])
-    onStatFilterChange([])
-    onFavoriteFilterChange(false)
+    onElementFilterChange([]);
+    onGradeFilterChange([]);
+    onStatFilterChange([]);
+    onFavoriteFilterChange(false);
     // onClose() 제거 - 바텀시트를 닫지 않음
-  }
+  };
 
   // 필터가 활성화되어 있는지 확인 (현재 사용하지 않음)
   // const hasActiveFilters = elementFilters.length > 0 || gradeFilters.length > 0 || statFilters.filter(f => f.enabled).length > 0 || showFavoritesOnly
 
-  if (!isOpen) return null
+  if (!isOpen) return null;
 
   return (
     <div className="fixed inset-0 z-50 flex items-end justify-center">
       {/* 배경 오버레이 */}
-      <div 
-        className="absolute inset-0 bg-black/50 backdrop-blur-sm"
-        onClick={onClose}
-      />
-      
+      <div className="absolute inset-0 bg-black/50 backdrop-blur-sm" onClick={onClose} />
+
       {/* 바텀시트 */}
-      <div className={`
+      <div
+        className={`
         relative w-full max-w-4xl bg-bg-primary
         rounded-t-2xl shadow-2xl transform transition-all duration-300 ease-out
         max-h-[85vh] overflow-hidden flex flex-col
         ${isOpen ? 'translate-y-0' : 'translate-y-full'}
-      `}>
+      `}
+      >
         {/* 드래그 핸들 */}
         <div className="flex justify-center py-3 bg-bg-primary">
           <div className="w-12 h-1 bg-text-secondary/30 rounded-full" />
@@ -92,13 +90,23 @@ const FilterBottomSheet = ({
         <div className="flex items-center justify-between px-4 py-3 border-b border-border-primary">
           <div className="flex items-center gap-3">
             <div className="w-8 h-8 bg-accent rounded-lg flex items-center justify-center">
-              <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z" />
+              <svg
+                className="w-5 h-5 text-white"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z"
+                />
               </svg>
             </div>
             <h2 className="text-xl font-bold text-text-primary">필터</h2>
           </div>
-          
+
           <button
             onClick={onClose}
             className="w-10 h-10 flex items-center justify-center rounded-lg
@@ -113,7 +121,7 @@ const FilterBottomSheet = ({
         <div className="flex-1 overflow-y-auto bg-bg-primary py-2">
           {/* 즐겨찾기 필터 */}
           <div className="border-b border-border-primary pb-4 mb-4">
-            <FavoriteFilter 
+            <FavoriteFilter
               onFilterChange={onFavoriteFilterChange}
               initialValue={showFavoritesOnly}
             />
@@ -125,7 +133,7 @@ const FilterBottomSheet = ({
               <span className="text-text-secondary text-sm font-medium">속성 필터:</span>
             </div>
             <div className="px-4">
-              <ElementFilter 
+              <ElementFilter
                 onFilterChange={onElementFilterChange}
                 initialFilters={elementFilters}
                 hideLabel={true}
@@ -139,7 +147,7 @@ const FilterBottomSheet = ({
               <span className="text-text-secondary text-sm font-medium">판매 등급:</span>
             </div>
             <div className="px-4">
-              <GradeFilter 
+              <GradeFilter
                 onFilterChange={onGradeFilterChange}
                 initialFilters={gradeFilters}
                 hideLabel={true}
@@ -149,10 +157,7 @@ const FilterBottomSheet = ({
 
           {/* 스탯 필터 */}
           <div className="pb-4">
-            <StatFilter 
-              onFilterChange={onStatFilterChange}
-              initialFilters={statFilters}
-            />
+            <StatFilter onFilterChange={onStatFilterChange} initialFilters={statFilters} />
           </div>
         </div>
 
@@ -176,7 +181,7 @@ const FilterBottomSheet = ({
         </div>
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default FilterBottomSheet
+export default FilterBottomSheet;

@@ -16,7 +16,7 @@ interface UseInfiniteScrollReturn<T> {
 
 export function useInfiniteScroll<T>({
   items,
-  itemsPerPage
+  itemsPerPage,
 }: UseInfiniteScrollProps<T>): UseInfiniteScrollReturn<T> {
   const [currentPage, setCurrentPage] = useState(1);
   const [isLoading, setIsLoading] = useState(false);
@@ -42,7 +42,7 @@ export function useInfiniteScroll<T>({
       const timer = setTimeout(() => {
         setIsInitialLoading(false);
       }, 300);
-      
+
       return () => clearTimeout(timer);
     }
   }, [items.length, isInitialLoading]);
@@ -63,10 +63,10 @@ export function useInfiniteScroll<T>({
     if (loadingRef.current || !hasMore) {
       return;
     }
-    
+
     loadingRef.current = true;
     setIsLoading(true);
-    
+
     // 실제 로딩 시뮬레이션 (50ms 딜레이로 단축)
     setTimeout(() => {
       setCurrentPage(prev => prev + 1);
@@ -88,6 +88,6 @@ export function useInfiniteScroll<T>({
     isLoading,
     isInitialLoading,
     loadMore,
-    reset
+    reset,
   };
 }

@@ -9,7 +9,7 @@ interface UseScrollToBottomProps {
 export function useScrollToBottom({
   onBottom,
   threshold = 300,
-  enabled = true
+  enabled = true,
 }: UseScrollToBottomProps) {
   const timeoutRef = useRef<number | undefined>(undefined);
 
@@ -27,12 +27,12 @@ export function useScrollToBottom({
         document.documentElement.scrollTop,
         document.body.scrollTop
       );
-      
+
       const scrollHeight = Math.max(
         document.documentElement.scrollHeight,
         document.body.scrollHeight
       );
-      
+
       const clientHeight = window.innerHeight;
 
       const scrolledToBottom = Math.ceil(scrollTop + clientHeight) >= scrollHeight - threshold;
@@ -48,7 +48,7 @@ export function useScrollToBottom({
 
     window.addEventListener('scroll', handleScroll, { passive: true });
     window.addEventListener('resize', handleScroll, { passive: true });
-    
+
     return () => {
       window.removeEventListener('scroll', handleScroll);
       window.removeEventListener('resize', handleScroll);
