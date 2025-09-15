@@ -47,10 +47,10 @@ export function useInfiniteScroll<T>({
     }
   }, [items.length, isInitialLoading]);
 
-  // 현재 표시할 아이템들을 메모이제이션
+  // 현재 표시할 아이템들을 메모이제이션 (성능 최적화)
   const displayedItems = useMemo(() => {
-    const result = items.slice(0, currentPage * itemsPerPage);
-    return result;
+    const endIndex = currentPage * itemsPerPage;
+    return items.slice(0, endIndex);
   }, [items, currentPage, itemsPerPage]);
 
   // 더 보기 가능 여부를 메모이제이션
@@ -67,16 +67,13 @@ export function useInfiniteScroll<T>({
     loadingRef.current = true;
     setIsLoading(true);
     
-    // 실제 로딩 시뮬레이션 (100ms 딜레이)
+    // 실제 로딩 시뮬레이션 (50ms 딜레이로 단축)
     setTimeout(() => {
-      setCurrentPage(prev => {
-        const newPage = prev + 1;
-        return newPage;
-      });
+      setCurrentPage(prev => prev + 1);
       setIsLoading(false);
       loadingRef.current = false;
-    }, 100);
-  }, [hasMore, displayedItems.length, items.length]);
+    }, 50);
+  }, [hasMore]);
 
   const reset = useCallback(() => {
     setCurrentPage(1);

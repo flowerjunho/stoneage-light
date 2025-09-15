@@ -5,6 +5,7 @@ import ScrollToTopButton from './components/ScrollToTopButton';
 import TabNavigation from './components/TabNavigation';
 import PetsPage from './pages/PetsPage';
 import BoardingPage from './pages/BoardingPage';
+import CalculatorPage from './pages/CalculatorPage';
 
 function App() {
   return (
@@ -19,6 +20,7 @@ function App() {
             <Route path="/stoneage-light" element={<Navigate to="/stoneage-light/pets" replace />} />
             <Route path="/stoneage-light/pets" element={<PetsPage />} />
             <Route path="/stoneage-light/boarding" element={<BoardingPage />} />
+            <Route path="/stoneage-light/calculator" element={<CalculatorPage />} />
           </Routes>
         </main>
         <ScrollToTopButton />

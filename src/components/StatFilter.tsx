@@ -171,7 +171,7 @@ const StatFilter = ({ onFilterChange, initialFilters = [] }: StatFilterProps) =>
       )}
 
       {filters.length === 0 && (
-        <div className="text-center py-6 text-text-secondary">
+        <div className="text-center py-3 text-text-secondary">
           <p className="text-sm">스탯 필터를 추가하여 조건에 맞는 펫을 찾아보세요</p>
         </div>
       )}

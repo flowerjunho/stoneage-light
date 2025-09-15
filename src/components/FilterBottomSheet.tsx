@@ -1,23 +1,33 @@
 import { useEffect } from 'react'
 import ElementFilter, { type ElementType } from './ElementFilter'
+import GradeFilter, { type GradeType } from './GradeFilter'
 import StatFilter, { type StatFilterItem } from './StatFilter'
+import FavoriteFilter from './FavoriteFilter'
 
 interface FilterBottomSheetProps {
   isOpen: boolean
   onClose: () => void
   elementFilters: ElementType[]
+  gradeFilters: GradeType[]
   statFilters: StatFilterItem[]
+  showFavoritesOnly: boolean
   onElementFilterChange: (filters: ElementType[]) => void
+  onGradeFilterChange: (filters: GradeType[]) => void
   onStatFilterChange: (filters: StatFilterItem[]) => void
+  onFavoriteFilterChange: (favoritesOnly: boolean) => void
 }
 
 const FilterBottomSheet = ({
   isOpen,
   onClose,
   elementFilters,
+  gradeFilters,
   statFilters,
+  showFavoritesOnly,
   onElementFilterChange,
-  onStatFilterChange
+  onGradeFilterChange,
+  onStatFilterChange,
+  onFavoriteFilterChange
 }: FilterBottomSheetProps) => {
 
   // ESC 키로 닫기
@@ -47,9 +57,14 @@ const FilterBottomSheet = ({
 
   const handleResetFilters = () => {
     onElementFilterChange([])
+    onGradeFilterChange([])
     onStatFilterChange([])
-    onClose()
+    onFavoriteFilterChange(false)
+    // onClose() 제거 - 바텀시트를 닫지 않음
   }
+
+  // 필터가 활성화되어 있는지 확인 (현재 사용하지 않음)
+  // const hasActiveFilters = elementFilters.length > 0 || gradeFilters.length > 0 || statFilters.filter(f => f.enabled).length > 0 || showFavoritesOnly
 
   if (!isOpen) return null
 
@@ -96,12 +111,40 @@ const FilterBottomSheet = ({
 
         {/* 스크롤 가능한 콘텐츠 */}
         <div className="flex-1 overflow-y-auto bg-bg-primary py-2">
+          {/* 즐겨찾기 필터 */}
+          <div className="border-b border-border-primary pb-4 mb-4">
+            <FavoriteFilter 
+              onFilterChange={onFavoriteFilterChange}
+              initialValue={showFavoritesOnly}
+            />
+          </div>
+
           {/* 속성 필터 */}
           <div className="border-b border-border-primary pb-4 mb-4">
-            <ElementFilter 
-              onFilterChange={onElementFilterChange}
-              initialFilters={elementFilters}
-            />
+            <div className="mb-4 px-4">
+              <span className="text-text-secondary text-sm font-medium">속성 필터:</span>
+            </div>
+            <div className="px-4">
+              <ElementFilter 
+                onFilterChange={onElementFilterChange}
+                initialFilters={elementFilters}
+                hideLabel={true}
+              />
+            </div>
+          </div>
+
+          {/* 등급 필터 */}
+          <div className="border-b border-border-primary pb-4 mb-4">
+            <div className="mb-4 px-4">
+              <span className="text-text-secondary text-sm font-medium">판매 등급:</span>
+            </div>
+            <div className="px-4">
+              <GradeFilter 
+                onFilterChange={onGradeFilterChange}
+                initialFilters={gradeFilters}
+                hideLabel={true}
+              />
+            </div>
           </div>
 
           {/* 스탯 필터 */}

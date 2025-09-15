@@ -1,6 +1,7 @@
 import React, { useMemo, useCallback } from 'react';
 import type { Pet } from '../types';
 import type { ElementType } from './ElementFilter';
+import type { GradeType } from './GradeFilter';
 import type { StatFilterItem } from './StatFilter';
 import PetCard from './PetCard';
 import PetCardSkeleton from './PetCardSkeleton';
@@ -8,15 +9,18 @@ import { useInfiniteScroll } from '../hooks/useInfiniteScroll';
 import { useIntersectionObserver } from '../hooks/useIntersectionObserver';
 import { useDebounce } from '../hooks/useDebounce';
 import { matchesConsonantSearch } from '../utils/korean';
+import { isFavorite } from '../utils/favorites';
 
 interface PetGridProps {
   pets: Pet[];
   searchTerm: string;
   elementFilters: ElementType[];
+  gradeFilters: GradeType[];
   statFilters: StatFilterItem[];
+  showFavoritesOnly: boolean;
 }
 
-const PetGrid: React.FC<PetGridProps> = React.memo(({ pets, searchTerm, elementFilters, statFilters }) => {
+const PetGrid: React.FC<PetGridProps> = React.memo(({ pets, searchTerm, elementFilters, gradeFilters, statFilters, showFavoritesOnly }) => {
   // 디바운싱된 검색어
   const debouncedSearchTerm = useDebounce(searchTerm, 300);
 
@@ -24,20 +28,15 @@ const PetGrid: React.FC<PetGridProps> = React.memo(({ pets, searchTerm, elementF
   const filteredPets = useMemo(() => {
     let result = pets;
 
-    // 텍스트 검색 필터링 (초성 검색 포함)
+    // 즐겨찾기 필터링 (가장 먼저 적용)
+    if (showFavoritesOnly) {
+      result = result.filter(pet => isFavorite(pet));
+    }
+
+    // 텍스트 검색 필터링 (name 필드만 검색)
     if (debouncedSearchTerm) {
       result = result.filter(pet => 
-        matchesConsonantSearch(pet.name, debouncedSearchTerm) ||
-        matchesConsonantSearch(pet.grade, debouncedSearchTerm) ||
-        matchesConsonantSearch(pet.source, debouncedSearchTerm) ||
-        String(pet.attack).includes(debouncedSearchTerm) ||
-        String(pet.defense).includes(debouncedSearchTerm) ||
-        String(pet.agility).includes(debouncedSearchTerm) ||
-        String(pet.vitality).includes(debouncedSearchTerm) ||
-        String(pet.earth).includes(debouncedSearchTerm) ||
-        String(pet.water).includes(debouncedSearchTerm) ||
-        String(pet.fire).includes(debouncedSearchTerm) ||
-        String(pet.wind).includes(debouncedSearchTerm)
+        matchesConsonantSearch(pet.name, debouncedSearchTerm)
       );
     }
 
@@ -53,6 +52,18 @@ const PetGrid: React.FC<PetGridProps> = React.memo(({ pets, searchTerm, elementF
             default: return false;
           }
         });
+      });
+    }
+
+    // 등급 필터링 (선택된 등급 중 하나와 일치해야 함)
+    if (gradeFilters.length > 0) {
+      result = result.filter(pet => {
+        // 일반등급 필터가 선택된 경우: 1등급, 2등급이 아닌 모든 펫
+        if (gradeFilters.includes('일반등급') && pet.grade !== '1등급' && pet.grade !== '2등급') {
+          return true;
+        }
+        // 1등급, 2등급 필터는 정확한 매칭
+        return gradeFilters.includes(pet.grade as GradeType);
       });
     }
 
@@ -73,7 +84,7 @@ const PetGrid: React.FC<PetGridProps> = React.memo(({ pets, searchTerm, elementF
     }
 
     return result;
-  }, [pets, debouncedSearchTerm, elementFilters, statFilters]);
+  }, [pets, debouncedSearchTerm, elementFilters, gradeFilters, statFilters, showFavoritesOnly]);
 
   // 실시간 타이핑 중인지 확인
   const isTyping = searchTerm !== debouncedSearchTerm;
@@ -86,7 +97,7 @@ const PetGrid: React.FC<PetGridProps> = React.memo(({ pets, searchTerm, elementF
     loadMore
   } = useInfiniteScroll({
     items: filteredPets,
-    itemsPerPage: 60
+    itemsPerPage: 30
   });
 
   // loadMore 함수를 메모이제이션
@@ -104,7 +115,7 @@ const PetGrid: React.FC<PetGridProps> = React.memo(({ pets, searchTerm, elementF
   if (isTyping && searchTerm.trim()) {
     return (
       <div className="max-w-6xl mx-auto px-4 iphone16:px-3">
-        <div className="mb-6 px-2 iphone16:mb-4">
+        <div className="mb-6 iphone16:mb-4">
           <span className="text-text-secondary text-sm font-medium">Searching...</span>
         </div>
         <div className="flex justify-center items-center min-h-80 p-8 iphone16:min-h-48 iphone16:p-6">
@@ -138,7 +149,7 @@ const PetGrid: React.FC<PetGridProps> = React.memo(({ pets, searchTerm, elementF
   if (filteredPets.length === 0) {
     return (
       <div className="max-w-6xl mx-auto px-4 iphone16:px-3">
-        <div className="mb-6 px-2 iphone16:mb-4">
+        <div className="mb-6 iphone16:mb-4">
           <span className="text-text-secondary text-sm font-medium">0 pets found</span>
         </div>
         <div className="flex justify-center items-center min-h-80 p-8 iphone16:min-h-48 iphone16:p-6">
@@ -157,10 +168,14 @@ const PetGrid: React.FC<PetGridProps> = React.memo(({ pets, searchTerm, elementF
               {(() => {
                 const hasSearch = !!debouncedSearchTerm;
                 const hasElementFilters = elementFilters.length > 0;
+                const hasGradeFilters = gradeFilters.length > 0;
                 const hasStatFilters = statFilters.filter(f => f.enabled).length > 0;
-                const hasAnyFilters = hasElementFilters || hasStatFilters;
+                const hasFavoriteFilter = showFavoritesOnly;
+                const hasAnyFilters = hasElementFilters || hasGradeFilters || hasStatFilters || hasFavoriteFilter;
 
-                if (hasSearch && hasAnyFilters) {
+                if (hasFavoriteFilter && !hasSearch && !hasElementFilters && !hasGradeFilters && !hasStatFilters) {
+                  return "즐겨찾기에 추가된 펫이 없습니다. 펫 카드의 별 아이콘을 클릭하여 즐겨찾기에 추가하세요.";
+                } else if (hasSearch && hasAnyFilters) {
                   return `No pets match "${debouncedSearchTerm}" with current filters. Try different search terms or filters.`;
                 } else if (hasSearch) {
                   return `No pets match "${debouncedSearchTerm}". Try different search terms.`;
@@ -181,7 +196,7 @@ const PetGrid: React.FC<PetGridProps> = React.memo(({ pets, searchTerm, elementF
   if (isInitialLoading) {
     return (
       <div className="max-w-6xl mx-auto px-4 iphone16:px-3">
-        <div className="mb-6 px-2 iphone16:mb-4">
+        <div className="mb-6 iphone16:mb-4">
           <div className="h-5 bg-bg-tertiary rounded w-32 animate-pulse"></div>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8 md:gap-4 iphone16:gap-4 iphone16:mb-6">
@@ -226,7 +241,7 @@ const PetGrid: React.FC<PetGridProps> = React.memo(({ pets, searchTerm, elementF
       )}
       
       {/* End Message */}
-      {!hasMore && displayedItems.length > 60 && (
+      {!hasMore && displayedItems.length > 30 && (
         <div className="flex justify-center py-8">
           <span className="text-text-secondary text-sm">
             All {filteredPets.length} pets loaded

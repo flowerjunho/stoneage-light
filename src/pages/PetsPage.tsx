@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import SearchBar from '../components/SearchBar';
 import ElementFilter, { type ElementType } from '../components/ElementFilter';
+import GradeFilter, { type GradeType } from '../components/GradeFilter';
 import StatFilter, { type StatFilterItem } from '../components/StatFilter';
+import FavoriteFilter from '../components/FavoriteFilter';
 import PetGrid from '../components/PetGrid';
 import FloatingFilterButton from '../components/FloatingFilterButton';
 import type { Pet } from '../types';
@@ -10,7 +12,9 @@ const PetsPage: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [pets, setPets] = useState<Pet[]>([]);
   const [elementFilters, setElementFilters] = useState<ElementType[]>([]);
+  const [gradeFilters, setGradeFilters] = useState<GradeType[]>([]);
   const [statFilters, setStatFilters] = useState<StatFilterItem[]>([]);
+  const [showFavoritesOnly, setShowFavoritesOnly] = useState(false);
 
   // 데이터 로딩을 비동기로 처리
   useEffect(() => {
@@ -23,7 +27,7 @@ const PetsPage: React.FC = () => {
         await new Promise(resolve => setTimeout(resolve, 200));
         
         setPets(module.default);
-      } catch (error) {
+      } catch {
         // Failed to load pets data
       }
     };
@@ -39,8 +43,22 @@ const PetsPage: React.FC = () => {
     setElementFilters(filters);
   };
 
+  const handleGradeFilterChange = (filters: GradeType[]) => {
+    setGradeFilters(filters);
+  };
+
   const handleStatFilterChange = (filters: StatFilterItem[]) => {
     setStatFilters(filters);
+  };
+
+  const handleFavoriteFilterChange = (favoritesOnly: boolean) => {
+    setShowFavoritesOnly(favoritesOnly);
+  };
+
+  const handleClearAllFilters = () => {
+    setElementFilters([]);
+    setGradeFilters([]);
+    setStatFilters([]);
   };
 
   return (
@@ -70,10 +88,20 @@ const PetsPage: React.FC = () => {
         <ElementFilter 
           onFilterChange={handleElementFilterChange}
           initialFilters={elementFilters}
+          onClearAllFilters={handleClearAllFilters}
+          hasFiltersActive={elementFilters.length > 0 || gradeFilters.length > 0 || statFilters.filter(f => f.enabled).length > 0}
+        />
+        <GradeFilter 
+          onFilterChange={handleGradeFilterChange}
+          initialFilters={gradeFilters}
         />
         <StatFilter 
           onFilterChange={handleStatFilterChange}
           initialFilters={statFilters}
+        />
+        <FavoriteFilter 
+          onFilterChange={handleFavoriteFilterChange}
+          initialValue={showFavoritesOnly}
         />
       </div>
       
@@ -81,14 +109,20 @@ const PetsPage: React.FC = () => {
         pets={pets} 
         searchTerm={searchTerm} 
         elementFilters={elementFilters}
+        gradeFilters={gradeFilters}
         statFilters={statFilters}
+        showFavoritesOnly={showFavoritesOnly}
       />
       
       <FloatingFilterButton
         elementFilters={elementFilters}
+        gradeFilters={gradeFilters}
         statFilters={statFilters}
+        showFavoritesOnly={showFavoritesOnly}
         onElementFilterChange={handleElementFilterChange}
+        onGradeFilterChange={handleGradeFilterChange}
         onStatFilterChange={handleStatFilterChange}
+        onFavoriteFilterChange={handleFavoriteFilterChange}
       />
     </>
   );

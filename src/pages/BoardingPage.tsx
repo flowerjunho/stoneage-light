@@ -53,25 +53,39 @@ const BoardingPage: React.FC = () => {
       result = { ...boardingData };
     }
 
-    // 검색 필터링
+    // 검색 필터링 - 캐릭터명과 펫명 검색 완전 분리
     if (debouncedSearchTerm) {
       const searchResult: BoardingData = {};
 
       Object.entries(result).forEach(([character, pets]) => {
-        // 캐릭터 이름 검색
-        if (matchesConsonantSearch(character, debouncedSearchTerm)) {
-          searchResult[character] = pets;
-          return;
-        }
-
-        // 펫 이름 검색
+        // 1. 캐릭터명 검색 - 매칭시 해당 캐릭터만 표시 (펫은 필터링하지 않음)
+        const characterMatches = matchesConsonantSearch(character, debouncedSearchTerm);
+        
+        // 2. 펫명 검색 - 매칭되는 펫들만 필터링
         const matchingPets = pets.filter(pet => 
           matchesConsonantSearch(pet, debouncedSearchTerm)
         );
 
-        if (matchingPets.length > 0) {
+        // 디버그 로그 (개발 환경에서만)
+        const isDev = typeof window !== 'undefined' && window.location?.hostname === 'localhost';
+        if (isDev && debouncedSearchTerm === 'ㅁㅁ') {
+          if (characterMatches || matchingPets.length > 0) {
+            console.log(`[BOARDING DEBUG] 캐릭터: "${character}" | 캐릭터 매칭: ${characterMatches} | 펫 매칭 수: ${matchingPets.length}`);
+            if (matchingPets.length > 0) {
+              console.log(`[BOARDING DEBUG] 매칭된 펫들:`, matchingPets);
+            }
+          }
+        }
+
+        // 3. 결과 결정
+        if (characterMatches) {
+          // 캐릭터명이 매칭되면 모든 펫 표시
+          searchResult[character] = pets;
+        } else if (matchingPets.length > 0) {
+          // 펫명이 매칭되면 해당 펫들만 표시
           searchResult[character] = matchingPets;
         }
+        // 둘 다 매칭 안되면 해당 캐릭터는 결과에서 제외
       });
 
       result = searchResult;
@@ -205,9 +219,12 @@ const BoardingPage: React.FC = () => {
       />
       
       <div className="max-w-6xl mx-auto px-4 iphone16:px-3">
-        <div className="mb-6 px-2 iphone16:mb-4">
+        <div className="mb-6 px-2 iphone16:mb-4 flex justify-between items-center">
           <span className="text-text-secondary text-sm font-medium">
             {totalCharacters} characters, {totalPets} pets shown
+          </span>
+          <span className="text-text-secondary text-xs font-medium iphone16:hidden">
+            ⭐ 특정 캐릭터만 탑승 가능
           </span>
         </div>
 

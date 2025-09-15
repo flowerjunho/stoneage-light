@@ -6,13 +6,14 @@ const TabNavigation: React.FC = () => {
   
   const tabs = [
     { path: '/stoneage-light/pets', label: '페트', name: 'pets' },
-    { path: '/stoneage-light/boarding', label: '탑승', name: 'boarding' }
+    { path: '/stoneage-light/boarding', label: '탑승', name: 'boarding' },
+    { path: '/stoneage-light/calculator', label: '환포계산기', name: 'calculator' }
   ];
 
   return (
     <div className="max-w-6xl mx-auto px-4 iphone16:px-3">
-      <div className="border-b border-border-primary mb-8 iphone16:mb-6">
-        <nav className="grid grid-cols-2 gap-0">
+      <div className="border-b border-border-primary mb-4 iphone16:mb-3">
+        <nav className="grid grid-cols-3 gap-0">
           {tabs.map((tab) => {
             const isActive = location.pathname === tab.path || 
               (location.pathname === '/' && tab.path === '/stoneage-light/pets');

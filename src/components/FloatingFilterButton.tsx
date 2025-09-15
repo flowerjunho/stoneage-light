@@ -1,25 +1,34 @@
 import { useState } from 'react'
 import FilterBottomSheet from './FilterBottomSheet'
 import type { ElementType } from './ElementFilter'
+import type { GradeType } from './GradeFilter'
 import type { StatFilterItem } from './StatFilter'
 
 interface FloatingFilterButtonProps {
   elementFilters: ElementType[]
+  gradeFilters: GradeType[]
   statFilters: StatFilterItem[]
+  showFavoritesOnly: boolean
   onElementFilterChange: (filters: ElementType[]) => void
+  onGradeFilterChange: (filters: GradeType[]) => void
   onStatFilterChange: (filters: StatFilterItem[]) => void
+  onFavoriteFilterChange: (favoritesOnly: boolean) => void
 }
 
 const FloatingFilterButton = ({
   elementFilters,
+  gradeFilters,
   statFilters,
+  showFavoritesOnly,
   onElementFilterChange,
-  onStatFilterChange
+  onGradeFilterChange,
+  onStatFilterChange,
+  onFavoriteFilterChange
 }: FloatingFilterButtonProps) => {
   const [isBottomSheetOpen, setIsBottomSheetOpen] = useState(false)
 
   // 활성 필터 개수 계산
-  const activeFilterCount = elementFilters.length + statFilters.filter(f => f.enabled).length
+  const activeFilterCount = elementFilters.length + gradeFilters.length + statFilters.filter(f => f.enabled).length + (showFavoritesOnly ? 1 : 0)
 
   return (
     <>
@@ -64,9 +73,13 @@ const FloatingFilterButton = ({
         isOpen={isBottomSheetOpen}
         onClose={() => setIsBottomSheetOpen(false)}
         elementFilters={elementFilters}
+        gradeFilters={gradeFilters}
         statFilters={statFilters}
+        showFavoritesOnly={showFavoritesOnly}
         onElementFilterChange={onElementFilterChange}
+        onGradeFilterChange={onGradeFilterChange}
         onStatFilterChange={onStatFilterChange}
+        onFavoriteFilterChange={onFavoriteFilterChange}
       />
     </>
   )
