@@ -5,9 +5,9 @@ const TabNavigation: React.FC = () => {
   const location = useLocation();
 
   const tabs = [
-    { path: '/stoneage-light/pets', label: '페트', name: 'pets' },
-    { path: '/stoneage-light/boarding', label: '탑승', name: 'boarding' },
-    { path: '/stoneage-light/calculator', label: '환포계산기', name: 'calculator' },
+    { path: '/pets', label: '페트', name: 'pets' },
+    { path: '/boarding', label: '탑승', name: 'boarding' },
+    { path: '/calculator', label: '환포계산기', name: 'calculator' },
   ];
 
   return (
@@ -17,7 +17,7 @@ const TabNavigation: React.FC = () => {
           {tabs.map(tab => {
             const isActive =
               location.pathname === tab.path ||
-              (location.pathname === '/' && tab.path === '/stoneage-light/pets');
+              (location.pathname === '/' && tab.path === '/pets');
 
             return (
               <Link

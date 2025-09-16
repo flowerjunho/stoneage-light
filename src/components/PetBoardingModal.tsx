@@ -71,7 +71,7 @@ const PetBoardingModal: React.FC<PetBoardingModalProps> = ({ isOpen, onClose, pe
     
     // 스크롤을 맨 위로 즉시 이동하고 페이지 이동
     window.scrollTo({ top: 0 });
-    navigate(`/stoneage-light/boarding?character=${encodeURIComponent(character)}`);
+    navigate(`/boarding?character=${encodeURIComponent(character)}`);
   };
 
   if (!isOpen) return null;

@@ -24,7 +24,7 @@ const ShareButton = () => {
 
   // 현재 페이지 공유하는 함수
   const shareCurrentPage = async () => {
-    const shareUrl = `https://flowerjunho.github.io${location.pathname}`;
+    const shareUrl = `https://flowerjunho.github.io/stoneage-light/#${location.pathname}`;
     
     try {
       // 클립보드에 복사

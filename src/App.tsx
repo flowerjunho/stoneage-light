@@ -1,4 +1,4 @@
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import { HashRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import Header from './components/Header';
 import ThemeToggle from './components/ThemeToggle';
 import ScrollToTopButton from './components/ScrollToTopButton';
@@ -17,14 +17,10 @@ function App() {
         <main className="pb-8">
           <TabNavigation />
           <Routes>
-            <Route path="/" element={<Navigate to="/stoneage-light/pets" replace />} />
-            <Route
-              path="/stoneage-light"
-              element={<Navigate to="/stoneage-light/pets" replace />}
-            />
-            <Route path="/stoneage-light/pets" element={<PetsPage />} />
-            <Route path="/stoneage-light/boarding" element={<BoardingPage />} />
-            <Route path="/stoneage-light/calculator" element={<CalculatorPage />} />
+            <Route path="/" element={<Navigate to="/pets" replace />} />
+            <Route path="/pets" element={<PetsPage />} />
+            <Route path="/boarding" element={<BoardingPage />} />
+            <Route path="/calculator" element={<CalculatorPage />} />
           </Routes>
         </main>
         <ShareButton />
