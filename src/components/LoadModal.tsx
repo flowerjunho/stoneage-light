@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import type { SavedData } from '../utils/storage';
 
 interface LoadModalProps {
@@ -18,6 +18,23 @@ const LoadModal: React.FC<LoadModalProps> = ({
   onDelete,
   formatTimestamp,
 }) => {
+  // ESC 키로 모달 닫기
+  useEffect(() => {
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape' && isOpen) {
+        onClose();
+      }
+    };
+
+    if (isOpen) {
+      document.addEventListener('keydown', handleKeyDown);
+    }
+
+    return () => {
+      document.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [isOpen, onClose]);
+
   if (!isOpen) return null;
 
   return (

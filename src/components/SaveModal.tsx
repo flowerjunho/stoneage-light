@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 
 interface SaveModalProps {
   isOpen: boolean;
@@ -15,6 +15,23 @@ const SaveModal: React.FC<SaveModalProps> = ({
   setSaveTitle,
   onSave,
 }) => {
+  // ESC 키로 모달 닫기
+  useEffect(() => {
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape' && isOpen) {
+        handleClose();
+      }
+    };
+
+    if (isOpen) {
+      document.addEventListener('keydown', handleKeyDown);
+    }
+
+    return () => {
+      document.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [isOpen]);
+
   if (!isOpen) return null;
 
   const handleClose = () => {

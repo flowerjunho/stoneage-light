@@ -35,6 +35,23 @@ const PetBoardingModal: React.FC<PetBoardingModalProps> = ({ isOpen, onClose, pe
     }
   }, [isOpen]);
 
+  // ESC 키로 모달 닫기
+  useEffect(() => {
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape' && isOpen) {
+        onClose();
+      }
+    };
+
+    if (isOpen) {
+      document.addEventListener('keydown', handleKeyDown);
+    }
+
+    return () => {
+      document.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [isOpen, onClose]);
+
 
   // 선택된 펫을 포함한 캐릭터들 찾기
   const charactersWithPet = useMemo(() => {

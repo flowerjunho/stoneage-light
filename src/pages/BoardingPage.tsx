@@ -3,6 +3,7 @@ import { useSearchParams, useNavigate } from 'react-router-dom';
 import SearchBar from '../components/SearchBar';
 import CharacterTabs from '../components/CharacterTabs';
 import PetDetailModal from '../components/PetDetailModal';
+import ShareButton from '../components/ShareButton';
 import { useDebounce } from '../hooks/useDebounce';
 import { matchesConsonantSearch } from '../utils/korean';
 import type { Pet } from '../types';
@@ -30,6 +31,10 @@ const BoardingPage: React.FC = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [selectedPet, setSelectedPet] = useState<Pet | null>(null);
   const [isPetModalOpen, setIsPetModalOpen] = useState(false);
+
+  // 공유 모드 감지
+  const isShareMode = searchParams.get('share') === 'true';
+  const sharedPetName = searchParams.get('pet');
 
   // 탑승 데이터와 펫 데이터 로딩
   useEffect(() => {
@@ -205,12 +210,198 @@ const BoardingPage: React.FC = () => {
     return result;
   }, [boardingData, debouncedSearchTerm, selectedCharacter]);
 
+  // 일반 모드로 돌아가기
+  const handleBackToAllPets = () => {
+    navigate('/boarding', { replace: true });
+  };
+
+  // 공유 모드에서 표시할 페트 찾기
+  const sharedPet = isShareMode && sharedPetName 
+    ? petData.find(pet => {
+        const cleanPetName = pet.name.replace(/\s+/g, '').replace(/\(환\)/g, '');
+        const cleanSharedName = decodeURIComponent(sharedPetName).replace(/\s+/g, '').replace(/\(환\)/g, '');
+        return cleanPetName === cleanSharedName;
+      })
+    : null;
+
   const isTyping = searchTerm !== debouncedSearchTerm;
 
   // 캐릭터 목록 추출
   const characters = React.useMemo(() => {
     return Object.keys(boardingData);
   }, [boardingData]);
+
+  // 공유 모드일 때
+  if (isShareMode && sharedPet) {
+    const shareUrl = `${window.location.origin}/stoneage-light/boarding?pet=${encodeURIComponent(sharedPet.name)}&share=true`;
+    
+    // 탑승 데이터에서 해당 페트가 탑승 가능한 캐릭터들 찾기
+    const ridingCharacters = Object.entries(boardingData).filter(([_, pets]) =>
+      pets.some(pet => {
+        const cleanBoardingName = pet.replace('⭐️', '').trim()
+          .replace(/\s+/g, '').replace(/\(환\)/g, '');
+        const cleanPetName = sharedPet.name
+          .replace(/\s+/g, '').replace(/\(환\)/g, '');
+        return cleanBoardingName === cleanPetName;
+      })
+    ).map(([character]) => character);
+
+    return (
+      <div className="max-w-4xl mx-auto px-4 iphone16:px-3 py-8">
+        {/* 뒤로가기 버튼 */}
+        <div className="mb-6">
+          <button
+            onClick={handleBackToAllPets}
+            className="inline-flex items-center gap-2 px-4 py-2 text-accent hover:text-accent/80 
+                     font-medium transition-all duration-200 hover:bg-accent/10 rounded-lg"
+          >
+            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M15 19l-7-7 7-7"
+              />
+            </svg>
+            모든 페트 보기
+          </button>
+        </div>
+
+        {/* 공유 페트 카드 */}
+        <div className="bg-bg-secondary rounded-xl p-8 border border-border-primary">
+          {/* 헤더 */}
+          <div className="flex items-center justify-between mb-6">
+            <h1 className="text-2xl font-bold text-text-primary">{sharedPet.name}</h1>
+            <ShareButton
+              shareUrl={shareUrl}
+              title={`${sharedPet.name} 탑승 정보 - 스톤에이지`}
+              size="md"
+              showText
+            />
+          </div>
+
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            {/* 페트 이미지 */}
+            <div className="flex justify-center">
+              <div className="relative">
+                <img
+                  src={sharedPet.imageLink}
+                  alt={sharedPet.name}
+                  className="w-48 h-48 object-contain rounded-lg bg-bg-tertiary p-4"
+                  loading="eager"
+                />
+              </div>
+            </div>
+
+            {/* 페트 정보 */}
+            <div className="space-y-6">
+              {/* 기본 정보 */}
+              <div>
+                <h3 className="text-lg font-semibold text-text-primary mb-3">기본 정보</h3>
+                <div className="grid grid-cols-2 gap-4 text-sm">
+                  <div>
+                    <span className="text-text-secondary">등급:</span>
+                    <span className={`ml-2 font-medium ${
+                      sharedPet.grade === '영웅' ? 'text-yellow-400' :
+                      sharedPet.grade === '희귀' ? 'text-purple-400' : 'text-text-primary'
+                    }`}>
+                      {sharedPet.grade}
+                    </span>
+                  </div>
+                  <div>
+                    <span className="text-text-secondary">속성:</span>
+                    <span className="ml-2 text-text-primary font-medium">{sharedPet.element}</span>
+                  </div>
+                  <div>
+                    <span className="text-text-secondary">획득처:</span>
+                    <span className="ml-2 text-text-primary font-medium">{sharedPet.source}</span>
+                  </div>
+                  <div>
+                    <span className="text-text-secondary">탑승:</span>
+                    <span className={`ml-2 font-medium ${
+                      sharedPet.rideable === '탑승가능' ? 'text-green-400' : 'text-red-400'
+                    }`}>
+                      {sharedPet.rideable}
+                    </span>
+                  </div>
+                </div>
+              </div>
+
+              {/* 탑승 가능 캐릭터 */}
+              <div>
+                <h3 className="text-lg font-semibold text-text-primary mb-3">탑승 가능 캐릭터</h3>
+                <div className="space-y-2">
+                  {ridingCharacters.length > 0 ? (
+                    <div className="flex flex-wrap gap-2">
+                      {ridingCharacters.map(character => (
+                        <span
+                          key={character}
+                          className="px-3 py-1 bg-accent/10 text-accent rounded-full text-sm font-medium"
+                        >
+                          {character}
+                        </span>
+                      ))}
+                    </div>
+                  ) : (
+                    <span className="text-text-secondary text-sm">탑승 불가</span>
+                  )}
+                </div>
+              </div>
+
+              {/* 능력치 */}
+              <div>
+                <h3 className="text-lg font-semibold text-text-primary mb-3">능력치</h3>
+                <div className="space-y-2">
+                  {[
+                    { label: '공격력', value: sharedPet.baseStats.attack, growth: sharedPet.growthStats.attack, color: 'text-red-400' },
+                    { label: '방어력', value: sharedPet.baseStats.defense, growth: sharedPet.growthStats.defense, color: 'text-blue-400' },
+                    { label: '순발력', value: sharedPet.baseStats.agility, growth: sharedPet.growthStats.agility, color: 'text-yellow-400' },
+                    { label: '내구력', value: sharedPet.baseStats.vitality, growth: sharedPet.growthStats.vitality, color: 'text-green-400' }
+                  ].map(({ label, value, growth, color }) => (
+                    <div key={label} className="flex justify-between items-center">
+                      <span className="text-text-secondary text-sm">{label}:</span>
+                      <div className="flex items-center gap-3">
+                        <span className={`font-bold ${color}`}>{value}</span>
+                        <span className="text-text-secondary text-xs">성장 +{growth}</span>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+                <div className="mt-3 pt-3 border-t border-border-primary">
+                  <div className="flex justify-between items-center">
+                    <span className="text-text-primary font-medium">총 성장률:</span>
+                    <span className="text-accent font-bold text-lg">{sharedPet.totalGrowth}</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // 공유 모드이지만 페트를 찾을 수 없는 경우
+  if (isShareMode && !sharedPet) {
+    return (
+      <div className="max-w-4xl mx-auto px-4 iphone16:px-3 py-8">
+        <div className="text-center py-12">
+          <div className="text-6xl mb-4">🐾</div>
+          <h3 className="text-xl font-bold text-text-primary mb-2">페트를 찾을 수 없습니다</h3>
+          <p className="text-text-secondary mb-6">
+            요청하신 페트가 존재하지 않거나 링크가 잘못되었습니다.
+          </p>
+          <button
+            onClick={handleBackToAllPets}
+            className="px-6 py-3 bg-accent text-white rounded-lg hover:bg-accent/90 
+                     transition-colors duration-200 font-medium"
+          >
+            모든 페트 보기
+          </button>
+        </div>
+      </div>
+    );
+  }
 
   if (isLoading) {
     return (

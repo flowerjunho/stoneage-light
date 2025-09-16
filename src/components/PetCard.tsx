@@ -11,6 +11,7 @@ const PetCard: React.FC<PetCardProps> = ({ pet }) => {
   const [isFav, setIsFav] = useState(() => isFavorite(pet));
   const [isAnimating, setIsAnimating] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [showToast, setShowToast] = useState(false);
 
   // 즐겨찾기 상태 변화 감지
   useEffect(() => {
@@ -43,6 +44,31 @@ const PetCard: React.FC<PetCardProps> = ({ pet }) => {
   const handleModalClose = useCallback(() => {
     setIsModalOpen(false);
   }, []);
+
+  // 공유 버튼 핸들러 - 항상 클립보드 복사
+  const handleShareClick = useCallback(async (e: React.MouseEvent) => {
+    e.stopPropagation();
+    
+    const shareUrl = `${window.location.origin}/stoneage-light/#/pets?pet=${pet.id}&share=true`;
+    
+    try {
+      // 모든 환경에서 클립보드에 복사
+      await navigator.clipboard.writeText(shareUrl);
+      setShowToast(true);
+      setTimeout(() => setShowToast(false), 2000);
+    } catch {
+      // 폴백: URL을 선택 가능한 input으로 표시
+      const input = document.createElement('input');
+      input.value = shareUrl;
+      document.body.appendChild(input);
+      input.select();
+      document.execCommand('copy');
+      document.body.removeChild(input);
+      
+      setShowToast(true);
+      setTimeout(() => setShowToast(false), 2000);
+    }
+  }, [pet.id]);
 
   // 속성 비율에 따른 그라데이션 보더 생성 - 메모이제이션
   const getElementalBorder = useMemo(() => {
@@ -235,37 +261,71 @@ const PetCard: React.FC<PetCardProps> = ({ pet }) => {
           <div className="flex-1 flex flex-col justify-between text-right">
             {/* 상단 그룹: 이름과 속성 */}
             <div>
-              {/* Name and Favorite */}
+              {/* Name, Favorite and Share */}
               <div className="flex items-start justify-end gap-2">
                 <h3 className="text-xl font-bold text-text-primary iphone16:text-lg leading-tight text-right">{pet.name}</h3>
-                <button
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    handleFavoriteToggle();
-                  }}
-                  className="group p-0.5 rounded-md hover:bg-bg-tertiary transition-all duration-200 active:scale-95 flex-shrink-0"
-                  aria-label={isFav ? '즐겨찾기에서 제거' : '즐겨찾기에 추가'}
-                >
-                  <svg
-                    width="18"
-                    height="18"
-                    viewBox="0 0 24 24"
-                    className={`transition-all duration-300 transform hover:scale-110 ${
-                      isAnimating ? 'rotate-180' : ''
-                    } ${
-                      isFav
-                        ? 'fill-yellow-400 text-yellow-400'
-                        : 'fill-none text-text-secondary group-hover:text-yellow-400 group-hover:rotate-12'
-                    }`}
+                <div className="flex gap-1 flex-shrink-0">
+                  <div className="relative">
+                    <button
+                      onClick={handleShareClick}
+                      className="w-6 h-6 p-1 rounded-full border-2 border-blue-500 hover:bg-blue-500/10 text-blue-500 transition-colors duration-200 flex items-center justify-center"
+                      title="공유하기"
+                    >
+                      <svg
+                        className="w-3 h-3"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                        xmlns="http://www.w3.org/2000/svg"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.367 2.684 3 3 0 00-5.367-2.684z"
+                        />
+                      </svg>
+                    </button>
+                    
+                    {/* 토스트 메시지 */}
+                    {showToast && (
+                      <div className="absolute -top-12 left-1/2 transform -translate-x-1/2 z-50">
+                        <div className="bg-gray-900 text-white text-xs px-3 py-2 rounded-lg shadow-lg whitespace-nowrap">
+                          링크가 복사되었습니다!
+                          <div className="absolute top-full left-1/2 transform -translate-x-1/2 w-0 h-0 border-l-4 border-r-4 border-t-4 border-transparent border-t-gray-900"></div>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleFavoriteToggle();
+                    }}
+                    className="group p-0.5 rounded-md hover:bg-bg-tertiary transition-all duration-200 active:scale-95 flex-shrink-0"
+                    aria-label={isFav ? '즐겨찾기에서 제거' : '즐겨찾기에 추가'}
                   >
-                    <path
-                      d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z"
-                      stroke="currentColor"
-                      strokeWidth="2"
-                      strokeLinejoin="round"
-                    />
-                  </svg>
-                </button>
+                    <svg
+                      width="18"
+                      height="18"
+                      viewBox="0 0 24 24"
+                      className={`transition-all duration-300 transform hover:scale-110 ${
+                        isAnimating ? 'rotate-180' : ''
+                      } ${
+                        isFav
+                          ? 'fill-yellow-400 text-yellow-400'
+                          : 'fill-none text-text-secondary group-hover:text-yellow-400 group-hover:rotate-12'
+                      }`}
+                    >
+                      <path
+                        d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z"
+                        stroke="currentColor"
+                        strokeWidth="2"
+                        strokeLinejoin="round"
+                      />
+                    </svg>
+                  </button>
+                </div>
               </div>
 
               {/* Elements - 펫 이름 바로 밑에 위치 */}
@@ -343,7 +403,7 @@ const PetCard: React.FC<PetCardProps> = ({ pet }) => {
               </div>
             </div>
 
-            {/* Grade - 맨 밑에 위치 */}
+            {/* 하단: Grade */}
             <div className="flex justify-end">
               <span className={gradeBadgeClasses}>{pet.grade}</span>
             </div>

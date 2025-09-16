@@ -39,10 +39,11 @@ const FloatingFilterButton = ({
       {/* 플로팅 필터 버튼 */}
       <button
         onClick={() => setIsBottomSheetOpen(true)}
-        className="fixed bottom-6 left-6 z-40 w-12 h-12 bg-accent hover:bg-accent/90
+        className="fixed bottom-6 z-40 w-12 h-12 bg-accent hover:bg-accent/90
                    text-white rounded-full shadow-lg hover:shadow-xl
                    flex items-center justify-center transition-all duration-300
                    hover:scale-110 active:scale-95
+                   left-6 lg:left-[calc(50%-32rem-60px)] xl:left-[calc(50%-30rem-60px)]
                    iphone16:bottom-4 iphone16:left-4 iphone16:w-10 iphone16:h-10"
         aria-label="필터 설정"
       >

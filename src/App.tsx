@@ -2,7 +2,7 @@ import { HashRouter as Router, Routes, Route, Navigate } from 'react-router-dom'
 import Header from './components/Header';
 import ThemeToggle from './components/ThemeToggle';
 import ScrollToTopButton from './components/ScrollToTopButton';
-import ShareButton from './components/ShareButton';
+import PageShareButton from './components/PageShareButton';
 import TabNavigation from './components/TabNavigation';
 import PetsPage from './pages/PetsPage';
 import BoardingPage from './pages/BoardingPage';
@@ -23,7 +23,7 @@ function App() {
             <Route path="/calculator" element={<CalculatorPage />} />
           </Routes>
         </main>
-        <ShareButton />
+        <PageShareButton />
         <ScrollToTopButton />
       </div>
     </Router>

@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React, { useMemo, useEffect } from 'react';
 import type { Pet } from '../types';
 
 interface PetDetailModalProps {
@@ -8,6 +8,22 @@ interface PetDetailModalProps {
 }
 
 const PetDetailModal: React.FC<PetDetailModalProps> = ({ isOpen, onClose, pet }) => {
+  // ESC 키로 모달 닫기
+  useEffect(() => {
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape' && isOpen) {
+        onClose();
+      }
+    };
+
+    if (isOpen) {
+      document.addEventListener('keydown', handleKeyDown);
+    }
+
+    return () => {
+      document.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [isOpen, onClose]);
   // 속성별 아이콘과 색상 설정
   const getElementIcon = (element: string, value: number) => {
     if (value === 0) return null;

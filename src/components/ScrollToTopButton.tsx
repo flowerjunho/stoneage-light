@@ -35,10 +35,11 @@ const ScrollToTopButton = () => {
   return (
     <button
       onClick={scrollToTop}
-      className="fixed bottom-6 right-6 z-50 w-12 h-12 bg-accent hover:bg-accent/90
+      className="fixed bottom-6 z-50 w-12 h-12 bg-accent hover:bg-accent/90
                  text-white rounded-full shadow-lg hover:shadow-xl
                  flex items-center justify-center transition-all duration-300
                  hover:scale-110 active:scale-95
+                 right-6 lg:right-[calc(50%-32rem-60px)] xl:right-[calc(50%-30rem-60px)]
                  iphone16:bottom-4 iphone16:right-4 iphone16:w-10 iphone16:h-10"
       aria-label="최상단으로 이동"
     >
