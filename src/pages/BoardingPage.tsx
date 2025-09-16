@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import SearchBar from '../components/SearchBar';
 import CharacterTabs from '../components/CharacterTabs';
 import { useDebounce } from '../hooks/useDebounce';
@@ -10,6 +11,7 @@ interface BoardingData {
 }
 
 const BoardingPage: React.FC = () => {
+  const [searchParams, setSearchParams] = useSearchParams();
   const [boardingData, setBoardingData] = useState<BoardingData>({});
   const [petData, setPetData] = useState<Pet[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
@@ -37,6 +39,14 @@ const BoardingPage: React.FC = () => {
 
     loadData();
   }, []);
+
+  // URL 파라미터에서 캐릭터 선택 상태 업데이트
+  useEffect(() => {
+    const characterParam = searchParams.get('character');
+    if (characterParam) {
+      setSelectedCharacter(decodeURIComponent(characterParam));
+    }
+  }, [searchParams]);
 
   const handleSearchChange = (value: string) => {
     setSearchTerm(value);

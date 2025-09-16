@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import type { Pet } from '../types';
 import { isFavorite, toggleFavorite, addFavoriteChangeListener } from '../utils/favorites';
+import PetBoardingModal from './PetBoardingModal';
 
 interface PetCardProps {
   pet: Pet;
@@ -9,6 +10,7 @@ interface PetCardProps {
 const PetCard: React.FC<PetCardProps> = ({ pet }) => {
   const [isFav, setIsFav] = useState(() => isFavorite(pet));
   const [isAnimating, setIsAnimating] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   // 즐겨찾기 상태 변화 감지
   useEffect(() => {
@@ -31,6 +33,16 @@ const PetCard: React.FC<PetCardProps> = ({ pet }) => {
     // 애니메이션 완료 후 상태 리셋
     setTimeout(() => setIsAnimating(false), 300);
   }, [pet]);
+
+  // 펫 클릭 핸들러
+  const handlePetClick = useCallback(() => {
+    setIsModalOpen(true);
+  }, []);
+
+  // 모달 닫기 핸들러
+  const handleModalClose = useCallback(() => {
+    setIsModalOpen(false);
+  }, []);
 
   // 속성 비율에 따른 그라데이션 보더 생성 - 메모이제이션
   const getElementalBorder = useMemo(() => {
@@ -188,8 +200,13 @@ const PetCard: React.FC<PetCardProps> = ({ pet }) => {
   const borderClass = getElementalBorder;
 
   return (
-    <div style={elementalBorderStyle}>
-      <div className={`${gradeClasses} border-2 ${borderClass}`}>
+    <>
+      <div 
+        style={elementalBorderStyle}
+        onClick={handlePetClick}
+        className="cursor-pointer transform transition-transform duration-200 hover:scale-[1.02] active:scale-[0.98]"
+      >
+        <div className={`${gradeClasses} border-2 ${borderClass}`}>
         {/* Top Section - Image and Info */}
         <div className="flex gap-4 mb-4 pb-3 border-b border-border">
           {/* Pet Image */}
@@ -220,11 +237,12 @@ const PetCard: React.FC<PetCardProps> = ({ pet }) => {
             <div>
               {/* Name and Favorite */}
               <div className="flex items-start justify-end gap-2">
-                <h3 className="text-xl font-bold text-text-primary iphone16:text-lg leading-tight text-right">
-                  {pet.name}
-                </h3>
+                <h3 className="text-xl font-bold text-text-primary iphone16:text-lg leading-tight text-right">{pet.name}</h3>
                 <button
-                  onClick={handleFavoriteToggle}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleFavoriteToggle();
+                  }}
                   className="group p-0.5 rounded-md hover:bg-bg-tertiary transition-all duration-200 active:scale-95 flex-shrink-0"
                   aria-label={isFav ? '즐겨찾기에서 제거' : '즐겨찾기에 추가'}
                 >
@@ -427,8 +445,16 @@ const PetCard: React.FC<PetCardProps> = ({ pet }) => {
             </div>
           </div>
         </div>
+        </div>
       </div>
-    </div>
+
+      {/* Pet Boarding Modal */}
+      <PetBoardingModal
+        isOpen={isModalOpen}
+        onClose={handleModalClose}
+        pet={pet}
+      />
+    </>
   );
 };
 
