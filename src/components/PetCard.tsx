@@ -68,7 +68,12 @@ const PetCard: React.FC<PetCardProps> = ({ pet }) => {
     // 여러 속성인 경우 그라데이션 생성
 
     return `border-transparent`;
-  }, [pet.elementStats.earth, pet.elementStats.water, pet.elementStats.fire, pet.elementStats.wind]);
+  }, [
+    pet.elementStats.earth,
+    pet.elementStats.water,
+    pet.elementStats.fire,
+    pet.elementStats.wind,
+  ]);
 
   // CSS 변수를 사용한 최적화된 스타일 계산
   const elementalStyle = useMemo((): React.CSSProperties => {
@@ -116,18 +121,23 @@ const PetCard: React.FC<PetCardProps> = ({ pet }) => {
       padding: '2px',
       borderRadius: '0.75rem',
     };
-  }, [pet.elementStats.earth, pet.elementStats.water, pet.elementStats.fire, pet.elementStats.wind]);
+  }, [
+    pet.elementStats.earth,
+    pet.elementStats.water,
+    pet.elementStats.fire,
+    pet.elementStats.wind,
+  ]);
 
   const gradeClasses = useMemo(() => {
     const baseClasses = 'bg-bg-secondary rounded-lg p-4 h-full iphone16:p-3 flex flex-col';
 
     // 등급별 클래스 매핑 (성능 최적화)
     const gradeClassMap = {
-      '일반등급': baseClasses,
-      '일반페트': baseClasses,
-      '일반': baseClasses,
-      '희귀': `${baseClasses} shadow-lg shadow-purple-500/20`,
-      '영웅': `${baseClasses} shadow-lg shadow-yellow-400/30`,
+      일반등급: baseClasses,
+      일반페트: baseClasses,
+      일반: baseClasses,
+      희귀: `${baseClasses} shadow-lg shadow-purple-500/20`,
+      영웅: `${baseClasses} shadow-lg shadow-yellow-400/30`,
     } as const;
 
     return gradeClassMap[pet.grade as keyof typeof gradeClassMap] || baseClasses;
@@ -138,11 +148,11 @@ const PetCard: React.FC<PetCardProps> = ({ pet }) => {
 
     // 등급별 배지 클래스 매핑 (성능 최적화)
     const badgeClassMap = {
-      '일반등급': `${baseClasses} bg-bg-tertiary text-text-secondary`,
-      '일반페트': `${baseClasses} bg-bg-tertiary text-text-secondary`,
-      '일반': `${baseClasses} bg-bg-tertiary text-text-secondary`,
-      '희귀': `${baseClasses} bg-gradient-to-r from-purple-500 to-purple-400 text-white`,
-      '영웅': `${baseClasses} bg-gradient-to-r from-yellow-400 to-yellow-300 text-black`,
+      일반등급: `${baseClasses} bg-bg-tertiary text-text-secondary`,
+      일반페트: `${baseClasses} bg-bg-tertiary text-text-secondary`,
+      일반: `${baseClasses} bg-bg-tertiary text-text-secondary`,
+      희귀: `${baseClasses} bg-gradient-to-r from-purple-500 to-purple-400 text-white`,
+      영웅: `${baseClasses} bg-gradient-to-r from-yellow-400 to-yellow-300 text-black`,
     } as const;
 
     return badgeClassMap[pet.grade as keyof typeof badgeClassMap] || badgeClassMap['일반등급'];
@@ -181,24 +191,24 @@ const PetCard: React.FC<PetCardProps> = ({ pet }) => {
     <div style={elementalBorderStyle}>
       <div className={`${gradeClasses} border-2 ${borderClass}`}>
         {/* Top Section - Image and Info */}
-        <div className="flex gap-3 mb-4 pb-3 border-b border-border">
+        <div className="flex gap-4 mb-4 pb-3 border-b border-border">
           {/* Pet Image */}
           <div className="flex-shrink-0">
             {pet.imageLink ? (
-              <div className="w-40 h-40 bg-bg-tertiary rounded-lg overflow-hidden border border-border">
+              <div className="w-36 h-36 bg-bg-tertiary rounded-lg overflow-hidden border border-border">
                 <img
                   src={pet.imageLink}
                   alt={pet.name}
                   className="w-full h-full object-contain"
                   loading="lazy"
-                  onError={(e) => {
+                  onError={e => {
                     // 이미지 로드 실패 시 빈 영역으로 처리
                     e.currentTarget.style.display = 'none';
                   }}
                 />
               </div>
             ) : (
-              <div className="w-40 h-40 bg-bg-tertiary rounded-lg border border-border flex items-center justify-center">
+              <div className="w-36 h-36 bg-bg-tertiary rounded-lg border border-border flex items-center justify-center">
                 <span className="text-text-secondary text-xs">이미지 없음</span>
               </div>
             )}
@@ -210,7 +220,9 @@ const PetCard: React.FC<PetCardProps> = ({ pet }) => {
             <div>
               {/* Name and Favorite */}
               <div className="flex items-start justify-end gap-2">
-                <h3 className="text-xl font-bold text-text-primary iphone16:text-lg leading-tight text-right">{pet.name}</h3>
+                <h3 className="text-xl font-bold text-text-primary iphone16:text-lg leading-tight text-right">
+                  {pet.name}
+                </h3>
                 <button
                   onClick={handleFavoriteToggle}
                   className="group p-0.5 rounded-md hover:bg-bg-tertiary transition-all duration-200 active:scale-95 flex-shrink-0"
@@ -239,11 +251,77 @@ const PetCard: React.FC<PetCardProps> = ({ pet }) => {
               </div>
 
               {/* Elements - 펫 이름 바로 밑에 위치 */}
-              <div className="flex gap-1.5 flex-wrap mt-1 justify-end">
-                {getElementIcon('earth', pet.elementStats.earth)}
-                {getElementIcon('water', pet.elementStats.water)}
-                {getElementIcon('fire', pet.elementStats.fire)}
-                {getElementIcon('wind', pet.elementStats.wind)}
+              <div className="mt-1">
+                <div className="flex gap-1.5 flex-wrap justify-end">
+                  {getElementIcon('earth', pet.elementStats.earth)}
+                  {getElementIcon('water', pet.elementStats.water)}
+                  {getElementIcon('fire', pet.elementStats.fire)}
+                  {getElementIcon('wind', pet.elementStats.wind)}
+                </div>
+
+                {/* Element Progress Bars */}
+                <div className="mt-2 space-y-1">
+                  {pet.elementStats.earth > 0 && (
+                    <div className="flex items-center gap-2 justify-end">
+                      <div className="flex gap-0.5">
+                        {Array.from({ length: 10 }, (_, i) => (
+                          <div
+                            key={`earth-${i}`}
+                            className={`h-1.5 w-2 rounded-sm ${
+                              i < pet.elementStats.earth ? 'bg-green-500' : 'bg-gray-600'
+                            }`}
+                          />
+                        ))}
+                      </div>
+                      <span className="text-xs text-green-400 w-4">地</span>
+                    </div>
+                  )}
+                  {pet.elementStats.water > 0 && (
+                    <div className="flex items-center gap-2 justify-end">
+                      <div className="flex gap-0.5">
+                        {Array.from({ length: 10 }, (_, i) => (
+                          <div
+                            key={`water-${i}`}
+                            className={`h-1.5 w-2 rounded-sm ${
+                              i < pet.elementStats.water ? 'bg-blue-500' : 'bg-gray-600'
+                            }`}
+                          />
+                        ))}
+                      </div>
+                      <span className="text-xs text-blue-400 w-4">水</span>
+                    </div>
+                  )}
+                  {pet.elementStats.fire > 0 && (
+                    <div className="flex items-center gap-2 justify-end">
+                      <div className="flex gap-0.5">
+                        {Array.from({ length: 10 }, (_, i) => (
+                          <div
+                            key={`fire-${i}`}
+                            className={`h-1.5 w-2 rounded-sm ${
+                              i < pet.elementStats.fire ? 'bg-red-500' : 'bg-gray-600'
+                            }`}
+                          />
+                        ))}
+                      </div>
+                      <span className="text-xs text-red-400 w-4">火</span>
+                    </div>
+                  )}
+                  {pet.elementStats.wind > 0 && (
+                    <div className="flex items-center gap-2 justify-end">
+                      <div className="flex gap-0.5">
+                        {Array.from({ length: 10 }, (_, i) => (
+                          <div
+                            key={`wind-${i}`}
+                            className={`h-1.5 w-2 rounded-sm ${
+                              i < pet.elementStats.wind ? 'bg-amber-500' : 'bg-gray-600'
+                            }`}
+                          />
+                        ))}
+                      </div>
+                      <span className="text-xs text-amber-400 w-4">風</span>
+                    </div>
+                  )}
+                </div>
               </div>
             </div>
 
@@ -261,19 +339,27 @@ const PetCard: React.FC<PetCardProps> = ({ pet }) => {
             <div className="grid grid-cols-2 gap-2 text-xs">
               <div className="flex justify-between items-center">
                 <span className="text-text-secondary">공격력</span>
-                <span className="font-bold text-text-primary font-mono">{pet.baseStats.attack}</span>
+                <span className="font-bold text-text-primary font-mono">
+                  {pet.baseStats.attack}
+                </span>
               </div>
               <div className="flex justify-between items-center">
                 <span className="text-text-secondary">방어력</span>
-                <span className="font-bold text-text-primary font-mono">{pet.baseStats.defense}</span>
+                <span className="font-bold text-text-primary font-mono">
+                  {pet.baseStats.defense}
+                </span>
               </div>
               <div className="flex justify-between items-center">
                 <span className="text-text-secondary">순발력</span>
-                <span className="font-bold text-text-primary font-mono">{pet.baseStats.agility}</span>
+                <span className="font-bold text-text-primary font-mono">
+                  {pet.baseStats.agility}
+                </span>
               </div>
               <div className="flex justify-between items-center">
                 <span className="text-text-secondary">내구력</span>
-                <span className="font-bold text-text-primary font-mono">{pet.baseStats.vitality}</span>
+                <span className="font-bold text-text-primary font-mono">
+                  {pet.baseStats.vitality}
+                </span>
               </div>
             </div>
           </div>
@@ -318,7 +404,6 @@ const PetCard: React.FC<PetCardProps> = ({ pet }) => {
           </div>
         </div>
 
-
         {/* Info Section - 컴팩트 디자인 */}
         <div className="pt-1.5 border-t border-border mt-auto">
           <div className="bg-bg-tertiary rounded-md p-1.5 space-y-0.5">
@@ -326,7 +411,9 @@ const PetCard: React.FC<PetCardProps> = ({ pet }) => {
               <span className="text-text-secondary">탑승:</span>
               <span
                 className={`font-medium text-xs px-1.5 py-0.5 rounded ${
-                  pet.rideable === '탑승가능' ? 'bg-green-500/20 text-green-400' : 'bg-red-500/20 text-red-400'
+                  pet.rideable === '탑승가능'
+                    ? 'bg-green-500/20 text-green-400'
+                    : 'bg-red-500/20 text-red-400'
                 }`}
               >
                 {pet.rideable === '탑승가능' ? '가능' : '불가'}
