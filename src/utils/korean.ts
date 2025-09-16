@@ -86,22 +86,6 @@ export function matchesConsonantSearch(text: string, searchTerm: string): boolea
   const textConsonants = extractInitialConsonants(text);
   const cleanSearchTerm = normalizedSearch.replace(/\s/g, ''); // Remove spaces from search
 
-  // Debug logging (개발 환경에서만)
-  const isDev = typeof window !== 'undefined' && window.location?.hostname === 'localhost';
-  if (isDev && cleanSearchTerm === 'ㅁㅁ') {
-    console.log(`[FULL DEBUG] 검색어: "${cleanSearchTerm}"`);
-    console.log(`[FULL DEBUG] 원본 텍스트: "${text}"`);
-    console.log(`[FULL DEBUG] 추출된 초성: "${textConsonants}"`);
-    console.log(`[FULL DEBUG] startsWith 결과: ${textConsonants.startsWith(cleanSearchTerm)}`);
-    console.log(`[FULL DEBUG] includes 결과: ${textConsonants.includes(cleanSearchTerm)}`);
-    console.log(`[FULL DEBUG] 텍스트 길이: ${text.length}, 초성 길이: ${textConsonants.length}`);
-    console.log(
-      `[FULL DEBUG] 각 글자별 코드:`,
-      text.split('').map(char => ({ char, code: char.charCodeAt(0).toString(16) }))
-    );
-    console.log('='.repeat(50));
-  }
-
   // 초성 검색 로직 - 길이별 다른 처리
   if (cleanSearchTerm.length === 1) {
     // 1글자 초성: 정확한 prefix match만 허용
@@ -120,6 +104,4 @@ export function matchesConsonantSearch(text: string, searchTerm: string): boolea
     }
     return textConsonants.includes(cleanSearchTerm);
   }
-
-  return false;
 }

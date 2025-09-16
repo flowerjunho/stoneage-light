@@ -5,9 +5,11 @@ interface PetDetailModalProps {
   isOpen: boolean;
   onClose: () => void;
   pet: Pet | null;
+  ridingImageUrl?: string;
 }
 
-const PetDetailModal: React.FC<PetDetailModalProps> = ({ isOpen, onClose, pet }) => {
+const PetDetailModal: React.FC<PetDetailModalProps> = ({ isOpen, onClose, pet, ridingImageUrl }) => {
+
   // ESC 키로 모달 닫기
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
@@ -197,19 +199,44 @@ const PetDetailModal: React.FC<PetDetailModalProps> = ({ isOpen, onClose, pet })
                 
                 {/* 페트 이미지와 기본 정보 */}
                 <div className="flex items-start gap-4 mb-4">
-                  {pet.imageLink && (
-                    <div className="flex-shrink-0">
-                      <img
-                        src={pet.imageLink}
-                        alt={pet.name}
-                        className="w-16 h-16 object-contain rounded"
-                        loading="lazy"
-                        onError={(e) => {
-                          e.currentTarget.style.display = 'none';
-                        }}
-                      />
-                    </div>
-                  )}
+                  <div className={`flex-shrink-0 ${ridingImageUrl && ridingImageUrl.trim() !== '' ? 'space-y-2' : ''}`}>
+                    {/* 기본 이미지는 항상 표시 */}
+                    {pet.imageLink && (
+                      <div>
+                        <div className="text-xs text-text-secondary mb-1">기본</div>
+                        <img
+                          src={pet.imageLink}
+                          alt={pet.name}
+                          className="w-16 h-16 object-contain rounded bg-bg-tertiary p-1"
+                          loading="lazy"
+                          onError={(e) => {
+                            const parentDiv = e.currentTarget.closest('div');
+                            if (parentDiv) {
+                              parentDiv.style.display = 'none';
+                            }
+                          }}
+                        />
+                      </div>
+                    )}
+                    {/* 탑승 이미지는 있을 때만 표시 */}
+                    {ridingImageUrl && ridingImageUrl.trim() !== '' && (
+                      <div>
+                        <div className="text-xs text-text-secondary mb-1">탑승</div>
+                        <img
+                          src={ridingImageUrl}
+                          alt={`${pet.name} 탑승`}
+                          className="w-16 h-16 object-contain rounded bg-bg-tertiary p-1"
+                          loading="lazy"
+                          onError={(e) => {
+                            const parentDiv = e.currentTarget.closest('div');
+                            if (parentDiv) {
+                              parentDiv.style.display = 'none';
+                            }
+                          }}
+                        />
+                      </div>
+                    )}
+                  </div>
                   
                   <div className="flex-1">
                     <div className="flex items-start justify-between mb-2">

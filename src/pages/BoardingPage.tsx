@@ -30,7 +30,11 @@ const BoardingPage: React.FC = () => {
   const debouncedSearchTerm = useDebounce(searchTerm, 300);
   const [isLoading, setIsLoading] = useState(true);
   const [selectedPet, setSelectedPet] = useState<Pet | null>(null);
+  const [selectedPetRidingImage, setSelectedPetRidingImage] = useState<string>('');
   const [isPetModalOpen, setIsPetModalOpen] = useState(false);
+  const [alertMessage, setAlertMessage] = useState<string>('');
+  const [showAlert, setShowAlert] = useState(false);
+  const [alertTimeoutId, setAlertTimeoutId] = useState<NodeJS.Timeout | null>(null);
 
   // 공유 모드 감지
   const isShareMode = searchParams.get('share') === 'true';
@@ -67,6 +71,15 @@ const BoardingPage: React.FC = () => {
     }
   }, [searchParams]);
 
+  // 컴포넌트 언마운트 시 timeout 정리
+  useEffect(() => {
+    return () => {
+      if (alertTimeoutId) {
+        clearTimeout(alertTimeoutId);
+      }
+    };
+  }, [alertTimeoutId]);
+
   const handleSearchChange = (value: string) => {
     setSearchTerm(value);
   };
@@ -84,41 +97,65 @@ const BoardingPage: React.FC = () => {
   };
 
   // 페트 클릭 핸들러
-  const handlePetClick = (petName: string) => {
+  const handlePetClick = (petName: string, characterName: string) => {
     // ⭐️ 제거하고 정확한 이름으로 매칭
     const cleanBoardingName = petName.replace('⭐️', '').trim();
 
     const matchingPet = petData.find(pet => {
-      // petData의 펫 이름에서 띄어쓰기와 (환) 제거
-      const cleanPetDataName = pet.name
-        .replace(/\s+/g, '') // 모든 띄어쓰기 제거
-        .replace(/\(환\)/g, ''); // (환) 제거
-
-      // boarding 데이터의 펫 이름에서도 띄어쓰기와 (환) 제거
-      const cleanBoardingNameForCompare = cleanBoardingName
-        .replace(/\s+/g, '') // 모든 띄어쓰기 제거
-        .replace(/\(환\)/g, ''); // (환) 제거
+      // 정확한 이름 매칭만 수행 (띄어쓰기만 제거, (환)은 유지)
+      const cleanPetDataName = pet.name.replace(/\s+/g, ''); // 띄어쓰기만 제거
+      const cleanBoardingNameForCompare = cleanBoardingName.replace(/\s+/g, ''); // 띄어쓰기만 제거
 
       return cleanPetDataName === cleanBoardingNameForCompare;
     });
 
     if (matchingPet) {
+      const ridingImage = findPureRidingImage(petName, characterName);
       setSelectedPet(matchingPet);
+      setSelectedPetRidingImage(ridingImage);
       setIsPetModalOpen(true);
+    } else {
+      // 기존 timeout이 있다면 제거
+      if (alertTimeoutId) {
+        clearTimeout(alertTimeoutId);
+      }
+      
+      // 페트 정보가 없는 경우 alert 표시
+      setAlertMessage(`${cleanBoardingName}의 정보가 없습니다.`);
+      setShowAlert(true);
+      
+      // 3초 후 자동으로 alert 숨기기
+      const timeoutId = setTimeout(() => {
+        setShowAlert(false);
+        setAlertMessage('');
+        setAlertTimeoutId(null);
+      }, 3000);
+      
+      setAlertTimeoutId(timeoutId);
     }
   };
 
   const handlePetModalClose = () => {
     setIsPetModalOpen(false);
     setSelectedPet(null);
+    setSelectedPetRidingImage('');
   };
 
-  // 펫 이름으로 이미지 찾기 함수 (pet-riding.json 우선 사용)
+  const handleAlertClose = () => {
+    if (alertTimeoutId) {
+      clearTimeout(alertTimeoutId);
+      setAlertTimeoutId(null);
+    }
+    setShowAlert(false);
+    setAlertMessage('');
+  };
+
+  // 바닥 페이지용: 탑승 이미지 없으면 일반 이미지 폴백
   const findPetImage = (petName: string, characterName: string): string => {
     // ⭐️ 제거하고 정확한 이름으로 매칭
     const cleanBoardingName = petName.replace('⭐️', '').trim();
 
-    // 1. pet-riding.json에서 캐릭터별 데이터 확인
+    // 1. pet-riding.json에서 캐릭터별 탑승 이미지 찾기
     const characterRidingPets = petRidingData[characterName];
     if (characterRidingPets) {
       const ridingPet = characterRidingPets.find(pet => {
@@ -138,22 +175,58 @@ const BoardingPage: React.FC = () => {
       }
     }
 
-    // 2. pet-riding.json에서 찾지 못한 경우 기존 petData.json에서 찾기 (폴백)
+    // 2. 탑승 이미지가 없으면 일반 이미지를 폴백으로 사용 (바닥 페이지용)
     const matchingPet = petData.find(pet => {
-      // petData의 펫 이름에서 띄어쓰기와 (환) 제거
-      const cleanPetDataName = pet.name
-        .replace(/\s+/g, '') // 모든 띄어쓰기 제거
-        .replace(/\(환\)/g, ''); // (환) 제거
+      // 정확한 매칭 시도
+      const cleanPetDataName = pet.name.replace(/\s+/g, '');
+      const cleanBoardingNameForCompare = cleanBoardingName.replace(/\s+/g, '');
 
-      // boarding 데이터의 펫 이름에서도 띄어쓰기와 (환) 제거
-      const cleanBoardingNameForCompare = cleanBoardingName
-        .replace(/\s+/g, '') // 모든 띄어쓰기 제거
-        .replace(/\(환\)/g, ''); // (환) 제거
+      if (cleanPetDataName === cleanBoardingNameForCompare) {
+        return true;
+      }
 
-      return cleanPetDataName === cleanBoardingNameForCompare;
+      // (환) 제거 후 매칭
+      const cleanPetDataNameNoEnv = pet.name
+        .replace(/\s+/g, '')
+        .replace(/\(환\)/g, '');
+
+      const cleanBoardingNameNoEnv = cleanBoardingName
+        .replace(/\s+/g, '')
+        .replace(/\(환\)/g, '');
+
+      return cleanPetDataNameNoEnv === cleanBoardingNameNoEnv;
     });
 
     return matchingPet?.imageLink || '';
+  };
+
+  // 모달용: 순수한 탑승 이미지만 반환 (일반 이미지 폴백 없음)
+  const findPureRidingImage = (petName: string, characterName: string): string => {
+    // ⭐️ 제거하고 정확한 이름으로 매칭
+    const cleanBoardingName = petName.replace('⭐️', '').trim();
+
+    // pet-riding.json에서만 탑승 이미지 찾기
+    const characterRidingPets = petRidingData[characterName];
+    if (characterRidingPets) {
+      const ridingPet = characterRidingPets.find(pet => {
+        const cleanRidingName = pet.name
+          .replace(/\s+/g, '') // 모든 띄어쓰기 제거
+          .replace(/\(환\)/g, ''); // (환) 제거
+
+        const cleanBoardingNameForCompare = cleanBoardingName
+          .replace(/\s+/g, '') // 모든 띄어쓰기 제거
+          .replace(/\(환\)/g, ''); // (환) 제거
+
+        return cleanRidingName === cleanBoardingNameForCompare;
+      });
+
+      if (ridingPet) {
+        return ridingPet.imageUrl;
+      }
+    }
+
+    // 탑승 이미지가 없으면 빈 문자열 반환 (모달용 - 폴백 없음)
+    return '';
   };
 
   // 검색 및 캐릭터 필터링
@@ -179,19 +252,6 @@ const BoardingPage: React.FC = () => {
 
         // 2. 펫명 검색 - 매칭되는 펫들만 필터링
         const matchingPets = pets.filter(pet => matchesConsonantSearch(pet, debouncedSearchTerm));
-
-        // 디버그 로그 (개발 환경에서만)
-        const isDev = typeof window !== 'undefined' && window.location?.hostname === 'localhost';
-        if (isDev && debouncedSearchTerm === 'ㅁㅁ') {
-          if (characterMatches || matchingPets.length > 0) {
-            console.log(
-              `[BOARDING DEBUG] 캐릭터: "${character}" | 캐릭터 매칭: ${characterMatches} | 펫 매칭 수: ${matchingPets.length}`
-            );
-            if (matchingPets.length > 0) {
-              console.log(`[BOARDING DEBUG] 매칭된 펫들:`, matchingPets);
-            }
-          }
-        }
 
         // 3. 결과 결정
         if (characterMatches) {
@@ -236,7 +296,7 @@ const BoardingPage: React.FC = () => {
     const shareUrl = `${window.location.origin}/stoneage-light/boarding?pet=${encodeURIComponent(sharedPet.name)}&share=true`;
     
     // 탑승 데이터에서 해당 페트가 탑승 가능한 캐릭터들 찾기
-    const ridingCharacters = Object.entries(boardingData).filter(([_, pets]) =>
+    const ridingCharacters = Object.entries(boardingData).filter(([, pets]) =>
       pets.some(pet => {
         const cleanBoardingName = pet.replace('⭐️', '').trim()
           .replace(/\s+/g, '').replace(/\(환\)/g, '');
@@ -310,7 +370,20 @@ const BoardingPage: React.FC = () => {
                   </div>
                   <div>
                     <span className="text-text-secondary">속성:</span>
-                    <span className="ml-2 text-text-primary font-medium">{sharedPet.element}</span>
+                    <div className="ml-2 flex flex-wrap gap-1">
+                      {sharedPet.elementStats.earth > 0 && (
+                        <span className="text-green-400 text-sm">지 {sharedPet.elementStats.earth}</span>
+                      )}
+                      {sharedPet.elementStats.water > 0 && (
+                        <span className="text-blue-400 text-sm">수 {sharedPet.elementStats.water}</span>
+                      )}
+                      {sharedPet.elementStats.fire > 0 && (
+                        <span className="text-red-400 text-sm">화 {sharedPet.elementStats.fire}</span>
+                      )}
+                      {sharedPet.elementStats.wind > 0 && (
+                        <span className="text-amber-400 text-sm">풍 {sharedPet.elementStats.wind}</span>
+                      )}
+                    </div>
                   </div>
                   <div>
                     <span className="text-text-secondary">획득처:</span>
@@ -573,7 +646,7 @@ const BoardingPage: React.FC = () => {
                     <div
                       key={`${character}-${pet}-${index}`}
                       className="bg-bg-primary rounded-lg p-4 border border-border-primary hover:border-accent/30 transition-colors iphone16:p-3 cursor-pointer hover:bg-bg-secondary"
-                      onClick={() => handlePetClick(pet)}
+                      onClick={() => handlePetClick(pet, character)}
                     >
                       <div className="flex flex-col items-center text-center">
                         {petImage && (
@@ -610,7 +683,37 @@ const BoardingPage: React.FC = () => {
       </div>
 
       {/* 페트 상세 모달 */}
-      <PetDetailModal isOpen={isPetModalOpen} onClose={handlePetModalClose} pet={selectedPet} />
+      <PetDetailModal 
+        isOpen={isPetModalOpen} 
+        onClose={handlePetModalClose} 
+        pet={selectedPet}
+        ridingImageUrl={selectedPetRidingImage}
+      />
+
+      {/* 디자인 Alert */}
+      {showAlert && (
+        <div className="fixed top-20 left-1/2 transform -translate-x-1/2 z-50 animate-in slide-in-from-top-2 duration-300">
+          <div className="bg-red-500/90 backdrop-blur-sm text-white px-4 py-3 rounded-lg shadow-lg border border-red-400/50">
+            <div className="flex items-center justify-between gap-3">
+              <div className="flex items-center gap-2">
+                <svg className="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01M12 3C16.97 3 21 7.03 21 12s-4.03 9-9 9-9-4.03-9-9 4.03-9 9-9z" />
+                </svg>
+                <span className="font-medium">{alertMessage}</span>
+              </div>
+              <button 
+                onClick={handleAlertClose}
+                className="text-white/80 hover:text-white transition-colors p-1"
+                aria-label="닫기"
+              >
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </>
   );
 };

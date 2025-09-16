@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
 import SearchBar from '../components/SearchBar';
 import ElementFilter, { type ElementType } from '../components/ElementFilter';
@@ -12,14 +12,14 @@ import type { Pet } from '../types';
 const PetsPage: React.FC = () => {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
-  
+
   const [searchTerm, setSearchTerm] = useState('');
   const [pets, setPets] = useState<Pet[]>([]);
   const [elementFilters, setElementFilters] = useState<ElementType[]>([]);
   const [gradeFilters, setGradeFilters] = useState<GradeType[]>([]);
   const [statFilters, setStatFilters] = useState<StatFilterItem[]>([]);
   const [showFavoritesOnly, setShowFavoritesOnly] = useState(false);
-  
+
   // 공유 모달 관련 상태
   const [isShareModalOpen, setIsShareModalOpen] = useState(false);
   const [sharedPet, setSharedPet] = useState<Pet | null>(null);
@@ -47,45 +47,17 @@ const PetsPage: React.FC = () => {
   useEffect(() => {
     const isShareMode = searchParams.get('share') === 'true';
     const sharedPetId = searchParams.get('pet');
-    
-    console.log('Share check:', { isShareMode, sharedPetId, petsLength: pets.length });
-    
+
     if (isShareMode && sharedPetId && pets.length > 0) {
-      const foundPet = pets.find(pet => pet.id === sharedPetId || pet.name === decodeURIComponent(sharedPetId));
-      console.log('Found pet:', foundPet);
+      const foundPet = pets.find(
+        pet => pet.id === sharedPetId || pet.name === decodeURIComponent(sharedPetId)
+      );
       if (foundPet) {
         setSharedPet(foundPet);
         setIsShareModalOpen(true);
-        console.log('Modal should open');
       }
     }
   }, [searchParams, pets]);
-
-  // 모달이 열릴 때 body 스크롤 막기 및 ESC 키 처리
-  useEffect(() => {
-    if (isShareModalOpen) {
-      document.body.style.overflow = 'hidden';
-    } else {
-      document.body.style.overflow = 'unset';
-    }
-    
-    // ESC 키로 모달 닫기
-    const handleKeyDown = (event: KeyboardEvent) => {
-      if (event.key === 'Escape' && isShareModalOpen) {
-        handleShareModalClose();
-      }
-    };
-
-    if (isShareModalOpen) {
-      document.addEventListener('keydown', handleKeyDown);
-    }
-    
-    // 컴포넌트 언마운트 시 정리
-    return () => {
-      document.body.style.overflow = 'unset';
-      document.removeEventListener('keydown', handleKeyDown);
-    };
-  }, [isShareModalOpen]);
 
   const handleSearchChange = (value: string) => {
     setSearchTerm(value);
@@ -114,12 +86,38 @@ const PetsPage: React.FC = () => {
   };
 
   // 공유 모달 닫기 핸들러
-  const handleShareModalClose = () => {
+  const handleShareModalClose = useCallback(() => {
     setIsShareModalOpen(false);
     setSharedPet(null);
     // URL 파라미터 제거
     navigate('/pets', { replace: true });
-  };
+  }, [navigate]);
+
+  // 모달이 열릴 때 body 스크롤 막기 및 ESC 키 처리
+  useEffect(() => {
+    if (isShareModalOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = 'unset';
+    }
+
+    // ESC 키로 모달 닫기
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape' && isShareModalOpen) {
+        handleShareModalClose();
+      }
+    };
+
+    if (isShareModalOpen) {
+      document.addEventListener('keydown', handleKeyDown);
+    }
+
+    // 컴포넌트 언마운트 시 정리
+    return () => {
+      document.body.style.overflow = 'unset';
+      document.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [isShareModalOpen, handleShareModalClose]);
 
   return (
     <>
@@ -186,13 +184,13 @@ const PetsPage: React.FC = () => {
 
       {/* 공유 모달 */}
       {isShareModalOpen && sharedPet && (
-        <div 
+        <div
           className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4"
           onClick={handleShareModalClose}
         >
-          <div 
+          <div
             className="max-w-md w-full max-h-[90vh] overflow-y-auto"
-            onClick={(e) => e.stopPropagation()}
+            onClick={e => e.stopPropagation()}
           >
             {/* 카드와 동일한 디자인 */}
             <div className="bg-bg-secondary rounded-lg p-4 h-full border border-border-primary flex flex-col">
@@ -222,7 +220,9 @@ const PetsPage: React.FC = () => {
                   <div>
                     {/* Name and Close */}
                     <div className="flex items-start justify-end gap-2">
-                      <h3 className="text-xl font-bold text-text-primary leading-tight text-right">{sharedPet.name}</h3>
+                      <h3 className="text-xl font-bold text-text-primary leading-tight text-right">
+                        {sharedPet.name}
+                      </h3>
                       <button
                         onClick={handleShareModalClose}
                         className="group p-0.5 rounded-md hover:bg-bg-tertiary transition-all duration-200 active:scale-95 flex-shrink-0"
@@ -236,7 +236,12 @@ const PetsPage: React.FC = () => {
                           fill="none"
                           stroke="currentColor"
                         >
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M6 18L18 6M6 6l12 12"
+                          />
                         </svg>
                       </button>
                     </div>
@@ -275,7 +280,9 @@ const PetsPage: React.FC = () => {
                                 <div
                                   key={`earth-${i}`}
                                   className={`h-1.5 w-2 rounded-sm ${
-                                    i < sharedPet.elementStats.earth ? 'bg-green-500' : 'bg-gray-600'
+                                    i < sharedPet.elementStats.earth
+                                      ? 'bg-green-500'
+                                      : 'bg-gray-600'
                                   }`}
                                 />
                               ))}
@@ -334,11 +341,15 @@ const PetsPage: React.FC = () => {
 
                   {/* Grade - 맨 밑에 위치 */}
                   <div className="flex justify-end">
-                    <span className={`text-xs font-semibold px-3 py-1 rounded-xl uppercase tracking-wide ${
-                      sharedPet.grade === '영웅' ? 'bg-gradient-to-r from-yellow-400 to-yellow-300 text-black' :
-                      sharedPet.grade === '희귀' ? 'bg-gradient-to-r from-purple-500 to-purple-400 text-white' :
-                      'bg-bg-tertiary text-text-secondary'
-                    }`}>
+                    <span
+                      className={`text-xs font-semibold px-3 py-1 rounded-xl uppercase tracking-wide ${
+                        sharedPet.grade === '영웅'
+                          ? 'bg-gradient-to-r from-yellow-400 to-yellow-300 text-black'
+                          : sharedPet.grade === '희귀'
+                            ? 'bg-gradient-to-r from-purple-500 to-purple-400 text-white'
+                            : 'bg-bg-tertiary text-text-secondary'
+                      }`}
+                    >
                       {sharedPet.grade}
                     </span>
                   </div>
@@ -352,19 +363,27 @@ const PetsPage: React.FC = () => {
                   <div className="grid grid-cols-4 gap-1 text-center text-sm">
                     <div>
                       <div className="text-text-secondary text-xs mb-1">공격력</div>
-                      <div className="font-bold text-text-primary font-mono">{sharedPet.baseStats.attack}</div>
+                      <div className="font-bold text-text-primary font-mono">
+                        {sharedPet.baseStats.attack}
+                      </div>
                     </div>
                     <div>
                       <div className="text-text-secondary text-xs mb-1">방어력</div>
-                      <div className="font-bold text-text-primary font-mono">{sharedPet.baseStats.defense}</div>
+                      <div className="font-bold text-text-primary font-mono">
+                        {sharedPet.baseStats.defense}
+                      </div>
                     </div>
                     <div>
                       <div className="text-text-secondary text-xs mb-1">순발력</div>
-                      <div className="font-bold text-text-primary font-mono">{sharedPet.baseStats.agility}</div>
+                      <div className="font-bold text-text-primary font-mono">
+                        {sharedPet.baseStats.agility}
+                      </div>
                     </div>
                     <div>
                       <div className="text-text-secondary text-xs mb-1">내구력</div>
-                      <div className="font-bold text-text-primary font-mono">{sharedPet.baseStats.vitality}</div>
+                      <div className="font-bold text-text-primary font-mono">
+                        {sharedPet.baseStats.vitality}
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -377,25 +396,35 @@ const PetsPage: React.FC = () => {
                   <div className="grid grid-cols-4 gap-1 text-center text-sm">
                     <div>
                       <div className="text-text-secondary text-xs mb-1">공격력</div>
-                      <div className="font-bold text-accent font-mono">{sharedPet.growthStats.attack}</div>
+                      <div className="font-bold text-accent font-mono">
+                        {sharedPet.growthStats.attack}
+                      </div>
                     </div>
                     <div>
                       <div className="text-text-secondary text-xs mb-1">방어력</div>
-                      <div className="font-bold text-accent font-mono">{sharedPet.growthStats.defense}</div>
+                      <div className="font-bold text-accent font-mono">
+                        {sharedPet.growthStats.defense}
+                      </div>
                     </div>
                     <div>
                       <div className="text-text-secondary text-xs mb-1">순발력</div>
-                      <div className="font-bold text-accent font-mono">{sharedPet.growthStats.agility}</div>
+                      <div className="font-bold text-accent font-mono">
+                        {sharedPet.growthStats.agility}
+                      </div>
                     </div>
                     <div>
                       <div className="text-text-secondary text-xs mb-1">내구력</div>
-                      <div className="font-bold text-accent font-mono">{sharedPet.growthStats.vitality}</div>
+                      <div className="font-bold text-accent font-mono">
+                        {sharedPet.growthStats.vitality}
+                      </div>
                     </div>
                   </div>
                   <div className="text-center pt-1 border-t border-border bg-accent/5 rounded">
                     <div className="flex justify-between items-center px-2">
                       <span className="text-sm text-text-secondary font-medium">총성장률</span>
-                      <span className="text-base font-bold text-accent font-mono">{sharedPet.totalGrowth}</span>
+                      <span className="text-base font-bold text-accent font-mono">
+                        {sharedPet.totalGrowth}
+                      </span>
                     </div>
                   </div>
                 </div>
