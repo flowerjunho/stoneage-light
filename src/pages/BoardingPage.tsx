@@ -11,7 +11,7 @@ interface BoardingData {
 }
 
 const BoardingPage: React.FC = () => {
-  const [searchParams, setSearchParams] = useSearchParams();
+  const [searchParams] = useSearchParams();
   const [boardingData, setBoardingData] = useState<BoardingData>({});
   const [petData, setPetData] = useState<Pet[]>([]);
   const [searchTerm, setSearchTerm] = useState('');

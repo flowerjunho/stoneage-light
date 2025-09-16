@@ -30,7 +30,7 @@ const ShareButton = () => {
       // 클립보드에 복사
       await navigator.clipboard.writeText(shareUrl);
       alert('링크가 클립보드에 복사되었습니다!');
-    } catch (error) {
+    } catch {
       // 클립보드 API 실패 시 fallback 방법
       const textArea = document.createElement('textarea');
       textArea.value = shareUrl;
@@ -44,7 +44,7 @@ const ShareButton = () => {
       try {
         document.execCommand('copy');
         alert('링크가 클립보드에 복사되었습니다!');
-      } catch (err) {
+      } catch {
         alert('클립보드 복사에 실패했습니다. 브라우저에서 복사 기능을 지원하지 않습니다.');
       }
       
