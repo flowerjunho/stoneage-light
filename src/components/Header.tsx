@@ -15,6 +15,11 @@ const Header: React.FC = () => {
           <h1 className="text-4xl font-bold mb-2 drop-shadow-2xl iphone16:text-2xl xs:text-xl leading-tight">
             스톤에이지 환수강림 라이트 by.名家(명가)
           </h1>
+          <div className="flex justify-end pr-1">
+            <p className="text-sm text-white/80 drop-shadow-lg iphone16:text-xs">
+              버그 수정, 피드백 및 추가 기능 문의는 왕/킹에게 DM 주세요.
+            </p>
+          </div>
         </div>
       </div>
     </header>
