@@ -12,8 +12,8 @@ interface BoardingData {
 }
 
 const BoardingPage: React.FC = () => {
-  const [searchParams] = useSearchParams();
   const [boardingData, setBoardingData] = useState<BoardingData>({});
+  const [searchParams] = useSearchParams();
   const [petData, setPetData] = useState<Pet[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCharacter, setSelectedCharacter] = useState<string | null>(null);
@@ -63,18 +63,18 @@ const BoardingPage: React.FC = () => {
   const handlePetClick = (petName: string) => {
     // ⭐️ 제거하고 정확한 이름으로 매칭
     const cleanBoardingName = petName.replace('⭐️', '').trim();
-    
+
     const matchingPet = petData.find(pet => {
       // petData의 펫 이름에서 띄어쓰기와 (환) 제거
       const cleanPetDataName = pet.name
-        .replace(/\s+/g, '')  // 모든 띄어쓰기 제거
-        .replace(/\(환\)/g, '');  // (환) 제거
-      
+        .replace(/\s+/g, '') // 모든 띄어쓰기 제거
+        .replace(/\(환\)/g, ''); // (환) 제거
+
       // boarding 데이터의 펫 이름에서도 띄어쓰기와 (환) 제거
       const cleanBoardingNameForCompare = cleanBoardingName
-        .replace(/\s+/g, '')  // 모든 띄어쓰기 제거
-        .replace(/\(환\)/g, '');  // (환) 제거
-      
+        .replace(/\s+/g, '') // 모든 띄어쓰기 제거
+        .replace(/\(환\)/g, ''); // (환) 제거
+
       return cleanPetDataName === cleanBoardingNameForCompare;
     });
 
@@ -372,13 +372,9 @@ const BoardingPage: React.FC = () => {
           ))}
         </div>
       </div>
-      
+
       {/* 페트 상세 모달 */}
-      <PetDetailModal
-        isOpen={isPetModalOpen}
-        onClose={handlePetModalClose}
-        pet={selectedPet}
-      />
+      <PetDetailModal isOpen={isPetModalOpen} onClose={handlePetModalClose} pet={selectedPet} />
     </>
   );
 };
