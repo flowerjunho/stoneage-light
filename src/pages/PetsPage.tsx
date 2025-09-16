@@ -21,12 +21,12 @@ const PetsPage: React.FC = () => {
     const loadPetsData = async () => {
       try {
         // 동적 import로 JSON 데이터 로드 (시뮬레이션)
-        const module = await import('../data/pets.json');
+        const module = await import('../data/petData.json');
 
         // 실제 로딩 느낌을 위한 최소 지연시간
         await new Promise(resolve => setTimeout(resolve, 200));
 
-        setPets(module.default);
+        setPets(module.pets);
       } catch {
         // Failed to load pets data
       }

@@ -27,16 +27,18 @@ export function addFavoriteChangeListener(listener: () => void) {
 
 export interface FavoritePet {
   name: string;
-  attack: number;
-  defense: number;
+  baseStats: {
+    attack: number;
+    defense: number;
+  };
   // 펫을 고유하게 식별하기 위한 키들
 }
 
 /**
  * 펫의 고유 ID 생성 (name + attack + defense로 구성)
  */
-export function getPetId(pet: { name: string; attack: number; defense: number }): string {
-  return `${pet.name}-${pet.attack}-${pet.defense}`;
+export function getPetId(pet: { name: string; baseStats: { attack: number; defense: number } }): string {
+  return `${pet.name}-${pet.baseStats.attack}-${pet.baseStats.defense}`;
 }
 
 /**
@@ -55,7 +57,7 @@ export function getFavorites(): string[] {
 /**
  * 즐겨찾기에 펫 추가
  */
-export function addToFavorites(pet: { name: string; attack: number; defense: number }): void {
+export function addToFavorites(pet: { name: string; baseStats: { attack: number; defense: number } }): void {
   try {
     const favorites = getFavorites();
     const petId = getPetId(pet);
@@ -73,7 +75,7 @@ export function addToFavorites(pet: { name: string; attack: number; defense: num
 /**
  * 즐겨찾기에서 펫 제거
  */
-export function removeFromFavorites(pet: { name: string; attack: number; defense: number }): void {
+export function removeFromFavorites(pet: { name: string; baseStats: { attack: number; defense: number } }): void {
   try {
     const favorites = getFavorites();
     const petId = getPetId(pet);
@@ -89,7 +91,7 @@ export function removeFromFavorites(pet: { name: string; attack: number; defense
 /**
  * 펫이 즐겨찾기에 있는지 확인
  */
-export function isFavorite(pet: { name: string; attack: number; defense: number }): boolean {
+export function isFavorite(pet: { name: string; baseStats: { attack: number; defense: number } }): boolean {
   try {
     const favorites = getFavorites();
     const petId = getPetId(pet);
@@ -115,7 +117,7 @@ export function clearAllFavorites(): void {
 /**
  * 즐겨찾기 토글 (추가/제거)
  */
-export function toggleFavorite(pet: { name: string; attack: number; defense: number }): boolean {
+export function toggleFavorite(pet: { name: string; baseStats: { attack: number; defense: number } }): boolean {
   const wasFavorite = isFavorite(pet);
 
   if (wasFavorite) {

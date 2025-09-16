@@ -45,13 +45,13 @@ const PetGrid: React.FC<PetGridProps> = React.memo(
           return elementFilters.some(element => {
             switch (element) {
               case 'earth':
-                return pet.earth > 0;
+                return pet.elementStats.earth > 0;
               case 'water':
-                return pet.water > 0;
+                return pet.elementStats.water > 0;
               case 'fire':
-                return pet.fire > 0;
+                return pet.elementStats.fire > 0;
               case 'wind':
-                return pet.wind > 0;
+                return pet.elementStats.wind > 0;
               default:
                 return false;
             }
@@ -62,11 +62,6 @@ const PetGrid: React.FC<PetGridProps> = React.memo(
       // 등급 필터링 (선택된 등급 중 하나와 일치해야 함)
       if (gradeFilters.length > 0) {
         result = result.filter(pet => {
-          // 일반등급 필터가 선택된 경우: 1등급, 2등급이 아닌 모든 펫
-          if (gradeFilters.includes('일반등급') && pet.grade !== '1등급' && pet.grade !== '2등급') {
-            return true;
-          }
-          // 1등급, 2등급 필터는 정확한 매칭
           return gradeFilters.includes(pet.grade as GradeType);
         });
       }
@@ -77,11 +72,22 @@ const PetGrid: React.FC<PetGridProps> = React.memo(
         if (activeFilters.length > 0) {
           result = result.filter(pet => {
             return activeFilters.every(filter => {
-              const petValue = pet[filter.stat];
-              if (typeof petValue === 'number') {
-                return petValue >= filter.value;
-              }
-              return false;
+              // nested 객체 접근을 위한 함수
+              const getNestedValue = (obj: unknown, path: string): number => {
+                const keys = path.split('.');
+                let value: unknown = obj;
+                for (const key of keys) {
+                  if (value && typeof value === 'object' && key in value) {
+                    value = (value as Record<string, unknown>)[key];
+                  } else {
+                    return 0;
+                  }
+                }
+                return typeof value === 'number' ? value : parseFloat(String(value)) || 0;
+              };
+
+              const petValue = getNestedValue(pet, filter.stat);
+              return petValue >= filter.value;
             });
           });
         }
@@ -234,7 +240,7 @@ const PetGrid: React.FC<PetGridProps> = React.memo(
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8 md:gap-4 iphone16:gap-4 iphone16:mb-6">
           {displayedItems.map((pet, index) => (
-            <PetCard key={`${pet.name}-${pet.attack}-${pet.defense}-${index}`} pet={pet} />
+            <PetCard key={`${pet.name}-${pet.baseStats.attack}-${pet.baseStats.defense}-${index}`} pet={pet} />
           ))}
         </div>
 

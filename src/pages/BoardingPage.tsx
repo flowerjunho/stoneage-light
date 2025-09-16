@@ -3,6 +3,7 @@ import SearchBar from '../components/SearchBar';
 import CharacterTabs from '../components/CharacterTabs';
 import { useDebounce } from '../hooks/useDebounce';
 import { matchesConsonantSearch } from '../utils/korean';
+import type { Pet } from '../types';
 
 interface BoardingData {
   [character: string]: string[];
@@ -10,26 +11,31 @@ interface BoardingData {
 
 const BoardingPage: React.FC = () => {
   const [boardingData, setBoardingData] = useState<BoardingData>({});
+  const [petData, setPetData] = useState<Pet[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCharacter, setSelectedCharacter] = useState<string | null>(null);
   const debouncedSearchTerm = useDebounce(searchTerm, 300);
   const [isLoading, setIsLoading] = useState(true);
 
-  // 탑승 데이터 로딩
+  // 탑승 데이터와 펫 데이터 로딩
   useEffect(() => {
-    const loadBoardingData = async () => {
+    const loadData = async () => {
       try {
-        const module = await import('../data/boarding.json');
+        const [boardingModule, petModule] = await Promise.all([
+          import('../data/boarding.json'),
+          import('../data/petData.json')
+        ]);
         await new Promise(resolve => setTimeout(resolve, 200));
-        setBoardingData(module.default);
+        setBoardingData(boardingModule.default);
+        setPetData(petModule.pets);
       } catch (error) {
-        console.error('Failed to load boarding data:', error);
+        console.error('Failed to load data:', error);
       } finally {
         setIsLoading(false);
       }
     };
 
-    loadBoardingData();
+    loadData();
   }, []);
 
   const handleSearchChange = (value: string) => {
@@ -38,6 +44,28 @@ const BoardingPage: React.FC = () => {
 
   const handleCharacterSelect = (character: string | null) => {
     setSelectedCharacter(character);
+  };
+
+  // 펫 이름으로 이미지 찾기 함수
+  const findPetImage = (petName: string): string => {
+    // ⭐️ 제거하고 정확한 이름으로 매칭
+    const cleanBoardingName = petName.replace('⭐️', '').trim();
+    
+    const matchingPet = petData.find(pet => {
+      // petData의 펫 이름에서 띄어쓰기와 (환) 제거
+      const cleanPetDataName = pet.name
+        .replace(/\s+/g, '')  // 모든 띄어쓰기 제거
+        .replace(/\(환\)/g, '');  // (환) 제거
+      
+      // boarding 데이터의 펫 이름에서도 띄어쓰기와 (환) 제거
+      const cleanBoardingNameForCompare = cleanBoardingName
+        .replace(/\s+/g, '')  // 모든 띄어쓰기 제거
+        .replace(/\(환\)/g, '');  // (환) 제거
+      
+      return cleanPetDataName === cleanBoardingNameForCompare;
+    });
+    
+    return matchingPet?.imageLink || '';
   };
 
   // 검색 및 캐릭터 필터링
@@ -260,23 +288,41 @@ const BoardingPage: React.FC = () => {
               </div>
 
               <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 iphone16:gap-2">
-                {pets.map((pet, index) => (
-                  <div
-                    key={`${character}-${pet}-${index}`}
-                    className="bg-bg-primary rounded-lg p-3 border border-border-primary hover:border-accent/30 transition-colors iphone16:p-2"
-                  >
-                    <span className="text-text-primary text-sm font-medium iphone16:text-xs">
-                      {pet.startsWith('⭐️') ? (
-                        <>
-                          <span className="text-yellow-400 mr-1">⭐️</span>
-                          {pet.replace('⭐️', '')}
-                        </>
-                      ) : (
-                        pet
-                      )}
-                    </span>
-                  </div>
-                ))}
+                {pets.map((pet, index) => {
+                  const petImage = findPetImage(pet);
+                  return (
+                    <div
+                      key={`${character}-${pet}-${index}`}
+                      className="bg-bg-primary rounded-lg p-3 border border-border-primary hover:border-accent/30 transition-colors iphone16:p-2"
+                    >
+                      <div className="flex items-center gap-2">
+                        {petImage && (
+                          <div className="flex-shrink-0">
+                            <img
+                              src={petImage}
+                              alt={pet}
+                              className="w-6 h-6 object-contain rounded"
+                              loading="lazy"
+                              onError={(e) => {
+                                e.currentTarget.style.display = 'none';
+                              }}
+                            />
+                          </div>
+                        )}
+                        <span className="text-text-primary text-sm font-medium iphone16:text-xs flex-1">
+                          {pet.startsWith('⭐️') ? (
+                            <>
+                              <span className="text-yellow-400 mr-1">⭐️</span>
+                              {pet.replace('⭐️', '')}
+                            </>
+                          ) : (
+                            pet
+                          )}
+                        </span>
+                      </div>
+                    </div>
+                  );
+                })}
               </div>
             </div>
           ))}

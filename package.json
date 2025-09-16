@@ -9,9 +9,11 @@
     "lint": "eslint .",
     "preview": "vite preview",
     "format": "prettier --write .",
-    "format:check": "prettier --check ."
+    "format:check": "prettier --check .",
+    "scrape:pets": "node scripts/petScraper.js"
   },
   "dependencies": {
+    "puppeteer": "^24.21.0",
     "react": "^19.1.1",
     "react-dom": "^19.1.1",
     "react-router-dom": "^7.9.1"

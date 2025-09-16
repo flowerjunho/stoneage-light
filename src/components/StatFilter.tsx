@@ -1,8 +1,7 @@
 import { useState, useEffect } from 'react';
-import type { Pet } from '../types';
 
 export interface StatFilterItem {
-  stat: keyof Pet;
+  stat: string; // 새로운 nested 구조를 지원하기 위해 string으로 변경
   value: number;
   enabled: boolean;
 }
@@ -21,20 +20,20 @@ const StatFilter = ({ onFilterChange, initialFilters = [] }: StatFilterProps) =>
   }, [initialFilters]);
 
   const statOptions = [
-    { key: 'attack', label: '공격' },
-    { key: 'defense', label: '방어' },
-    { key: 'agility', label: '순발' },
-    { key: 'vitality', label: '체력' },
-    { key: 'attackGrowth', label: '공성장' },
-    { key: 'defenseGrowth', label: '방성장' },
-    { key: 'agilityGrowth', label: '순성장' },
-    { key: 'vitalityGrowth', label: '체성장' },
-    { key: 'totalGrowth', label: '총성장' },
+    { key: 'baseStats.attack', label: '공격' },
+    { key: 'baseStats.defense', label: '방어' },
+    { key: 'baseStats.agility', label: '순발' },
+    { key: 'baseStats.vitality', label: '체력' },
+    { key: 'growthStats.attack', label: '공격성장률' },
+    { key: 'growthStats.defense', label: '방어성장률' },
+    { key: 'growthStats.agility', label: '순발성장률' },
+    { key: 'growthStats.vitality', label: '체력성장률' },
+    { key: 'totalGrowth', label: '총성장률' },
   ];
 
   const addFilter = () => {
     const newFilter: StatFilterItem = {
-      stat: 'attack',
+      stat: 'baseStats.attack',
       value: 0,
       enabled: true,
     };
@@ -99,7 +98,7 @@ const StatFilter = ({ onFilterChange, initialFilters = [] }: StatFilterProps) =>
                 <div className="flex items-center gap-2">
                   <select
                     value={filter.stat}
-                    onChange={e => updateFilter(index, { stat: e.target.value as keyof Pet })}
+                    onChange={e => updateFilter(index, { stat: e.target.value })}
                     className="px-3 py-2 bg-bg-tertiary border border-border-primary rounded-lg
                              text-text-primary text-sm focus:outline-none focus:ring-2 
                              focus:ring-accent focus:border-transparent"
