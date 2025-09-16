@@ -78,11 +78,11 @@ const PetBoardingModal: React.FC<PetBoardingModalProps> = ({ isOpen, onClose, pe
 
   return (
     <div 
-      className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4"
+      className="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center z-50 p-4 backdrop-blur-sm"
       onClick={onClose}
     >
       <div 
-        className="bg-bg-primary rounded-lg max-w-4xl w-full max-h-[80vh] overflow-hidden"
+        className="bg-bg-primary rounded-lg max-w-4xl w-full max-h-[80vh] overflow-hidden border-2 border-border shadow-2xl shadow-black/50"
         onClick={(e) => e.stopPropagation()}
       >
         {/* 모달 헤더 */}
@@ -148,7 +148,7 @@ const PetBoardingModal: React.FC<PetBoardingModalProps> = ({ isOpen, onClose, pe
                 <div
                   key={character}
                   onClick={() => handleCharacterClick(character)}
-                  className="bg-bg-secondary rounded-lg p-4 text-center hover:bg-bg-tertiary transition-colors duration-200 cursor-pointer transform hover:scale-105 active:scale-95"
+                  className="bg-bg-secondary rounded-lg p-4 text-center hover:bg-bg-tertiary transition-all duration-200 cursor-pointer transform hover:scale-105 active:scale-95 border border-border hover:border-accent hover:shadow-lg hover:shadow-accent/20"
                 >
                   <h3 className="text-lg font-semibold text-text-primary">
                     {character}

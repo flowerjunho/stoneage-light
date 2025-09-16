@@ -249,11 +249,11 @@ const PetDetailModal: React.FC<PetDetailModalProps> = ({ isOpen, onClose, pet })
                     
                     <div className="space-y-2">
                       <div className="flex justify-between">
-                        <span className="text-text-secondary">민첩:</span>
+                        <span className="text-text-secondary">순발력:</span>
                         <span className="font-bold text-text-primary">{pet.baseStats.agility}</span>
                       </div>
                       <div className="flex justify-between">
-                        <span className="text-text-secondary">체력:</span>
+                        <span className="text-text-secondary">내구력:</span>
                         <span className="font-bold text-text-primary">{pet.baseStats.vitality}</span>
                       </div>
                     </div>
@@ -266,22 +266,22 @@ const PetDetailModal: React.FC<PetDetailModalProps> = ({ isOpen, onClose, pet })
                   <div className="grid grid-cols-2 gap-3 text-base">
                     <div className="space-y-2">
                       <div className="flex justify-between">
-                        <span className="text-text-secondary">공격 성장률:</span>
+                        <span className="text-text-secondary">공격력:</span>
                         <span className="font-bold text-accent">{pet.growthStats.attack}</span>
                       </div>
                       <div className="flex justify-between">
-                        <span className="text-text-secondary">방어 성장률:</span>
+                        <span className="text-text-secondary">방어력:</span>
                         <span className="font-bold text-accent">{pet.growthStats.defense}</span>
                       </div>
                     </div>
                     
                     <div className="space-y-2">
                       <div className="flex justify-between">
-                        <span className="text-text-secondary">민첩 성장률:</span>
+                        <span className="text-text-secondary">순발력:</span>
                         <span className="font-bold text-accent">{pet.growthStats.agility}</span>
                       </div>
                       <div className="flex justify-between">
-                        <span className="text-text-secondary">체력 성장률:</span>
+                        <span className="text-text-secondary">내구력:</span>
                         <span className="font-bold text-accent">{pet.growthStats.vitality}</span>
                       </div>
                     </div>

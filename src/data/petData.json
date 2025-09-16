@@ -683,8 +683,8 @@
       "source": "전투포인트상점",
       "imageLink": "",
       "elementStats": {
-        "water": 0,
-        "fire": 0,
+        "water": 9,
+        "fire": 1,
         "wind": 0,
         "earth": 0
       },
@@ -710,7 +710,7 @@
       "source": "라돈타전리품",
       "imageLink": "",
       "elementStats": {
-        "water": 0,
+        "water": 10,
         "fire": 0,
         "wind": 0,
         "earth": 0
