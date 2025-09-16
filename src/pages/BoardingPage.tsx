@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import SearchBar from '../components/SearchBar';
 import CharacterTabs from '../components/CharacterTabs';
+import PetDetailModal from '../components/PetDetailModal';
 import { useDebounce } from '../hooks/useDebounce';
 import { matchesConsonantSearch } from '../utils/korean';
 import type { Pet } from '../types';
@@ -18,6 +19,8 @@ const BoardingPage: React.FC = () => {
   const [selectedCharacter, setSelectedCharacter] = useState<string | null>(null);
   const debouncedSearchTerm = useDebounce(searchTerm, 300);
   const [isLoading, setIsLoading] = useState(true);
+  const [selectedPet, setSelectedPet] = useState<Pet | null>(null);
+  const [isPetModalOpen, setIsPetModalOpen] = useState(false);
 
   // 탑승 데이터와 펫 데이터 로딩
   useEffect(() => {
@@ -25,7 +28,7 @@ const BoardingPage: React.FC = () => {
       try {
         const [boardingModule, petModule] = await Promise.all([
           import('../data/boarding.json'),
-          import('../data/petData.json')
+          import('../data/petData.json'),
         ]);
         await new Promise(resolve => setTimeout(resolve, 200));
         setBoardingData(boardingModule.default);
@@ -56,8 +59,8 @@ const BoardingPage: React.FC = () => {
     setSelectedCharacter(character);
   };
 
-  // 펫 이름으로 이미지 찾기 함수
-  const findPetImage = (petName: string): string => {
+  // 페트 클릭 핸들러
+  const handlePetClick = (petName: string) => {
     // ⭐️ 제거하고 정확한 이름으로 매칭
     const cleanBoardingName = petName.replace('⭐️', '').trim();
     
@@ -74,7 +77,37 @@ const BoardingPage: React.FC = () => {
       
       return cleanPetDataName === cleanBoardingNameForCompare;
     });
-    
+
+    if (matchingPet) {
+      setSelectedPet(matchingPet);
+      setIsPetModalOpen(true);
+    }
+  };
+
+  const handlePetModalClose = () => {
+    setIsPetModalOpen(false);
+    setSelectedPet(null);
+  };
+
+  // 펫 이름으로 이미지 찾기 함수
+  const findPetImage = (petName: string): string => {
+    // ⭐️ 제거하고 정확한 이름으로 매칭
+    const cleanBoardingName = petName.replace('⭐️', '').trim();
+
+    const matchingPet = petData.find(pet => {
+      // petData의 펫 이름에서 띄어쓰기와 (환) 제거
+      const cleanPetDataName = pet.name
+        .replace(/\s+/g, '') // 모든 띄어쓰기 제거
+        .replace(/\(환\)/g, ''); // (환) 제거
+
+      // boarding 데이터의 펫 이름에서도 띄어쓰기와 (환) 제거
+      const cleanBoardingNameForCompare = cleanBoardingName
+        .replace(/\s+/g, '') // 모든 띄어쓰기 제거
+        .replace(/\(환\)/g, ''); // (환) 제거
+
+      return cleanPetDataName === cleanBoardingNameForCompare;
+    });
+
     return matchingPet?.imageLink || '';
   };
 
@@ -303,7 +336,8 @@ const BoardingPage: React.FC = () => {
                   return (
                     <div
                       key={`${character}-${pet}-${index}`}
-                      className="bg-bg-primary rounded-lg p-3 border border-border-primary hover:border-accent/30 transition-colors iphone16:p-2"
+                      className="bg-bg-primary rounded-lg p-3 border border-border-primary hover:border-accent/30 transition-colors iphone16:p-2 cursor-pointer hover:bg-bg-secondary"
+                      onClick={() => handlePetClick(pet)}
                     >
                       <div className="flex items-center gap-2">
                         {petImage && (
@@ -313,7 +347,7 @@ const BoardingPage: React.FC = () => {
                               alt={pet}
                               className="w-6 h-6 object-contain rounded"
                               loading="lazy"
-                              onError={(e) => {
+                              onError={e => {
                                 e.currentTarget.style.display = 'none';
                               }}
                             />
@@ -338,6 +372,13 @@ const BoardingPage: React.FC = () => {
           ))}
         </div>
       </div>
+      
+      {/* 페트 상세 모달 */}
+      <PetDetailModal
+        isOpen={isPetModalOpen}
+        onClose={handlePetModalClose}
+        pet={selectedPet}
+      />
     </>
   );
 };

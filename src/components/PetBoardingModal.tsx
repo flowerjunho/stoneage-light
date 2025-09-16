@@ -86,8 +86,8 @@ const PetBoardingModal: React.FC<PetBoardingModalProps> = ({ isOpen, onClose, pe
         onClick={(e) => e.stopPropagation()}
       >
         {/* 모달 헤더 */}
-        <div className="flex justify-between items-center p-6 border-b border-border">
-          <h2 className="text-xl font-bold text-text-primary">
+        <div className="flex justify-between items-center p-4 border-b border-border">
+          <h2 className="text-lg font-bold text-text-primary">
             {pet?.name} 탑승 가능 캐릭터
           </h2>
           <button
@@ -113,7 +113,7 @@ const PetBoardingModal: React.FC<PetBoardingModalProps> = ({ isOpen, onClose, pe
         </div>
 
         {/* 모달 내용 */}
-        <div className="p-6 overflow-y-auto max-h-[calc(80vh-120px)]">
+        <div className="p-4 overflow-y-auto max-h-[calc(80vh-100px)]">
           {isLoading ? (
             <div className="flex items-center justify-center py-12">
               <div className="text-text-secondary">로딩 중...</div>
