@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useSearchParams } from 'react-router-dom';
+import { useSearchParams, useNavigate } from 'react-router-dom';
 import SearchBar from '../components/SearchBar';
 import CharacterTabs from '../components/CharacterTabs';
 import PetDetailModal from '../components/PetDetailModal';
@@ -11,9 +11,18 @@ interface BoardingData {
   [character: string]: string[];
 }
 
+interface PetRidingData {
+  [character: string]: Array<{
+    imageUrl: string;
+    name: string;
+  }>;
+}
+
 const BoardingPage: React.FC = () => {
   const [boardingData, setBoardingData] = useState<BoardingData>({});
+  const [petRidingData, setPetRidingData] = useState<PetRidingData>({});
   const [searchParams] = useSearchParams();
+  const navigate = useNavigate();
   const [petData, setPetData] = useState<Pet[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCharacter, setSelectedCharacter] = useState<string | null>(null);
@@ -26,13 +35,15 @@ const BoardingPage: React.FC = () => {
   useEffect(() => {
     const loadData = async () => {
       try {
-        const [boardingModule, petModule] = await Promise.all([
+        const [boardingModule, petModule, petRidingModule] = await Promise.all([
           import('../data/boarding.json'),
           import('../data/petData.json'),
+          import('../data/pet-riding.json'),
         ]);
         await new Promise(resolve => setTimeout(resolve, 200));
         setBoardingData(boardingModule.default);
         setPetData(petModule.pets);
+        setPetRidingData(petRidingModule.default);
       } catch (error) {
         console.error('Failed to load data:', error);
       } finally {
@@ -57,6 +68,14 @@ const BoardingPage: React.FC = () => {
 
   const handleCharacterSelect = (character: string | null) => {
     setSelectedCharacter(character);
+    // URL 파라미터 업데이트
+    const newSearchParams = new URLSearchParams(searchParams);
+    if (character) {
+      newSearchParams.set('character', encodeURIComponent(character));
+    } else {
+      newSearchParams.delete('character');
+    }
+    navigate(`/boarding?${newSearchParams.toString()}`, { replace: true });
   };
 
   // 페트 클릭 핸들러
@@ -89,11 +108,32 @@ const BoardingPage: React.FC = () => {
     setSelectedPet(null);
   };
 
-  // 펫 이름으로 이미지 찾기 함수
-  const findPetImage = (petName: string): string => {
+  // 펫 이름으로 이미지 찾기 함수 (pet-riding.json 우선 사용)
+  const findPetImage = (petName: string, characterName: string): string => {
     // ⭐️ 제거하고 정확한 이름으로 매칭
     const cleanBoardingName = petName.replace('⭐️', '').trim();
 
+    // 1. pet-riding.json에서 캐릭터별 데이터 확인
+    const characterRidingPets = petRidingData[characterName];
+    if (characterRidingPets) {
+      const ridingPet = characterRidingPets.find(pet => {
+        const cleanRidingName = pet.name
+          .replace(/\s+/g, '') // 모든 띄어쓰기 제거
+          .replace(/\(환\)/g, ''); // (환) 제거
+
+        const cleanBoardingNameForCompare = cleanBoardingName
+          .replace(/\s+/g, '') // 모든 띄어쓰기 제거
+          .replace(/\(환\)/g, ''); // (환) 제거
+
+        return cleanRidingName === cleanBoardingNameForCompare;
+      });
+
+      if (ridingPet) {
+        return ridingPet.imageUrl;
+      }
+    }
+
+    // 2. pet-riding.json에서 찾지 못한 경우 기존 petData.json에서 찾기 (폴백)
     const matchingPet = petData.find(pet => {
       // petData의 펫 이름에서 띄어쓰기와 (환) 제거
       const cleanPetDataName = pet.name
@@ -182,12 +222,17 @@ const BoardingPage: React.FC = () => {
           {Array.from({ length: 6 }, (_, index) => (
             <div key={`skeleton-${index}`} className="bg-bg-secondary rounded-lg p-6 iphone16:p-4">
               <div className="h-6 bg-bg-tertiary rounded w-24 mb-4 animate-pulse"></div>
-              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
+              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 iphone16:gap-3">
                 {Array.from({ length: 8 }, (_, petIndex) => (
                   <div
                     key={`pet-skeleton-${petIndex}`}
-                    className="h-8 bg-bg-tertiary rounded animate-pulse"
-                  ></div>
+                    className="bg-bg-primary rounded-lg p-4 iphone16:p-3 border border-border-primary"
+                  >
+                    <div className="flex flex-col items-center text-center">
+                      <div className="w-24 h-24 md:w-28 md:h-28 lg:w-32 lg:h-32 xl:w-36 xl:h-36 iphone16:w-20 iphone16:h-20 bg-bg-tertiary rounded animate-pulse mb-3 iphone16:mb-2"></div>
+                      <div className="h-4 bg-bg-tertiary rounded w-16 animate-pulse"></div>
+                    </div>
+                  </div>
                 ))}
               </div>
             </div>
@@ -330,22 +375,22 @@ const BoardingPage: React.FC = () => {
                 </span>
               </div>
 
-              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 iphone16:gap-2">
+              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 iphone16:gap-3">
                 {pets.map((pet, index) => {
-                  const petImage = findPetImage(pet);
+                  const petImage = findPetImage(pet, character);
                   return (
                     <div
                       key={`${character}-${pet}-${index}`}
-                      className="bg-bg-primary rounded-lg p-3 border border-border-primary hover:border-accent/30 transition-colors iphone16:p-2 cursor-pointer hover:bg-bg-secondary"
+                      className="bg-bg-primary rounded-lg p-4 border border-border-primary hover:border-accent/30 transition-colors iphone16:p-3 cursor-pointer hover:bg-bg-secondary"
                       onClick={() => handlePetClick(pet)}
                     >
-                      <div className="flex items-center gap-2">
+                      <div className="flex flex-col items-center text-center">
                         {petImage && (
-                          <div className="flex-shrink-0">
+                          <div className="mb-3 iphone16:mb-2">
                             <img
                               src={petImage}
                               alt={pet}
-                              className="w-6 h-6 object-contain rounded"
+                              className="w-24 h-24 md:w-28 md:h-28 lg:w-32 lg:h-32 xl:w-36 xl:h-36 iphone16:w-20 iphone16:h-20 object-contain rounded"
                               loading="lazy"
                               onError={e => {
                                 e.currentTarget.style.display = 'none';
@@ -353,7 +398,7 @@ const BoardingPage: React.FC = () => {
                             />
                           </div>
                         )}
-                        <span className="text-text-primary text-sm font-medium iphone16:text-xs flex-1">
+                        <span className="text-text-primary text-sm font-medium iphone16:text-xs break-words">
                           {pet.startsWith('⭐️') ? (
                             <>
                               <span className="text-yellow-400 mr-1">⭐️</span>

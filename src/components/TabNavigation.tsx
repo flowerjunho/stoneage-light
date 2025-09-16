@@ -7,7 +7,7 @@ const TabNavigation: React.FC = () => {
   const tabs = [
     { path: '/pets', label: '페트', name: 'pets' },
     { path: '/boarding', label: '탑승', name: 'boarding' },
-    { path: '/calculator', label: '환포계산기', name: 'calculator' },
+    { path: '/calculator', label: '계산기', name: 'calculator' },
   ];
 
   return (
