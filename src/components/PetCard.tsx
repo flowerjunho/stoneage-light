@@ -269,7 +269,7 @@ const PetCard: React.FC<PetCardProps> = ({ pet }) => {
               </div>
 
               {/* Elements - 펫 이름 바로 밑에 위치 */}
-              <div className="mt-1">
+              <div className="mt-2">
                 <div className="flex gap-1.5 flex-wrap justify-end">
                   {getElementIcon('earth', pet.elementStats.earth)}
                   {getElementIcon('water', pet.elementStats.water)}
@@ -350,73 +350,57 @@ const PetCard: React.FC<PetCardProps> = ({ pet }) => {
           </div>
         </div>
 
-        {/* Basic Stats - 두줄 컴팩트 디자인 */}
+        {/* Basic Stats - 세로 정렬 디자인 */}
         <div className="mb-2">
-          <h4 className="text-xs font-medium text-text-secondary mb-1.5">초기치</h4>
+          <h4 className="text-sm font-medium text-text-secondary mb-1.5">초기치</h4>
           <div className="bg-bg-tertiary rounded-md p-2 border border-border">
-            <div className="grid grid-cols-2 gap-2 text-xs">
-              <div className="flex justify-between items-center">
-                <span className="text-text-secondary">공격력</span>
-                <span className="font-bold text-text-primary font-mono">
-                  {pet.baseStats.attack}
-                </span>
+            <div className="grid grid-cols-4 gap-1 text-center text-sm">
+              <div>
+                <div className="text-text-secondary text-xs mb-1">공격력</div>
+                <div className="font-bold text-text-primary font-mono">{pet.baseStats.attack}</div>
               </div>
-              <div className="flex justify-between items-center">
-                <span className="text-text-secondary">방어력</span>
-                <span className="font-bold text-text-primary font-mono">
-                  {pet.baseStats.defense}
-                </span>
+              <div>
+                <div className="text-text-secondary text-xs mb-1">방어력</div>
+                <div className="font-bold text-text-primary font-mono">{pet.baseStats.defense}</div>
               </div>
-              <div className="flex justify-between items-center">
-                <span className="text-text-secondary">순발력</span>
-                <span className="font-bold text-text-primary font-mono">
-                  {pet.baseStats.agility}
-                </span>
+              <div>
+                <div className="text-text-secondary text-xs mb-1">순발력</div>
+                <div className="font-bold text-text-primary font-mono">{pet.baseStats.agility}</div>
               </div>
-              <div className="flex justify-between items-center">
-                <span className="text-text-secondary">내구력</span>
-                <span className="font-bold text-text-primary font-mono">
-                  {pet.baseStats.vitality}
-                </span>
+              <div>
+                <div className="text-text-secondary text-xs mb-1">내구력</div>
+                <div className="font-bold text-text-primary font-mono">{pet.baseStats.vitality}</div>
               </div>
             </div>
           </div>
         </div>
 
-        {/* Growth Section - 두줄 컴팩트 디자인 */}
+        {/* Growth Stats - 세로 정렬 디자인 */}
         <div className="mb-2">
-          <h4 className="text-xs font-medium text-text-secondary mb-1.5">성장률</h4>
-          <div className="bg-bg-primary rounded-md p-2 border border-border space-y-1.5">
-            <div className="grid grid-cols-2 gap-2 text-xs">
-              <div className="flex justify-between items-center">
-                <span className="text-text-secondary">공격력</span>
-                <span className="font-semibold text-text-primary font-mono">
-                  {pet.growthStats.attack}
-                </span>
+          <h4 className="text-sm font-medium text-text-secondary mb-1.5">성장률</h4>
+          <div className="bg-bg-primary rounded-md p-2 border border-border space-y-2">
+            <div className="grid grid-cols-4 gap-1 text-center text-sm">
+              <div>
+                <div className="text-text-secondary text-xs mb-1">공격력</div>
+                <div className="font-bold text-accent font-mono">{pet.growthStats.attack}</div>
               </div>
-              <div className="flex justify-between items-center">
-                <span className="text-text-secondary">방어력</span>
-                <span className="font-semibold text-text-primary font-mono">
-                  {pet.growthStats.defense}
-                </span>
+              <div>
+                <div className="text-text-secondary text-xs mb-1">방어력</div>
+                <div className="font-bold text-accent font-mono">{pet.growthStats.defense}</div>
               </div>
-              <div className="flex justify-between items-center">
-                <span className="text-text-secondary">순발력</span>
-                <span className="font-semibold text-text-primary font-mono">
-                  {pet.growthStats.agility}
-                </span>
+              <div>
+                <div className="text-text-secondary text-xs mb-1">순발력</div>
+                <div className="font-bold text-accent font-mono">{pet.growthStats.agility}</div>
               </div>
-              <div className="flex justify-between items-center">
-                <span className="text-text-secondary">내구력</span>
-                <span className="font-semibold text-text-primary font-mono">
-                  {pet.growthStats.vitality}
-                </span>
+              <div>
+                <div className="text-text-secondary text-xs mb-1">내구력</div>
+                <div className="font-bold text-accent font-mono">{pet.growthStats.vitality}</div>
               </div>
             </div>
             <div className="text-center pt-1 border-t border-border bg-accent/5 rounded">
               <div className="flex justify-between items-center px-2">
-                <span className="text-xs text-text-secondary font-medium">총성장률</span>
-                <span className="text-sm font-bold text-accent font-mono">{pet.totalGrowth}</span>
+                <span className="text-sm text-text-secondary font-medium">총성장률</span>
+                <span className="text-base font-bold text-accent font-mono">{pet.totalGrowth}</span>
               </div>
             </div>
           </div>
@@ -425,10 +409,10 @@ const PetCard: React.FC<PetCardProps> = ({ pet }) => {
         {/* Info Section - 컴팩트 디자인 */}
         <div className="pt-1.5 border-t border-border mt-auto">
           <div className="bg-bg-tertiary rounded-md p-1.5 space-y-0.5">
-            <div className="flex justify-between items-center text-xs">
+            <div className="flex justify-between items-center text-sm">
               <span className="text-text-secondary">탑승:</span>
               <span
-                className={`font-medium text-xs px-1.5 py-0.5 rounded ${
+                className={`font-medium text-sm px-1.5 py-0.5 rounded ${
                   pet.rideable === '탑승가능'
                     ? 'bg-green-500/20 text-green-400'
                     : 'bg-red-500/20 text-red-400'
@@ -437,9 +421,9 @@ const PetCard: React.FC<PetCardProps> = ({ pet }) => {
                 {pet.rideable === '탑승가능' ? '가능' : '불가'}
               </span>
             </div>
-            <div className="flex justify-between items-start text-xs">
+            <div className="flex justify-between items-start text-sm">
               <span className="text-text-secondary shrink-0">획득처:</span>
-              <span className="text-text-primary text-right leading-tight ml-2 text-xs">
+              <span className="text-text-primary text-right leading-tight ml-2 text-sm">
                 {pet.source}
               </span>
             </div>

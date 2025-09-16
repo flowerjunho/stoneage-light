@@ -28,7 +28,7 @@ const PetDetailModal: React.FC<PetDetailModalProps> = ({ isOpen, onClose, pet })
 
     return (
       <span
-        className={`text-sm px-2 py-1 rounded border ${elementClasses[element as keyof typeof elementClasses]}`}
+        className={`text-base px-2 py-1 rounded border ${elementClasses[element as keyof typeof elementClasses]}`}
       >
         {icons[element as keyof typeof icons]} {value}
       </span>
@@ -207,13 +207,13 @@ const PetDetailModal: React.FC<PetDetailModalProps> = ({ isOpen, onClose, pet })
                     
                     <div className="space-y-2">
                       <div>
-                        <span className="text-text-secondary text-sm">획득:</span>
-                        <span className="ml-1 text-text-primary text-sm">{pet.source}</span>
+                        <span className="text-text-secondary text-base">획득:</span>
+                        <span className="ml-1 text-text-primary text-base">{pet.source}</span>
                       </div>
                       
                       <div>
-                        <span className="text-text-secondary text-sm">탑승:</span>
-                        <span className={`ml-1 font-medium text-sm ${pet.rideable === '탑승가능' ? 'text-green-400' : 'text-red-400'}`}>
+                        <span className="text-text-secondary text-base">탑승:</span>
+                        <span className={`ml-1 font-medium text-base ${pet.rideable === '탑승가능' ? 'text-green-400' : 'text-red-400'}`}>
                           {pet.rideable}
                         </span>
                       </div>
@@ -235,26 +235,26 @@ const PetDetailModal: React.FC<PetDetailModalProps> = ({ isOpen, onClose, pet })
                 {/* 기본 스탯 정보 */}
                 <div className="mb-4">
                   <h4 className="font-semibold text-text-primary mb-2 border-b border-border-primary pb-1">기본 스탯</h4>
-                  <div className="grid grid-cols-2 gap-3 text-sm">
-                    <div className="space-y-1">
+                  <div className="grid grid-cols-2 gap-3 text-base">
+                    <div className="space-y-2">
                       <div className="flex justify-between">
                         <span className="text-text-secondary">공격력:</span>
-                        <span className="font-medium text-text-primary">{pet.baseStats.attack}</span>
+                        <span className="font-bold text-text-primary">{pet.baseStats.attack}</span>
                       </div>
                       <div className="flex justify-between">
                         <span className="text-text-secondary">방어력:</span>
-                        <span className="font-medium text-text-primary">{pet.baseStats.defense}</span>
+                        <span className="font-bold text-text-primary">{pet.baseStats.defense}</span>
                       </div>
                     </div>
                     
-                    <div className="space-y-1">
+                    <div className="space-y-2">
                       <div className="flex justify-between">
                         <span className="text-text-secondary">민첩:</span>
-                        <span className="font-medium text-text-primary">{pet.baseStats.agility}</span>
+                        <span className="font-bold text-text-primary">{pet.baseStats.agility}</span>
                       </div>
                       <div className="flex justify-between">
                         <span className="text-text-secondary">체력:</span>
-                        <span className="font-medium text-text-primary">{pet.baseStats.vitality}</span>
+                        <span className="font-bold text-text-primary">{pet.baseStats.vitality}</span>
                       </div>
                     </div>
                   </div>
@@ -263,26 +263,26 @@ const PetDetailModal: React.FC<PetDetailModalProps> = ({ isOpen, onClose, pet })
                 {/* 성장률 정보 */}
                 <div className="mb-4">
                   <h4 className="font-semibold text-text-primary mb-2 border-b border-border-primary pb-1">성장률</h4>
-                  <div className="grid grid-cols-2 gap-3 text-sm">
-                    <div className="space-y-1">
+                  <div className="grid grid-cols-2 gap-3 text-base">
+                    <div className="space-y-2">
                       <div className="flex justify-between">
                         <span className="text-text-secondary">공격 성장률:</span>
-                        <span className="font-medium text-accent">{pet.growthStats.attack}</span>
+                        <span className="font-bold text-accent">{pet.growthStats.attack}</span>
                       </div>
                       <div className="flex justify-between">
                         <span className="text-text-secondary">방어 성장률:</span>
-                        <span className="font-medium text-accent">{pet.growthStats.defense}</span>
+                        <span className="font-bold text-accent">{pet.growthStats.defense}</span>
                       </div>
                     </div>
                     
-                    <div className="space-y-1">
+                    <div className="space-y-2">
                       <div className="flex justify-between">
                         <span className="text-text-secondary">민첩 성장률:</span>
-                        <span className="font-medium text-accent">{pet.growthStats.agility}</span>
+                        <span className="font-bold text-accent">{pet.growthStats.agility}</span>
                       </div>
                       <div className="flex justify-between">
                         <span className="text-text-secondary">체력 성장률:</span>
-                        <span className="font-medium text-accent">{pet.growthStats.vitality}</span>
+                        <span className="font-bold text-accent">{pet.growthStats.vitality}</span>
                       </div>
                     </div>
                   </div>
@@ -290,7 +290,7 @@ const PetDetailModal: React.FC<PetDetailModalProps> = ({ isOpen, onClose, pet })
 
                 {/* 총 성장률 - 가장 중요한 정보 */}
                 <div className="bg-accent/10 border border-accent/30 rounded-lg p-4 text-center">
-                  <div className="text-text-secondary text-sm mb-1">총 성장률</div>
+                  <div className="text-text-secondary text-base mb-1">총 성장률</div>
                   <div className="text-2xl font-bold text-accent">{pet.totalGrowth}</div>
                 </div>
               </div>
