@@ -9,7 +9,7 @@ interface SearchBarProps {
 const SearchBar: React.FC<SearchBarProps> = ({
   searchTerm,
   onSearchChange,
-  placeholder = 'Search pets...',
+  placeholder = '초성으로 검색하세요. 예)ㅇㄱㄹㅎ[얀기로(환)]',
 }) => {
   return (
     <div className="w-full max-w-2xl mx-auto mb-8 px-4 iphone16:px-3 iphone16:mb-4">

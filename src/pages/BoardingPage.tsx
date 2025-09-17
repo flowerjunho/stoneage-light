@@ -119,18 +119,18 @@ const BoardingPage: React.FC = () => {
       if (alertTimeoutId) {
         clearTimeout(alertTimeoutId);
       }
-      
+
       // 페트 정보가 없는 경우 alert 표시
       setAlertMessage(`${cleanBoardingName}의 정보가 없습니다.`);
       setShowAlert(true);
-      
+
       // 3초 후 자동으로 alert 숨기기
       const timeoutId = setTimeout(() => {
         setShowAlert(false);
         setAlertMessage('');
         setAlertTimeoutId(null);
       }, 3000);
-      
+
       setAlertTimeoutId(timeoutId);
     }
   };
@@ -186,13 +186,9 @@ const BoardingPage: React.FC = () => {
       }
 
       // (환) 제거 후 매칭
-      const cleanPetDataNameNoEnv = pet.name
-        .replace(/\s+/g, '')
-        .replace(/\(환\)/g, '');
+      const cleanPetDataNameNoEnv = pet.name.replace(/\s+/g, '').replace(/\(환\)/g, '');
 
-      const cleanBoardingNameNoEnv = cleanBoardingName
-        .replace(/\s+/g, '')
-        .replace(/\(환\)/g, '');
+      const cleanBoardingNameNoEnv = cleanBoardingName.replace(/\s+/g, '').replace(/\(환\)/g, '');
 
       return cleanPetDataNameNoEnv === cleanBoardingNameNoEnv;
     });
@@ -276,13 +272,16 @@ const BoardingPage: React.FC = () => {
   };
 
   // 공유 모드에서 표시할 페트 찾기
-  const sharedPet = isShareMode && sharedPetName 
-    ? petData.find(pet => {
-        const cleanPetName = pet.name.replace(/\s+/g, '').replace(/\(환\)/g, '');
-        const cleanSharedName = decodeURIComponent(sharedPetName).replace(/\s+/g, '').replace(/\(환\)/g, '');
-        return cleanPetName === cleanSharedName;
-      })
-    : null;
+  const sharedPet =
+    isShareMode && sharedPetName
+      ? petData.find(pet => {
+          const cleanPetName = pet.name.replace(/\s+/g, '').replace(/\(환\)/g, '');
+          const cleanSharedName = decodeURIComponent(sharedPetName)
+            .replace(/\s+/g, '')
+            .replace(/\(환\)/g, '');
+          return cleanPetName === cleanSharedName;
+        })
+      : null;
 
   const isTyping = searchTerm !== debouncedSearchTerm;
 
@@ -294,17 +293,21 @@ const BoardingPage: React.FC = () => {
   // 공유 모드일 때
   if (isShareMode && sharedPet) {
     const shareUrl = `${window.location.origin}/stoneage-light/boarding?pet=${encodeURIComponent(sharedPet.name)}&share=true`;
-    
+
     // 탑승 데이터에서 해당 페트가 탑승 가능한 캐릭터들 찾기
-    const ridingCharacters = Object.entries(boardingData).filter(([, pets]) =>
-      pets.some(pet => {
-        const cleanBoardingName = pet.replace('⭐️', '').trim()
-          .replace(/\s+/g, '').replace(/\(환\)/g, '');
-        const cleanPetName = sharedPet.name
-          .replace(/\s+/g, '').replace(/\(환\)/g, '');
-        return cleanBoardingName === cleanPetName;
-      })
-    ).map(([character]) => character);
+    const ridingCharacters = Object.entries(boardingData)
+      .filter(([, pets]) =>
+        pets.some(pet => {
+          const cleanBoardingName = pet
+            .replace('⭐️', '')
+            .trim()
+            .replace(/\s+/g, '')
+            .replace(/\(환\)/g, '');
+          const cleanPetName = sharedPet.name.replace(/\s+/g, '').replace(/\(환\)/g, '');
+          return cleanBoardingName === cleanPetName;
+        })
+      )
+      .map(([character]) => character);
 
     return (
       <div className="max-w-4xl mx-auto px-4 iphone16:px-3 py-8">
@@ -361,10 +364,15 @@ const BoardingPage: React.FC = () => {
                 <div className="grid grid-cols-2 gap-4 text-sm">
                   <div>
                     <span className="text-text-secondary">등급:</span>
-                    <span className={`ml-2 font-medium ${
-                      sharedPet.grade === '영웅' ? 'text-yellow-400' :
-                      sharedPet.grade === '희귀' ? 'text-purple-400' : 'text-text-primary'
-                    }`}>
+                    <span
+                      className={`ml-2 font-medium ${
+                        sharedPet.grade === '영웅'
+                          ? 'text-yellow-400'
+                          : sharedPet.grade === '희귀'
+                            ? 'text-purple-400'
+                            : 'text-text-primary'
+                      }`}
+                    >
                       {sharedPet.grade}
                     </span>
                   </div>
@@ -372,16 +380,24 @@ const BoardingPage: React.FC = () => {
                     <span className="text-text-secondary">속성:</span>
                     <div className="ml-2 flex flex-wrap gap-1">
                       {sharedPet.elementStats.earth > 0 && (
-                        <span className="text-green-400 text-sm">지 {sharedPet.elementStats.earth}</span>
+                        <span className="text-green-400 text-sm">
+                          지 {sharedPet.elementStats.earth}
+                        </span>
                       )}
                       {sharedPet.elementStats.water > 0 && (
-                        <span className="text-blue-400 text-sm">수 {sharedPet.elementStats.water}</span>
+                        <span className="text-blue-400 text-sm">
+                          수 {sharedPet.elementStats.water}
+                        </span>
                       )}
                       {sharedPet.elementStats.fire > 0 && (
-                        <span className="text-red-400 text-sm">화 {sharedPet.elementStats.fire}</span>
+                        <span className="text-red-400 text-sm">
+                          화 {sharedPet.elementStats.fire}
+                        </span>
                       )}
                       {sharedPet.elementStats.wind > 0 && (
-                        <span className="text-amber-400 text-sm">풍 {sharedPet.elementStats.wind}</span>
+                        <span className="text-amber-400 text-sm">
+                          풍 {sharedPet.elementStats.wind}
+                        </span>
                       )}
                     </div>
                   </div>
@@ -391,9 +407,11 @@ const BoardingPage: React.FC = () => {
                   </div>
                   <div>
                     <span className="text-text-secondary">탑승:</span>
-                    <span className={`ml-2 font-medium ${
-                      sharedPet.rideable === '탑승가능' ? 'text-green-400' : 'text-red-400'
-                    }`}>
+                    <span
+                      className={`ml-2 font-medium ${
+                        sharedPet.rideable === '탑승가능' ? 'text-green-400' : 'text-red-400'
+                      }`}
+                    >
                       {sharedPet.rideable}
                     </span>
                   </div>
@@ -426,10 +444,30 @@ const BoardingPage: React.FC = () => {
                 <h3 className="text-lg font-semibold text-text-primary mb-3">능력치</h3>
                 <div className="space-y-2">
                   {[
-                    { label: '공격력', value: sharedPet.baseStats.attack, growth: sharedPet.growthStats.attack, color: 'text-red-400' },
-                    { label: '방어력', value: sharedPet.baseStats.defense, growth: sharedPet.growthStats.defense, color: 'text-blue-400' },
-                    { label: '순발력', value: sharedPet.baseStats.agility, growth: sharedPet.growthStats.agility, color: 'text-yellow-400' },
-                    { label: '내구력', value: sharedPet.baseStats.vitality, growth: sharedPet.growthStats.vitality, color: 'text-green-400' }
+                    {
+                      label: '공격력',
+                      value: sharedPet.baseStats.attack,
+                      growth: sharedPet.growthStats.attack,
+                      color: 'text-red-400',
+                    },
+                    {
+                      label: '방어력',
+                      value: sharedPet.baseStats.defense,
+                      growth: sharedPet.growthStats.defense,
+                      color: 'text-blue-400',
+                    },
+                    {
+                      label: '순발력',
+                      value: sharedPet.baseStats.agility,
+                      growth: sharedPet.growthStats.agility,
+                      color: 'text-yellow-400',
+                    },
+                    {
+                      label: '내구력',
+                      value: sharedPet.baseStats.vitality,
+                      growth: sharedPet.growthStats.vitality,
+                      color: 'text-green-400',
+                    },
                   ].map(({ label, value, growth, color }) => (
                     <div key={label} className="flex justify-between items-center">
                       <span className="text-text-secondary text-sm">{label}:</span>
@@ -513,7 +551,7 @@ const BoardingPage: React.FC = () => {
         <SearchBar
           searchTerm={searchTerm}
           onSearchChange={handleSearchChange}
-          placeholder="Search characters and pets..."
+          placeholder="초성으로 검색하세요. 예)ㅅㄱㅁㄴ, ㅎㅂㅌ"
         />
         <div className="mb-6 px-2 iphone16:mb-4">
           <span className="text-text-secondary text-sm font-medium">Searching...</span>
@@ -563,7 +601,7 @@ const BoardingPage: React.FC = () => {
         <SearchBar
           searchTerm={searchTerm}
           onSearchChange={handleSearchChange}
-          placeholder="Search characters and pets..."
+          placeholder="초성으로 검색하세요. 예)ㅅㄱㅁㄴ, ㅎㅂㅌ"
         />
         <div className="mb-6 px-2 iphone16:mb-4">
           <span className="text-text-secondary text-sm font-medium">0 characters found</span>
@@ -604,7 +642,7 @@ const BoardingPage: React.FC = () => {
         <SearchBar
           searchTerm={searchTerm}
           onSearchChange={handleSearchChange}
-          placeholder="Search characters and pets..."
+          placeholder="초성으로 검색하세요. 예)ㅅㄱㅁㄴ, ㅎㅂㅌ"
         />
       </div>
 
@@ -683,9 +721,9 @@ const BoardingPage: React.FC = () => {
       </div>
 
       {/* 페트 상세 모달 */}
-      <PetDetailModal 
-        isOpen={isPetModalOpen} 
-        onClose={handlePetModalClose} 
+      <PetDetailModal
+        isOpen={isPetModalOpen}
+        onClose={handlePetModalClose}
         pet={selectedPet}
         ridingImageUrl={selectedPetRidingImage}
       />
@@ -696,18 +734,33 @@ const BoardingPage: React.FC = () => {
           <div className="bg-red-500/90 backdrop-blur-sm text-white px-4 py-3 rounded-lg shadow-lg border border-red-400/50">
             <div className="flex items-center justify-between gap-3">
               <div className="flex items-center gap-2">
-                <svg className="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01M12 3C16.97 3 21 7.03 21 12s-4.03 9-9 9-9-4.03-9-9 4.03-9 9-9z" />
+                <svg
+                  className="w-5 h-5 flex-shrink-0"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M12 9v2m0 4h.01M12 3C16.97 3 21 7.03 21 12s-4.03 9-9 9-9-4.03-9-9 4.03-9 9-9z"
+                  />
                 </svg>
                 <span className="font-medium">{alertMessage}</span>
               </div>
-              <button 
+              <button
                 onClick={handleAlertClose}
                 className="text-white/80 hover:text-white transition-colors p-1"
                 aria-label="닫기"
               >
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M6 18L18 6M6 6l12 12"
+                  />
                 </svg>
               </button>
             </div>

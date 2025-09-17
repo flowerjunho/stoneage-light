@@ -2,6 +2,8 @@ import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import itemsData from '../data/pooyas_items.json';
 import rightItemsData from '../data/right_items.json';
+import { searchMultipleFields } from '../utils/searchUtils';
+import SearchBar from '../components/SearchBar';
 
 interface Item {
   id: string;
@@ -19,7 +21,7 @@ const ItemsPage: React.FC = () => {
   const [displayedItems, setDisplayedItems] = useState<Item[]>([]);
   const [activeTab, setActiveTab] = useState<'pooyas' | 'hwansoo'>(() => {
     const tabFromUrl = searchParams.get('tab');
-    return (tabFromUrl === 'pooyas' || tabFromUrl === 'hwansoo') ? tabFromUrl : 'hwansoo';
+    return tabFromUrl === 'pooyas' || tabFromUrl === 'hwansoo' ? tabFromUrl : 'hwansoo';
   });
   const [searchTerm, setSearchTerm] = useState('');
   const [isLoading, setIsLoading] = useState(true);
@@ -30,14 +32,17 @@ const ItemsPage: React.FC = () => {
   const ITEMS_PER_PAGE = 50;
 
   // 탭 변경 핸들러
-  const handleTabChange = useCallback((tab: 'pooyas' | 'hwansoo') => {
-    setActiveTab(tab);
-    setSearchParams(prev => {
-      const newParams = new URLSearchParams(prev);
-      newParams.set('tab', tab);
-      return newParams;
-    });
-  }, [setSearchParams]);
+  const handleTabChange = useCallback(
+    (tab: 'pooyas' | 'hwansoo') => {
+      setActiveTab(tab);
+      setSearchParams(prev => {
+        const newParams = new URLSearchParams(prev);
+        newParams.set('tab', tab);
+        return newParams;
+      });
+    },
+    [setSearchParams]
+  );
 
   useEffect(() => {
     // 데이터 로딩 시뮬레이션
@@ -50,38 +55,42 @@ const ItemsPage: React.FC = () => {
     loadItems();
   }, []);
 
-  // 탭에 따른 아이템 필터링
+  // 탭에 따른 아이템 필터링 (초성 검색 포함)
   const filteredItems = useMemo(() => {
     if (activeTab === 'pooyas') {
+      // 검색어가 없으면 모든 아이템 반환
+      if (!searchTerm.trim()) {
+        return allItems;
+      }
       return allItems.filter(item =>
-        item.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        (item.options && item.options.toLowerCase().includes(searchTerm.toLowerCase())) ||
-        (item.materials && item.materials.toLowerCase().includes(searchTerm.toLowerCase()))
+        searchMultipleFields(searchTerm, [item.name, item.options, item.materials])
       );
     }
     if (activeTab === 'hwansoo') {
+      // 검색어가 없으면 모든 아이템 반환
+      if (!searchTerm.trim()) {
+        return rightItemsData;
+      }
       return rightItemsData.filter(item =>
-        item.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        (item.description && item.description.toLowerCase().includes(searchTerm.toLowerCase()))
+        searchMultipleFields(searchTerm, [item.name, item.description, item.materials])
       );
     }
     return [];
   }, [allItems, activeTab, searchTerm]);
-  
 
   // 무한스크롤을 위한 더 많은 아이템 로드
   const loadMoreItems = useCallback(async () => {
     if (isLoadingMore || !hasMore) return;
-    
+
     setIsLoadingMore(true);
-    
+
     // 로딩 시뮬레이션
     await new Promise(resolve => setTimeout(resolve, 500));
-    
+
     const startIndex = currentPage * ITEMS_PER_PAGE;
     const endIndex = startIndex + ITEMS_PER_PAGE;
     const newItems = filteredItems.slice(startIndex, endIndex);
-    
+
     if (newItems.length > 0) {
       setDisplayedItems(prev => {
         const existingIds = new Set(prev.map(item => item.id));
@@ -89,7 +98,7 @@ const ItemsPage: React.FC = () => {
         return [...prev, ...uniqueNewItems];
       });
       setCurrentPage(prev => prev + 1);
-      
+
       // 더 이상 로드할 아이템이 없는지 확인
       if (endIndex >= filteredItems.length) {
         setHasMore(false);
@@ -97,7 +106,7 @@ const ItemsPage: React.FC = () => {
     } else {
       setHasMore(false);
     }
-    
+
     setIsLoadingMore(false);
   }, [currentPage, filteredItems, isLoadingMore, hasMore]);
 
@@ -106,7 +115,7 @@ const ItemsPage: React.FC = () => {
     setDisplayedItems([]);
     setCurrentPage(0);
     setHasMore(true);
-    
+
     if (filteredItems.length > 0) {
       const initialItems = filteredItems.slice(0, ITEMS_PER_PAGE);
       setDisplayedItems(initialItems);
@@ -125,7 +134,7 @@ const ItemsPage: React.FC = () => {
       const scrollHeight = document.documentElement.scrollHeight;
       const scrollTop = document.documentElement.scrollTop;
       const clientHeight = document.documentElement.clientHeight;
-      
+
       // 페이지 하단에서 300px 위에 도달하면 로드
       if (scrollTop + clientHeight >= scrollHeight - 300) {
         loadMoreItems();
@@ -133,7 +142,7 @@ const ItemsPage: React.FC = () => {
     };
 
     window.addEventListener('scroll', handleScroll, { passive: true });
-    
+
     return () => {
       window.removeEventListener('scroll', handleScroll);
     };
@@ -151,7 +160,7 @@ const ItemsPage: React.FC = () => {
       <div className="mb-8">
         <div className="text-center text-text-secondary space-y-4">
           <p className="text-base md:text-lg">스톤에이지 아이템 도감</p>
-          
+
           {/* 정보성 알림 박스 */}
           <div className="bg-bg-secondary border-l-4 border-accent rounded-r-lg p-4 space-y-2">
             <div className="flex items-center gap-3">
@@ -212,39 +221,22 @@ const ItemsPage: React.FC = () => {
       </div>
 
       {/* 검색 바 */}
-      <div className="mb-6">
-        <div className="relative max-w-md mx-auto">
-          <input
-            type="text"
-            value={searchTerm}
-            onChange={e => setSearchTerm(e.target.value)}
-            placeholder="아이템 검색..."
-            className="w-full px-4 py-3 pl-12 bg-bg-secondary border border-border rounded-xl text-text-primary focus:outline-none focus:ring-2 focus:ring-accent focus:border-accent transition-all duration-200"
-          />
-          <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-            <svg
-              className="h-5 w-5 text-text-secondary"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
-              />
-            </svg>
-          </div>
-        </div>
-      </div>
+      <SearchBar
+        searchTerm={searchTerm}
+        onSearchChange={setSearchTerm}
+        placeholder="초성으로 검색하세요. 예. ㅇㅎㅎㅌ"
+      />
 
       {/* 통계 정보 */}
       <div className="mb-6">
         <div className="bg-bg-secondary rounded-xl p-4 border border-border">
           <div className="flex items-center justify-between text-sm">
             <span className="text-text-secondary">
-              {activeTab === 'hwansoo' ? '환수강림' : '뿌야'} - 총 <span className="font-bold text-accent">{activeTab === 'pooyas' ? allItems.length : rightItemsData.length}</span>개의 아이템
+              {activeTab === 'hwansoo' ? '환수강림' : '뿌야'} - 총{' '}
+              <span className="font-bold text-accent">
+                {activeTab === 'pooyas' ? allItems.length : rightItemsData.length}
+              </span>
+              개의 아이템
             </span>
             {searchTerm && (
               <span className="text-text-secondary">
@@ -254,7 +246,8 @@ const ItemsPage: React.FC = () => {
           </div>
           {displayedItems.length > 0 && (
             <div className="mt-2 text-xs text-text-muted">
-              현재 표시: <span className="font-bold text-accent">{displayedItems.length}</span>개 / 전체 {filteredItems.length}개
+              현재 표시: <span className="font-bold text-accent">{displayedItems.length}</span>개 /
+              전체 {filteredItems.length}개
             </div>
           )}
         </div>
@@ -287,7 +280,7 @@ const ItemsPage: React.FC = () => {
                             src={item.imageUrl}
                             alt={item.name}
                             className="w-full h-full object-contain"
-                            onError={(e) => {
+                            onError={e => {
                               const target = e.target as HTMLImageElement;
                               target.style.display = 'none';
                               target.nextElementSibling!.classList.remove('hidden');
@@ -308,9 +301,7 @@ const ItemsPage: React.FC = () => {
                       {/* 옵션 정보 (재료/획득) - 뿌야 탭 */}
                       {activeTab === 'pooyas' && item.options && (
                         <div className="mb-1">
-                          <p className="text-sm text-text-secondary line-clamp-2">
-                            {item.options}
-                          </p>
+                          <p className="text-sm text-text-secondary line-clamp-2">{item.options}</p>
                         </div>
                       )}
 
@@ -326,20 +317,20 @@ const ItemsPage: React.FC = () => {
                       {/* 획득 정보 - 환수강림 탭만 */}
                       {activeTab === 'hwansoo' && item.materials && (
                         <div className="mb-1">
-                          <p className="text-xs text-text-muted">
-                            획득: {item.materials}
-                          </p>
+                          <p className="text-xs text-text-muted">획득: {item.materials}</p>
                         </div>
                       )}
 
                       {/* 전체 텍스트 정보 - 뿌야 탭만 */}
-                      {activeTab === 'pooyas' && item.materials && item.materials !== item.options && (
-                        <div className="mb-1">
-                          <p className="text-xs text-text-muted whitespace-pre-wrap break-words">
-                            {item.materials}
-                          </p>
-                        </div>
-                      )}
+                      {activeTab === 'pooyas' &&
+                        item.materials &&
+                        item.materials !== item.options && (
+                          <div className="mb-1">
+                            <p className="text-xs text-text-muted whitespace-pre-wrap break-words">
+                              {item.materials}
+                            </p>
+                          </div>
+                        )}
                     </div>
 
                     {/* 링크 아이콘 - 뿌야 탭만 */}
@@ -396,7 +387,6 @@ const ItemsPage: React.FC = () => {
           )}
         </div>
       )}
-
     </div>
   );
 };

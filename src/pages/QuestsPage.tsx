@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import questWithContentData from '../data/questWithContent.json';
+import { matchesConsonantSearch } from '../utils/searchUtils';
+import SearchBar from '../components/SearchBar';
 
 interface QuestWithContent {
   idx: number;
@@ -27,9 +29,12 @@ const QuestsPage: React.FC = () => {
   }, []);
 
   // 검색 필터링
-  const filteredQuests = quests.filter(quest =>
-    quest.title.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  const filteredQuests = quests.filter(quest => {
+    if (!searchTerm.trim()) {
+      return true;
+    }
+    return matchesConsonantSearch(searchTerm, quest.title);
+  });
 
   const handleQuestClick = (questIdx: number) => {
     navigate(`/quests/${questIdx}`);
@@ -41,7 +46,7 @@ const QuestsPage: React.FC = () => {
       <div className="mb-8">
         <div className="text-center text-text-secondary space-y-4">
           <p className="text-base md:text-lg">스톤에이지 환수강림 라이트 퀘스트 정보</p>
-          
+
           {/* 정보성 알림 박스 */}
           <div className="bg-bg-secondary border-l-4 border-accent rounded-r-lg p-4 space-y-2">
             <div className="flex items-start gap-3">
@@ -65,32 +70,11 @@ const QuestsPage: React.FC = () => {
       </div>
 
       {/* 검색 바 */}
-      <div className="mb-6">
-        <div className="relative max-w-md mx-auto">
-          <input
-            type="text"
-            value={searchTerm}
-            onChange={e => setSearchTerm(e.target.value)}
-            placeholder="퀘스트 검색..."
-            className="w-full px-4 py-3 pl-12 bg-bg-secondary border border-border rounded-xl text-text-primary focus:outline-none focus:ring-2 focus:ring-accent focus:border-accent transition-all duration-200"
-          />
-          <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-            <svg
-              className="h-5 w-5 text-text-secondary"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
-              />
-            </svg>
-          </div>
-        </div>
-      </div>
+      <SearchBar
+        searchTerm={searchTerm}
+        onSearchChange={setSearchTerm}
+        placeholder="퀘스트를 초성으로 검색하세요."
+      />
 
       {/* 통계 정보 */}
       <div className="mb-6">
@@ -117,7 +101,7 @@ const QuestsPage: React.FC = () => {
       ) : (
         <div className="space-y-3">
           {filteredQuests.length > 0 ? (
-            filteredQuests.map((quest) => {
+            filteredQuests.map(quest => {
               return (
                 <div
                   key={quest.idx}
