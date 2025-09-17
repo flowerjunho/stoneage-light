@@ -1,14 +1,16 @@
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import itemsData from '../data/pooyas_items.json';
+import rightItemsData from '../data/right_items.json';
 
 interface Item {
   id: string;
   name: string;
   imageUrl: string;
-  options: string;
-  materials: string;
-  link: string;
+  options?: string;
+  materials?: string;
+  description?: string;
+  link?: string;
 }
 
 const ItemsPage: React.FC = () => {
@@ -53,11 +55,16 @@ const ItemsPage: React.FC = () => {
     if (activeTab === 'pooyas') {
       return allItems.filter(item =>
         item.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        item.options.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        item.materials.toLowerCase().includes(searchTerm.toLowerCase())
+        (item.options && item.options.toLowerCase().includes(searchTerm.toLowerCase())) ||
+        (item.materials && item.materials.toLowerCase().includes(searchTerm.toLowerCase()))
       );
     }
-    // 환수강림 탭은 아직 데이터가 없음
+    if (activeTab === 'hwansoo') {
+      return rightItemsData.filter(item =>
+        item.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        (item.description && item.description.toLowerCase().includes(searchTerm.toLowerCase()))
+      );
+    }
     return [];
   }, [allItems, activeTab, searchTerm]);
   
@@ -111,7 +118,7 @@ const ItemsPage: React.FC = () => {
   // 스크롤 이벤트로 무한스크롤 구현
   useEffect(() => {
     const handleScroll = () => {
-      if (activeTab !== 'pooyas' || !hasMore || isLoadingMore || displayedItems.length === 0) {
+      if (!hasMore || isLoadingMore || displayedItems.length === 0) {
         return;
       }
 
@@ -147,7 +154,7 @@ const ItemsPage: React.FC = () => {
           
           {/* 정보성 알림 박스 */}
           <div className="bg-bg-secondary border-l-4 border-accent rounded-r-lg p-4 space-y-2">
-            <div className="flex items-start gap-3">
+            <div className="flex items-center gap-3">
               <div className="text-accent text-lg flex-shrink-0">📦</div>
               <div className="text-left">
                 <p className="text-sm font-medium text-text-primary">
@@ -155,14 +162,25 @@ const ItemsPage: React.FC = () => {
                 </p>
               </div>
             </div>
-            <div className="flex items-start gap-3">
-              <div className="text-yellow-500 text-lg flex-shrink-0">💡</div>
-              <div className="text-left">
-                <p className="text-sm text-text-secondary">
-                  아이템을 클릭하면 원본 페이지로 이동합니다.
-                </p>
+            {activeTab === 'pooyas' ? (
+              <div className="flex items-center gap-3">
+                <div className="text-yellow-500 text-lg flex-shrink-0">💡</div>
+                <div className="text-left">
+                  <p className="text-sm text-text-secondary">
+                    아이템을 클릭하면 원본 페이지로 이동합니다.
+                  </p>
+                </div>
               </div>
-            </div>
+            ) : (
+              <div className="flex items-center gap-3">
+                <div className="text-blue-500 text-lg flex-shrink-0">🔄</div>
+                <div className="text-left">
+                  <p className="text-sm text-text-secondary">
+                    아이템은 지속적으로 추가될 예정입니다.
+                  </p>
+                </div>
+              </div>
+            )}
           </div>
         </div>
       </div>
@@ -226,7 +244,7 @@ const ItemsPage: React.FC = () => {
         <div className="bg-bg-secondary rounded-xl p-4 border border-border">
           <div className="flex items-center justify-between text-sm">
             <span className="text-text-secondary">
-              {activeTab === 'hwansoo' ? '환수강림' : '뿌야'} - 총 <span className="font-bold text-accent">{activeTab === 'pooyas' ? allItems.length : 0}</span>개의 아이템
+              {activeTab === 'hwansoo' ? '환수강림' : '뿌야'} - 총 <span className="font-bold text-accent">{activeTab === 'pooyas' ? allItems.length : rightItemsData.length}</span>개의 아이템
             </span>
             {searchTerm && (
               <span className="text-text-secondary">
@@ -234,7 +252,7 @@ const ItemsPage: React.FC = () => {
               </span>
             )}
           </div>
-          {activeTab === 'pooyas' && displayedItems.length > 0 && (
+          {displayedItems.length > 0 && (
             <div className="mt-2 text-xs text-text-muted">
               현재 표시: <span className="font-bold text-accent">{displayedItems.length}</span>개 / 전체 {filteredItems.length}개
             </div>
@@ -248,16 +266,6 @@ const ItemsPage: React.FC = () => {
           <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-accent"></div>
           <p className="mt-4 text-text-secondary">아이템 목록을 불러오는 중...</p>
         </div>
-      ) : activeTab === 'hwansoo' ? (
-        <div className="text-center py-12">
-          <div className="text-6xl mb-4">🔨</div>
-          <h3 className="text-xl font-bold text-text-primary mb-2">
-            환수강림 아이템 준비 중
-          </h3>
-          <p className="text-text-secondary">
-            환수강림 아이템 데이터를 준비 중입니다
-          </p>
-        </div>
       ) : (
         <div className="space-y-3">
           {displayedItems.length > 0 ? (
@@ -265,8 +273,10 @@ const ItemsPage: React.FC = () => {
               return (
                 <div
                   key={item.id ? `item-${item.id}` : `index-${index}`}
-                  onClick={() => handleItemClick(item)}
-                  className="group bg-bg-secondary hover:bg-bg-tertiary border border-border hover:border-accent rounded-xl p-4 cursor-pointer transition-all duration-200 hover:shadow-lg hover:scale-[1.01] active:scale-[0.99]"
+                  onClick={activeTab === 'pooyas' ? () => handleItemClick(item) : undefined}
+                  className={`group bg-bg-secondary hover:bg-bg-tertiary border border-border hover:border-accent rounded-xl p-4 transition-all duration-200 hover:shadow-lg hover:scale-[1.01] active:scale-[0.99] ${
+                    activeTab === 'pooyas' ? 'cursor-pointer' : ''
+                  }`}
                 >
                   <div className="flex items-center gap-4">
                     {/* 아이템 이미지 */}
@@ -295,8 +305,8 @@ const ItemsPage: React.FC = () => {
                         {item.name || '아이템'}
                       </h3>
 
-                      {/* 옵션 정보 (재료/획득) */}
-                      {item.options && (
+                      {/* 옵션 정보 (재료/획득) - 뿌야 탭 */}
+                      {activeTab === 'pooyas' && item.options && (
                         <div className="mb-1">
                           <p className="text-sm text-text-secondary line-clamp-2">
                             {item.options}
@@ -304,8 +314,17 @@ const ItemsPage: React.FC = () => {
                         </div>
                       )}
 
-                      {/* 전체 텍스트 정보 */}
-                      {item.materials && item.materials !== item.options && (
+                      {/* 설명 정보 - 환수강림 탭 */}
+                      {activeTab === 'hwansoo' && item.description && (
+                        <div className="mb-1">
+                          <p className="text-sm text-text-secondary line-clamp-2">
+                            {item.description}
+                          </p>
+                        </div>
+                      )}
+
+                      {/* 전체 텍스트 정보 - 뿌야 탭만 */}
+                      {activeTab === 'pooyas' && item.materials && item.materials !== item.options && (
                         <div className="mb-1">
                           <p className="text-xs text-text-muted whitespace-pre-wrap break-words">
                             {item.materials}
@@ -314,24 +333,26 @@ const ItemsPage: React.FC = () => {
                       )}
                     </div>
 
-                    {/* 링크 아이콘 */}
-                    <div className="flex-shrink-0">
-                      <div className="w-8 h-8 bg-accent/10 group-hover:bg-accent/20 rounded-full flex items-center justify-center transition-colors duration-200">
-                        <svg
-                          className="h-4 w-4 text-accent"
-                          fill="none"
-                          stroke="currentColor"
-                          viewBox="0 0 24 24"
-                        >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth={2}
-                            d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"
-                          />
-                        </svg>
+                    {/* 링크 아이콘 - 뿌야 탭만 */}
+                    {activeTab === 'pooyas' && (
+                      <div className="flex-shrink-0">
+                        <div className="w-8 h-8 bg-accent/10 group-hover:bg-accent/20 rounded-full flex items-center justify-center transition-colors duration-200">
+                          <svg
+                            className="h-4 w-4 text-accent"
+                            fill="none"
+                            stroke="currentColor"
+                            viewBox="0 0 24 24"
+                          >
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              strokeWidth={2}
+                              d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"
+                            />
+                          </svg>
+                        </div>
                       </div>
-                    </div>
+                    )}
                   </div>
                 </div>
               );
@@ -345,7 +366,7 @@ const ItemsPage: React.FC = () => {
           ) : null}
 
           {/* 로딩 상태 */}
-          {activeTab === 'pooyas' && hasMore && displayedItems.length > 0 && (
+          {hasMore && displayedItems.length > 0 && (
             <div className="text-center py-6">
               {isLoadingMore ? (
                 <div className="flex flex-col items-center gap-3">
@@ -359,7 +380,7 @@ const ItemsPage: React.FC = () => {
           )}
 
           {/* 모든 아이템 로드 완료 */}
-          {activeTab === 'pooyas' && !hasMore && displayedItems.length > 0 && (
+          {!hasMore && displayedItems.length > 0 && (
             <div className="text-center py-6">
               <p className="text-sm text-text-muted">모든 아이템을 불러왔습니다</p>
             </div>
