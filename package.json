@@ -13,6 +13,7 @@
     "scrape:pets": "node scripts/petScraper.js"
   },
   "dependencies": {
+    "firebase": "^12.2.1",
     "puppeteer": "^24.21.0",
     "react": "^19.1.1",
     "react-dom": "^19.1.1",

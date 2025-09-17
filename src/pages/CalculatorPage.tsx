@@ -17,13 +17,13 @@ import petData from '../data/petData.json';
 const CalculatorPage: React.FC = () => {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
-  
+
   // 서브탭 상태 관리
   const [activeSubTab, setActiveSubTab] = useState('rebirth');
 
   // 페트성장 계산기 상태
   const [petLevel, setPetLevel] = useState(1);
-  const [selectedPet, setSelectedPet] = useState<typeof petData.pets[0] | null>(null);
+  const [selectedPet, setSelectedPet] = useState<(typeof petData.pets)[0] | null>(null);
   const [petSearchQuery, setPetSearchQuery] = useState('');
   const [showPetDropdown, setShowPetDropdown] = useState(false);
   const [filteredPets, setFilteredPets] = useState(petData.pets);
@@ -207,7 +207,7 @@ const CalculatorPage: React.FC = () => {
   };
 
   // 페트 선택 핸들러
-  const handlePetSelect = (pet: typeof petData.pets[0]) => {
+  const handlePetSelect = (pet: (typeof petData.pets)[0]) => {
     setSelectedPet(pet);
     setPetSearchQuery(pet.name);
     setShowPetDropdown(false);
@@ -349,250 +349,252 @@ const CalculatorPage: React.FC = () => {
       {activeSubTab === 'rebirth' && (
         <div>
           {/* 헤더 */}
-      <div className="mb-8">
-        <div className="mb-6">
-          {/* 저장/불러오기 버튼 */}
-          <div className="flex justify-center gap-3 mb-4">
-            <button
-              onClick={() => setShowSaveModal(true)}
-              className="px-4 py-2 rounded-lg bg-blue-500 text-white font-semibold hover:bg-blue-600 transition-colors"
-            >
-              저장
-            </button>
-            <button
-              onClick={() => {
-                loadSavedList();
-                setShowLoadModal(true);
-              }}
-              className="px-4 py-2 rounded-lg bg-green-500 text-white font-semibold hover:bg-green-600 transition-colors"
-            >
-              불러오기
-            </button>
-          </div>
+          <div className="mb-8">
+            <div className="mb-6">
+              {/* 저장/불러오기 버튼 */}
+              <div className="flex justify-center gap-3 mb-4">
+                <button
+                  onClick={() => setShowSaveModal(true)}
+                  className="px-4 py-2 rounded-lg bg-blue-500 text-white font-semibold hover:bg-blue-600 transition-colors"
+                >
+                  저장
+                </button>
+                <button
+                  onClick={() => {
+                    loadSavedList();
+                    setShowLoadModal(true);
+                  }}
+                  className="px-4 py-2 rounded-lg bg-green-500 text-white font-semibold hover:bg-green-600 transition-colors"
+                >
+                  불러오기
+                </button>
+              </div>
 
-          {/* 현재 불러온 데이터 타이틀 표시 */}
-          {currentTitle && (
-            <div className="text-center py-2 mb-4">
-              <div className="inline-block px-4 py-2 bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 rounded-lg border border-blue-200 dark:border-blue-700">
-                <span className="font-semibold text-sm">현재 데이터: {currentTitle}</span>
+              {/* 현재 불러온 데이터 타이틀 표시 */}
+              {currentTitle && (
+                <div className="text-center py-2 mb-4">
+                  <div className="inline-block px-4 py-2 bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 rounded-lg border border-blue-200 dark:border-blue-700">
+                    <span className="font-semibold text-sm">현재 데이터: {currentTitle}</span>
+                  </div>
+                </div>
+              )}
+
+              {/* 설명 텍스트 */}
+              <div className="text-center text-text-secondary space-y-2">
+                <p className="text-base md:text-lg">
+                  💡 <span className="font-semibold">입력 가능 항목</span>: 레벨, 체력, 완력, 건강
+                </p>
+                <p className="text-sm text-orange-600 dark:text-orange-400">
+                  ⚠️{' '}
+                  <span className="font-semibold">
+                    환포 계산기는 환생 포인트 퀘스트를 모두 완료 했다고 가정하고 20개로 계산 됩니다
+                  </span>
+                </p>
               </div>
             </div>
-          )}
-
-          {/* 설명 텍스트 */}
-          <div className="text-center text-text-secondary space-y-2">
-            <p className="text-base md:text-lg">
-              💡 <span className="font-semibold">입력 가능 항목</span>: 레벨, 체력, 완력, 건강
-            </p>
-            <p className="text-sm text-orange-600 dark:text-orange-400">
-              ⚠️{' '}
-              <span className="font-semibold">
-                환포 계산기는 환생 포인트 퀘스트를 모두 완료 했다고 가정하고 20개로 계산 됩니다
-              </span>
-            </p>
           </div>
-        </div>
-      </div>
 
-      {/* 환생별 카드 레이아웃 */}
-      <div className="grid grid-cols-1 lg:grid-cols-5 gap-6 mb-8">
-        {calculatedData.map((data, index) => (
-          <RebirthCard
-            key={`rebirth-${index}`}
-            rebirthIndex={index}
-            data={data}
-            userInputs={userInputs}
-            onLevelChange={handleLevelChange}
-            onStatChange={handleStatChange}
-          />
-        ))}
-      </div>
-
-      {/* 환포적용 상세 정보 */}
-      <div className="rounded-xl shadow-lg p-6 bg-bg-secondary border border-border">
-        <h2 className="text-2xl font-bold mb-6 text-center text-text-primary">
-          📈 환포적용 상세 정보
-        </h2>
-
-        {/* 모바일 뷰 */}
-        <div className="block lg:hidden">
-          <div className="space-y-4">
-            {[
-              { key: 'con', label: '체력 환포적용' },
-              { key: 'wis', label: '완력 환포적용' },
-              { key: 'dex', label: '건강 환포적용' },
-              { key: 'agi', label: '순발 환포적용' },
-            ].map(({ key, label }) => (
-              <div key={key} className="bg-bg-tertiary rounded-lg p-3 border border-border">
-                <h4 className="font-medium text-text-primary mb-2 text-sm">{label}</h4>
-                <div className="grid grid-cols-5 gap-2 text-xs">
-                  {calculatedData.map((data, i) => (
-                    <div key={i} className="text-center">
-                      <div className="text-text-secondary mb-1">{i + 1}환</div>
-                      <div className="space-y-1">
-                        <div className="inline-block px-1.5 py-0.5 rounded text-xs font-mono font-bold bg-green-500 text-white">
-                          {data.appliedRebirth[key as keyof StatInput]}
-                        </div>
-                        <div className="inline-block px-1.5 py-0.5 rounded text-xs font-mono bg-bg-primary text-text-secondary">
-                          {data.appliedRebirthDecimal[key as keyof StatInput].toFixed(2)}
-                        </div>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
+          {/* 환생별 카드 레이아웃 */}
+          <div className="grid grid-cols-1 lg:grid-cols-5 gap-6 mb-8">
+            {calculatedData.map((data, index) => (
+              <RebirthCard
+                key={`rebirth-${index}`}
+                rebirthIndex={index}
+                data={data}
+                userInputs={userInputs}
+                onLevelChange={handleLevelChange}
+                onStatChange={handleStatChange}
+              />
             ))}
+          </div>
 
-            {/* 환포 총합 모바일 뷰 */}
-            <div className="bg-bg-secondary rounded-lg p-3 border border-border">
-              <h4 className="font-semibold text-text-primary mb-2 text-sm">환포 총합 + 보너스</h4>
-              <div className="grid grid-cols-5 gap-2 text-xs">
-                {calculatedData.map((data, i) => (
-                  <div key={i} className="text-center">
-                    <div className="text-text-secondary mb-1">{i + 1}환</div>
-                    <div className="space-y-1">
-                      <div className="inline-block px-1.5 py-1 rounded text-xs font-mono font-bold bg-blue-500 text-white">
-                        {data.appliedRebirth.con +
-                          data.appliedRebirth.wis +
-                          data.appliedRebirth.dex +
-                          data.appliedRebirth.agi +
-                          data.bonus}
-                      </div>
-                      <div className="inline-block px-1.5 py-0.5 rounded text-xs font-mono bg-gray-600 text-white">
-                        {(
-                          data.appliedRebirthDecimal.con +
-                          data.appliedRebirthDecimal.wis +
-                          data.appliedRebirthDecimal.dex +
-                          data.appliedRebirthDecimal.agi +
-                          data.bonus
-                        ).toFixed(2)}
-                      </div>
+          {/* 환포적용 상세 정보 */}
+          <div className="rounded-xl shadow-lg p-6 bg-bg-secondary border border-border">
+            <h2 className="text-2xl font-bold mb-6 text-center text-text-primary">
+              📈 환포적용 상세 정보
+            </h2>
+
+            {/* 모바일 뷰 */}
+            <div className="block lg:hidden">
+              <div className="space-y-4">
+                {[
+                  { key: 'con', label: '체력 환포적용' },
+                  { key: 'wis', label: '완력 환포적용' },
+                  { key: 'dex', label: '건강 환포적용' },
+                  { key: 'agi', label: '순발 환포적용' },
+                ].map(({ key, label }) => (
+                  <div key={key} className="bg-bg-tertiary rounded-lg p-3 border border-border">
+                    <h4 className="font-medium text-text-primary mb-2 text-sm">{label}</h4>
+                    <div className="grid grid-cols-5 gap-2 text-xs">
+                      {calculatedData.map((data, i) => (
+                        <div key={i} className="text-center">
+                          <div className="text-text-secondary mb-1">{i + 1}환</div>
+                          <div className="space-y-1">
+                            <div className="inline-block px-1.5 py-0.5 rounded text-xs font-mono font-bold bg-green-500 text-white">
+                              {data.appliedRebirth[key as keyof StatInput]}
+                            </div>
+                            <div className="inline-block px-1.5 py-0.5 rounded text-xs font-mono bg-bg-primary text-text-secondary">
+                              {data.appliedRebirthDecimal[key as keyof StatInput].toFixed(2)}
+                            </div>
+                          </div>
+                        </div>
+                      ))}
                     </div>
                   </div>
                 ))}
+
+                {/* 환포 총합 모바일 뷰 */}
+                <div className="bg-bg-secondary rounded-lg p-3 border border-border">
+                  <h4 className="font-semibold text-text-primary mb-2 text-sm">
+                    환포 총합 + 보너스
+                  </h4>
+                  <div className="grid grid-cols-5 gap-2 text-xs">
+                    {calculatedData.map((data, i) => (
+                      <div key={i} className="text-center">
+                        <div className="text-text-secondary mb-1">{i + 1}환</div>
+                        <div className="space-y-1">
+                          <div className="inline-block px-1.5 py-1 rounded text-xs font-mono font-bold bg-blue-500 text-white">
+                            {data.appliedRebirth.con +
+                              data.appliedRebirth.wis +
+                              data.appliedRebirth.dex +
+                              data.appliedRebirth.agi +
+                              data.bonus}
+                          </div>
+                          <div className="inline-block px-1.5 py-0.5 rounded text-xs font-mono bg-gray-600 text-white">
+                            {(
+                              data.appliedRebirthDecimal.con +
+                              data.appliedRebirthDecimal.wis +
+                              data.appliedRebirthDecimal.dex +
+                              data.appliedRebirthDecimal.agi +
+                              data.bonus
+                            ).toFixed(2)}
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
               </div>
+            </div>
+
+            {/* 데스크톱 뷰 */}
+            <div className="hidden lg:block overflow-x-auto">
+              <table className="w-full text-sm text-text-secondary">
+                <thead>
+                  <tr className="bg-bg-tertiary">
+                    <th className="px-4 py-3 text-left font-semibold" rowSpan={2}>
+                      스탯
+                    </th>
+                    {calculatedData.map((_, i) => (
+                      <th
+                        key={i}
+                        className="px-2 py-2 text-center font-semibold border-l border-border"
+                        colSpan={2}
+                      >
+                        {i + 1}환
+                      </th>
+                    ))}
+                  </tr>
+                  <tr className="bg-bg-tertiary border-t border-border">
+                    {calculatedData.map((_, i) => (
+                      <>
+                        <th
+                          key={`${i}-applied`}
+                          className="px-2 py-2 text-center font-semibold text-xs bg-bg-tertiary text-text-secondary"
+                        >
+                          적용
+                        </th>
+                        <th
+                          key={`${i}-actual`}
+                          className="px-2 py-2 text-center font-semibold text-xs bg-bg-tertiary text-text-secondary"
+                        >
+                          실제
+                        </th>
+                      </>
+                    ))}
+                  </tr>
+                </thead>
+                <tbody>
+                  {[
+                    { key: 'con', label: '체력 환포적용' },
+                    { key: 'wis', label: '완력 환포적용' },
+                    { key: 'dex', label: '건강 환포적용' },
+                    { key: 'agi', label: '순발 환포적용' },
+                  ].map(({ key, label }) => (
+                    <tr key={key} className="border-t border-border">
+                      <td className="px-4 py-3 font-medium">{label}</td>
+                      {calculatedData.map((data, i) => (
+                        <>
+                          <td key={`${i}-applied`} className="px-2 py-3 text-center">
+                            <span className="inline-block px-2 py-1 rounded text-xs font-mono font-bold bg-green-500 text-white">
+                              {data.appliedRebirth[key as keyof StatInput]}
+                            </span>
+                          </td>
+                          <td key={`${i}-actual`} className="px-2 py-3 text-center">
+                            <span className="inline-block px-2 py-1 rounded text-xs font-mono bg-bg-tertiary text-text-primary">
+                              {data.appliedRebirthDecimal[key as keyof StatInput].toFixed(2)}
+                            </span>
+                          </td>
+                        </>
+                      ))}
+                    </tr>
+                  ))}
+                  <tr className="border-t font-semibold border-border bg-bg-tertiary">
+                    <td className="px-4 py-3">환포 총합 + 보너스</td>
+                    {calculatedData.map((data, i) => (
+                      <>
+                        <td key={`${i}-total-applied`} className="px-2 py-3 text-center">
+                          <span className="inline-block px-3 py-2 rounded text-sm font-mono font-bold bg-blue-500 text-white shadow-lg">
+                            {data.appliedRebirth.con +
+                              data.appliedRebirth.wis +
+                              data.appliedRebirth.dex +
+                              data.appliedRebirth.agi +
+                              data.bonus}
+                          </span>
+                        </td>
+                        <td key={`${i}-total-actual`} className="px-2 py-3 text-center">
+                          <span className="inline-block px-2 py-1 rounded text-xs font-mono bg-gray-600 text-white">
+                            {(
+                              data.appliedRebirthDecimal.con +
+                              data.appliedRebirthDecimal.wis +
+                              data.appliedRebirthDecimal.dex +
+                              data.appliedRebirthDecimal.agi +
+                              data.bonus
+                            ).toFixed(2)}
+                          </span>
+                        </td>
+                      </>
+                    ))}
+                  </tr>
+                </tbody>
+              </table>
             </div>
           </div>
-        </div>
 
-        {/* 데스크톱 뷰 */}
-        <div className="hidden lg:block overflow-x-auto">
-          <table className="w-full text-sm text-text-secondary">
-            <thead>
-              <tr className="bg-bg-tertiary">
-                <th className="px-4 py-3 text-left font-semibold" rowSpan={2}>
-                  스탯
-                </th>
-                {calculatedData.map((_, i) => (
-                  <th
-                    key={i}
-                    className="px-2 py-2 text-center font-semibold border-l border-border"
-                    colSpan={2}
-                  >
-                    {i + 1}환
-                  </th>
-                ))}
-              </tr>
-              <tr className="bg-bg-tertiary border-t border-border">
-                {calculatedData.map((_, i) => (
-                  <>
-                    <th
-                      key={`${i}-applied`}
-                      className="px-2 py-2 text-center font-semibold text-xs bg-bg-tertiary text-text-secondary"
-                    >
-                      적용
-                    </th>
-                    <th
-                      key={`${i}-actual`}
-                      className="px-2 py-2 text-center font-semibold text-xs bg-bg-tertiary text-text-secondary"
-                    >
-                      실제
-                    </th>
-                  </>
-                ))}
-              </tr>
-            </thead>
-            <tbody>
-              {[
-                { key: 'con', label: '체력 환포적용' },
-                { key: 'wis', label: '완력 환포적용' },
-                { key: 'dex', label: '건강 환포적용' },
-                { key: 'agi', label: '순발 환포적용' },
-              ].map(({ key, label }) => (
-                <tr key={key} className="border-t border-border">
-                  <td className="px-4 py-3 font-medium">{label}</td>
-                  {calculatedData.map((data, i) => (
-                    <>
-                      <td key={`${i}-applied`} className="px-2 py-3 text-center">
-                        <span className="inline-block px-2 py-1 rounded text-xs font-mono font-bold bg-green-500 text-white">
-                          {data.appliedRebirth[key as keyof StatInput]}
-                        </span>
-                      </td>
-                      <td key={`${i}-actual`} className="px-2 py-3 text-center">
-                        <span className="inline-block px-2 py-1 rounded text-xs font-mono bg-bg-tertiary text-text-primary">
-                          {data.appliedRebirthDecimal[key as keyof StatInput].toFixed(2)}
-                        </span>
-                      </td>
-                    </>
-                  ))}
-                </tr>
+          {/* MAX 환포 정보 */}
+          <div className="mt-6 rounded-xl shadow-lg p-6 bg-bg-secondary border border-border">
+            <h2 className="text-2xl font-bold mb-4 text-center text-text-primary">🏆 MAX 환포</h2>
+
+            <div className="grid grid-cols-5 gap-4">
+              {[66, 98, 130, 161, 192].map((max, i) => (
+                <div key={i} className="text-center">
+                  <div className="text-sm font-medium mb-2 text-text-secondary">{i + 1}환</div>
+                  <div className="px-4 py-2 rounded-lg font-bold text-lg bg-red-500 text-white">
+                    {max}
+                  </div>
+                </div>
               ))}
-              <tr className="border-t font-semibold border-border bg-bg-tertiary">
-                <td className="px-4 py-3">환포 총합 + 보너스</td>
-                {calculatedData.map((data, i) => (
-                  <>
-                    <td key={`${i}-total-applied`} className="px-2 py-3 text-center">
-                      <span className="inline-block px-3 py-2 rounded text-sm font-mono font-bold bg-blue-500 text-white shadow-lg">
-                        {data.appliedRebirth.con +
-                          data.appliedRebirth.wis +
-                          data.appliedRebirth.dex +
-                          data.appliedRebirth.agi +
-                          data.bonus}
-                      </span>
-                    </td>
-                    <td key={`${i}-total-actual`} className="px-2 py-3 text-center">
-                      <span className="inline-block px-2 py-1 rounded text-xs font-mono bg-gray-600 text-white">
-                        {(
-                          data.appliedRebirthDecimal.con +
-                          data.appliedRebirthDecimal.wis +
-                          data.appliedRebirthDecimal.dex +
-                          data.appliedRebirthDecimal.agi +
-                          data.bonus
-                        ).toFixed(2)}
-                      </span>
-                    </td>
-                  </>
-                ))}
-              </tr>
-            </tbody>
-          </table>
-        </div>
-      </div>
-
-      {/* MAX 환포 정보 */}
-      <div className="mt-6 rounded-xl shadow-lg p-6 bg-bg-secondary border border-border">
-        <h2 className="text-2xl font-bold mb-4 text-center text-text-primary">🏆 MAX 환포</h2>
-
-        <div className="grid grid-cols-5 gap-4">
-          {[66, 98, 130, 161, 192].map((max, i) => (
-            <div key={i} className="text-center">
-              <div className="text-sm font-medium mb-2 text-text-secondary">{i + 1}환</div>
-              <div className="px-4 py-2 rounded-lg font-bold text-lg bg-red-500 text-white">
-                {max}
-              </div>
             </div>
-          ))}
-        </div>
-      </div>
+          </div>
 
-      {/* 저장 모달 */}
-      <SaveModal
-        isOpen={showSaveModal}
-        onClose={() => setShowSaveModal(false)}
-        saveTitle={saveTitle}
-        setSaveTitle={setSaveTitle}
-        onSave={handleSave}
-      />
+          {/* 저장 모달 */}
+          <SaveModal
+            isOpen={showSaveModal}
+            onClose={() => setShowSaveModal(false)}
+            saveTitle={saveTitle}
+            setSaveTitle={setSaveTitle}
+            onSave={handleSave}
+          />
 
           {/* 불러오기 모달 */}
           <LoadModal
@@ -808,7 +810,7 @@ const CalculatorPage: React.FC = () => {
                       </tr>
                       <tr className="border-t border-border bg-bg-tertiary">
                         <td className="px-4 py-3 font-bold text-text-primary">
-                          Lv.{petLevel} 능력치
+                          Lv.{petLevel} <span className="text-green-500">S급</span> 능력치
                         </td>
                         <td className="px-4 py-3 text-center">
                           <span className="inline-block px-3 py-1 rounded bg-blue-500 text-white font-bold">

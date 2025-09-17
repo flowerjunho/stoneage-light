@@ -7,6 +7,7 @@ import TabNavigation from './components/TabNavigation';
 import PetsPage from './pages/PetsPage';
 import BoardingPage from './pages/BoardingPage';
 import CalculatorPage from './pages/CalculatorPage';
+import BoardPage from './pages/BoardPage';
 
 function App() {
   return (
@@ -21,6 +22,7 @@ function App() {
             <Route path="/pets" element={<PetsPage />} />
             <Route path="/boarding" element={<BoardingPage />} />
             <Route path="/calculator" element={<CalculatorPage />} />
+            <Route path="/board" element={<BoardPage />} />
           </Routes>
         </main>
         <PageShareButton />
