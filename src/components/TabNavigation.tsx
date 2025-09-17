@@ -7,6 +7,8 @@ const TabNavigation: React.FC = () => {
   const tabs = [
     { path: '/pets', label: '페트', name: 'pets' },
     { path: '/boarding', label: '탑승', name: 'boarding' },
+    { path: '/items', label: '아이템', name: 'items' },
+    { path: '/quests', label: '퀘스트', name: 'quests' },
     { path: '/calculator', label: '계산기', name: 'calculator' },
     { path: '/board', label: '게시판', name: 'board' },
   ];
@@ -14,7 +16,7 @@ const TabNavigation: React.FC = () => {
   return (
     <div className="max-w-6xl mx-auto px-4 iphone16:px-3">
       <div className="border-b border-border-primary mb-4 iphone16:mb-3">
-        <nav className="grid grid-cols-4 gap-0">
+        <nav className="grid grid-cols-6 gap-0">
           {tabs.map(tab => {
             const isActive =
               location.pathname === tab.path ||

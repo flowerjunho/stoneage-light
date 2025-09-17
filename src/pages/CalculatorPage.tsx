@@ -497,20 +497,18 @@ const CalculatorPage: React.FC = () => {
                   </tr>
                   <tr className="bg-bg-tertiary border-t border-border">
                     {calculatedData.map((_, i) => (
-                      <>
+                      <React.Fragment key={`header-${i}`}>
                         <th
-                          key={`${i}-applied`}
                           className="px-2 py-2 text-center font-semibold text-xs bg-bg-tertiary text-text-secondary"
                         >
                           적용
                         </th>
                         <th
-                          key={`${i}-actual`}
                           className="px-2 py-2 text-center font-semibold text-xs bg-bg-tertiary text-text-secondary"
                         >
                           실제
                         </th>
-                      </>
+                      </React.Fragment>
                     ))}
                   </tr>
                 </thead>
@@ -524,26 +522,26 @@ const CalculatorPage: React.FC = () => {
                     <tr key={key} className="border-t border-border">
                       <td className="px-4 py-3 font-medium">{label}</td>
                       {calculatedData.map((data, i) => (
-                        <>
-                          <td key={`${i}-applied`} className="px-2 py-3 text-center">
+                        <React.Fragment key={`${key}-${i}`}>
+                          <td className="px-2 py-3 text-center">
                             <span className="inline-block px-2 py-1 rounded text-xs font-mono font-bold bg-green-500 text-white">
                               {data.appliedRebirth[key as keyof StatInput]}
                             </span>
                           </td>
-                          <td key={`${i}-actual`} className="px-2 py-3 text-center">
+                          <td className="px-2 py-3 text-center">
                             <span className="inline-block px-2 py-1 rounded text-xs font-mono bg-bg-tertiary text-text-primary">
                               {data.appliedRebirthDecimal[key as keyof StatInput].toFixed(2)}
                             </span>
                           </td>
-                        </>
+                        </React.Fragment>
                       ))}
                     </tr>
                   ))}
                   <tr className="border-t font-semibold border-border bg-bg-tertiary">
                     <td className="px-4 py-3">환포 총합 + 보너스</td>
                     {calculatedData.map((data, i) => (
-                      <>
-                        <td key={`${i}-total-applied`} className="px-2 py-3 text-center">
+                      <React.Fragment key={`total-${i}`}>
+                        <td className="px-2 py-3 text-center">
                           <span className="inline-block px-3 py-2 rounded text-sm font-mono font-bold bg-blue-500 text-white shadow-lg">
                             {data.appliedRebirth.con +
                               data.appliedRebirth.wis +
@@ -552,7 +550,7 @@ const CalculatorPage: React.FC = () => {
                               data.bonus}
                           </span>
                         </td>
-                        <td key={`${i}-total-actual`} className="px-2 py-3 text-center">
+                        <td className="px-2 py-3 text-center">
                           <span className="inline-block px-2 py-1 rounded text-xs font-mono bg-gray-600 text-white">
                             {(
                               data.appliedRebirthDecimal.con +
@@ -563,7 +561,7 @@ const CalculatorPage: React.FC = () => {
                             ).toFixed(2)}
                           </span>
                         </td>
-                      </>
+                      </React.Fragment>
                     ))}
                   </tr>
                 </tbody>
@@ -579,7 +577,7 @@ const CalculatorPage: React.FC = () => {
               {[66, 98, 130, 161, 192].map((max, i) => (
                 <div key={i} className="text-center">
                   <div className="text-sm font-medium mb-2 text-text-secondary">{i + 1}환</div>
-                  <div className="px-4 py-2 rounded-lg font-bold text-lg bg-red-500 text-white">
+                  <div className="px-4 py-2 rounded-lg font-bold text-lg bg-red-500 text-white flex items-center justify-center">
                     {max}
                   </div>
                 </div>
@@ -726,26 +724,148 @@ const CalculatorPage: React.FC = () => {
                 <h3 className="text-lg font-bold text-text-primary mb-4">
                   {selectedPet.name} 정보
                 </h3>
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
-                  <div>
-                    <span className="text-text-secondary">등급:</span>
-                    <span className="ml-2 text-text-primary font-medium">{selectedPet.grade}</span>
+                
+                <div className="flex flex-col md:flex-row gap-6">
+                  {/* 페트 이미지 */}
+                  <div className="flex-shrink-0">
+                    {selectedPet.imageLink ? (
+                      <div className="w-32 h-32 mx-auto md:mx-0">
+                        <img
+                          src={selectedPet.imageLink}
+                          alt={selectedPet.name}
+                          className="w-full h-full object-contain rounded-lg border border-border bg-bg-tertiary"
+                          onError={(e) => {
+                            e.currentTarget.style.display = 'none';
+                          }}
+                        />
+                      </div>
+                    ) : (
+                      <div className="w-32 h-32 mx-auto md:mx-0 flex items-center justify-center bg-bg-tertiary rounded-lg border border-border">
+                        <span className="text-4xl">🐾</span>
+                      </div>
+                    )}
                   </div>
-                  <div>
-                    <span className="text-text-secondary">획득처:</span>
-                    <span className="ml-2 text-text-primary font-medium">{selectedPet.source}</span>
-                  </div>
-                  <div>
-                    <span className="text-text-secondary">탑승:</span>
-                    <span
-                      className={`ml-2 font-medium ${selectedPet.rideable === '탑승가능' ? 'text-green-400' : 'text-red-400'}`}
-                    >
-                      {selectedPet.rideable}
-                    </span>
-                  </div>
-                  <div>
-                    <span className="text-text-secondary">총 성장률:</span>
-                    <span className="ml-2 text-accent font-bold">{selectedPet.totalGrowth}</span>
+                  
+                  {/* 페트 정보 */}
+                  <div className="flex-1">
+                    {/* 속성 정보 */}
+                    <div className="mb-4">
+                      <h4 className="text-sm font-medium text-text-primary mb-3">속성</h4>
+                      
+                      {/* 속성 아이콘 */}
+                      <div className="flex gap-1.5 flex-wrap mb-3">
+                        {selectedPet.elementStats.earth > 0 && (
+                          <span className="text-sm px-2 py-1 rounded border bg-green-500/10 border-green-500/30 text-green-400">
+                            地 {selectedPet.elementStats.earth}
+                          </span>
+                        )}
+                        {selectedPet.elementStats.water > 0 && (
+                          <span className="text-sm px-2 py-1 rounded border bg-blue-500/10 border-blue-500/30 text-blue-400">
+                            水 {selectedPet.elementStats.water}
+                          </span>
+                        )}
+                        {selectedPet.elementStats.fire > 0 && (
+                          <span className="text-sm px-2 py-1 rounded border bg-red-500/10 border-red-500/30 text-red-400">
+                            火 {selectedPet.elementStats.fire}
+                          </span>
+                        )}
+                        {selectedPet.elementStats.wind > 0 && (
+                          <span className="text-sm px-2 py-1 rounded border bg-amber-500/10 border-amber-500/30 text-amber-400">
+                            風 {selectedPet.elementStats.wind}
+                          </span>
+                        )}
+                      </div>
+
+                      {/* 속성 프로그레스 바 */}
+                      <div className="space-y-2">
+                        {selectedPet.elementStats.earth > 0 && (
+                          <div className="flex items-center gap-2">
+                            <span className="text-xs text-green-400 w-4">地</span>
+                            <div className="flex gap-0.5 flex-1">
+                              {Array.from({ length: 10 }, (_, i) => (
+                                <div
+                                  key={`earth-bar-${i}`}
+                                  className={`h-1.5 w-2 rounded-sm ${
+                                    i < selectedPet.elementStats.earth ? 'bg-green-500' : 'bg-gray-600'
+                                  }`}
+                                />
+                              ))}
+                            </div>
+                          </div>
+                        )}
+                        {selectedPet.elementStats.water > 0 && (
+                          <div className="flex items-center gap-2">
+                            <span className="text-xs text-blue-400 w-4">水</span>
+                            <div className="flex gap-0.5 flex-1">
+                              {Array.from({ length: 10 }, (_, i) => (
+                                <div
+                                  key={`water-bar-${i}`}
+                                  className={`h-1.5 w-2 rounded-sm ${
+                                    i < selectedPet.elementStats.water ? 'bg-blue-500' : 'bg-gray-600'
+                                  }`}
+                                />
+                              ))}
+                            </div>
+                          </div>
+                        )}
+                        {selectedPet.elementStats.fire > 0 && (
+                          <div className="flex items-center gap-2">
+                            <span className="text-xs text-red-400 w-4">火</span>
+                            <div className="flex gap-0.5 flex-1">
+                              {Array.from({ length: 10 }, (_, i) => (
+                                <div
+                                  key={`fire-bar-${i}`}
+                                  className={`h-1.5 w-2 rounded-sm ${
+                                    i < selectedPet.elementStats.fire ? 'bg-red-500' : 'bg-gray-600'
+                                  }`}
+                                />
+                              ))}
+                            </div>
+                          </div>
+                        )}
+                        {selectedPet.elementStats.wind > 0 && (
+                          <div className="flex items-center gap-2">
+                            <span className="text-xs text-amber-400 w-4">風</span>
+                            <div className="flex gap-0.5 flex-1">
+                              {Array.from({ length: 10 }, (_, i) => (
+                                <div
+                                  key={`wind-bar-${i}`}
+                                  className={`h-1.5 w-2 rounded-sm ${
+                                    i < selectedPet.elementStats.wind ? 'bg-amber-500' : 'bg-gray-600'
+                                  }`}
+                                />
+                              ))}
+                            </div>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+
+                    {/* 기본 정보 */}
+                    <div className="border-t border-border pt-4">
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+                        <div>
+                          <span className="text-text-secondary">등급:</span>
+                          <span className="ml-2 text-text-primary font-medium">{selectedPet.grade}</span>
+                        </div>
+                        <div>
+                          <span className="text-text-secondary">획득처:</span>
+                          <span className="ml-2 text-text-primary font-medium">{selectedPet.source}</span>
+                        </div>
+                        <div>
+                          <span className="text-text-secondary">탑승:</span>
+                          <span
+                            className={`ml-2 font-medium ${selectedPet.rideable === '탑승가능' ? 'text-green-400' : 'text-red-400'}`}
+                          >
+                            {selectedPet.rideable}
+                          </span>
+                        </div>
+                        <div>
+                          <span className="text-text-secondary">총 성장률:</span>
+                          <span className="ml-2 text-accent font-bold">{selectedPet.totalGrowth}</span>
+                        </div>
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>

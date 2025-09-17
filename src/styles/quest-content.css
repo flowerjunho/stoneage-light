@@ -1,0 +1,596 @@
+/* 퀘스트 콘텐츠 전용 스타일 */
+.quest-content {
+  font-family: 'Dotum', '돋움', Tahoma, Geneva, Arial, sans-serif !important;
+  font-size: 14px !important;
+  line-height: 1.5 !important;
+  word-break: keep-all !important;
+  overflow-wrap: break-word !important;
+  color: rgb(68 68 68) !important; /* 원본 사이트와 동일한 색상 */
+}
+
+/* view-content 기본 스타일 */
+.quest-content .view-content {
+  font-size: 14px !important;
+  line-height: 1.8 !important;
+  color: inherit !important;
+}
+
+/* 그누보드 특화 클래스들 */
+.quest-content .rd_hd {
+  margin: 0px -15px 20px !important;
+  clear: both !important;
+  color: rgb(68 68 68) !important;
+  font-family: '돋움' !important;
+  background-color: rgb(255 255 255) !important;
+}
+
+.quest-content .rd_body {
+  margin-bottom: 30px !important;
+  clear: both !important;
+  color: rgb(68 68 68) !important;
+  font-family: '돋움' !important;
+  background-color: rgb(255 255 255) !important;
+  height: auto !important;
+}
+
+.quest-content .board {
+  clear: both !important;
+  width: 100% !important;
+}
+
+.quest-content .btm_area {
+  clear: both !important;
+  border-bottom: 1px solid rgb(238 238 238) !important;
+}
+
+.quest-content .side {
+  float: right !important;
+  padding: 9px !important;
+}
+
+.quest-content .fr {
+  float: right !important;
+}
+
+.quest-content .clear {
+  clear: both !important;
+}
+
+.quest-content .blind {
+  position: absolute !important;
+  width: 1px !important;
+  height: 1px !important;
+  padding: 0 !important;
+  margin: -1px !important;
+  overflow: hidden !important;
+  clip: rect(0, 0, 0, 0) !important;
+  border: 0 !important;
+}
+
+/* 기본 텍스트 요소들 */
+.quest-content p {
+  margin-bottom: 14px !important;
+  font-size: 14px !important;
+  line-height: 16.8px !important;
+  color: rgb(68 68 68) !important;
+}
+
+.quest-content div {
+  line-height: inherit !important;
+  color: inherit !important;
+}
+
+.quest-content span {
+  color: inherit !important;
+  line-height: inherit !important;
+}
+
+/* document 클래스 스타일 */
+.quest-content .document_7863_7449,
+.quest-content .rhymix_content,
+.quest-content .xe_content {
+  font-family: inherit !important;
+  font-size: 14px !important;
+  line-height: 16.8px !important;
+}
+
+/* 제목 요소들 */
+.quest-content h1,
+.quest-content h2,
+.quest-content h3,
+.quest-content h4 {
+  color: rgb(75 85 99) !important; /* text-gray-600 */
+  font-weight: 600 !important;
+  margin: 1.5rem 0 1rem 0 !important;
+  line-height: 1.4 !important;
+}
+
+.quest-content h1 { font-size: 1.4rem !important; }
+.quest-content h2 { font-size: 1.2rem !important; }
+.quest-content h3 { font-size: 1.1rem !important; }
+.quest-content h4 { font-size: 1rem !important; }
+
+/* 이미지 스타일 */
+.quest-content img {
+  max-width: 100% !important;
+  height: auto !important;
+  border-radius: 6px !important;
+  margin: 1rem 0 !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1) !important;
+  display: block !important;
+}
+
+/* 테이블 스타일 - 원본 사이트 스타일 재현 */
+.quest-content table {
+  border-collapse: collapse !important;
+  margin: 1rem auto !important;
+  font-family: Tahoma, '돋움', Dotum, Helvetica, 'Apple SD Gothic Neo', sans-serif !important;
+  line-height: 1.5 !important;
+  font-size: 12px !important;
+}
+
+/* et_vars bd_tb 클래스 스타일 */
+.quest-content table.et_vars {
+  width: 100% !important;
+  max-width: 910px !important;
+  margin-bottom: 20px !important;
+}
+
+.quest-content td,
+.quest-content th {
+  padding: 7px 16px !important;
+  border: 1px solid rgb(221 221 221) !important;
+  text-align: left !important;
+  font-size: 12px !important;
+  line-height: 1.5 !important;
+  color: rgb(68 68 68) !important;
+}
+
+.quest-content th {
+  background: rgb(246 246 246) !important;
+  color: rgb(68 68 68) !important;
+  font-weight: normal !important;
+  min-width: 60px !important;
+}
+
+/* 배경색이 있는 행들 */
+.quest-content tr.bg0 td {
+  background: rgb(255 255 255) !important;
+}
+
+.quest-content tr.bg1 td {
+  background: rgb(246 246 246) !important;
+}
+
+/* 체크포인트 테이블 특수 스타일 */
+.quest-content table[bgcolor="#FFFFFF"] {
+  background: rgb(255 255 255) !important;
+  border: 1px solid rgb(0 0 0) !important;
+  width: 100% !important;
+  max-width: 640px !important;
+  margin: 1rem auto !important;
+}
+
+.quest-content table[bgcolor="#FFFFFF"] td {
+  padding: 4px 8px !important;
+  border: 1px solid rgb(0 0 0) !important;
+  font-size: 10pt !important;
+  line-height: 1.2 !important;
+}
+
+.quest-content td[bgcolor="#86BEDF"] {
+  background: rgb(134 190 223) !important;
+  color: rgb(0 0 0) !important;
+  font-weight: bold !important;
+  text-align: center !important;
+}
+
+/* 리스트 스타일 */
+.quest-content ul,
+.quest-content ol {
+  margin: 1rem 0 !important;
+  padding-left: 1.2rem !important;
+  color: rgb(107 114 128) !important; /* text-gray-500 */
+}
+
+.quest-content li {
+  margin: 0.4rem 0 !important;
+  line-height: 1.6 !important;
+  font-size: 14px !important;
+}
+
+/* 강조 텍스트 */
+.quest-content strong,
+.quest-content b {
+  font-weight: bold !important;
+  color: inherit !important;
+}
+
+.quest-content em,
+.quest-content i {
+  font-style: italic !important;
+  color: inherit !important;
+}
+
+/* 섹션 제목 스타일 */
+.quest-content div[style*="font-size:24px"] {
+  font-size: 24px !important;
+  line-height: 19px !important;
+  margin: 1.5rem 0 1rem 0 !important;
+}
+
+/* 중앙 정렬 스타일 */
+.quest-content center,
+.quest-content p[align="center"],
+.quest-content div[align="center"] {
+  text-align: center !important;
+}
+
+/* 배경 이미지 스타일 */
+.quest-content td[style*="background-image"] {
+  background-size: cover !important;
+  background-repeat: no-repeat !important;
+}
+
+/* 컬러 스타일 재현 */
+.quest-content span[style*="color:rgb(255,0,0)"],
+.quest-content span[style*="color: rgb(255,0,0)"] {
+  color: rgb(255 0 0) !important;
+}
+
+.quest-content span[style*="color:rgb(0,0,255)"],
+.quest-content span[style*="color: rgb(0,0,255)"] {
+  color: rgb(0 0 255) !important;
+}
+
+.quest-content span[style*="color:rgb(168,0,255)"],
+.quest-content span[style*="color: rgb(168,0,255)"] {
+  color: rgb(168 0 255) !important;
+}
+
+.quest-content span[style*="color:rgb(0,0,0)"],
+.quest-content span[style*="color: rgb(0,0,0)"] {
+  color: rgb(0 0 0) !important;
+}
+
+.quest-content span[style*="color:rgb(51,51,51)"],
+.quest-content span[style*="color: rgb(51,51,51)"] {
+  color: rgb(51 51 51) !important;
+}
+
+/* 다크 테마에서 어두운 텍스트 색상 밝게 변경 */
+html.dark .quest-content span[style*="color:rgb(0,0,0)"],
+html.dark .quest-content span[style*="color: rgb(0,0,0)"] {
+  color: #ffffff !important; /* --text-primary */
+}
+
+html.dark .quest-content span[style*="color:rgb(51,51,51)"],
+html.dark .quest-content span[style*="color: rgb(51,51,51)"] {
+  color: #b0b0b0 !important; /* --text-secondary */
+}
+
+html.dark .quest-content span[style*="color:rgb(68,68,68)"],
+html.dark .quest-content span[style*="color: rgb(68,68,68)"] {
+  color: #b0b0b0 !important; /* --text-secondary */
+}
+
+/* 링크 스타일 */
+.quest-content a {
+  color: rgb(59 130 246) !important; /* text-blue-500 */
+  text-decoration: underline !important;
+  word-break: break-all !important;
+}
+
+.quest-content a:hover {
+  color: rgb(75 85 99) !important; /* text-gray-600 */
+  text-decoration: none !important;
+}
+
+/* 인라인 스타일 override - 빨간색 */
+.quest-content [style*="color: rgb(255, 0, 0)"],
+.quest-content [style*="color:rgb(255,0,0)"] {
+  color: rgb(239 68 68) !important; /* text-red-500 */
+}
+
+/* 인라인 스타일 override - 파란색 */
+.quest-content [style*="color: rgb(0, 0, 255)"],
+.quest-content [style*="color:rgb(0,0,255)"] {
+  color: rgb(59 130 246) !important; /* text-blue-500 */
+}
+
+/* 인라인 스타일 override - 초록색 */
+.quest-content [style*="color: rgb(0, 128, 0)"],
+.quest-content [style*="color:rgb(0,128,0)"] {
+  color: rgb(34 197 94) !important; /* text-green-500 */
+}
+
+/* 인라인 스타일 override - 굵기 */
+.quest-content [style*="font-weight: bold"],
+.quest-content [style*="font-weight:bold"] {
+  font-weight: 600 !important;
+  color: rgb(75 85 99) !important; /* text-gray-600 */
+}
+
+/* 인라인 스타일 override - 정렬 */
+.quest-content [style*="text-align: center"],
+.quest-content [style*="text-align:center"] {
+  text-align: center !important;
+}
+
+/* 폰트 크기 */
+.quest-content small {
+  font-size: 12px !important;
+}
+
+.quest-content big {
+  font-size: 16px !important;
+}
+
+/* 모바일 최적화 */
+@media (max-width: 768px) {
+  .quest-content {
+    font-size: 13px !important;
+    line-height: 1.5 !important;
+  }
+  
+  .quest-content .view-content {
+    font-size: 13px !important;
+    line-height: 15.6px !important;
+  }
+  
+  .quest-content p {
+    font-size: 13px !important;
+    margin-bottom: 12px !important;
+    line-height: 15.6px !important;
+  }
+  
+  .quest-content h1 { font-size: 1.3rem !important; }
+  .quest-content h2 { font-size: 1.2rem !important; }
+  .quest-content h3 { font-size: 1.1rem !important; }
+  .quest-content h4 { font-size: 1rem !important; }
+  
+  .quest-content table {
+    font-size: 11px !important;
+    margin: 0.8rem auto !important;
+    overflow-x: auto !important;
+    display: block !important;
+    white-space: nowrap !important;
+  }
+  
+  .quest-content table.et_vars {
+    max-width: 100% !important;
+    width: 100% !important;
+  }
+  
+  .quest-content table[bgcolor="#FFFFFF"] {
+    max-width: 100% !important;
+    width: 100% !important;
+  }
+  
+  .quest-content td,
+  .quest-content th {
+    padding: 5px 6px !important;
+    font-size: 11px !important;
+  }
+  
+  .quest-content img {
+    margin: 0.8rem auto !important;
+    border-radius: 4px !important;
+    max-width: 100% !important;
+    height: auto !important;
+    display: block !important;
+  }
+  
+  .quest-content ul,
+  .quest-content ol {
+    padding-left: 1rem !important;
+    margin-left: 0.5em !important;
+  }
+  
+  .quest-content li {
+    font-size: 13px !important;
+    margin: 0.3rem 0 !important;
+  }
+  
+  .quest-content center {
+    text-align: center !important;
+  }
+}
+
+/* 아이폰16 최적화 */
+@media (max-width: 430px) {
+  .quest-content {
+    font-size: 13px !important;
+  }
+  
+  .quest-content .view-content {
+    font-size: 13px !important;
+  }
+  
+  .quest-content p {
+    font-size: 13px !important;
+    margin: 0.5rem 0 !important;
+  }
+  
+  .quest-content table {
+    font-size: 11px !important;
+    overflow-x: auto !important;
+    display: block !important;
+    white-space: nowrap !important;
+  }
+  
+  .quest-content td,
+  .quest-content th {
+    padding: 5px 6px !important;
+    font-size: 11px !important;
+  }
+  
+  .quest-content li {
+    font-size: 13px !important;
+  }
+}
+
+/* 다크 테마 지원 */
+html.dark .quest-content {
+  color: #ffffff !important; /* --text-primary */
+}
+
+html.dark .quest-content p {
+  color: #b0b0b0 !important; /* --text-secondary */
+}
+
+html.dark .quest-content .rd_hd,
+html.dark .quest-content .rd_body {
+  background-color: #1a1a1a !important; /* --bg-secondary */
+  color: #b0b0b0 !important; /* --text-secondary */
+}
+
+html.dark .quest-content h1,
+html.dark .quest-content h2,
+html.dark .quest-content h3,
+html.dark .quest-content h4 {
+  color: #ffffff !important; /* --text-primary */
+}
+
+html.dark .quest-content table {
+  background: #1a1a1a !important; /* --bg-secondary */
+}
+
+html.dark .quest-content td,
+html.dark .quest-content th {
+  border: 1px solid #333333 !important; /* --border */
+  color: #b0b0b0 !important; /* --text-secondary */
+}
+
+html.dark .quest-content tr.bg0 td {
+  background: #1a1a1a !important; /* --bg-secondary */
+}
+
+html.dark .quest-content tr.bg1 td {
+  background: #2a2a2a !important; /* --bg-tertiary */
+}
+
+html.dark .quest-content th {
+  background: #2a2a2a !important; /* --bg-tertiary */
+}
+
+html.dark .quest-content td[bgcolor="#86BEDF"] {
+  background: #3b82f6 !important; /* --accent */
+  color: #ffffff !important; /* --text-primary */
+}
+
+html.dark .quest-content table[bgcolor="#FFFFFF"] {
+  background: #1a1a1a !important; /* --bg-secondary */
+  border: 1px solid #333333 !important; /* --border */
+}
+
+html.dark .quest-content .btm_area {
+  border-bottom: 1px solid #333333 !important; /* --border */
+}
+
+html.dark .quest-content ul,
+html.dark .quest-content ol {
+  color: #b0b0b0 !important; /* --text-secondary */
+}
+
+html.dark .quest-content a {
+  color: #3b82f6 !important; /* --accent */
+}
+
+html.dark .quest-content a:hover {
+  color: #2563eb !important; /* --accent-hover */
+}
+
+html.dark .quest-content strong,
+html.dark .quest-content b {
+  color: #ffffff !important; /* --text-primary */
+}
+
+html.dark .quest-content em,
+html.dark .quest-content i {
+  color: #b0b0b0 !important; /* --text-secondary */
+}
+
+/* 다크모드에서 원본 색상 유지되어야 하는 요소들 */
+html.dark .quest-content span[style*="color:rgb(255,0,0)"],
+html.dark .quest-content span[style*="color: rgb(255,0,0)"] {
+  color: rgb(248 113 113) !important; /* red-400 */
+}
+
+html.dark .quest-content span[style*="color:rgb(0,0,255)"],
+html.dark .quest-content span[style*="color: rgb(0,0,255)"] {
+  color: rgb(96 165 250) !important; /* blue-400 */
+}
+
+html.dark .quest-content span[style*="color:rgb(168,0,255)"],
+html.dark .quest-content span[style*="color: rgb(168,0,255)"] {
+  color: rgb(196 181 253) !important; /* violet-300 */
+}
+
+/* 다크모드에서 배경색 자동 변환 */
+html.dark .quest-content div[style*="background-color:rgb(255,255,255)"],
+html.dark .quest-content div[style*="background-color: rgb(255,255,255)"],
+html.dark .quest-content div[style*="background-color:#ffffff"],
+html.dark .quest-content div[style*="background-color: #ffffff"],
+html.dark .quest-content div[style*="background-color:#FFFFFF"],
+html.dark .quest-content div[style*="background-color: #FFFFFF"],
+html.dark .quest-content div[style*="background-color:white"],
+html.dark .quest-content div[style*="background-color: white"] {
+  background-color: #1a1a1a !important; /* --bg-secondary */
+}
+
+html.dark .quest-content span[style*="background-color:rgb(255,255,255)"],
+html.dark .quest-content span[style*="background-color: rgb(255,255,255)"],
+html.dark .quest-content span[style*="background-color:#ffffff"],
+html.dark .quest-content span[style*="background-color: #ffffff"],
+html.dark .quest-content span[style*="background-color:#FFFFFF"],
+html.dark .quest-content span[style*="background-color: #FFFFFF"],
+html.dark .quest-content span[style*="background-color:white"],
+html.dark .quest-content span[style*="background-color: white"] {
+  background-color: #1a1a1a !important; /* --bg-secondary */
+}
+
+html.dark .quest-content p[style*="background-color:rgb(255,255,255)"],
+html.dark .quest-content p[style*="background-color: rgb(255,255,255)"],
+html.dark .quest-content p[style*="background-color:#ffffff"],
+html.dark .quest-content p[style*="background-color: #ffffff"],
+html.dark .quest-content p[style*="background-color:#FFFFFF"],
+html.dark .quest-content p[style*="background-color: #FFFFFF"],
+html.dark .quest-content p[style*="background-color:white"],
+html.dark .quest-content p[style*="background-color: white"] {
+  background-color: #1a1a1a !important; /* --bg-secondary */
+}
+
+/* 라이트모드에서 배경색 원본 유지 */
+html:not(.dark) .quest-content div[style*="background-color:rgb(255,255,255)"],
+html:not(.dark) .quest-content div[style*="background-color: rgb(255,255,255)"],
+html:not(.dark) .quest-content div[style*="background-color:#ffffff"],
+html:not(.dark) .quest-content div[style*="background-color: #ffffff"],
+html:not(.dark) .quest-content div[style*="background-color:#FFFFFF"],
+html:not(.dark) .quest-content div[style*="background-color: #FFFFFF"],
+html:not(.dark) .quest-content div[style*="background-color:white"],
+html:not(.dark) .quest-content div[style*="background-color: white"] {
+  background-color: rgb(255 255 255) !important;
+}
+
+html:not(.dark) .quest-content span[style*="background-color:rgb(255,255,255)"],
+html:not(.dark) .quest-content span[style*="background-color: rgb(255,255,255)"],
+html:not(.dark) .quest-content span[style*="background-color:#ffffff"],
+html:not(.dark) .quest-content span[style*="background-color: #ffffff"],
+html:not(.dark) .quest-content span[style*="background-color:#FFFFFF"],
+html:not(.dark) .quest-content span[style*="background-color: #FFFFFF"],
+html:not(.dark) .quest-content span[style*="background-color:white"],
+html:not(.dark) .quest-content span[style*="background-color: white"] {
+  background-color: rgb(255 255 255) !important;
+}
+
+html:not(.dark) .quest-content p[style*="background-color:rgb(255,255,255)"],
+html:not(.dark) .quest-content p[style*="background-color: rgb(255,255,255)"],
+html:not(.dark) .quest-content p[style*="background-color:#ffffff"],
+html:not(.dark) .quest-content p[style*="background-color: #ffffff"],
+html:not(.dark) .quest-content p[style*="background-color:#FFFFFF"],
+html:not(.dark) .quest-content p[style*="background-color: #FFFFFF"],
+html:not(.dark) .quest-content p[style*="background-color:white"],
+html:not(.dark) .quest-content p[style*="background-color: white"] {
+  background-color: rgb(255 255 255) !important;
+}

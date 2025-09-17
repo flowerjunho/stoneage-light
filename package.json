@@ -10,7 +10,10 @@
     "preview": "vite preview",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
-    "scrape:pets": "node scripts/petScraper.js"
+    "scrape:pets": "node scripts/petScraper.js",
+    "scrape:quests": "node scripts/questScraper.js",
+    "scrape:quests:content": "node scripts/questScraperWithContent.js",
+    "scrape:items": "node scrape_items.js"
   },
   "dependencies": {
     "firebase": "^12.2.1",

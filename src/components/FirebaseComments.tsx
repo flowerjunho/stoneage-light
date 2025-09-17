@@ -1,15 +1,15 @@
 import React, { useState, useEffect } from 'react';
-import { 
-  collection, 
-  addDoc, 
-  query, 
-  orderBy, 
-  onSnapshot, 
-  updateDoc, 
-  doc, 
+import {
+  collection,
+  addDoc,
+  query,
+  orderBy,
+  onSnapshot,
+  updateDoc,
+  doc,
   increment,
   deleteDoc,
-  Timestamp 
+  Timestamp,
 } from 'firebase/firestore';
 import { db, type Comment } from '../lib/firebase';
 
@@ -52,31 +52,32 @@ const FirebaseComments: React.FC = () => {
   // 실시간 댓글 불러오기
   useEffect(() => {
     setIsLoading(true);
-    
-    const q = query(
-      collection(db, 'comments'),
-      orderBy('timestamp', 'desc')
-    );
 
-    const unsubscribe = onSnapshot(q, (snapshot) => {
-      const commentsData: Comment[] = [];
-      snapshot.forEach((doc) => {
-        const data = doc.data();
-        commentsData.push({
-          id: doc.id,
-          nickname: data.nickname,
-          content: data.content,
-          timestamp: data.timestamp?.toDate() || new Date(),
-          likes: data.likes || 0,
-          passwordHash: data.passwordHash || ''
+    const q = query(collection(db, 'comments'), orderBy('timestamp', 'desc'));
+
+    const unsubscribe = onSnapshot(
+      q,
+      snapshot => {
+        const commentsData: Comment[] = [];
+        snapshot.forEach(doc => {
+          const data = doc.data();
+          commentsData.push({
+            id: doc.id,
+            nickname: data.nickname,
+            content: data.content,
+            timestamp: data.timestamp?.toDate() || new Date(),
+            likes: data.likes || 0,
+            passwordHash: data.passwordHash || '',
+          });
         });
-      });
-      setComments(commentsData);
-      setIsLoading(false);
-    }, (error) => {
-      console.error('댓글 불러오기 실패:', error);
-      setIsLoading(false);
-    });
+        setComments(commentsData);
+        setIsLoading(false);
+      },
+      error => {
+        console.error('댓글 불러오기 실패:', error);
+        setIsLoading(false);
+      }
+    );
 
     return () => unsubscribe();
   }, []);
@@ -84,7 +85,7 @@ const FirebaseComments: React.FC = () => {
   // 댓글 작성
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (!content.trim()) {
       alert('댓글 내용을 입력해주세요.');
       return;
@@ -100,13 +101,13 @@ const FirebaseComments: React.FC = () => {
     try {
       const finalNickname = nickname.trim() || title.trim() || '익명';
       const passwordHash = password.trim() ? await simpleHash(password.trim()) : '';
-      
+
       await addDoc(collection(db, 'comments'), {
         nickname: finalNickname,
         content: content.trim(),
         timestamp: Timestamp.now(),
         likes: 0,
-        passwordHash: passwordHash
+        passwordHash: passwordHash,
       });
 
       // 타이틀과 닉네임 저장
@@ -133,7 +134,7 @@ const FirebaseComments: React.FC = () => {
     try {
       const commentRef = doc(db, 'comments', commentId);
       await updateDoc(commentRef, {
-        likes: increment(1)
+        likes: increment(1),
       });
     } catch (error) {
       console.error('좋아요 실패:', error);
@@ -141,7 +142,11 @@ const FirebaseComments: React.FC = () => {
   };
 
   // 댓글 삭제 기능 (관리자 또는 비밀번호 확인)
-  const handleDelete = async (commentId: string, commentAuthor: string, commentPasswordHash?: string) => {
+  const handleDelete = async (
+    commentId: string,
+    commentAuthor: string,
+    commentPasswordHash?: string
+  ) => {
     // 관리자인 경우 바로 삭제
     if (isAdmin) {
       const confirmDelete = window.confirm(
@@ -166,13 +171,15 @@ const FirebaseComments: React.FC = () => {
       return;
     }
 
-    const inputPassword = prompt(`댓글을 삭제하려면 비밀번호를 입력하세요.\n\n작성자: ${commentAuthor}`);
-    
+    const inputPassword = prompt(
+      `댓글을 삭제하려면 비밀번호를 입력하세요.\n\n작성자: ${commentAuthor}`
+    );
+
     if (!inputPassword) return;
 
     try {
       const inputPasswordHash = await simpleHash(inputPassword);
-      
+
       if (inputPasswordHash !== commentPasswordHash) {
         alert('비밀번호가 일치하지 않습니다.');
         return;
@@ -201,7 +208,7 @@ const FirebaseComments: React.FC = () => {
     if (minutes < 60) return `${minutes}분 전`;
     if (hours < 24) return `${hours}시간 전`;
     if (days < 7) return `${days}일 전`;
-    
+
     return date.toLocaleDateString('ko-KR');
   };
 
@@ -222,7 +229,7 @@ const FirebaseComments: React.FC = () => {
             <input
               type="text"
               value={title}
-              onChange={(e) => setTitle(e.target.value)}
+              onChange={e => setTitle(e.target.value)}
               placeholder="제목 (선택사항)"
               maxLength={20}
               className={`w-full px-3 py-2 bg-bg-secondary border rounded-lg text-text-primary focus:outline-none focus:ring-2 focus:ring-accent ${
@@ -239,7 +246,7 @@ const FirebaseComments: React.FC = () => {
             <input
               type="text"
               value={nickname}
-              onChange={(e) => setNickname(e.target.value)}
+              onChange={e => setNickname(e.target.value)}
               placeholder="닉네임 (선택사항)"
               maxLength={20}
               className="w-full px-3 py-2 bg-bg-secondary border border-border rounded-lg text-text-primary focus:outline-none focus:ring-2 focus:ring-accent"
@@ -248,23 +255,21 @@ const FirebaseComments: React.FC = () => {
           <div>
             <textarea
               value={content}
-              onChange={(e) => setContent(e.target.value)}
-              placeholder="댓글을 입력하세요... (필수, 최대 500자)"
+              onChange={e => setContent(e.target.value)}
+              placeholder="내용을 입력해주세요. (필수, 최대 500자)"
               maxLength={500}
               rows={3}
               className="w-full px-3 py-2 bg-bg-secondary border border-border rounded-lg text-text-primary focus:outline-none focus:ring-2 focus:ring-accent resize-none"
               required
             />
-            <div className="text-right text-xs text-text-secondary mt-1">
-              {content.length}/500
-            </div>
+            <div className="text-right text-xs text-text-secondary mt-1">{content.length}/500</div>
           </div>
           <div>
             <input
               type="password"
               value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              placeholder="삭제 비밀번호 (선택사항 - 설정하면 나중에 댓글 삭제 가능)"
+              onChange={e => setPassword(e.target.value)}
+              placeholder="삭제 비밀번호 (선택사항)"
               maxLength={50}
               className="w-full px-3 py-2 bg-bg-secondary border border-border rounded-lg text-text-primary focus:outline-none focus:ring-2 focus:ring-accent"
             />
@@ -284,10 +289,8 @@ const FirebaseComments: React.FC = () => {
 
       {/* 댓글 목록 */}
       <div className="space-y-4">
-        <h3 className="text-lg font-semibold text-text-primary">
-          💭 댓글 {comments.length}개
-        </h3>
-        
+        <h3 className="text-lg font-semibold text-text-primary">💭 댓글 {comments.length}개</h3>
+
         {isLoading ? (
           <div className="text-center py-8">
             <div className="text-text-secondary">댓글을 불러오는 중...</div>
@@ -297,16 +300,11 @@ const FirebaseComments: React.FC = () => {
             <div className="text-text-secondary">첫 번째 댓글을 작성해보세요!</div>
           </div>
         ) : (
-          comments.map((comment) => (
-            <div
-              key={comment.id}
-              className="bg-bg-tertiary rounded-lg p-4 border border-border"
-            >
+          comments.map(comment => (
+            <div key={comment.id} className="bg-bg-tertiary rounded-lg p-4 border border-border">
               <div className="flex justify-between items-start mb-2">
                 <div className="flex items-center space-x-2">
-                  <span className="font-medium text-text-primary">
-                    {comment.nickname}
-                  </span>
+                  <span className="font-medium text-text-primary">{comment.nickname}</span>
                   <span className="text-xs text-text-secondary">
                     {formatTime(comment.timestamp)}
                   </span>
@@ -320,21 +318,27 @@ const FirebaseComments: React.FC = () => {
                     <span>{comment.likes}</span>
                   </button>
                   <button
-                    onClick={() => comment.id && handleDelete(comment.id, comment.nickname, comment.passwordHash)}
+                    onClick={() =>
+                      comment.id && handleDelete(comment.id, comment.nickname, comment.passwordHash)
+                    }
                     className={`text-xs transition-colors px-2 py-1 rounded ${
-                      isAdmin 
-                        ? 'text-yellow-600 hover:text-yellow-800 hover:bg-yellow-100 dark:hover:bg-yellow-900/20' 
+                      isAdmin
+                        ? 'text-yellow-600 hover:text-yellow-800 hover:bg-yellow-100 dark:hover:bg-yellow-900/20'
                         : 'text-red-500 hover:text-red-700 hover:bg-red-100 dark:hover:bg-red-900/20'
                     }`}
-                    title={isAdmin ? "관리자 권한으로 삭제" : comment.passwordHash ? "비밀번호로 삭제" : "비밀번호가 설정되지 않음"}
+                    title={
+                      isAdmin
+                        ? '관리자 권한으로 삭제'
+                        : comment.passwordHash
+                          ? '비밀번호로 삭제'
+                          : '비밀번호가 설정되지 않음'
+                    }
                   >
                     {isAdmin ? '👑🗑️' : '🗑️'}
                   </button>
                 </div>
               </div>
-              <div className="text-text-primary whitespace-pre-wrap">
-                {comment.content}
-              </div>
+              <div className="text-text-primary whitespace-pre-wrap">{comment.content}</div>
             </div>
           ))
         )}
