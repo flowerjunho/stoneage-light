@@ -3,294 +3,343 @@
     "id": "1",
     "name": "암흑 헤티아의 창",
     "description": "공 +62~67 순 -5~10 내구력 +5 크리 +7%",
-    "imageUrl": "https://www.hwansoo.top/data/editor/2507/cbeeb1a85da6628eb68730a2660d74fd_1753951286_3674.png"
+    "imageUrl": "https://www.hwansoo.top/data/editor/2507/cbeeb1a85da6628eb68730a2660d74fd_1753951286_3674.png",
+    "materials": "특수 레이드 암흑 헤티아(절망의 열쇠 사용)"
   },
   {
     "id": "2",
     "name": "암흑 초신성 갑옷",
     "description": "공 +3~5 방 +50~60 민 -5~10 내구력 +5~10 윤택의정령 LV5",
-    "imageUrl": "https://www.hwansoo.top/data/editor/2507/236465b2e1f78f0aec1cd307a093b8ec_1753951350_9832.png"
+    "imageUrl": "https://www.hwansoo.top/data/editor/2507/236465b2e1f78f0aec1cd307a093b8ec_1753951350_9832.png",
+    "materials": "특수 레이드 암흑 헤티아(절망의 열쇠 사용)"
   },
   {
     "id": "3",
     "name": "암흑 헤티아 머리장식",
     "description": "공 +5~8 방 +27~33 순 -0~3 내구력 +10~15 무지개정령",
-    "imageUrl": "https://www.hwansoo.top/data/editor/2507/7e35685f711d4dbf97951a52b440dfd1_1753951476_0221.png"
+    "imageUrl": "https://www.hwansoo.top/data/editor/2507/7e35685f711d4dbf97951a52b440dfd1_1753951476_0221.png",
+    "materials": "특수 레이드 암흑 헤티아(절망의 열쇠 사용)"
   },
   {
     "id": "4",
     "name": "전령의 낡은 열쇠",
     "description": "전령의 낡은 열쇠. 알수 없는 기운이 맴돈다. (흑갈푸스) (일일레이드 확률 보상)",
-    "imageUrl": "https://hwansoo.net/data/editor/2405/3641f3a2fdc1bc16e760c04025dd971c_1714544996_9775.png"
+    "imageUrl": "https://hwansoo.net/data/editor/2405/3641f3a2fdc1bc16e760c04025dd971c_1714544996_9775.png",
+    "materials": "일일 레이드"
   },
   {
     "id": "5",
     "name": "전리품(흑갈푸스)",
     "description": "더블 클릭시 확률로 보상 획득",
-    "imageUrl": "https://hwansoo.net/data/editor/2405/3641f3a2fdc1bc16e760c04025dd971c_1714544380_0453.png"
+    "imageUrl": "https://hwansoo.net/data/editor/2405/3641f3a2fdc1bc16e760c04025dd971c_1714544380_0453.png",
+    "materials": "전령의 낡은 열쇠 소지 후 흑갈푸스"
   },
   {
     "id": "6",
     "name": "전령의 룬",
     "description": "전령의 기운이 담긴 룬. 알 수 없는 힘이 깃들어있다.",
-    "imageUrl": "https://hwansoo.net/data/editor/2405/7b1465adfd5650d5c5f13c5e9d7c7487_1714544904_1325.png"
+    "imageUrl": "https://hwansoo.net/data/editor/2405/7b1465adfd5650d5c5f13c5e9d7c7487_1714544904_1325.png",
+    "materials": "전령의 낡은 열쇠 소지 후 흑갈푸스"
   },
   {
     "id": "7",
     "name": "흑갈푸스 계열 레어 알",
     "description": "흑갈푸스/갈푸스/델푸스/울푸스/베르푸스 중 하나 획득",
-    "imageUrl": "https://hwansoo.net/data/editor/2405/3641f3a2fdc1bc16e760c04025dd971c_1714544424_0584.png"
+    "imageUrl": "https://hwansoo.net/data/editor/2405/3641f3a2fdc1bc16e760c04025dd971c_1714544424_0584.png",
+    "materials": "전령의 낡은 열쇠 소지 후 흑갈푸스"
   },
   {
     "id": "8",
     "name": "캐릭터 흰색 염색약",
     "description": "현재 캐릭터를 흰색 캐릭터로 변경",
-    "imageUrl": "https://hwansoo.net/data/editor/2405/3641f3a2fdc1bc16e760c04025dd971c_1714544337_3044.png"
+    "imageUrl": "https://hwansoo.net/data/editor/2405/3641f3a2fdc1bc16e760c04025dd971c_1714544337_3044.png",
+    "materials": "전령의 낡은 열쇠 소지 후 흑갈푸스"
   },
   {
     "id": "9",
     "name": "캐릭터 검정 염색약",
     "description": "현재 캐릭터를 검정 캐릭터로 변경",
-    "imageUrl": "https://hwansoo.net/data/editor/2405/3641f3a2fdc1bc16e760c04025dd971c_1714544337_567.png"
+    "imageUrl": "https://hwansoo.net/data/editor/2405/3641f3a2fdc1bc16e760c04025dd971c_1714544337_567.png",
+    "materials": "전령의 낡은 열쇠 소지 후 흑갈푸스"
   },
   {
     "id": "10",
     "name": "정령의 귀걸이 (화)",
     "description": "공+1~3 체+3~6 회피+5 화속성+2",
-    "imageUrl": "https://hwansoo.net/data/editor/2403/bdd441839d0bd36945052b939e0f74ca_1711280708_5871.png"
+    "imageUrl": "https://hwansoo.net/data/editor/2403/bdd441839d0bd36945052b939e0f74ca_1711280708_5871.png",
+    "materials": "전령의 낡은 열쇠 소지 후 흑갈푸스"
   },
   {
     "id": "11",
     "name": "정령의 귀걸이 (지)",
     "description": "방+1~3 체+3~6 회피+5 지속성+2",
-    "imageUrl": "https://hwansoo.net/data/editor/2403/f02515978e0a7bd79e8474a4bf402dd1_1711281762_1473.png"
+    "imageUrl": "https://hwansoo.net/data/editor/2403/f02515978e0a7bd79e8474a4bf402dd1_1711281762_1473.png",
+    "materials": "전령의 낡은 열쇠 소지 후 흑갈푸스"
   },
   {
     "id": "12",
     "name": "정령의 귀걸이 (풍)",
     "description": "순+1~3 체+3~6 회피+5 풍속성+2",
-    "imageUrl": "https://hwansoo.net/data/editor/2403/58212bff1fbaebca3964b2ed697b198a_1711281881_7175.png"
+    "imageUrl": "https://hwansoo.net/data/editor/2403/58212bff1fbaebca3964b2ed697b198a_1711281881_7175.png",
+    "materials": "전령의 낡은 열쇠 소지 후 흑갈푸스"
   },
   {
     "id": "13",
     "name": "정령의 귀걸이 (수)",
     "description": "체+10~20 회피+5 수속성+2",
-    "imageUrl": "https://hwansoo.net/data/editor/2405/7b1465adfd5650d5c5f13c5e9d7c7487_1714544276_3998.png"
+    "imageUrl": "https://hwansoo.net/data/editor/2405/7b1465adfd5650d5c5f13c5e9d7c7487_1714544276_3998.png",
+    "materials": "전령의 낡은 열쇠 소지 후 흑갈푸스"
   },
   {
     "id": "14",
     "name": "해방의 귀걸이[지]",
     "description": "공+3 방+3 순+3 체+8 회피+5 [지+2]",
-    "imageUrl": "https://hwansoo.net/data/editor/2405/3641f3a2fdc1bc16e760c04025dd971c_1714545562_6669.png"
+    "imageUrl": "https://hwansoo.net/data/editor/2405/3641f3a2fdc1bc16e760c04025dd971c_1714545562_6669.png",
+    "materials": "전령의 룬 + 정령의 귀걸이 4개로 제작"
   },
   {
     "id": "15",
     "name": "해방의 귀걸이[수]",
     "description": "공+3 방+3 순+3 체+8 회피+5 [수+2]",
-    "imageUrl": "https://hwansoo.net/data/editor/2405/3641f3a2fdc1bc16e760c04025dd971c_1714545562_36.png"
+    "imageUrl": "https://hwansoo.net/data/editor/2405/3641f3a2fdc1bc16e760c04025dd971c_1714545562_36.png",
+    "materials": "전령의 룬 + 정령의 귀걸이 4개로 제작"
   },
   {
     "id": "16",
     "name": "해방의 귀걸이[화]",
     "description": "공+3 방+3 순+3 체+8 회피+5 [화+2]",
-    "imageUrl": "https://hwansoo.net/data/editor/2405/3641f3a2fdc1bc16e760c04025dd971c_1714545563_2448.png"
+    "imageUrl": "https://hwansoo.net/data/editor/2405/3641f3a2fdc1bc16e760c04025dd971c_1714545563_2448.png",
+    "materials": "전령의 룬 + 정령의 귀걸이 4개로 제작"
   },
   {
     "id": "17",
     "name": "해방의 귀걸이[풍]",
     "description": "공+3 방+3 순+3 체+8 회피+5 [풍+2]",
-    "imageUrl": "https://hwansoo.net/data/editor/2405/3641f3a2fdc1bc16e760c04025dd971c_1714545562_9555.png"
+    "imageUrl": "https://hwansoo.net/data/editor/2405/3641f3a2fdc1bc16e760c04025dd971c_1714545562_9555.png",
+    "materials": "전령의 룬 + 정령의 귀걸이 4개로 제작"
   },
   {
     "id": "18",
     "name": "기계 심장",
-    "description": "메켄테르를 무찌르고 얻은 기계심장. 기계장갑에 사용하는 것일지도?",
-    "imageUrl": "https://hwansoo.net/data/editor/2404/1d41b97f26dfb6ddaffaaa6aa4d29a0c_1712486704_9338.png"
+    "description": "메켄타르를 무찌르고 얻은 기계심장. 기계장갑에 사용하는 것일지도?",
+    "imageUrl": "https://hwansoo.net/data/editor/2404/1d41b97f26dfb6ddaffaaa6aa4d29a0c_1712486704_9338.png",
+    "materials": "주간레이드 메켄타르 은신처"
   },
   {
     "id": "19",
     "name": "마모된 기계 장갑",
     "description": "체력 +3~5 공격력 +1~3",
-    "imageUrl": "https://hwansoo.net/data/editor/2404/ce45817c31e2d003b30f70b631ee50c8_1712486693_2289.png"
+    "imageUrl": "https://hwansoo.net/data/editor/2404/ce45817c31e2d003b30f70b631ee50c8_1712486693_2289.png",
+    "materials": "주간레이드 메켄타르 은신처"
   },
   {
     "id": "20",
     "name": "가열된 기계 심장",
     "description": "이 기계심장을 열면 무슨일이 벌어질것 같다. (50%확률로 개방)",
-    "imageUrl": "https://hwansoo.net/data/editor/2404/1d41b97f26dfb6ddaffaaa6aa4d29a0c_1712486704_9338.png"
+    "imageUrl": "https://hwansoo.net/data/editor/2404/1d41b97f26dfb6ddaffaaa6aa4d29a0c_1712486704_9338.png",
+    "materials": "기계 심장 + 마모된 기계 장갑으로 제작"
   },
   {
     "id": "21",
     "name": "반짝이는 기계 장갑",
     "description": "체력 +5~8 공 +3~6 방 +1~2 순 +1~2",
-    "imageUrl": "https://hwansoo.net/data/editor/2404/05748a2e53212acc2d01927deec3f025_1712486819_4748.png"
+    "imageUrl": "https://hwansoo.net/data/editor/2404/05748a2e53212acc2d01927deec3f025_1712486819_4748.png",
+    "materials": "가열된 기계 심장 사용"
   },
   {
     "id": "22",
     "name": "인어 비늘 벨트",
     "description": "공+1~3 방+1~3 순+1~3 내+3~5 명중+2",
-    "imageUrl": "https://hwansoo.net/data/editor/2406/56bf74734db22aaa9f76b751ff6a6543_1717662559_3319.png"
+    "imageUrl": "https://hwansoo.net/data/editor/2406/56bf74734db22aaa9f76b751ff6a6543_1717662559_3319.png",
+    "materials": "주간레이드 어인의 은신처"
   },
   {
     "id": "23",
     "name": "인어 비늘",
     "description": "인어 비늘 벨트를 더욱 강하게 만들어 줄 수 있는 비늘",
-    "imageUrl": "https://hwansoo.net/data/editor/2406/56bf74734db22aaa9f76b751ff6a6543_1717662558_8575.png"
+    "imageUrl": "https://hwansoo.net/data/editor/2406/56bf74734db22aaa9f76b751ff6a6543_1717662558_8575.png",
+    "materials": "주간레이드 어인의 은신처"
   },
   {
     "id": "24",
     "name": "인어 계열 레어 알",
     "description": "타스무미/오시모미/주니무미/에르모미 중 1개 획득",
-    "imageUrl": "https://hwansoo.net/data/editor/2406/fe5c14e6c85c86bae43c9a5df567d100_1717662578_7225.png"
+    "imageUrl": "https://hwansoo.net/data/editor/2406/fe5c14e6c85c86bae43c9a5df567d100_1717662578_7225.png",
+    "materials": "주간레이드 어인의 은신처"
   },
   {
     "id": "25",
     "name": "빛나는 인어 비늘",
     "description": "이 응축된 힘의 결정을 열어볼까? (50% 확률로 개방)",
-    "imageUrl": "https://hwansoo.net/data/editor/2406/56bf74734db22aaa9f76b751ff6a6543_1717662558_8575.png"
+    "imageUrl": "https://hwansoo.net/data/editor/2406/56bf74734db22aaa9f76b751ff6a6543_1717662558_8575.png",
+    "materials": "인어 비늘 벨트 + 인어 비늘로 제작"
   },
   {
     "id": "26",
     "name": "빛나는 인어 벨트",
     "description": "공+3~5 방+3~5 순+3~5 내+5~10 명중+4",
-    "imageUrl": "https://hwansoo.net/data/editor/2406/56bf74734db22aaa9f76b751ff6a6543_1717662559_0953.png"
+    "imageUrl": "https://hwansoo.net/data/editor/2406/56bf74734db22aaa9f76b751ff6a6543_1717662559_0953.png",
+    "materials": "빛나는 인어 비늘 사용"
   },
   {
     "id": "27",
     "name": "초신성 갑옷",
     "description": "공 +1~5 방 +45~55 민 -7~15 내 +1~10 윤택의 정령 LV5",
-    "imageUrl": "https://hwansoo.net/data/editor/2409/a9a6dad482b5e7ad9dcbbecabf87a920_1726147476_9424.png"
+    "imageUrl": "https://hwansoo.net/data/editor/2409/a9a6dad482b5e7ad9dcbbecabf87a920_1726147476_9424.png",
+    "materials": "얼음성 주간레이드 언딘(질투의 방)"
   },
   {
     "id": "28",
     "name": "삼위일체(개)의 구슬",
     "description": "삼위일체(개)를 만들 수 있는 구슬",
-    "imageUrl": "https://hwansoo.net/data/editor/2409/a9a6dad482b5e7ad9dcbbecabf87a920_1726147476_719.png"
+    "imageUrl": "https://hwansoo.net/data/editor/2409/a9a6dad482b5e7ad9dcbbecabf87a920_1726147476_719.png",
+    "materials": "얼음성 주간레이드 언딘(질투의 방)"
   },
   {
     "id": "29",
     "name": "헤티아의 창",
     "description": "공 +60~65 민 -10~15 내 +1~5 크리 +7%",
-    "imageUrl": "https://hwansoo.net/data/editor/2409/a9a6dad482b5e7ad9dcbbecabf87a920_1726147476_608.png"
+    "imageUrl": "https://hwansoo.net/data/editor/2409/a9a6dad482b5e7ad9dcbbecabf87a920_1726147476_608.png",
+    "materials": "얼음성 주간레이드 헤티아(분노의 방)"
   },
   {
     "id": "30",
     "name": "삼위일체(진)의 심장",
     "description": "삼위일체(진)을 만들 수 있는 조각",
-    "imageUrl": "https://hwansoo.net/data/editor/2409/a9a6dad482b5e7ad9dcbbecabf87a920_1726147476_8248.png"
+    "imageUrl": "https://hwansoo.net/data/editor/2409/a9a6dad482b5e7ad9dcbbecabf87a920_1726147476_8248.png",
+    "materials": "얼음성 주간레이드 헤티아(분노의 방)"
   },
   {
     "id": "31",
     "name": "헤티아의 머리장식",
     "description": "공 +3~5 방 +25~30 민 -1~5 내구 +5~10 무지개 정령",
-    "imageUrl": "https://hwansoo.net/data/editor/2409/a9a6dad482b5e7ad9dcbbecabf87a920_1726147476_1508.png"
+    "imageUrl": "https://hwansoo.net/data/editor/2409/a9a6dad482b5e7ad9dcbbecabf87a920_1726147476_1508.png",
+    "materials": "얼음성 주간레이드 헤티아(분노의 방)"
   },
   {
     "id": "32",
     "name": "절망의 열쇠",
     "description": "절망의 방(암흑 헤티아)로 이동",
-    "imageUrl": "https://hwansoo.net/data/editor/2409/a9a6dad482b5e7ad9dcbbecabf87a920_1726147476_3935.png"
+    "imageUrl": "https://hwansoo.net/data/editor/2409/a9a6dad482b5e7ad9dcbbecabf87a920_1726147476_3935.png",
+    "materials": "얼음성 주간레이드 헤티아(분노의 방)"
   },
   {
     "id": "33",
     "name": "냉동 참다랑어",
     "description": "공 +30~35 방 +5 순 +5 회피 +1 고등정화 정령 Lv2",
-    "imageUrl": "https://hwansoo.net/data/editor/2406/fe5c14e6c85c86bae43c9a5df567d100_1717661441_2962.png"
+    "imageUrl": "https://hwansoo.net/data/editor/2406/fe5c14e6c85c86bae43c9a5df567d100_1717661441_2962.png",
+    "materials": "얼음성 주간레이드 흑기린(오만의 방)"
   },
   {
     "id": "34",
     "name": "티아트의 대지",
     "description": "방 +2~6 내 +5 치유의 정령 Lv5",
-    "imageUrl": "https://hwansoo.net/data/editor/2406/fe5c14e6c85c86bae43c9a5df567d100_1717661440_2426.png"
+    "imageUrl": "https://hwansoo.net/data/editor/2406/fe5c14e6c85c86bae43c9a5df567d100_1717661440_2426.png",
+    "materials": "얼음성 주간레이드 흑기린(오만의 방)"
   },
   {
     "id": "35",
     "name": "바르의 바람",
     "description": "순 +2~6 내 +5 치유의 정령 Lv5",
-    "imageUrl": "https://hwansoo.net/data/editor/2406/fe5c14e6c85c86bae43c9a5df567d100_1717661440_5693.png"
+    "imageUrl": "https://hwansoo.net/data/editor/2406/fe5c14e6c85c86bae43c9a5df567d100_1717661440_5693.png",
+    "materials": "얼음성 주간레이드 흑기린(오만의 방)"
   },
   {
     "id": "36",
     "name": "이라의 불꽃",
     "description": "공 +2~6 내+5 치유의 정령 Lv5",
-    "imageUrl": "https://hwansoo.net/data/editor/2406/fe5c14e6c85c86bae43c9a5df567d100_1717661440_9959.png"
+    "imageUrl": "https://hwansoo.net/data/editor/2406/fe5c14e6c85c86bae43c9a5df567d100_1717661440_9959.png",
+    "materials": "얼음성 주간레이드 흑기린(오만의 방)"
   },
   {
     "id": "37",
     "name": "흑룡의 발톱",
     "description": "공 +20 순 +20~25 체 +10~15 크리 +3 은혜의 정령 Lv6",
-    "imageUrl": "https://hwansoo.net/data/editor/2406/fe5c14e6c85c86bae43c9a5df567d100_1717662010_3887.png"
+    "imageUrl": "https://hwansoo.net/data/editor/2406/fe5c14e6c85c86bae43c9a5df567d100_1717662010_3887.png",
+    "materials": "얼음성 주간레이드 흑룡(나태의 방)"
   },
   {
     "id": "38",
     "name": "검은불꽃 장궁",
     "description": "공 +25~30 방 -15 [6회 고정]",
-    "imageUrl": "https://hwansoo.net/data/editor/2406/fe5c14e6c85c86bae43c9a5df567d100_1717662010_147.png"
+    "imageUrl": "https://hwansoo.net/data/editor/2406/fe5c14e6c85c86bae43c9a5df567d100_1717662010_147.png",
+    "materials": "얼음성 주간레이드 흑룡(나태의 방)"
   },
   {
     "id": "39",
     "name": "미리네아의 거울",
     "description": "공 +1~3 방 +1~3 순 +1~3 체 +3~5 거울의 정령 Lv2",
-    "imageUrl": "https://hwansoo.net/data/editor/2406/fe5c14e6c85c86bae43c9a5df567d100_1717662009_9098.png"
+    "imageUrl": "https://hwansoo.net/data/editor/2406/fe5c14e6c85c86bae43c9a5df567d100_1717662009_9098.png",
+    "materials": "얼음성 주간레이드 흑룡(나태의 방)"
   },
   {
     "id": "40",
     "name": "얼음손톱",
     "description": "공 +25~27 내 +5~10 은혜의 정령 Lv.5",
-    "imageUrl": "https://hwansoo.net/data/editor/2405/f510aee67b4cc347ae4131a06bc2c847_1715747472_759.png"
+    "imageUrl": "https://hwansoo.net/data/editor/2405/f510aee67b4cc347ae4131a06bc2c847_1715747472_759.png",
+    "materials": "얼음성 주간레이드 크로아치(편견의 방)"
   },
   {
     "id": "41",
     "name": "얼음 옷",
     "description": "공 +1~3 방 +23~25 순 +1~3 무지개의 정령",
-    "imageUrl": "https://hwansoo.net/data/editor/2405/f510aee67b4cc347ae4131a06bc2c847_1715747488_3172.png"
+    "imageUrl": "https://hwansoo.net/data/editor/2405/f510aee67b4cc347ae4131a06bc2c847_1715747488_3172.png",
+    "materials": "얼음성 주간레이드 테로노돈(교만의 방)"
   },
   {
     "id": "42",
     "name": "미라쥬",
     "description": "공 +1~3 거울의 정령 (1회)",
-    "imageUrl": "https://hwansoo.net/data/editor/2405/f510aee67b4cc347ae4131a06bc2c847_1715747494_9015.png"
+    "imageUrl": "https://hwansoo.net/data/editor/2405/f510aee67b4cc347ae4131a06bc2c847_1715747494_9015.png",
+    "materials": "얼음성 주간레이드 테로노돈(교만의 방)"
   },
   {
     "id": "43",
     "name": "번개의 반지",
     "description": "순 +5~8 내 +3~5 크리 +3~5%",
-    "imageUrl": "https://hwansoo.net/data/editor/2405/f510aee67b4cc347ae4131a06bc2c847_1715747502_7072.png"
+    "imageUrl": "https://hwansoo.net/data/editor/2405/f510aee67b4cc347ae4131a06bc2c847_1715747502_7072.png",
+    "materials": "얼음성 주간레이드 테로노돈(교만의 방)"
   },
   {
     "id": "44",
     "name": "삼위일체",
     "description": "공+3 방+3 순+3 내+5",
-    "imageUrl": "https://hwansoo.net/data/editor/2405/f510aee67b4cc347ae4131a06bc2c847_1715747510_6708.png"
+    "imageUrl": "https://hwansoo.net/data/editor/2405/f510aee67b4cc347ae4131a06bc2c847_1715747510_6708.png",
+    "materials": "얼음성 주간레이드 메피노(탐욕의 방)"
   },
   {
     "id": "45",
     "name": "열공의 도끼",
     "description": "공 +65~70 방 -12~14 순 -30 크리+7%",
-    "imageUrl": "https://hwansoo.net/data/editor/2405/f510aee67b4cc347ae4131a06bc2c847_1715747518_079.png"
+    "imageUrl": "https://hwansoo.net/data/editor/2405/f510aee67b4cc347ae4131a06bc2c847_1715747518_079.png",
+    "materials": "얼음성 주간레이드 메피노(탐욕의 방)"
   },
   {
     "id": "46",
     "name": "머슬링 귀걸이",
     "description": "공 +1~5 회피 +7%",
-    "imageUrl": "https://hwansoo.net/data/editor/2405/f510aee67b4cc347ae4131a06bc2c847_1715747526_6021.png"
+    "imageUrl": "https://hwansoo.net/data/editor/2405/f510aee67b4cc347ae4131a06bc2c847_1715747526_6021.png",
+    "materials": "얼음성 주간레이드 메피노(탐욕의 방)"
   },
   {
     "id": "47",
     "name": "얼음 부메랑",
     "description": "공 +30 방 +10 내 +10 맹독의 정령 Lv5",
-    "imageUrl": "https://hwansoo.net/data/editor/2405/f510aee67b4cc347ae4131a06bc2c847_1715747534_4001.png"
+    "imageUrl": "https://hwansoo.net/data/editor/2405/f510aee67b4cc347ae4131a06bc2c847_1715747534_4001.png",
+    "materials": "얼음성 주간레이드 메피노(탐욕의 방)"
   },
   {
     "id": "48",
     "name": "삼위일체(진)",
     "description": "공 +7~10 방 +7~10 순 +7~10 체+10~15",
-    "imageUrl": "http://pooyas.com/files/attach/outimage/sypoo.com/icecastle/icecastle_three/item_03.gif"
+    "imageUrl": "http://pooyas.com/files/attach/outimage/sypoo.com/icecastle/icecastle_three/item_03.gif",
+    "materials": "삼위일체(개) + 삼위일체(진)의 심장으로 제작"
   },
   {
     "id": "49",
     "name": "삼위일체(개)",
     "description": "공 +5~7 방 +5~7 순 +5~7 체+5~10",
-    "imageUrl": "http://pooyas.com/files/attach/outimage/sypoo.com/icecastle/icecastle_three/item_02.gif"
+    "imageUrl": "http://pooyas.com/files/attach/outimage/sypoo.com/icecastle/icecastle_three/item_02.gif",
+    "materials": "삼위일체 + 삼위일체(개)의 구슬로 제작"
   }
 ]

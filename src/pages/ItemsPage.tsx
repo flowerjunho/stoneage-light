@@ -323,6 +323,15 @@ const ItemsPage: React.FC = () => {
                         </div>
                       )}
 
+                      {/* 획득 정보 - 환수강림 탭만 */}
+                      {activeTab === 'hwansoo' && item.materials && (
+                        <div className="mb-1">
+                          <p className="text-xs text-text-muted">
+                            획득: {item.materials}
+                          </p>
+                        </div>
+                      )}
+
                       {/* 전체 텍스트 정보 - 뿌야 탭만 */}
                       {activeTab === 'pooyas' && item.materials && item.materials !== item.options && (
                         <div className="mb-1">
