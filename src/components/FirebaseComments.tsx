@@ -270,7 +270,7 @@ const FirebaseComments: React.FC = () => {
                 <div className="bg-bg-secondary rounded-lg p-3 border border-border">
                   <div className="text-xs text-text-secondary mb-2 font-semibold">📈 주간 방문자 현황</div>
                   <div className="space-y-1">
-                    {weeklyStats.map((stat, index) => {
+                    {weeklyStats.map((stat) => {
                       const date = new Date(stat.date);
                       const dayName = ['일', '월', '화', '수', '목', '금', '토'][date.getDay()];
                       const isToday = stat.date === new Date().toISOString().split('T')[0];
