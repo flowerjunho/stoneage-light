@@ -36,13 +36,17 @@ const FirebaseComments: React.FC = () => {
     return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
   };
 
-  // 주의 시작일 (월요일)을 구하는 함수
+  // 주의 시작일 (월요일)을 구하는 함수 (서울 시간대 기준)
   const getWeekStartDate = (offset: number = 0): Date => {
-    const today = new Date();
-    const dayOfWeek = today.getDay(); // 0: 일요일, 1: 월요일, ..., 6: 토요일
+    // 서울 시간대 기준으로 현재 날짜 구하기
+    const seoulDateString = new Date().toLocaleDateString('en-CA', { timeZone: 'Asia/Seoul' });
+    const seoulDate = new Date(seoulDateString + 'T00:00:00');
+    
+    const dayOfWeek = seoulDate.getDay(); // 0: 일요일, 1: 월요일, ..., 6: 토요일
     const daysFromMonday = dayOfWeek === 0 ? -6 : 1 - dayOfWeek; // 월요일까지의 거리
-    const weekStart = new Date(today);
-    weekStart.setDate(today.getDate() + daysFromMonday + (offset * 7));
+    
+    const weekStart = new Date(seoulDate);
+    weekStart.setDate(seoulDate.getDate() + daysFromMonday + (offset * 7));
     return weekStart;
   };
 
@@ -418,7 +422,7 @@ const FirebaseComments: React.FC = () => {
             {weeklyStats.map((stat) => {
               const date = new Date(stat.date);
               const dayName = ['월', '화', '수', '목', '금', '토', '일'][date.getDay() === 0 ? 6 : date.getDay() - 1];
-              const today = new Date().toISOString().split('T')[0];
+              const today = new Date().toLocaleDateString('en-CA', { timeZone: 'Asia/Seoul' });
               const isToday = stat.date === today;
               const isWeekend = date.getDay() === 0 || date.getDay() === 6; // 일요일 또는 토요일
               

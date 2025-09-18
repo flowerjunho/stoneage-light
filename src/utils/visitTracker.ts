@@ -6,13 +6,10 @@ export class VisitTracker {
   private static readonly COLLECTION_NAME = 'daily_stats';
   private static readonly LOCALSTORAGE_PREFIX = 'stoneage_visit_';
 
-  // 오늘 날짜를 YYYY-MM-DD 형식으로 반환
+  // 오늘 날짜를 YYYY-MM-DD 형식으로 반환 (서울 시간대 기준)
   private static getTodayString(): string {
-    const today = new Date();
-    const year = today.getFullYear();
-    const month = String(today.getMonth() + 1).padStart(2, '0');
-    const day = String(today.getDate()).padStart(2, '0');
-    return `${year}-${month}-${day}`;
+    // 서울 시간대로 직접 변환
+    return new Date().toLocaleDateString('en-CA', { timeZone: 'Asia/Seoul' });
   }
 
   // 로컬스토리지에서 오늘 방문 여부 확인
@@ -137,11 +134,9 @@ export class VisitTracker {
     }
   }
 
-  // 날짜 포맷팅 헬퍼
+  // 날짜 포맷팅 헬퍼 (서울 시간대 기준)
   private static formatDate(date: Date): string {
-    const year = date.getFullYear();
-    const month = String(date.getMonth() + 1).padStart(2, '0');
-    const day = String(date.getDate()).padStart(2, '0');
-    return `${year}-${month}-${day}`;
+    // 서울 시간대로 직접 변환
+    return date.toLocaleDateString('en-CA', { timeZone: 'Asia/Seoul' });
   }
 }
