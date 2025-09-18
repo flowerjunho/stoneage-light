@@ -13,7 +13,9 @@ import RebirthCard from '../components/RebirthCard';
 import SaveModal from '../components/SaveModal';
 import LoadModal from '../components/LoadModal';
 import PetDetailModal from '../components/PetDetailModal';
+import ExpTableModal from '../components/ExpTableModal';
 import petData from '../data/petData.json';
+import levelExpData from '../data/level_exp.json';
 
 const CalculatorPage: React.FC = () => {
   const [searchParams] = useSearchParams();
@@ -65,16 +67,62 @@ const CalculatorPage: React.FC = () => {
   const [saveTitle, setSaveTitle] = useState('');
   const [savedDataList, setSavedDataList] = useState<SavedData[]>([]);
   const [currentTitle, setCurrentTitle] = useState<string>(''); // 현재 불러온 데이터의 타이틀
+  const [isExpTableModalOpen, setIsExpTableModalOpen] = useState(false);
 
   // 페트 모달 관련 상태
   const [selectedModalPet, setSelectedModalPet] = useState<(typeof petData.pets)[0] | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
+
+  // 경험치 계산기 상태
+  const [currentLevel, setCurrentLevel] = useState(1);
+  const [targetLevel, setTargetLevel] = useState(140);
+  const [expCalculationResult, setExpCalculationResult] = useState({
+    requiredExp: 0,
+    currentLevelExp: 0,
+    targetLevelExp: 0,
+  });
 
   // 페트 클릭 핸들러
   const handlePetClick = (pet: (typeof petData.pets)[0]) => {
     setSelectedModalPet(pet);
     setIsModalOpen(true);
   };
+
+  // 경험치 계산 로직
+  const calculateExp = (current: number, target: number) => {
+    if (current >= target) {
+      return {
+        requiredExp: 0,
+        currentLevelExp: 0,
+        targetLevelExp: 0,
+      };
+    }
+
+    // 현재 레벨부터 목표 레벨 전까지의 모든 레벨업 경험치를 더함
+    // 예: 현재 1, 목표 5 → Lv1 + Lv2 + Lv3 + Lv4 (1→2, 2→3, 3→4, 4→5 레벨업)
+    let requiredExp = 0;
+    for (let level = current; level < target; level++) {
+      const levelData = levelExpData.levelExpData.find(data => data.level === level);
+      if (levelData) {
+        requiredExp += levelData.exp;
+      }
+    }
+
+    const currentLevelData = levelExpData.levelExpData.find(data => data.level === current);
+    const targetLevelData = levelExpData.levelExpData.find(data => data.level === target);
+
+    return {
+      requiredExp,
+      currentLevelExp: currentLevelData?.exp || 0,
+      targetLevelExp: targetLevelData?.exp || 0,
+    };
+  };
+
+  // 경험치 계산 실행
+  React.useEffect(() => {
+    const result = calculateExp(currentLevel, targetLevel);
+    setExpCalculationResult(result);
+  }, [currentLevel, targetLevel]);
 
   // 모달 닫기 핸들러
   const handleModalClose = () => {
@@ -372,7 +420,7 @@ const CalculatorPage: React.FC = () => {
   // URL 파라미터에서 서브탭 상태 관리
   useEffect(() => {
     const tabParam = searchParams.get('tab');
-    if (tabParam === 'petgrowth' || tabParam === 'rebirth' || tabParam === 'petsale') {
+    if (tabParam === 'petgrowth' || tabParam === 'rebirth' || tabParam === 'petsale' || tabParam === 'expcalc') {
       setActiveSubTab(tabParam);
     } else {
       // 기본값 설정 및 URL 업데이트
@@ -399,6 +447,7 @@ const CalculatorPage: React.FC = () => {
     { id: 'rebirth', label: '환생포인트' },
     { id: 'petgrowth', label: '페트성장' },
     { id: 'petsale', label: '페트판매' },
+    { id: 'expcalc', label: '경험치' },
   ];
 
   return (
@@ -1416,10 +1465,118 @@ const CalculatorPage: React.FC = () => {
         </div>
       )}
 
+      {/* 경험치 계산기 서브탭 */}
+      {activeSubTab === 'expcalc' && (
+        <div>
+          {/* 경험치 테이블 버튼 */}
+          <div className="flex justify-end mb-6">
+            <button
+              onClick={() => setIsExpTableModalOpen(true)}
+              className="px-4 py-2 rounded-lg bg-gray-600 text-white text-sm font-medium hover:bg-gray-700 transition-colors"
+            >
+              경험치 테이블
+            </button>
+          </div>
+
+          {/* 경험치 계산기 */}
+          <div className="bg-bg-secondary rounded-xl p-6 mb-6 border border-border">
+            <h2 className="text-xl font-bold text-text-primary mb-6 text-center">
+              📈 경험치 계산기
+            </h2>
+
+            {/* 입력 섹션 */}
+            <div className="max-w-2xl mx-auto mb-8">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {/* 현재 레벨 */}
+                <div>
+                  <label className="block text-text-primary font-bold mb-3 text-center">
+                    현재 레벨
+                  </label>
+                  <input
+                    type="number"
+                    min="1"
+                    max="140"
+                    value={currentLevel}
+                    onChange={(e) => {
+                      const value = parseInt(e.target.value) || 1;
+                      setCurrentLevel(Math.min(Math.max(1, value), 140));
+                    }}
+                    className="w-full px-4 py-3 bg-white dark:bg-gray-800 border-2 border-accent rounded-xl text-text-primary text-center text-lg font-bold focus:outline-none focus:ring-4 focus:ring-accent/30 shadow-lg"
+                    placeholder="1"
+                  />
+                </div>
+
+                {/* 목표 레벨 */}
+                <div>
+                  <label className="block text-text-primary font-bold mb-3 text-center">
+                    목표 레벨
+                  </label>
+                  <input
+                    type="number"
+                    min="1"
+                    max="140"
+                    value={targetLevel}
+                    onChange={(e) => {
+                      const value = parseInt(e.target.value) || 1;
+                      setTargetLevel(Math.min(Math.max(1, value), 140));
+                    }}
+                    className="w-full px-4 py-3 bg-white dark:bg-gray-800 border-2 border-accent rounded-xl text-text-primary text-center text-lg font-bold focus:outline-none focus:ring-4 focus:ring-accent/30 shadow-lg"
+                    placeholder="140"
+                  />
+                </div>
+              </div>
+            </div>
+
+            {/* 결과 섹션 */}
+            <div className="max-w-3xl mx-auto">
+              <div className="bg-bg-primary rounded-xl p-6 border border-border shadow-lg">
+                <h3 className="text-lg font-bold text-text-primary mb-4 text-center">
+                  계산 결과
+                </h3>
+                
+                <div className="flex justify-center">
+                  {/* 필요한 경험치만 크게 표시 */}
+                  <div className="text-center p-6 bg-gradient-to-br from-purple-500/10 to-blue-500/10 rounded-xl border-2 border-purple-500/30 max-w-md w-full">
+                    <div className="text-lg text-text-primary mb-3 font-semibold">
+                      Lv.{currentLevel} → Lv.{targetLevel}
+                    </div>
+                    <div className="text-sm text-text-secondary mb-2">필요한 경험치</div>
+                    <div className="text-3xl font-bold text-purple-500 mb-2">
+                      {expCalculationResult.requiredExp.toLocaleString()}
+                    </div>
+                    <div className="text-xs text-text-secondary">
+                      {currentLevel < targetLevel && (
+                        `${targetLevel - currentLevel}레벨 상승`
+                      )}
+                    </div>
+                  </div>
+                </div>
+
+                {/* 안내 메시지 */}
+                {currentLevel >= targetLevel && (
+                  <div className="mt-4 p-4 bg-yellow-500/10 border border-yellow-500/30 rounded-lg">
+                    <p className="text-yellow-600 dark:text-yellow-400 text-center font-medium">
+                      ⚠️ 목표 레벨이 현재 레벨보다 높아야 합니다.
+                    </p>
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Pet Detail Modal */}
       {selectedModalPet && (
         <PetDetailModal isOpen={isModalOpen} onClose={handleModalClose} pet={selectedModalPet} />
       )}
+
+      {/* 경험치 테이블 모달 */}
+      <ExpTableModal
+        isOpen={isExpTableModalOpen}
+        onClose={() => setIsExpTableModalOpen(false)}
+        expData={levelExpData.levelExpData}
+      />
     </div>
   );
 };

@@ -1,0 +1,660 @@
+{
+  "lastUpdated": "2025-09-18T09:19:35.169Z",
+  "totalCount": 17,
+  "characters": [
+    {
+      "id": "31853",
+      "name": "곰아저씨",
+      "url": "https://pooyas.com/index.php?mid=sa_character&document_srl=31853",
+      "description": "곰아저씨 캐릭터는 1999년 스톤에이지 개발 시 처음 등장한 캐릭터로 물개 가죽을 머리에 쓰고 있는 것이 큰 특징이에요. 원작(일본)에서는 물개 아저씨라 불리지만 넷마블 스톤에이지팀에서는 물개 가죽을 곰 가죽으로 착각하여 캐릭터 이름을 정한 것 같아요.",
+      "colors": [
+        "https://pooyas.com/files/attach/images/29222/853/031/ff367408d32be7824a39c396e657ae4f.gif",
+        "https://pooyas.com/files/attach/images/29222/853/031/34c0c894f977b259e779c3c3fd9e4deb.gif",
+        "https://pooyas.com/files/attach/images/29222/853/031/eafb47f5273744a9c52098f45911f18c.gif",
+        "https://pooyas.com/files/attach/images/29222/853/031/f28c6fee07733ccf02c4abd0674f073a.gif",
+        "https://pooyas.com/files/attach/images/29222/853/031/78d69199033225e0b11a1bc537deadf8.gif",
+        "https://pooyas.com/files/attach/images/29222/853/031/30ef449241cf80fbbdb62a0bd9a4a667.gif"
+      ],
+      "weapons": [
+        {
+          "type": "기본",
+          "image": "https://pooyas.com/files/attach/images/29222/853/031/7c2ee035252d03166e1e5400aa55c47f.gif"
+        },
+        {
+          "type": "도끼(엑스)",
+          "image": "https://pooyas.com/files/attach/images/29222/853/031/15128ccaab77bee278ee761560d3d896.gif"
+        },
+        {
+          "type": "곤봉",
+          "image": "https://pooyas.com/files/attach/images/29222/853/031/c66260bc7765d3d7589cf0b5762ffd03.gif"
+        },
+        {
+          "type": "(창)스피어",
+          "image": "https://pooyas.com/files/attach/images/29222/853/031/f5e05471fe6745646a6c5250617c5ea8.gif"
+        },
+        {
+          "type": "활",
+          "image": "https://pooyas.com/files/attach/images/29222/853/031/d518d23f7a500bf385e96a186d9171ca.gif"
+        }
+      ]
+    },
+    {
+      "id": "32788",
+      "name": "귀염둥이",
+      "url": "https://pooyas.com/index.php?mid=sa_character&document_srl=32788",
+      "description": "귀염둥이 캐릭터는 1999년 스톤에이지 개발 시 처음 등장한 캐릭터로 단발머리에 머리띠를 하고 있는 게 큰 특징이에요. 이중 검정 머리에 빨간 옷을 입은 캐릭터는 스톤에이지 공식만화를 그린 로빈양이 제일 좋아하는 캐릭터예요.",
+      "colors": [
+        "https://pooyas.com/files/attach/images/29222/788/032/168f007a4b06b30301bd72e99a07432e.gif",
+        "https://pooyas.com/files/attach/images/29222/788/032/51ac04c5fdbb589c12c5145eb01cd32a.gif",
+        "https://pooyas.com/files/attach/images/29222/788/032/f0b4583af1aacf4240efac696982b152.gif",
+        "https://pooyas.com/files/attach/images/29222/788/032/d6cc5fcf8be0aff1ecc980f4d28d6a2e.gif",
+        "https://pooyas.com/files/attach/images/29222/788/032/d0fb7b879a84b3290b23fda4fb7703b2.gif",
+        "https://pooyas.com/files/attach/images/29222/788/032/7b4c12df24c0cf5ea4ae2d682439ff54.gif"
+      ],
+      "weapons": [
+        {
+          "type": "기본",
+          "image": "https://pooyas.com/files/attach/images/29222/788/032/5b8e96808047cc2a00d4d9ac9d9b9505.gif"
+        },
+        {
+          "type": "도끼(엑스)",
+          "image": "https://pooyas.com/files/attach/images/29222/788/032/76ff26a64113ab26757ee53f37e20455.gif"
+        },
+        {
+          "type": "곤봉",
+          "image": "https://pooyas.com/files/attach/images/29222/788/032/78a802ddab6d3575b6837877c09b407c.gif"
+        },
+        {
+          "type": "(창)스피어",
+          "image": "https://pooyas.com/files/attach/images/29222/788/032/4e2609cdd4408302c0f0bd444a868660.gif"
+        },
+        {
+          "type": "활",
+          "image": "https://pooyas.com/files/attach/images/29222/788/032/92a8308e2270a09d0087f006ce109ae4.gif"
+        }
+      ]
+    },
+    {
+      "id": "29244",
+      "name": "꼬맹이(남)",
+      "url": "https://pooyas.com/index.php?mid=sa_character&document_srl=29244",
+      "description": "꼬맹이(남) 캐릭터는 1999년 스톤에이지 개발 시 처음 등장한 캐릭터로 아담한 사이즈에 머리가 부스스한 게 큰 특징이에요. 게임상에서 땅꼬마로 많이 불리었고 갈색 머리에 주황색 옷은 입은 캐릭터는 리온으로 많이 알려져 있어요.",
+      "colors": [
+        "https://pooyas.com/files/attach/images/29222/244/029/1a9efee40dc0a16ddd79526151bf70ac.gif",
+        "https://pooyas.com/files/attach/images/29222/244/029/16c88f90ee37845f782763999888c613.gif",
+        "https://pooyas.com/files/attach/images/29222/244/029/025df9902b6bf32fd7b925ccc96619be.gif",
+        "https://pooyas.com/files/attach/images/29222/244/029/a30e7a42d461e84394368f55d96834c8.gif",
+        "https://pooyas.com/files/attach/images/29222/244/029/aabd9605abc56b1a32af74b2fb23aa9d.gif",
+        "https://pooyas.com/files/attach/images/29222/244/029/e1914dfabf48368b9ace10b76e810ef1.gif"
+      ],
+      "weapons": [
+        {
+          "type": "기본",
+          "image": "https://pooyas.com/files/attach/images/29222/244/029/212ac622b46fd27dfea12a91840befa8.gif"
+        },
+        {
+          "type": "도끼(엑스)",
+          "image": "https://pooyas.com/files/attach/images/29222/244/029/b3ce42b4b01ef0dc938ef8e228a70b22.gif"
+        },
+        {
+          "type": "곤봉",
+          "image": "https://pooyas.com/files/attach/images/29222/244/029/8db6a5841aab68e319d2ae4f9ce81771.gif"
+        },
+        {
+          "type": "(창)스피어",
+          "image": "https://pooyas.com/files/attach/images/29222/244/029/168a1faf3bbb6e1420029d7aeaa6c56f.gif"
+        },
+        {
+          "type": "활",
+          "image": "https://pooyas.com/files/attach/images/29222/244/029/44c2781225340088c209e386bc4108d5.gif"
+        }
+      ]
+    },
+    {
+      "id": "32975",
+      "name": "꼬맹이(여)",
+      "url": "https://pooyas.com/index.php?mid=sa_character&document_srl=32975",
+      "description": "꼬맹이(여) 캐릭터는 1999년 스톤에이지 개발 시 처음 등장한 캐릭터로 아담한 사이즈에 머리가 콩알만 한 게 큰 특징이에요. 게임상에서 땅꼬마로 많이 불리었고 귀여운 모습에 부캐로 많이 선택하는 캐릭터 중 하나예요.",
+      "colors": [
+        "https://pooyas.com/files/attach/images/29222/975/032/cd99b2dd6550b9303ae87ff6c97b2823.gif",
+        "https://pooyas.com/files/attach/images/29222/975/032/6d0225219c81bae618449835d46c9c27.gif",
+        "https://pooyas.com/files/attach/images/29222/975/032/452e6ff97d332f6fab6116876bb49186.gif",
+        "https://pooyas.com/files/attach/images/29222/975/032/4a7cb50b3de0c73d642a1fa326c9b4db.gif",
+        "https://pooyas.com/files/attach/images/29222/975/032/4d2d9368fdecdbaf965faffcce082740.gif",
+        "https://pooyas.com/files/attach/images/29222/975/032/987f1b3191709101f8d5a2ce841c39d8.gif",
+        "https://pooyas.com/files/attach/images/29222/975/032/7fa9f7d9c5ec686848f735f7cb0c36fa.gif"
+      ],
+      "weapons": [
+        {
+          "type": "기본",
+          "image": "https://pooyas.com/files/attach/images/29222/975/032/5565ea0a7f6c64c55b3f6ae58ea28267.gif"
+        },
+        {
+          "type": "도끼(엑스)",
+          "image": "https://pooyas.com/files/attach/images/29222/975/032/8109cbc8b55fa7e3c000fe35f2623d0f.gif"
+        },
+        {
+          "type": "곤봉",
+          "image": "https://pooyas.com/files/attach/images/29222/975/032/e76c56d13e7680c8b7fd9ea773f56713.gif"
+        },
+        {
+          "type": "(창)스피어",
+          "image": "https://pooyas.com/files/attach/images/29222/975/032/0e951fff4e256b5d7b2c9aeb4cce781c.gif"
+        },
+        {
+          "type": "활",
+          "image": "https://pooyas.com/files/attach/images/29222/975/032/ed293e93319b07806dcc2f7ca18e8237.gif"
+        }
+      ]
+    },
+    {
+      "id": "33044",
+      "name": "내숭소녀",
+      "url": "https://pooyas.com/index.php?mid=sa_character&document_srl=33044",
+      "description": "내숭소녀 캐릭터는 1999년 스톤에이지 개발 시 처음 등장한 캐릭터로 여리여리한 외모로 여성 플레이어에게 인기가 많았어요. 모자를 쓰고 있으며 명함 이미지에서는 발그레한 모습을 보여주기도 해요. ",
+      "colors": [
+        "https://pooyas.com/files/attach/images/29222/044/033/672a9576b998c1e69bf9635125795ff6.gif",
+        "https://pooyas.com/files/attach/images/29222/044/033/10e29717cceef637cde2887e01230788.gif",
+        "https://pooyas.com/files/attach/images/29222/044/033/f5dbab16235d70f025d10d3db091e228.gif",
+        "https://pooyas.com/files/attach/images/29222/044/033/15935c0984c606173dad4497587f1d19.gif",
+        "https://pooyas.com/files/attach/images/29222/044/033/3025eefb4a7437e3ebfea2f36ccbb15f.gif",
+        "https://pooyas.com/files/attach/images/29222/044/033/8eea4fb29a590a4b52e6222d09c4404f.gif"
+      ],
+      "weapons": [
+        {
+          "type": "기본",
+          "image": "https://pooyas.com/files/attach/images/29222/044/033/50a6687e0e58c8c499c09af1b36c09cf.gif"
+        },
+        {
+          "type": "도끼(엑스)",
+          "image": "https://pooyas.com/files/attach/images/29222/044/033/dd422044449a171c823ded3c9b595aa1.gif"
+        },
+        {
+          "type": "곤봉",
+          "image": "https://pooyas.com/files/attach/images/29222/044/033/5b4bcd12c6fd18edd517e62c8d4479f9.gif"
+        },
+        {
+          "type": "(창)스피어",
+          "image": "https://pooyas.com/files/attach/images/29222/044/033/da4aaaafa56e87d09d90d4c40e1b56ff.gif"
+        },
+        {
+          "type": "활",
+          "image": "https://pooyas.com/files/attach/images/29222/044/033/b4cf17314187e055f11fa2cf4cb27ded.gif"
+        }
+      ]
+    },
+    {
+      "id": "33095",
+      "name": "몸짱아줌마",
+      "url": "https://pooyas.com/index.php?mid=sa_character&document_srl=33095",
+      "description": "몸짱아줌마 캐릭터는 1999년 스톤에이지 개발 시 처음 등장한 캐릭터로 맨손 공격 시 따귀를 때린 후 손키스를 날리는 게 큰 특징이에요. 왜 캐릭터명을 몸짱아줌마로 정한지 모르겠지만 당시에 몸짱아줌마라는 예명으로 활동했던 정다연 씨의 영향이 있었을 것 같아요.",
+      "colors": [
+        "https://pooyas.com/files/attach/images/29222/095/033/03ee3e687c0b762e665905a4a4afc360.gif",
+        "https://pooyas.com/files/attach/images/29222/095/033/7626fe9ccccaa554bf2be94966d0134d.gif",
+        "https://pooyas.com/files/attach/images/29222/095/033/6c754b4fccdde1bc81cbdca65930262f.gif",
+        "https://pooyas.com/files/attach/images/29222/095/033/e81d2990af147597d7377f3a52cdaf4c.gif",
+        "https://pooyas.com/files/attach/images/29222/095/033/66f33162a9903db212c09986f353a33f.gif",
+        "https://pooyas.com/files/attach/images/29222/095/033/c34214d55cd5cb955514b46121760a0b.gif"
+      ],
+      "weapons": [
+        {
+          "type": "기본",
+          "image": "https://pooyas.com/files/attach/images/29222/095/033/4b9ee11eec9a6f1b52473e1cb4e567b2.gif"
+        },
+        {
+          "type": "도끼(엑스)",
+          "image": "https://pooyas.com/files/attach/images/29222/095/033/2204f24d04f06272e054bb58bc6085cd.gif"
+        },
+        {
+          "type": "곤봉",
+          "image": "https://pooyas.com/files/attach/images/29222/095/033/9fa47d84fe4fb9692993fcb993b3367d.gif"
+        },
+        {
+          "type": "(창)스피어",
+          "image": "https://pooyas.com/files/attach/images/29222/095/033/ede4f5cf41a52aa70b06518a7b404364.gif"
+        },
+        {
+          "type": "활",
+          "image": "https://pooyas.com/files/attach/images/29222/095/033/aff8bb880a33bad96bb3b5cc6dc269e2.gif"
+        }
+      ]
+    },
+    {
+      "id": "33175",
+      "name": "물개소녀",
+      "url": "https://pooyas.com/index.php?mid=sa_character&document_srl=33175",
+      "description": "물개소녀 캐릭터는 1999년 스톤에이지 개발 시 처음 등장한 캐릭터로 물개 가죽을 머리에 쓰고 있는 게 큰 특징이에요. 개발 당시 기본 색상 4개와 더불어 연두/ 검정 색상 캐릭터까지 총 6개로 만들어졌으며 해당 색상 캐릭터는 환생 퀘스트 진행 NPC로 등장해요.",
+      "colors": [
+        "https://pooyas.com/files/attach/images/29222/175/033/50d7bffb13d1f80f51e2b48ca5ceaea8.gif",
+        "https://pooyas.com/files/attach/images/29222/175/033/225211be05214e9b01158602b9b2f58d.gif",
+        "https://pooyas.com/files/attach/images/29222/175/033/0bffb1697c4a158a4dd12e2ce102a1d9.gif",
+        "https://pooyas.com/files/attach/images/29222/175/033/b7bcca5a15e3b1f704a252027276419a.gif",
+        "https://pooyas.com/files/attach/images/29222/175/033/bc88566778f52f0f35e4bf66d81abff2.gif",
+        "https://pooyas.com/files/attach/images/29222/175/033/4d2592b87f1a2301a47fd7f719479296.gif",
+        "https://pooyas.com/files/attach/images/29222/175/033/cc893f80559b0d83a1baa1f13f6ded2d.gif",
+        "https://pooyas.com/files/attach/images/29222/175/033/60eeb8ad61e6ea41b75401f417a7048a.gif"
+      ],
+      "weapons": [
+        {
+          "type": "기본",
+          "image": "https://pooyas.com/files/attach/images/29222/175/033/14c35f177c368e16bb63832f5f27f243.gif"
+        },
+        {
+          "type": "도끼(엑스)",
+          "image": "https://pooyas.com/files/attach/images/29222/175/033/c7b548ff21d6ea2d261db08d29c9218f.gif"
+        },
+        {
+          "type": "곤봉",
+          "image": "https://pooyas.com/files/attach/images/29222/175/033/8cac3ac6885a09f91096490ebcb61749.gif"
+        },
+        {
+          "type": "(창)스피어",
+          "image": "https://pooyas.com/files/attach/images/29222/175/033/4ca2da57932a87000e96fa9be324e533.gif"
+        },
+        {
+          "type": "활",
+          "image": "https://pooyas.com/files/attach/images/29222/175/033/77a8008305c0ed72b1ba54d5d7b82873.gif"
+        }
+      ]
+    },
+    {
+      "id": "33226",
+      "name": "바람소년",
+      "url": "https://pooyas.com/index.php?mid=sa_character&document_srl=33226",
+      "description": "바람소년 캐릭터는 2004년 사자소년과 울보천사 캐릭터 업데이트 이후 새롭게 추가된 캐릭터로 2005년 5월 17일 처음 세상에 등장했어요. 하회 탈을 두른 긴 머리에 근육질 몸매가 특징이에요.",
+      "colors": [
+        "https://pooyas.com/files/attach/images/29222/226/033/881daff84a33afc149f65b2ecacdccc2.gif",
+        "https://pooyas.com/files/attach/images/29222/226/033/f40cd1b1a9ffb280a786a57d4366fd25.gif",
+        "https://pooyas.com/files/attach/images/29222/226/033/916610d8efd62becc2d66628167b4207.gif",
+        "https://pooyas.com/files/attach/images/29222/226/033/26aa2847196f04de39efd0edb59a1bdb.gif"
+      ],
+      "weapons": [
+        {
+          "type": "기본",
+          "image": "https://pooyas.com/files/attach/images/29222/226/033/0e0a069614bd56e74b636ce141ec9384.gif"
+        },
+        {
+          "type": "도끼(엑스)",
+          "image": "https://pooyas.com/files/attach/images/29222/226/033/410c51a9e8c7e7bcb1dbfba6cae67cc1.gif"
+        },
+        {
+          "type": "곤봉",
+          "image": "https://pooyas.com/files/attach/images/29222/226/033/fa1662527e25ef03c433d292c366fc97.gif"
+        },
+        {
+          "type": "(창)스피어",
+          "image": "https://pooyas.com/files/attach/images/29222/226/033/6e693b7179285653eb61bfb7865876f9.gif"
+        },
+        {
+          "type": "활",
+          "image": "https://pooyas.com/files/attach/images/29222/226/033/7542ea1c966222bd9e52f5b485792eff.gif"
+        }
+      ]
+    },
+    {
+      "id": "34107",
+      "name": "불량소년",
+      "url": "https://pooyas.com/index.php?mid=sa_character&document_srl=34107",
+      "description": "불량소년 캐릭터는 1999년 스톤에이지 개발 시 처음 등장한 캐릭터로 어깨가 구부정한 게 특징이에요. 특유의 생김새 때문에 깡패, 양아치라고도 불리지만 인기가 많은 캐릭터 중 하나예요.",
+      "colors": [
+        "https://pooyas.com/files/attach/images/29222/107/034/370b387f6241f4b05df5b3161741857b.gif",
+        "https://pooyas.com/files/attach/images/29222/107/034/18879448c2274f28893209dfa98e9e46.gif",
+        "https://pooyas.com/files/attach/images/29222/107/034/76ec2c70679cd64f0dba1aae30c2a634.gif",
+        "https://pooyas.com/files/attach/images/29222/107/034/0cf011deb944bb7059c33ecedb2eeba1.gif",
+        "https://pooyas.com/files/attach/images/29222/107/034/cfe53e0743b3dc768a3b41b328036e06.gif",
+        "https://pooyas.com/files/attach/images/29222/107/034/99456c0fa62a1edea1d2267c656647e3.gif",
+        "https://pooyas.com/files/attach/images/29222/107/034/b0af26c816872d346419d6365b4cdd3c.gif"
+      ],
+      "weapons": [
+        {
+          "type": "기본",
+          "image": "https://pooyas.com/files/attach/images/29222/107/034/8287e18ae690c0d853513043737eb67a.gif"
+        },
+        {
+          "type": "도끼(엑스)",
+          "image": "https://pooyas.com/files/attach/images/29222/107/034/cfbffa9d75d7de0988b905637bfbe74f.gif"
+        },
+        {
+          "type": "곤봉",
+          "image": "https://pooyas.com/files/attach/images/29222/107/034/f6ae3d2e305769913f4b11151fad3760.gif"
+        },
+        {
+          "type": "(창)스피어",
+          "image": "https://pooyas.com/files/attach/images/29222/107/034/865b45123000dcfe1f42e15e3a220693.gif"
+        },
+        {
+          "type": "활",
+          "image": "https://pooyas.com/files/attach/images/29222/107/034/fb09361ea5c1ac44d910dd7d00dc7554.gif"
+        }
+      ]
+    },
+    {
+      "id": "34306",
+      "name": "사자소년",
+      "url": "https://pooyas.com/index.php?mid=sa_character&document_srl=34306",
+      "description": "사자소년 캐릭터는 1999년 개발된 12개의 오리지널 캐릭터 이후 새롭게 추가된 캐릭터로 2004년 2월 14일 처음 세상에 등장했어요. 용맹스러운 사자의 영혼을 타고나 지는 것을 싫어하고 약간은 거만하고 상대를 도발하는 행동을 많이하는 다혈질인 게 특징이에요.",
+      "colors": [
+        "https://pooyas.com/files/attach/images/29222/306/034/0704a9e5d2f80c00e27e856cce65d349.gif",
+        "https://pooyas.com/files/attach/images/29222/306/034/fdd14a3aade0a0adccbc690a72d9cc7f.gif",
+        "https://pooyas.com/files/attach/images/29222/306/034/08259fcdb7b779e5926552fa4229214b.gif",
+        "https://pooyas.com/files/attach/images/29222/306/034/cc0c3594fb8fc6be89bfc354b4112cd7.gif"
+      ],
+      "weapons": [
+        {
+          "type": "기본",
+          "image": "https://pooyas.com/files/attach/images/29222/306/034/f1737ec42f4f11afa15b7b529ef2e96b.gif"
+        },
+        {
+          "type": "도끼(엑스)",
+          "image": "https://pooyas.com/files/attach/images/29222/306/034/4bb9fc4a93647fd548501f344862e330.gif"
+        },
+        {
+          "type": "곤봉",
+          "image": "https://pooyas.com/files/attach/images/29222/306/034/2f4fe2af04fcece979d1176a185a42d1.gif"
+        },
+        {
+          "type": "(창)스피어",
+          "image": "https://pooyas.com/files/attach/images/29222/306/034/0a8665fa00911e128a54edbb4476cf2d.gif"
+        },
+        {
+          "type": "활",
+          "image": "https://pooyas.com/files/attach/images/29222/306/034/8e6271139bd3f90a3aedce81d8701c29.gif"
+        }
+      ]
+    },
+    {
+      "id": "34342",
+      "name": "산적",
+      "url": "https://pooyas.com/index.php?mid=sa_character&document_srl=34342",
+      "description": "산적 캐릭터는 1999년 스톤에이지 개발 시 처음 등장한 캐릭터로 인디언 돌쇠 캐릭터를 베이스로 조금 변형된 버전이에요. 오리지널 버전에서는 본래 퀘스트에서만 만날 수 있는 두목 느낌의 NPC 캐릭터였으나 넷마블 스톤에이지에서 캐시 캐릭터로 등장했어요.",
+      "colors": [
+        "https://pooyas.com/files/attach/images/29222/342/034/1fb29fbdeb3a217ebaf3618cb86fb703.gif",
+        "https://pooyas.com/files/attach/images/29222/342/034/8cf80d17b4c170669657917f6d03d5d2.gif"
+      ],
+      "weapons": [
+        {
+          "type": "기본",
+          "image": "https://pooyas.com/files/attach/images/29222/342/034/b95f607bf7a4e860da5f5ce9408c3675.gif"
+        },
+        {
+          "type": "도끼(엑스)",
+          "image": "https://pooyas.com/files/attach/images/29222/342/034/a8c0f19f703d667c472b174706e5c759.gif"
+        },
+        {
+          "type": "곤봉",
+          "image": "https://pooyas.com/files/attach/images/29222/342/034/97c4c60bffd50d75a7aa090a288beccf.gif"
+        },
+        {
+          "type": "(창)스피어",
+          "image": "https://pooyas.com/files/attach/images/29222/342/034/b32c122b955b7119dd427e2a69366629.gif"
+        },
+        {
+          "type": "활",
+          "image": "https://pooyas.com/files/attach/images/29222/342/034/790989ebc4b46d77bcccc87e0678ce0e.gif"
+        }
+      ]
+    },
+    {
+      "id": "34391",
+      "name": "석기미남",
+      "url": "https://pooyas.com/index.php?mid=sa_character&document_srl=34391",
+      "description": "석기미남 캐릭터는 1999년 스톤에이지 개발 시 처음 등장한 캐릭터로 이니엄 스톤에이 시절에는 토끼머리라 불리었고 이때부터 가장 인기 있는 캐릭터 중에 하나예요. 스톤에이지 세계관을 만든 정령왕은 석기미남 모습을 하고 있으며, 넷마블 스톤에이지 시절 도우미ㅡ노르노르가 마지막으로 만든 칠흑의 탑 라돈타에서는 암흑 정령왕 모습으로 등장했어요. 또한, 대만 스톤에이지의 설정상 영웅 샴기르는 검정색 머리의 석기마님 캐릭터이기도 해요.",
+      "colors": [
+        "https://pooyas.com/files/attach/images/29222/391/034/cde6a018f4f0213c795cad0e998790c2.gif",
+        "https://pooyas.com/files/attach/images/29222/391/034/9b8ad2a312ab410ade6b245f16d2b642.gif",
+        "https://pooyas.com/files/attach/images/29222/391/034/fc3f9c64e4a10a9ab62bcd676ddd93a5.gif",
+        "https://pooyas.com/files/attach/images/29222/391/034/15c7586110d5a3a97d4500c5a68fa20f.gif",
+        "https://pooyas.com/files/attach/images/29222/391/034/479b7ee4539488ee8a2dc5f95b4d9479.gif",
+        "https://pooyas.com/files/attach/images/29222/391/034/d770986faa26b808a92526d5ce5169c2.gif",
+        "https://pooyas.com/files/attach/images/29222/391/034/90ee2a88afc5829df4883efe2c9d869e.gif"
+      ],
+      "weapons": [
+        {
+          "type": "기본",
+          "image": [
+            "https://pooyas.com/files/attach/images/29222/391/034/bcccdfe757996efc336b2143c73a7a87.gif",
+            "https://pooyas.com/files/attach/images/29222/391/034/4299c7b8947e09df8d18a96338d108f5.gif"
+          ]
+        },
+        {
+          "type": "도끼(엑스)",
+          "image": [
+            "https://pooyas.com/files/attach/images/29222/391/034/4dde29cfede0b0b9d67b3b47b45cfe93.gif",
+            "https://pooyas.com/files/attach/images/29222/391/034/de64b0d5f95645962137764bf531d612.gif"
+          ]
+        },
+        {
+          "type": "곤봉",
+          "image": [
+            "https://pooyas.com/files/attach/images/29222/391/034/5c1467e98f1f9ce3d508ac3e78c7a134.gif",
+            "https://pooyas.com/files/attach/images/29222/391/034/4c3caaf515bd5dcffac4c08bc8d7551f.gif"
+          ]
+        },
+        {
+          "type": "(창)스피어",
+          "image": [
+            "https://pooyas.com/files/attach/images/29222/391/034/6b3a00ae8718c8ec7111487950a285ff.gif",
+            "https://pooyas.com/files/attach/images/29222/391/034/7925bca99d167248601be0dee552d9f4.gif"
+          ]
+        },
+        {
+          "type": "활",
+          "image": [
+            "https://pooyas.com/files/attach/images/29222/391/034/ce59b228e7154452d52a5ea4fe42acb4.gif",
+            "https://pooyas.com/files/attach/images/29222/391/034/17cdcce40e4a6291317598d28b194ad7.gif"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "34453",
+      "name": "어리버리맨",
+      "url": "https://pooyas.com/index.php?mid=sa_character&document_srl=34453",
+      "description": "어리버리맨 캐릭터는 1999년 스톤에이지 개발 시 처음 등장한 캐릭터로 꽁지머리가 특징이에요. 가장 베이직한 모습을 하고 있어서 그런지 호불호가 없는 캐릭터 중에 하나예요.",
+      "colors": [
+        "https://pooyas.com/files/attach/images/29222/453/034/76a4ccb5062026e4be60ccfa58f51894.gif",
+        "https://pooyas.com/files/attach/images/29222/453/034/734a2fa579004e60da9afe56eacb3173.gif",
+        "https://pooyas.com/files/attach/images/29222/453/034/055ff9c421f6dabb4111f1759c75d9c2.gif",
+        "https://pooyas.com/files/attach/images/29222/453/034/8def4fb45597e7f5e4223f4a65afb084.gif",
+        "https://pooyas.com/files/attach/images/29222/453/034/db36c776b75bb6a0ef4dd7df699b4be9.gif",
+        "https://pooyas.com/files/attach/images/29222/453/034/1e356102662fdb2f11a96dedee167472.gif"
+      ],
+      "weapons": [
+        {
+          "type": "기본",
+          "image": "https://pooyas.com/files/attach/images/29222/453/034/570af930917c86dd020ba6494442388e.gif"
+        },
+        {
+          "type": "도끼(엑스)",
+          "image": "https://pooyas.com/files/attach/images/29222/453/034/ac751314c93481c0c98972b3ae656fad.gif"
+        },
+        {
+          "type": "곤봉",
+          "image": "https://pooyas.com/files/attach/images/29222/453/034/749a607250f04138e0150f17835fceaf.gif"
+        },
+        {
+          "type": "(창)스피어",
+          "image": "https://pooyas.com/files/attach/images/29222/453/034/be50c6461ab8377b81eae3be7081eae1.gif"
+        },
+        {
+          "type": "활",
+          "image": "https://pooyas.com/files/attach/images/29222/453/034/af6a182f786c3f5849d33749deb84860.gif"
+        }
+      ]
+    },
+    {
+      "id": "35101",
+      "name": "울보소녀",
+      "url": "https://pooyas.com/index.php?mid=sa_character&document_srl=35101",
+      "description": "울보소녀 캐릭터는 1999년 개발된 12개의 오리지널 캐릭터 이후 새롭게 추가된 캐릭터로 2004년 2월 14일 처음 세상에 등장했어요. 눈물과 겁이 많지만 깜찍하고 귀여운 모습을 하고 있으며, 심하게 울거나 화가 나면 숨겨진 괴력을 발휘해요. 밤을 무서워하지만 음식만 보면 자다가도 뛰어 나올 정도로 먹을 것에 집착성을 보이는 캐릭터라는 설정을 가지고 있어요.",
+      "colors": [
+        "https://pooyas.com/files/attach/images/29222/101/035/8a89883d296635be0bdca14a0c3b9544.gif",
+        "https://pooyas.com/files/attach/images/29222/101/035/7ac60858d1584697cb30402c00fedee1.gif",
+        "https://pooyas.com/files/attach/images/29222/101/035/c8c2ff374fa0c358b886789eaa11bf80.gif",
+        "https://pooyas.com/files/attach/images/29222/101/035/c250de37c061fb53532f765f6a92881e.gif"
+      ],
+      "weapons": [
+        {
+          "type": "기본",
+          "image": "https://pooyas.com/files/attach/images/29222/101/035/6984bd1cffb74a6f6a1849812a946119.gif"
+        },
+        {
+          "type": "도끼(엑스)",
+          "image": "https://pooyas.com/files/attach/images/29222/101/035/4651b1d24ef111e03d1267394615f4f7.gif"
+        },
+        {
+          "type": "곤봉",
+          "image": "https://pooyas.com/files/attach/images/29222/101/035/af9c74792bc5a3d6b9602d75d9459f44.gif"
+        },
+        {
+          "type": "(창)스피어",
+          "image": "https://pooyas.com/files/attach/images/29222/101/035/88fb9f2086cf7f3d26c560a1765fef58.gif"
+        },
+        {
+          "type": "활",
+          "image": "https://pooyas.com/files/attach/images/29222/101/035/d283ae0cf0d19c96507e5089c545e297.gif"
+        }
+      ]
+    },
+    {
+      "id": "35934",
+      "name": "인디언돌쇠",
+      "url": "https://pooyas.com/index.php?mid=sa_character&document_srl=35934",
+      "description": "인디언 돌쇠 캐릭터는 1999년 스톤에이지 개발 시 처음 등장한 캐릭터로 떡두꺼비 같은 생김새가 특징이에요. 서버 다운이 이뤄났을 때 플레이어는 다른 서버로 이동해 'OO 서버를 복구하라!'라는 명대사를 외치기도 했어요.",
+      "colors": [
+        "https://pooyas.com/files/attach/images/29222/934/035/a9c10b4f21c84fd3d724983dd3b4907d.gif",
+        "https://pooyas.com/files/attach/images/29222/934/035/f1d846fe53e4744df37b513ddee9098a.gif",
+        "https://pooyas.com/files/attach/images/29222/934/035/f14c3ab771fc4d37b6826d8833c3078b.gif",
+        "https://pooyas.com/files/attach/images/29222/934/035/f9f8153b87bb17889ab75b873a328f46.gif",
+        "https://pooyas.com/files/attach/images/29222/934/035/4f03b4faf1a3638e77dff3e4d7a843a2.gif",
+        "https://pooyas.com/files/attach/images/29222/934/035/cd2a7c9715aa7d5a5fc328994c29b141.gif"
+      ],
+      "weapons": [
+        {
+          "type": "기본",
+          "image": "https://pooyas.com/files/attach/images/29222/934/035/c9c527bb6c9bd5a84c68df3d041a8861.gif"
+        },
+        {
+          "type": "도끼(엑스)",
+          "image": "https://pooyas.com/files/attach/images/29222/934/035/93e2398a7b4bc0fa223d62686cf435f9.gif"
+        },
+        {
+          "type": "곤봉",
+          "image": "https://pooyas.com/files/attach/images/29222/934/035/fae551abe2f283cac68745cc0d7b5a46.gif"
+        },
+        {
+          "type": "(창)스피어",
+          "image": "https://pooyas.com/files/attach/images/29222/934/035/822764269b02cabe79e565b993a36b40.gif"
+        },
+        {
+          "type": "활",
+          "image": "https://pooyas.com/files/attach/images/29222/934/035/9e4b5e09edc3fa2ff0f83c2258870f63.gif"
+        }
+      ]
+    },
+    {
+      "id": "35980",
+      "name": "정글소녀",
+      "url": "https://pooyas.com/index.php?mid=sa_character&document_srl=35980",
+      "description": "정글소녀 캐릭터는 2004년 사자소년과 울보소녀 캐릭터 업데이트 이후 새롭게 추가된 캐릭터로 2005년 5월 17일 처음 세상에 등장했어요. 정글에서 자란 설정을 가진 외모였기 때문에 처음 출시되었을 때 여자 캐릭터가 맞느냐라는 질타를 많이 받았어요. 또한, 페트를 탑승할 때는 정상적으로 허리를 편다거나 다리가 길어지는 등 굉장한 특이점을 지닌 캐릭터예요.",
+      "colors": [
+        "https://pooyas.com/files/attach/images/29222/980/035/33decf71fcc484055a4618242f25fd17.gif",
+        "https://pooyas.com/files/attach/images/29222/980/035/055a1e1a27652b1b2d18455e44e6f3e9.gif",
+        "https://pooyas.com/files/attach/images/29222/980/035/26cf402f7f21c211010d4251caa73a3b.gif",
+        "https://pooyas.com/files/attach/images/29222/980/035/4fb71ee4df002000228b16667f74a56b.gif"
+      ],
+      "weapons": [
+        {
+          "type": "기본",
+          "image": "https://pooyas.com/files/attach/images/29222/980/035/86ca279dfa4f9afa95073cc143721dbd.gif"
+        },
+        {
+          "type": "도끼(엑스)",
+          "image": "https://pooyas.com/files/attach/images/29222/980/035/31a3791e8c1ff6e75190787cae500ed8.gif"
+        },
+        {
+          "type": "곤봉",
+          "image": "https://pooyas.com/files/attach/images/29222/980/035/cfda92a34cfdd3ec3e14b853622468a8.gif"
+        },
+        {
+          "type": "(창)스피어",
+          "image": "https://pooyas.com/files/attach/images/29222/980/035/ab379db2aaa15225ba2663389ba518f7.gif"
+        },
+        {
+          "type": "활",
+          "image": "https://pooyas.com/files/attach/images/29222/980/035/2dbed65a07d706a24b1a0e62525bc9be.gif"
+        }
+      ]
+    },
+    {
+      "id": "36019",
+      "name": "터프소녀",
+      "url": "https://pooyas.com/index.php?mid=sa_character&document_srl=36019",
+      "description": "터프소녀 캐릭터는 1999년 스톤에이지 개발 시 처음 등장한 캐릭터로 큰인기를 누리진 못했어요. 개발 당시 기본 색상 4개와 더불어 연두/ 흰색 색상 캐릭터까지 총 6개로 만들어졌으며 해당 색상 캐릭터는 모나시프, 유리 퀘스트 NPC로 등장해요.",
+      "colors": [
+        "https://pooyas.com/files/attach/images/29222/019/036/24356b2cbf9df044eb26e0579c7831eb.gif",
+        "https://pooyas.com/files/attach/images/29222/019/036/708fa7b6a5daa2ee98c38f6e85b8b8bc.gif",
+        "https://pooyas.com/files/attach/images/29222/019/036/f9cfc61ec4d72ab1b038bf934665155b.gif",
+        "https://pooyas.com/files/attach/images/29222/019/036/bff6eab6773a8aa02100b8daccb047aa.gif",
+        "https://pooyas.com/files/attach/images/29222/019/036/e1c8f8d7ce02d6e3d234f7d013c0cc9c.gif",
+        "https://pooyas.com/files/attach/images/29222/019/036/5546deeabf89d836e9ddfd86ef4b8055.gif",
+        "https://pooyas.com/files/attach/images/29222/019/036/d05898afefc674dbf2f9b063f5276442.gif"
+      ],
+      "weapons": [
+        {
+          "type": "기본",
+          "image": "https://pooyas.com/files/attach/images/29222/019/036/e19f116d55d4c0cb7d11c0a4cbcf6ae0.gif"
+        },
+        {
+          "type": "도끼(엑스)",
+          "image": "https://pooyas.com/files/attach/images/29222/019/036/0c60149901727fa0ad0a461ae257048c.gif"
+        },
+        {
+          "type": "곤봉",
+          "image": "https://pooyas.com/files/attach/images/29222/019/036/8dfbd7336e9301877138a73dce6e1635.gif"
+        },
+        {
+          "type": "(창)스피어",
+          "image": "https://pooyas.com/files/attach/images/29222/019/036/03b78b53db94d97fa9b95be3db4bccb2.gif"
+        },
+        {
+          "type": "활",
+          "image": "https://pooyas.com/files/attach/images/29222/019/036/f77e21b21bb1d4c95e9957aeaa6aa8d4.gif"
+        }
+      ]
+    },
+    {
+      "id": "36321",
+      "name": "툰가",
+      "url": "https://pooyas.com/index.php?mid=sa_character&document_srl=36321",
+      "description": "툰가 캐릭터는 1999년 스톤에이지 개발 시 처음 등장한 캐릭터로 곰아저씨 캐릭터를 베이스로 만들어졌어요. 오리지널 버전에서는 사이너스, 쟈루에 각 길을 잇는 다리에 위치한 이벤트 NPC였지만, 넷마블 스톤에이지에서 캐시 캐릭터로 출시됐어요. 이후 정장을 입은 모습도 만들어졌어요.",
+      "colors": [
+        "https://pooyas.com/files/attach/images/29222/321/036/c50cad409f352952f849b6718ad9a791.gif",
+        "https://pooyas.com/files/attach/images/29222/321/036/acca866d557f1e6996cf016bc719323e.gif",
+        "https://pooyas.com/files/attach/images/29222/321/036/06f2158a94e99d821899174d6eb86a1c.gif"
+      ],
+      "weapons": [
+        {
+          "type": "기본",
+          "image": "https://pooyas.com/files/attach/images/29222/321/036/71902ef3b4e9d8e3e0cd2b4bfe95a313.gif"
+        },
+        {
+          "type": "도끼(엑스)",
+          "image": "https://pooyas.com/files/attach/images/29222/321/036/65cf4140baaff2486c1397d4bda07fd6.gif"
+        },
+        {
+          "type": "곤봉",
+          "image": "https://pooyas.com/files/attach/images/29222/321/036/6fae2395a0f5b3b2f41ec93faece5731.gif"
+        },
+        {
+          "type": "(창)스피어",
+          "image": "https://pooyas.com/files/attach/images/29222/321/036/26a334ab6145fb2451f956094fe86c85.gif"
+        },
+        {
+          "type": "활",
+          "image": "https://pooyas.com/files/attach/images/29222/321/036/3031dc12ed1b1f26038847444990a819.gif"
+        }
+      ]
+    }
+  ]
+}

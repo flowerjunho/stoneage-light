@@ -3,6 +3,7 @@ import { useSearchParams, useNavigate } from 'react-router-dom';
 import SearchBar from '../components/SearchBar';
 import CharacterTabs from '../components/CharacterTabs';
 import PetDetailModal from '../components/PetDetailModal';
+import CharacterDetailModal from '../components/CharacterDetailModal';
 import ShareButton from '../components/ShareButton';
 import { useDebounce } from '../hooks/useDebounce';
 import { matchesConsonantSearch } from '../utils/korean';
@@ -19,9 +20,22 @@ interface PetRidingData {
   }>;
 }
 
+interface Character {
+  id: string;
+  name: string;
+  url: string;
+  description: string;
+  colors: string[];
+  weapons: Array<{
+    type: string;
+    image: string | string[];
+  }>;
+}
+
 const BoardingPage: React.FC = () => {
   const [boardingData, setBoardingData] = useState<BoardingData>({});
   const [petRidingData, setPetRidingData] = useState<PetRidingData>({});
+  const [charactersData, setCharactersData] = useState<Character[]>([]);
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
   const [petData, setPetData] = useState<Pet[]>([]);
@@ -32,6 +46,8 @@ const BoardingPage: React.FC = () => {
   const [selectedPet, setSelectedPet] = useState<Pet | null>(null);
   const [selectedPetRidingImage, setSelectedPetRidingImage] = useState<string>('');
   const [isPetModalOpen, setIsPetModalOpen] = useState(false);
+  const [selectedCharacterData, setSelectedCharacterData] = useState<Character | null>(null);
+  const [isCharacterModalOpen, setIsCharacterModalOpen] = useState(false);
   const [alertMessage, setAlertMessage] = useState<string>('');
   const [showAlert, setShowAlert] = useState(false);
   const [alertTimeoutId, setAlertTimeoutId] = useState<NodeJS.Timeout | null>(null);
@@ -44,15 +60,17 @@ const BoardingPage: React.FC = () => {
   useEffect(() => {
     const loadData = async () => {
       try {
-        const [boardingModule, petModule, petRidingModule] = await Promise.all([
+        const [boardingModule, petModule, petRidingModule, charactersModule] = await Promise.all([
           import('../data/boarding.json'),
           import('../data/petData.json'),
           import('../data/pet-riding.json'),
+          import('../data/characters.json'),
         ]);
         await new Promise(resolve => setTimeout(resolve, 200));
         setBoardingData(boardingModule.default);
         setPetData(petModule.pets);
         setPetRidingData(petRidingModule.default);
+        setCharactersData(charactersModule.characters);
       } catch (error) {
         console.error('Failed to load data:', error);
       } finally {
@@ -98,8 +116,8 @@ const BoardingPage: React.FC = () => {
 
   // 페트 클릭 핸들러
   const handlePetClick = (petName: string, characterName: string) => {
-    // ⭐️ 제거하고 정확한 이름으로 매칭
-    const cleanBoardingName = petName.replace('⭐️', '').trim();
+    // ⭐️, ⭐ 둘 다 제거하고 정확한 이름으로 매칭
+    const cleanBoardingName = petName.replace(/⭐️?/g, '').trim();
 
     const matchingPet = petData.find(pet => {
       // 정확한 이름 매칭만 수행 (띄어쓰기만 제거, (환)은 유지)
@@ -141,6 +159,32 @@ const BoardingPage: React.FC = () => {
     setSelectedPetRidingImage('');
   };
 
+  // 캐릭터명 매핑 테이블 (boarding.json과 characters.json의 이름이 다른 경우)
+  const characterNameMapping: { [key: string]: string } = {
+    // 현재는 매핑이 필요하지 않음 - characters.json에 직접 "울보소녀" 존재
+    // 필요시 다른 매핑 추가
+  };
+
+  // 캐릭터 클릭 핸들러
+  const handleCharacterClick = (characterName: string) => {
+    // 별 아이콘(⭐, ⭐️) 제거하고 텍스트만 추출
+    const cleanCharacterName = characterName.replace(/⭐️?/g, '').trim();
+    
+    // 매핑된 이름이 있으면 사용, 없으면 정제된 이름 사용
+    const mappedName = characterNameMapping[cleanCharacterName] || cleanCharacterName;
+    
+    const characterData = charactersData.find(char => char.name === mappedName);
+    if (characterData) {
+      setSelectedCharacterData(characterData);
+      setIsCharacterModalOpen(true);
+    }
+  };
+
+  const handleCharacterModalClose = () => {
+    setIsCharacterModalOpen(false);
+    setSelectedCharacterData(null);
+  };
+
   const handleAlertClose = () => {
     if (alertTimeoutId) {
       clearTimeout(alertTimeoutId);
@@ -152,8 +196,8 @@ const BoardingPage: React.FC = () => {
 
   // 바닥 페이지용: 탑승 이미지 없으면 일반 이미지 폴백
   const findPetImage = (petName: string, characterName: string): string => {
-    // ⭐️ 제거하고 정확한 이름으로 매칭
-    const cleanBoardingName = petName.replace('⭐️', '').trim();
+    // ⭐️, ⭐ 둘 다 제거하고 정확한 이름으로 매칭
+    const cleanBoardingName = petName.replace(/⭐️?/g, '').trim();
 
     // 1. pet-riding.json에서 캐릭터별 탑승 이미지 찾기
     const characterRidingPets = petRidingData[characterName];
@@ -198,8 +242,8 @@ const BoardingPage: React.FC = () => {
 
   // 모달용: 순수한 탑승 이미지만 반환 (일반 이미지 폴백 없음)
   const findPureRidingImage = (petName: string, characterName: string): string => {
-    // ⭐️ 제거하고 정확한 이름으로 매칭
-    const cleanBoardingName = petName.replace('⭐️', '').trim();
+    // ⭐️, ⭐ 둘 다 제거하고 정확한 이름으로 매칭
+    const cleanBoardingName = petName.replace(/⭐️?/g, '').trim();
 
     // pet-riding.json에서만 탑승 이미지 찾기
     const characterRidingPets = petRidingData[characterName];
@@ -669,9 +713,23 @@ const BoardingPage: React.FC = () => {
               className="bg-bg-secondary rounded-lg p-6 iphone16:p-4 border border-border-primary"
             >
               <div className="flex items-center justify-between mb-4 iphone16:mb-3">
-                <h2 className="text-xl font-bold text-text-primary iphone16:text-lg">
-                  {character}
-                </h2>
+                <div 
+                  className="flex items-center gap-1 cursor-pointer group"
+                  onClick={() => handleCharacterClick(character)}
+                >
+                  <h2 className="text-xl font-bold text-text-primary iphone16:text-lg group-hover:text-accent transition-colors duration-200 underline decoration-text-muted group-hover:decoration-accent decoration-2 underline-offset-2">
+                    {character}
+                  </h2>
+                  <svg 
+                    className="w-4 h-4 text-text-muted group-hover:text-accent transition-colors duration-200" 
+                    fill="none" 
+                    stroke="currentColor" 
+                    viewBox="0 0 24 24"
+                    strokeWidth={2}
+                  >
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                  </svg>
+                </div>
                 <span className="bg-accent/10 text-accent px-3 py-1 rounded-full text-sm font-medium iphone16:text-xs iphone16:px-2">
                   {pets.length}개
                 </span>
@@ -726,6 +784,13 @@ const BoardingPage: React.FC = () => {
         onClose={handlePetModalClose}
         pet={selectedPet}
         ridingImageUrl={selectedPetRidingImage}
+      />
+
+      {/* 캐릭터 상세 모달 */}
+      <CharacterDetailModal
+        isOpen={isCharacterModalOpen}
+        onClose={handleCharacterModalClose}
+        character={selectedCharacterData}
       />
 
       {/* 디자인 Alert */}
