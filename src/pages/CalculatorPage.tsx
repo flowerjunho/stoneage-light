@@ -23,6 +23,7 @@ const CalculatorPage: React.FC = () => {
 
   // 페트 판매 계산기 상태
   const [petSaleLevel, setPetSaleLevel] = useState(60);
+  const [petSaleLevelInput, setPetSaleLevelInput] = useState('60');
   const [petSaleResults, setPetSaleResults] = useState({
     normal: 0,
     grade1: 0,
@@ -78,6 +79,34 @@ const CalculatorPage: React.FC = () => {
       grade1: result2,
       grade2: result3,
     };
+  };
+
+  // 페트 판매 레벨 입력 처리
+  const handlePetSaleLevelChange = (value: string) => {
+    // 숫자가 아닌 문자 제거
+    const numericValue = value.replace(/[^0-9]/g, '');
+    
+    if (numericValue === '') {
+      setPetSaleLevelInput('');
+      return; // 빈 문자열일 때는 계산하지 않음
+    }
+    
+    const level = parseInt(numericValue);
+    
+    if (!isNaN(level)) {
+      // 141 이상이면 140으로 제한
+      if (level > 140) {
+        setPetSaleLevelInput('140');
+        setPetSaleLevel(140);
+      } else if (level >= 1) {
+        // 1 이상 140 이하의 유효한 숫자
+        setPetSaleLevelInput(numericValue);
+        setPetSaleLevel(level);
+      } else {
+        // 0 또는 유효하지 않은 숫자는 입력만 허용하고 계산하지 않음
+        setPetSaleLevelInput(numericValue);
+      }
+    }
   };
 
   // 레벨 변경 시 가격 계산
@@ -1099,14 +1128,10 @@ const CalculatorPage: React.FC = () => {
               </label>
               <div className="relative">
                 <input
-                  type="number"
-                  min="1"
-                  max="140"
-                  value={petSaleLevel}
-                  onChange={e => {
-                    const level = parseInt(e.target.value) || 1;
-                    setPetSaleLevel(Math.max(1, Math.min(140, level)));
-                  }}
+                  type="text"
+                  value={petSaleLevelInput}
+                  onChange={e => handlePetSaleLevelChange(e.target.value)}
+                  onFocus={e => e.target.select()}
                   className="w-full px-6 py-4 bg-white dark:bg-gray-800 border-2 border-accent rounded-xl text-text-primary text-center text-2xl font-bold focus:outline-none focus:ring-4 focus:ring-accent/30 shadow-lg"
                   placeholder="60"
                 />
