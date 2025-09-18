@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { HashRouter as Router, Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import Header from './components/Header';
 import ThemeToggle from './components/ThemeToggle';
@@ -12,10 +12,24 @@ import QuestsPage from './pages/QuestsPage';
 import QuestDetailPage from './pages/QuestDetailPage';
 import CalculatorPage from './pages/CalculatorPage';
 import BoardPage from './pages/BoardPage';
+import { VisitTracker } from './utils/visitTracker';
 
 const AppContent: React.FC = () => {
   const location = useLocation();
   const hideTabNavigation = location.pathname.includes('/quests/') && location.pathname !== '/quests';
+
+  // 앱 시작 시 방문자 추적
+  useEffect(() => {
+    // 관리자가 아닌 경우에만 방문자 카운트
+    const adminId = localStorage.getItem('ADMIN_ID_STONE');
+    const isAdmin = adminId === 'flowerjunho';
+    
+    if (!isAdmin) {
+      VisitTracker.trackVisit().catch(error => {
+        console.error('방문자 추적 실패:', error);
+      });
+    }
+  }, []); // 빈 dependency array로 한 번만 실행
 
   return (
     <div className="min-h-screen bg-bg-primary text-text-primary">

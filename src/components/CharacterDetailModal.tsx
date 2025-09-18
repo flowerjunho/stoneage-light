@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 
 interface Character {
   id: string;
@@ -19,6 +19,17 @@ interface CharacterDetailModalProps {
 }
 
 const CharacterDetailModal: React.FC<CharacterDetailModalProps> = ({ isOpen, onClose, character }) => {
+  // 스크롤 막기
+  useEffect(() => {
+    if (isOpen) {
+      document.body.style.overflow = 'hidden';
+    }
+
+    return () => {
+      document.body.style.overflow = '';
+    };
+  }, [isOpen]);
+
   if (!isOpen || !character) return null;
 
   const handleDimClick = (e: React.MouseEvent) => {

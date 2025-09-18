@@ -10,7 +10,7 @@ interface PetDetailModalProps {
 
 const PetDetailModal: React.FC<PetDetailModalProps> = ({ isOpen, onClose, pet, ridingImageUrl }) => {
 
-  // ESC 키로 모달 닫기
+  // ESC 키로 모달 닫기 및 스크롤 막기
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
       if (event.key === 'Escape' && isOpen) {
@@ -19,10 +19,14 @@ const PetDetailModal: React.FC<PetDetailModalProps> = ({ isOpen, onClose, pet, r
     };
 
     if (isOpen) {
+      // 모달이 열릴 때 스크롤 막기
+      document.body.style.overflow = 'hidden';
       document.addEventListener('keydown', handleKeyDown);
     }
 
     return () => {
+      // 모달이 닫힐 때 스크롤 복원
+      document.body.style.overflow = '';
       document.removeEventListener('keydown', handleKeyDown);
     };
   }, [isOpen, onClose]);

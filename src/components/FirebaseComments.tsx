@@ -12,6 +12,7 @@ import {
   Timestamp,
 } from 'firebase/firestore';
 import { db, type Comment } from '../lib/firebase';
+import { VisitTracker } from '../utils/visitTracker';
 
 const FirebaseComments: React.FC = () => {
   const [comments, setComments] = useState<Comment[]>([]);
@@ -22,6 +23,8 @@ const FirebaseComments: React.FC = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isAdmin, setIsAdmin] = useState(false);
+  const [dailyVisitors, setDailyVisitors] = useState<number>(0);
+  const [weeklyStats, setWeeklyStats] = useState<Array<{ date: string; count: number }>>([]);
 
   // 간단한 해시 함수 (실제 프로덕션에서는 더 강력한 해시 사용 권장)
   const simpleHash = async (text: string): Promise<string> => {
@@ -30,6 +33,18 @@ const FirebaseComments: React.FC = () => {
     const hashBuffer = await crypto.subtle.digest('SHA-256', data);
     const hashArray = Array.from(new Uint8Array(hashBuffer));
     return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+  };
+
+  // 방문자 통계 로드 함수 (관리자 전용)
+  const loadVisitorStats = async () => {
+    try {
+      const todayCount = await VisitTracker.getDailyStats();
+      const weekStats = await VisitTracker.getWeeklyStats();
+      setDailyVisitors(todayCount);
+      setWeeklyStats(weekStats);
+    } catch (error) {
+      console.error('방문자 통계 로드 실패:', error);
+    }
   };
 
   // 저장된 타이틀, 닉네임 및 관리자 권한 확인
@@ -46,7 +61,13 @@ const FirebaseComments: React.FC = () => {
 
     // 관리자 권한 확인
     const adminId = localStorage.getItem('ADMIN_ID_STONE');
-    setIsAdmin(adminId === 'flowerjunho');
+    const isAdminUser = adminId === 'flowerjunho';
+    setIsAdmin(isAdminUser);
+    
+    // 관리자인 경우에만 방문자 통계 로드
+    if (isAdminUser) {
+      loadVisitorStats();
+    }
   }, []);
 
   // 실시간 댓글 불러오기
@@ -219,9 +240,14 @@ const FirebaseComments: React.FC = () => {
         <div className="flex items-center justify-between mb-4">
           <h3 className="text-lg font-semibold text-text-primary">💬 댓글 작성</h3>
           {isAdmin && (
-            <span className="text-xs bg-yellow-500 text-black px-2 py-1 rounded">
-              👑 관리자 모드
-            </span>
+            <div className="flex items-center gap-3">
+              <span className="text-xs bg-yellow-500 text-black px-2 py-1 rounded">
+                👑 관리자 모드
+              </span>
+              <div className="text-xs text-text-secondary">
+                📊 오늘 방문자: <span className="font-semibold text-accent">{dailyVisitors}명</span>
+              </div>
+            </div>
           )}
         </div>
         <form onSubmit={handleSubmit} className="space-y-3">
@@ -237,8 +263,32 @@ const FirebaseComments: React.FC = () => {
               }`}
             />
             {isAdmin && (
-              <div className="text-xs text-yellow-600 dark:text-yellow-400 mt-1">
-                ⚡ 관리자 권한: 모든 댓글 삭제 가능
+              <div className="space-y-2">
+                <div className="text-xs text-yellow-600 dark:text-yellow-400">
+                  ⚡ 관리자 권한: 모든 댓글 삭제 가능
+                </div>
+                <div className="bg-bg-secondary rounded-lg p-3 border border-border">
+                  <div className="text-xs text-text-secondary mb-2 font-semibold">📈 주간 방문자 현황</div>
+                  <div className="space-y-1">
+                    {weeklyStats.map((stat, index) => {
+                      const date = new Date(stat.date);
+                      const dayName = ['일', '월', '화', '수', '목', '금', '토'][date.getDay()];
+                      const isToday = stat.date === new Date().toISOString().split('T')[0];
+                      return (
+                        <div key={stat.date} className={`flex justify-between text-xs ${isToday ? 'font-semibold text-accent' : 'text-text-secondary'}`}>
+                          <span>{stat.date} ({dayName})</span>
+                          <span>{stat.count}명</span>
+                        </div>
+                      );
+                    })}
+                    <div className="border-t border-border pt-1 mt-2">
+                      <div className="flex justify-between text-xs font-semibold text-text-primary">
+                        <span>7일 총계</span>
+                        <span>{weeklyStats.reduce((total, stat) => total + stat.count, 0)}명</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
               </div>
             )}
           </div>

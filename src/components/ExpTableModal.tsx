@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 
 interface ExpTableData {
   level: number;
@@ -12,6 +12,17 @@ interface ExpTableModalProps {
 }
 
 const ExpTableModal: React.FC<ExpTableModalProps> = ({ isOpen, onClose, expData }) => {
+  // 스크롤 막기
+  useEffect(() => {
+    if (isOpen) {
+      document.body.style.overflow = 'hidden';
+    }
+
+    return () => {
+      document.body.style.overflow = '';
+    };
+  }, [isOpen]);
+
   if (!isOpen) return null;
 
   const handleDimClick = (e: React.MouseEvent) => {
