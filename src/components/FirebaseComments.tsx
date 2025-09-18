@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import {
   collection,
   addDoc,
@@ -25,6 +25,7 @@ const FirebaseComments: React.FC = () => {
   const [isAdmin, setIsAdmin] = useState(false);
   const [dailyVisitors, setDailyVisitors] = useState<number>(0);
   const [weeklyStats, setWeeklyStats] = useState<Array<{ date: string; count: number }>>([]);
+  const [currentWeekOffset, setCurrentWeekOffset] = useState<number>(0); // 0: 이번주, -1: 지난주, 1: 다음주
 
   // 간단한 해시 함수 (실제 프로덕션에서는 더 강력한 해시 사용 권장)
   const simpleHash = async (text: string): Promise<string> => {
@@ -35,17 +36,39 @@ const FirebaseComments: React.FC = () => {
     return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
   };
 
+  // 주의 시작일 (월요일)을 구하는 함수
+  const getWeekStartDate = (offset: number = 0): Date => {
+    const today = new Date();
+    const dayOfWeek = today.getDay(); // 0: 일요일, 1: 월요일, ..., 6: 토요일
+    const daysFromMonday = dayOfWeek === 0 ? -6 : 1 - dayOfWeek; // 월요일까지의 거리
+    const weekStart = new Date(today);
+    weekStart.setDate(today.getDate() + daysFromMonday + (offset * 7));
+    return weekStart;
+  };
+
   // 방문자 통계 로드 함수 (관리자 전용)
-  const loadVisitorStats = async () => {
+  const loadVisitorStats = useCallback(async (weekOffset: number = 0) => {
     try {
       const todayCount = await VisitTracker.getDailyStats();
-      const weekStats = await VisitTracker.getWeeklyStats();
       setDailyVisitors(todayCount);
+
+      // 특정 주의 통계 로드
+      const weekStart = getWeekStartDate(weekOffset);
+      const weekStats: Array<{ date: string; count: number }> = [];
+      
+      for (let i = 0; i < 7; i++) {
+        const date = new Date(weekStart);
+        date.setDate(weekStart.getDate() + i);
+        const dateString = date.toISOString().split('T')[0];
+        const count = await VisitTracker.getDailyStats(dateString);
+        weekStats.push({ date: dateString, count });
+      }
+      
       setWeeklyStats(weekStats);
     } catch (error) {
       console.error('방문자 통계 로드 실패:', error);
     }
-  };
+  }, []);
 
   // 저장된 타이틀, 닉네임 및 관리자 권한 확인
   useEffect(() => {
@@ -66,9 +89,9 @@ const FirebaseComments: React.FC = () => {
     
     // 관리자인 경우에만 방문자 통계 로드
     if (isAdminUser) {
-      loadVisitorStats();
+      loadVisitorStats(currentWeekOffset);
     }
-  }, []);
+  }, [currentWeekOffset, loadVisitorStats]);
 
   // 실시간 댓글 불러오기
   useEffect(() => {
@@ -263,32 +286,8 @@ const FirebaseComments: React.FC = () => {
               }`}
             />
             {isAdmin && (
-              <div className="space-y-2">
-                <div className="text-xs text-yellow-600 dark:text-yellow-400">
-                  ⚡ 관리자 권한: 모든 댓글 삭제 가능
-                </div>
-                <div className="bg-bg-secondary rounded-lg p-3 border border-border">
-                  <div className="text-xs text-text-secondary mb-2 font-semibold">📈 주간 방문자 현황</div>
-                  <div className="space-y-1">
-                    {weeklyStats.map((stat) => {
-                      const date = new Date(stat.date);
-                      const dayName = ['일', '월', '화', '수', '목', '금', '토'][date.getDay()];
-                      const isToday = stat.date === new Date().toISOString().split('T')[0];
-                      return (
-                        <div key={stat.date} className={`flex justify-between text-xs ${isToday ? 'font-semibold text-accent' : 'text-text-secondary'}`}>
-                          <span>{stat.date} ({dayName})</span>
-                          <span>{stat.count}명</span>
-                        </div>
-                      );
-                    })}
-                    <div className="border-t border-border pt-1 mt-2">
-                      <div className="flex justify-between text-xs font-semibold text-text-primary">
-                        <span>7일 총계</span>
-                        <span>{weeklyStats.reduce((total, stat) => total + stat.count, 0)}명</span>
-                      </div>
-                    </div>
-                  </div>
-                </div>
+              <div className="text-xs text-yellow-600 dark:text-yellow-400">
+                ⚡ 관리자 권한: 모든 댓글 삭제 가능
               </div>
             )}
           </div>
@@ -393,6 +392,71 @@ const FirebaseComments: React.FC = () => {
           ))
         )}
       </div>
+
+      {/* 관리자 전용 주간 방문자 통계 */}
+      {isAdmin && weeklyStats.length > 0 && (
+        <div className="mt-6 bg-bg-tertiary rounded-lg p-4 border border-border">
+          <div className="flex items-center justify-between mb-4">
+            <h3 className="text-sm font-semibold text-text-primary">📈 주간 방문자 현황</h3>
+            <div className="flex items-center gap-2">
+              <button
+                onClick={() => setCurrentWeekOffset(prev => prev - 1)}
+                className="px-2 py-1 text-xs bg-bg-secondary hover:bg-bg-primary rounded border border-border transition-colors"
+                title="이전 주"
+              >
+                ◀
+              </button>
+              <span className="text-xs text-text-secondary">
+                {currentWeekOffset === 0 ? '이번 주' : 
+                 currentWeekOffset === -1 ? '지난 주' : 
+                 currentWeekOffset === 1 ? '다음 주' : 
+                 `${Math.abs(currentWeekOffset)}주 ${currentWeekOffset > 0 ? '후' : '전'}`}
+              </span>
+              <button
+                onClick={() => setCurrentWeekOffset(prev => prev + 1)}
+                className="px-2 py-1 text-xs bg-bg-secondary hover:bg-bg-primary rounded border border-border transition-colors"
+                title="다음 주"
+              >
+                ▶
+              </button>
+            </div>
+          </div>
+          
+          <div className="space-y-1">
+            {weeklyStats.map((stat) => {
+              const date = new Date(stat.date);
+              const dayName = ['월', '화', '수', '목', '금', '토', '일'][date.getDay() === 0 ? 6 : date.getDay() - 1];
+              const today = new Date().toISOString().split('T')[0];
+              const isToday = stat.date === today;
+              const isWeekend = date.getDay() === 0 || date.getDay() === 6; // 일요일 또는 토요일
+              
+              return (
+                <div 
+                  key={stat.date} 
+                  className={`flex justify-between items-center text-xs py-1 px-2 rounded ${
+                    isToday ? 'font-semibold text-accent bg-accent/10' : 
+                    isWeekend ? 'text-red-400' : 'text-text-secondary'
+                  }`}
+                >
+                  <span className="flex items-center gap-2">
+                    <span className="w-4 text-center">{dayName}</span>
+                    <span>{stat.date}</span>
+                    {isToday && <span className="text-xs text-accent">오늘</span>}
+                  </span>
+                  <span className="font-mono">{stat.count}명</span>
+                </div>
+              );
+            })}
+            
+            <div className="border-t border-border pt-2 mt-2">
+              <div className="flex justify-between text-xs font-semibold text-text-primary bg-bg-secondary/50 rounded px-2 py-1">
+                <span>주간 총계</span>
+                <span className="font-mono">{weeklyStats.reduce((total, stat) => total + stat.count, 0)}명</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
