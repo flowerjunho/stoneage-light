@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import questWithContentData from '../data/questWithContent.json';
 import { matchesConsonantSearch } from '../utils/searchUtils';
 import SearchBar from '../components/SearchBar';
@@ -13,8 +13,11 @@ interface QuestWithContent {
 
 const QuestsPage: React.FC = () => {
   const navigate = useNavigate();
+  const [searchParams, setSearchParams] = useSearchParams();
   const [quests, setQuests] = useState<QuestWithContent[]>([]);
-  const [searchTerm, setSearchTerm] = useState('');
+  const [searchTerm, setSearchTerm] = useState(() => {
+    return searchParams.get('search') || '';
+  });
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
@@ -37,7 +40,11 @@ const QuestsPage: React.FC = () => {
   });
 
   const handleQuestClick = (questIdx: number) => {
-    navigate(`/quests/${questIdx}`);
+    const currentSearch = searchParams.get('search');
+    const questUrl = currentSearch 
+      ? `/quests/${questIdx}?search=${encodeURIComponent(currentSearch)}`
+      : `/quests/${questIdx}`;
+    navigate(questUrl);
   };
 
   return (
@@ -72,7 +79,18 @@ const QuestsPage: React.FC = () => {
       {/* 검색 바 */}
       <SearchBar
         searchTerm={searchTerm}
-        onSearchChange={setSearchTerm}
+        onSearchChange={(value) => {
+          setSearchTerm(value);
+          setSearchParams(prev => {
+            const newParams = new URLSearchParams(prev);
+            if (value.trim()) {
+              newParams.set('search', value);
+            } else {
+              newParams.delete('search');
+            }
+            return newParams;
+          });
+        }}
         placeholder="퀘스트를 초성으로 검색하세요."
       />
 

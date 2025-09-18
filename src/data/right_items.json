@@ -333,13 +333,174 @@
     "name": "삼위일체(진)",
     "description": "공 +7~10 방 +7~10 순 +7~10 체+10~15",
     "imageUrl": "http://pooyas.com/files/attach/outimage/sypoo.com/icecastle/icecastle_three/item_03.gif",
-    "materials": "삼위일체(개) + 삼위일체(진)의 심장으로 제작"
+    "materials": "삼위일체(개) + 삼위일체(진)의 심장으로 제작 (확률 30%)"
   },
   {
     "id": "49",
     "name": "삼위일체(개)",
     "description": "공 +5~7 방 +5~7 순 +5~7 체+5~10",
     "imageUrl": "http://pooyas.com/files/attach/outimage/sypoo.com/icecastle/icecastle_three/item_02.gif",
-    "materials": "삼위일체 + 삼위일체(개)의 구슬로 제작"
+    "materials": "삼위일체 + 삼위일체(개)의 구슬로 제작 (확률 50%)"
+  },
+  {
+    "id": "50",
+    "name": "기계 파편(A)",
+    "description": "방 +1~5 순 +1~5 체 +5~10 (메카 페트를 얻기 위한 재료)",
+    "imageUrl": "https://www.hwansoo.top/data/editor/2506/51edc0161297200937786461e4cede2a_1750063732_9283.png",
+    "materials": "주간 레이드 기계의 침공"
+  },
+  {
+    "id": "51",
+    "name": "기계 파편(B)",
+    "description": "방 +5~10  체 +5~10 (메카 페트를 얻기 위한 재료)",
+    "imageUrl": "https://www.hwansoo.top/data/editor/2506/796992fad613ccc2daa11a7975812f68_1750063781_2109.png",
+    "materials": "주간 레이드 기계의 침공"
+  },
+  {
+    "id": "52",
+    "name": "기계 파편(C)",
+    "description": "공 +1~5 방 +1~5 체 +5~10 (메카 페트를 얻기 위한 재료)",
+    "imageUrl": "https://www.hwansoo.top/data/editor/2506/1f5ea411b8a08116fddd29a71bde154a_1750063826_2491.png",
+    "materials": "주간 레이드 기계의 침공"
+  },
+  {
+    "id": "53",
+    "name": "기계 코어 모듈",
+    "description": "빛나는 장갑을 한 단계 더 해방 시키는데 필요한 코어",
+    "imageUrl": "https://www.hwansoo.top/data/editor/2506/ccc612322dbdf0094d2ae863f6616d0b_1750063874_4502.png",
+    "materials": "주간 레이드 기계의 침공"
+  },
+  {
+    "id": "54",
+    "name": "강화석 (+10%)",
+    "description": "특정 부위 장비의 능력치를 강화시킨다. (+10%)",
+    "imageUrl": "https://www.hwansoo.top/data/editor/2506/6f9899ba87db8556c620ac793803214b_1750063991_3671.png",
+    "materials": "레이드"
+  },
+  {
+    "id": "55",
+    "name": "강화석 (+25%)",
+    "description": "특정 부위 장비의 능력치를 강화시킨다. (+25%)",
+    "imageUrl": "https://www.hwansoo.top/data/editor/2506/6f9899ba87db8556c620ac793803214b_1750063991_3671.png",
+    "materials": "레이드"
+  },
+  {
+    "id": "56",
+    "name": "크리스탈 (100 ~ 10,000P)",
+    "description": "더블 클릭 시 크리스탈 획득",
+    "imageUrl": "https://www.hwansoo.top/data/editor/2506/6f9899ba87db8556c620ac793803214b_1750064004_4976.png",
+    "materials": "레이드 및 다양한 컨텐츠"
+  },
+  {
+    "id": "57",
+    "name": "경험치 구슬 (30분 ~ 24시간)",
+    "description": "사용한 시간만큼 경험치 +100% 증가",
+    "imageUrl": "https://www.hwansoo.top/data/editor/2506/6f9899ba87db8556c620ac793803214b_1750064016_2987.png",
+    "materials": "레이드 및 다양한 컨텐츠"
+  },
+  {
+    "id": "58",
+    "name": "코어 응축 덩어리",
+    "description": "코어 장갑을 얻거나, 모든 재료가 파괴된다.",
+    "imageUrl": "https://www.hwansoo.top/data/editor/2506/7d865dff2ac8c6181be8e7af26ea6fc6_1750064475_9488.png",
+    "materials": "반짝이는 장갑 + 기계 코어 모듈로 제작"
+  },
+  {
+    "id": "59",
+    "name": "기계 코어 장갑",
+    "description": "공 +5~8 방 +2~4 순 +2~4 체 +8~12",
+    "imageUrl": "https://www.hwansoo.top/data/editor/2506/7d865dff2ac8c6181be8e7af26ea6fc6_1750064482_5309.png",
+    "materials": "코어 응축 덩어리 사용 확률(50%)"
+  },
+  {
+    "id": "60",
+    "name": "페트 알 (메가 카키)",
+    "description": "더블 클릭 시 '메가 카키' 페트 획득",
+    "imageUrl": "https://www.hwansoo.top/data/editor/2506/ded29cd43185bd9452015a5c3d0b4ba2_1750065085_5512.png",
+    "materials": "기계 파편(A) + 기계 파편(B) + 기계 파편(C)로 제작"
+  },
+  {
+    "id": "60",
+    "name": "페트 알 (테이토스)",
+    "description": "더블 클릭 시 '테이토스' 페트 획득",
+    "imageUrl": "https://www.hwansoo.top/data/editor/2506/ded29cd43185bd9452015a5c3d0b4ba2_1750065085_5512.png",
+    "materials": "기계 파편(A) + 기계 파편(B) + 기계 파편(C)로 제작"
+  },
+  {
+    "id": "61",
+    "name": "켄타르의 알",
+    "description": "더블 클릭 시 켄타르 획득",
+    "imageUrl": "https://www.hwansoo.top/data/editor/2506/ded29cd43185bd9452015a5c3d0b4ba2_1750065085_5512.png",
+    "materials": "주간레이드 메켄타르 은신처"
+  },
+  {
+    "id": "62",
+    "name": "그리스네의 알",
+    "description": "더블 클릭 시 그리스네 획득",
+    "imageUrl": "https://www.hwansoo.top/data/editor/2506/ded29cd43185bd9452015a5c3d0b4ba2_1750065085_5512.png",
+    "materials": "주간레이드 메켄타르 은신처"
+  },
+  {
+    "id": "63",
+    "name": "페트 알(우라노스)",
+    "description": "더블 클릭 시 우라노스 획득",
+    "imageUrl": "https://www.hwansoo.top/data/editor/2506/ded29cd43185bd9452015a5c3d0b4ba2_1750065085_5512.png",
+    "materials": "얼음성 주간레이드 언딘(질투의 방)"
+  },
+  {
+    "id": "64",
+    "name": "얼음성 포인트 (1~3P)",
+    "description": "사용 시, 얼음의 포인트 1~3P 획득 (언딘, 헤티아 2P), (암흑 헤티아 3P), (그 외 1P)",
+    "imageUrl": "https://hwansoo.net/data/editor/2405/f510aee67b4cc347ae4131a06bc2c847_1715747984_2955.png",
+    "materials": "주간레이드 얼음성 및 암흑 헤티아"
+  },
+  {
+    "id": "65",
+    "name": "파란 라돈타 반지",
+    "description": "공 +3~5 방 -3~5 민 +6~7 내 +10 크리 +6",
+    "imageUrl": "https://www.hwansoo.top/data/editor/2508/f4243f310b4e26ddb648d77ccf1a1c15_1754352761_2402.png",
+    "materials": "라돈타 전리품 개봉시 랜덤 아이템 획득 가능"
+  },
+  {
+    "id": "66",
+    "name": "붉은 라돈타 반지",
+    "description": "공 +3~5 방 -3~5 민 +5~7 내 +10 크리 +6",
+    "imageUrl": "https://www.hwansoo.top/data/editor/2508/37781c5710467f184508e10fd18bcc00_1754352296_067.png",
+    "materials": "라돈타 전리품 개봉시 랜덤 아이템 획득 가능"
+  },
+  {
+    "id": "67",
+    "name": " 라돈타 귀걸이",
+    "description": "공 +5 방 +5 민 +5 내 +10 회피 +5",
+    "imageUrl": "https://www.hwansoo.top/data/editor/2508/37781c5710467f184508e10fd18bcc00_1754352312_2321.png",
+    "materials": "라돈타 전리품 개봉시 랜덤 아이템 획득 가능"
+  },
+  {
+    "id": "68",
+    "name": "라돈타의 찬란한 파편",
+    "description": "암흑헤티아 아이템 강화에 사용된다. 창: 공+5, 투구: 민+5, 갑옷: 방+5(2회 가능, 1회는 '100% 성공', 2회차 부터는 '50% 성공', '25% 아이템 파괴')",
+    "imageUrl": "https://www.hwansoo.top/data/editor/2508/6a697936fc11a77febf1f45a93923ebf_1754489979_0256.jpg",
+    "materials": "라돈타 전리품 개봉시 랜덤 아이템 획득 가능"
+  },
+  {
+    "id": "69",
+    "name": "페트 알 '사리온'",
+    "description": "더블 클릭 시 페트 '사리온' 획득",
+    "imageUrl": "https://www.hwansoo.top/data/editor/2506/ded29cd43185bd9452015a5c3d0b4ba2_1750065085_5512.png",
+    "materials": "라돈타 전리품 개봉시 랜덤 아이템 획득 가능"
+  },
+  {
+    "id": "70",
+    "name": "아이테르의 빛",
+    "description": "민 +3~5 회피 +5",
+    "imageUrl": "https://images-ext-1.discordapp.net/external/M2vnhETAp_8di2xjlY2PBFJIoxFQazgYSbRCzrRw6Sk/%3Ffname%3Dhttp%253A%252F%252Fsa.ongam.com%252Fmake11%252Fhero_ac.gif/https/img1.daumcdn.net/relay/cafe/R400x0/?width=75&height=62",
+    "materials": "하이하모 영웅의 길 퀘스트 클리어 보상"
+  },
+  {
+    "id": "70",
+    "name": "네메시스 소울 펜던트",
+    "description": "공 +3~5 회피 명중 +3",
+    "imageUrl": "https://cdn.discordapp.com/attachments/1337456342373236766/1418031979521249290/image.png?ex=68cca4b1&is=68cb5331&hm=6bd1c3bd2b25f9441c770f112d468cd69e2cb28deefe3c98fd517aeb21a47f59&",
+    "materials": "타니토스의 신전에서 네메시스의 길로 퀘스트 클리어 보상"
   }
 ]

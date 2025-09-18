@@ -161,7 +161,7 @@ const PetDetailModal: React.FC<PetDetailModalProps> = ({ isOpen, onClose, pet, r
       onClick={onClose}
     >
       <div 
-        className="bg-bg-primary rounded-lg max-w-md w-full max-h-[80vh] overflow-hidden"
+        className="bg-bg-primary rounded-lg max-w-md w-full max-h-[80vh] overflow-hidden border-2 border-border shadow-2xl"
         onClick={(e) => e.stopPropagation()}
       >
         {/* 모달 헤더 */}

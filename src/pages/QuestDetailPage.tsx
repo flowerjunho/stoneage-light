@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate, useSearchParams } from 'react-router-dom';
 import questWithContentData from '../data/questWithContent.json';
 import '../styles/quest-content.css';
 
@@ -13,6 +13,7 @@ interface QuestWithContent {
 const QuestDetailPage: React.FC = () => {
   const { questId } = useParams<{ questId: string }>();
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   const [quest, setQuest] = useState<QuestWithContent | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
@@ -36,7 +37,11 @@ const QuestDetailPage: React.FC = () => {
   }, [questId]);
 
   const handleGoBack = () => {
-    navigate('/quests');
+    const currentSearch = searchParams.get('search');
+    const questsUrl = currentSearch 
+      ? `/quests?search=${encodeURIComponent(currentSearch)}`
+      : '/quests';
+    navigate(questsUrl);
   };
 
   const handleOpenOriginal = () => {
