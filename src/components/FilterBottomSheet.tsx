@@ -144,7 +144,7 @@ const FilterBottomSheet = ({
           {/* 등급 필터 */}
           <div className="border-b border-border-primary pb-4 mb-4">
             <div className="mb-4 px-4">
-              <span className="text-text-secondary text-sm font-medium">판매 등급:</span>
+              <span className="text-text-secondary text-sm font-medium">페트 등급:</span>
             </div>
             <div className="px-4">
               <GradeFilter

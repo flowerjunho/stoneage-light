@@ -75,6 +75,7 @@ const PetsPage: React.FC = () => {
     if (tabParam && (tabParam === 'info' || tabParam === 'skills')) {
       setActiveTab(tabParam);
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []); // 의존성 배열을 비워서 mount 시점에만 실행
 
   // 공유 모달 관련 상태

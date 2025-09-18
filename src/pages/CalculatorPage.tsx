@@ -21,6 +21,14 @@ const CalculatorPage: React.FC = () => {
   // 서브탭 상태 관리
   const [activeSubTab, setActiveSubTab] = useState('rebirth');
 
+  // 페트 판매 계산기 상태
+  const [petSaleLevel, setPetSaleLevel] = useState(60);
+  const [petSaleResults, setPetSaleResults] = useState({
+    normal: 0,
+    grade1: 0,
+    grade2: 0,
+  });
+
   // 페트성장 계산기 상태
   const [petLevel, setPetLevel] = useState(1);
   const [selectedPet, setSelectedPet] = useState<(typeof petData.pets)[0] | null>(null);
@@ -54,6 +62,29 @@ const CalculatorPage: React.FC = () => {
 
   // 계산 로직을 custom hook으로 분리
   const calculatedData = useRebirthCalculation(userInputs);
+
+  // 페트 판매가 계산 함수
+  const calculatePetSalePrice = (level: number) => {
+    if (level < 1 || level > 140) {
+      return { normal: 0, grade1: 0, grade2: 0 };
+    }
+
+    const result1 = (((level + 1) * level) / 2 - 1) * 20 + 10;
+    const result2 = result1 * 8;
+    const result3 = result1 * 5;
+
+    return {
+      normal: result1,
+      grade1: result2,
+      grade2: result3,
+    };
+  };
+
+  // 레벨 변경 시 가격 계산
+  React.useEffect(() => {
+    const results = calculatePetSalePrice(petSaleLevel);
+    setPetSaleResults(results);
+  }, [petSaleLevel]);
 
   // 입력 처리
   const handleStatChange = (
@@ -291,7 +322,7 @@ const CalculatorPage: React.FC = () => {
   // URL 파라미터에서 서브탭 상태 관리
   useEffect(() => {
     const tabParam = searchParams.get('tab');
-    if (tabParam === 'petgrowth' || tabParam === 'rebirth') {
+    if (tabParam === 'petgrowth' || tabParam === 'rebirth' || tabParam === 'petsale') {
       setActiveSubTab(tabParam);
     } else {
       // 기본값 설정 및 URL 업데이트
@@ -317,6 +348,7 @@ const CalculatorPage: React.FC = () => {
   const subTabs = [
     { id: 'rebirth', label: '환생포인트' },
     { id: 'petgrowth', label: '페트성장' },
+    { id: 'petsale', label: '페트판매' },
   ];
 
   return (
@@ -498,14 +530,10 @@ const CalculatorPage: React.FC = () => {
                   <tr className="bg-bg-tertiary border-t border-border">
                     {calculatedData.map((_, i) => (
                       <React.Fragment key={`header-${i}`}>
-                        <th
-                          className="px-2 py-2 text-center font-semibold text-xs bg-bg-tertiary text-text-secondary"
-                        >
+                        <th className="px-2 py-2 text-center font-semibold text-xs bg-bg-tertiary text-text-secondary">
                           적용
                         </th>
-                        <th
-                          className="px-2 py-2 text-center font-semibold text-xs bg-bg-tertiary text-text-secondary"
-                        >
+                        <th className="px-2 py-2 text-center font-semibold text-xs bg-bg-tertiary text-text-secondary">
                           실제
                         </th>
                       </React.Fragment>
@@ -724,7 +752,7 @@ const CalculatorPage: React.FC = () => {
                 <h3 className="text-lg font-bold text-text-primary mb-4">
                   {selectedPet.name} 정보
                 </h3>
-                
+
                 <div className="flex flex-col md:flex-row gap-6">
                   {/* 페트 이미지 */}
                   <div className="flex-shrink-0">
@@ -734,7 +762,7 @@ const CalculatorPage: React.FC = () => {
                           src={selectedPet.imageLink}
                           alt={selectedPet.name}
                           className="w-full h-full object-contain rounded-lg border border-border bg-bg-tertiary"
-                          onError={(e) => {
+                          onError={e => {
                             e.currentTarget.style.display = 'none';
                           }}
                         />
@@ -745,13 +773,13 @@ const CalculatorPage: React.FC = () => {
                       </div>
                     )}
                   </div>
-                  
+
                   {/* 페트 정보 */}
                   <div className="flex-1">
                     {/* 속성 정보 */}
                     <div className="mb-4">
                       <h4 className="text-sm font-medium text-text-primary mb-3">속성</h4>
-                      
+
                       {/* 속성 아이콘 */}
                       <div className="flex gap-1.5 flex-wrap mb-3">
                         {selectedPet.elementStats.earth > 0 && (
@@ -786,7 +814,9 @@ const CalculatorPage: React.FC = () => {
                                 <div
                                   key={`earth-bar-${i}`}
                                   className={`h-1.5 w-2 rounded-sm ${
-                                    i < selectedPet.elementStats.earth ? 'bg-green-500' : 'bg-gray-600'
+                                    i < selectedPet.elementStats.earth
+                                      ? 'bg-green-500'
+                                      : 'bg-gray-600'
                                   }`}
                                 />
                               ))}
@@ -801,7 +831,9 @@ const CalculatorPage: React.FC = () => {
                                 <div
                                   key={`water-bar-${i}`}
                                   className={`h-1.5 w-2 rounded-sm ${
-                                    i < selectedPet.elementStats.water ? 'bg-blue-500' : 'bg-gray-600'
+                                    i < selectedPet.elementStats.water
+                                      ? 'bg-blue-500'
+                                      : 'bg-gray-600'
                                   }`}
                                 />
                               ))}
@@ -831,7 +863,9 @@ const CalculatorPage: React.FC = () => {
                                 <div
                                   key={`wind-bar-${i}`}
                                   className={`h-1.5 w-2 rounded-sm ${
-                                    i < selectedPet.elementStats.wind ? 'bg-amber-500' : 'bg-gray-600'
+                                    i < selectedPet.elementStats.wind
+                                      ? 'bg-amber-500'
+                                      : 'bg-gray-600'
                                   }`}
                                 />
                               ))}
@@ -846,11 +880,15 @@ const CalculatorPage: React.FC = () => {
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
                         <div>
                           <span className="text-text-secondary">등급:</span>
-                          <span className="ml-2 text-text-primary font-medium">{selectedPet.grade}</span>
+                          <span className="ml-2 text-text-primary font-medium">
+                            {selectedPet.grade}
+                          </span>
                         </div>
                         <div>
                           <span className="text-text-secondary">획득처:</span>
-                          <span className="ml-2 text-text-primary font-medium">{selectedPet.source}</span>
+                          <span className="ml-2 text-text-primary font-medium">
+                            {selectedPet.source}
+                          </span>
                         </div>
                         <div>
                           <span className="text-text-secondary">탑승:</span>
@@ -862,7 +900,9 @@ const CalculatorPage: React.FC = () => {
                         </div>
                         <div>
                           <span className="text-text-secondary">총 성장률:</span>
-                          <span className="ml-2 text-accent font-bold">{selectedPet.totalGrowth}</span>
+                          <span className="ml-2 text-accent font-bold">
+                            {selectedPet.totalGrowth}
+                          </span>
                         </div>
                       </div>
                     </div>
@@ -875,7 +915,7 @@ const CalculatorPage: React.FC = () => {
                 <h3 className="text-lg font-bold text-text-primary mb-4 text-center">
                   능력치 상세
                 </h3>
-                
+
                 {/* 데스크톱 테이블 뷰 */}
                 <div className="hidden md:block overflow-x-auto">
                   <table className="w-full text-sm">
@@ -971,14 +1011,14 @@ const CalculatorPage: React.FC = () => {
                       { key: 'attack', label: '공격력', color: 'bg-blue-500' },
                       { key: 'defense', label: '방어력', color: 'bg-green-500' },
                       { key: 'agility', label: '순발력', color: 'bg-yellow-500' },
-                      { key: 'vitality', label: '내구력', color: 'bg-red-500' }
+                      { key: 'vitality', label: '내구력', color: 'bg-red-500' },
                     ].map(({ key, label, color }) => (
                       <div key={key} className="bg-bg-tertiary rounded-lg p-3 border border-border">
                         <div className="text-center">
                           <div className="mb-2">
                             <span className="text-text-primary font-medium text-sm">{label}</span>
                           </div>
-                          
+
                           <div className={`${color} text-white rounded-lg py-2 px-3 mb-3`}>
                             <div className="font-bold text-lg">
                               {calculatedPetStats[key as keyof typeof calculatedPetStats]}
@@ -995,7 +1035,11 @@ const CalculatorPage: React.FC = () => {
                             <div>
                               <div className="text-text-secondary mb-1">성장률</div>
                               <div className="font-mono text-accent bg-bg-primary rounded px-1 py-1">
-                                {selectedPet.growthStats[key as keyof typeof selectedPet.growthStats]}
+                                {
+                                  selectedPet.growthStats[
+                                    key as keyof typeof selectedPet.growthStats
+                                  ]
+                                }
                               </div>
                             </div>
                           </div>
@@ -1036,6 +1080,166 @@ const CalculatorPage: React.FC = () => {
               </p>
             </div>
           )}
+        </div>
+      )}
+
+      {/* 페트판매 서브탭 */}
+      {activeSubTab === 'petsale' && (
+        <div>
+          {/* 페트판매 계산기 */}
+          <div className="bg-bg-secondary rounded-xl p-6 mb-6 border border-border">
+            <h2 className="text-xl font-bold text-text-primary mb-6 text-center">
+              💰 페트 판매가 계산기
+            </h2>
+
+            {/* 레벨 입력 */}
+            <div className="max-w-md mx-auto mb-6">
+              <label className="block text-text-primary font-medium mb-2 text-center">
+                페트 레벨 (1 ~ 140)
+              </label>
+              <input
+                type="number"
+                min="1"
+                max="140"
+                value={petSaleLevel}
+                onChange={e => {
+                  const level = parseInt(e.target.value) || 1;
+                  setPetSaleLevel(Math.max(1, Math.min(140, level)));
+                }}
+                className="w-full px-4 py-3 bg-bg-tertiary border border-border rounded-lg text-text-primary text-center text-lg font-medium focus:outline-none focus:ring-2 focus:ring-accent"
+                placeholder="레벨을 입력하세요"
+              />
+            </div>
+
+            {/* 계산 결과 */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              {/* 일반 페트 */}
+              <div className="bg-bg-tertiary rounded-lg p-6 border border-border text-center">
+                <div className="text-gray-500 text-lg mb-2">일반 페트</div>
+                <div className="text-2xl md:text-3xl font-bold text-blue-500 mb-2">
+                  {petSaleResults.normal.toLocaleString()}
+                </div>
+                <div className="text-text-secondary text-sm">stone</div>
+              </div>
+
+              {/* 1등급 페트 */}
+              <div className="bg-bg-tertiary rounded-lg p-6 border border-border text-center">
+                <div className="text-purple-500 text-lg mb-2">1등급 페트</div>
+                <div className="text-2xl md:text-3xl font-bold text-purple-500 mb-2">
+                  {petSaleResults.grade1.toLocaleString()}
+                </div>
+                <div className="text-text-secondary text-sm">stone</div>
+              </div>
+
+              {/* 2등급 페트 */}
+              <div className="bg-bg-tertiary rounded-lg p-6 border border-border text-center">
+                <div className="text-yellow-500 text-lg mb-2">2등급 페트</div>
+                <div className="text-2xl md:text-3xl font-bold text-yellow-500 mb-2">
+                  {petSaleResults.grade2.toLocaleString()}
+                </div>
+                <div className="text-text-secondary text-sm">stone</div>
+              </div>
+            </div>
+
+            {/* 레벨별 예시 */}
+            <div className="mt-6">
+              <h3 className="text-lg font-bold text-text-primary mb-4 text-center">
+                📈 레벨별 판매가 예시
+              </h3>
+
+              {/* 모바일 뷰 */}
+              <div className="block md:hidden space-y-3">
+                {[50, 100, 140].map(level => {
+                  const results = calculatePetSalePrice(level);
+                  return (
+                    <div key={level} className="bg-bg-tertiary rounded-lg p-3 border border-border">
+                      <div className="text-center text-accent font-bold mb-2">Lv.{level}</div>
+                      <div className="grid grid-cols-3 gap-2 text-xs">
+                        <div className="text-center">
+                          <div className="text-text-secondary mb-1">일반</div>
+                          <div className="font-mono text-blue-500">
+                            {results.normal.toLocaleString()}
+                          </div>
+                        </div>
+                        <div className="text-center">
+                          <div className="text-text-secondary mb-1">1등급</div>
+                          <div className="font-mono text-purple-500">
+                            {results.grade1.toLocaleString()}
+                          </div>
+                        </div>
+                        <div className="text-center">
+                          <div className="text-text-secondary mb-1">2등급</div>
+                          <div className="font-mono text-yellow-500">
+                            {results.grade2.toLocaleString()}
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+
+              {/* 데스크톱 뷰 */}
+              <div className="hidden md:block overflow-x-auto">
+                <table className="w-full text-sm text-text-secondary">
+                  <thead>
+                    <tr className="bg-bg-tertiary">
+                      <th className="px-4 py-3 text-center font-semibold text-text-primary">
+                        레벨
+                      </th>
+                      <th className="px-4 py-3 text-center font-semibold text-blue-500">
+                        일반 페트
+                      </th>
+                      <th className="px-4 py-3 text-center font-semibold text-purple-500">
+                        1등급 페트
+                      </th>
+                      <th className="px-4 py-3 text-center font-semibold text-yellow-500">
+                        2등급 페트
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {[50, 75, 100, 125, 140].map(level => {
+                      const results = calculatePetSalePrice(level);
+                      return (
+                        <tr key={level} className="border-t border-border">
+                          <td className="px-4 py-3 text-center font-medium text-accent">
+                            Lv.{level}
+                          </td>
+                          <td className="px-4 py-3 text-center font-mono text-blue-500">
+                            {results.normal.toLocaleString()}
+                          </td>
+                          <td className="px-4 py-3 text-center font-mono text-purple-500">
+                            {results.grade1.toLocaleString()}
+                          </td>
+                          <td className="px-4 py-3 text-center font-mono text-yellow-500">
+                            {results.grade2.toLocaleString()}
+                          </td>
+                        </tr>
+                      );
+                    })}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+            {/* 주의사항 */}
+            <div className="mt-6 p-4 bg-orange-500/10 border border-orange-500/30 rounded-lg">
+              <div className="flex items-start gap-3">
+                <div className="text-orange-500 text-xl flex-shrink-0">⚠️</div>
+                <div>
+                  <h4 className="text-orange-600 dark:text-orange-400 font-medium mb-1">
+                    주의사항
+                  </h4>
+                  <ul className="text-sm text-text-secondary space-y-1">
+                    <li>• 실제 게임에서의 판매가와 다를 수 있습니다</li>
+                    <li>• 페트의 상태나 특별한 조건에 따라 가격이 변동될 수 있습니다</li>
+                    <li>• 이 계산기는 기본 공식에 따른 참고용입니다</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       )}
     </div>

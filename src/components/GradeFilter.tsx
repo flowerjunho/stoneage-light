@@ -76,7 +76,7 @@ const GradeFilter = ({
   return (
     <div className={hideLabel ? 'mb-6' : 'px-4 mb-6'}>
       <div className="flex flex-wrap gap-3 items-center">
-        {!hideLabel && <span className="text-text-secondary text-sm font-medium">판매 등급:</span>}
+        {!hideLabel && <span className="text-text-secondary text-sm font-medium">페트 등급:</span>}
 
         {grades.map(grade => {
           const isActive = activeFilters.includes(grade.key);
@@ -104,14 +104,14 @@ const GradeFilter = ({
                      border border-border-primary rounded-lg hover:bg-bg-secondary
                      transition-all duration-200"
           >
-            판매 등급 초기화
+            페트 등급 초기화
           </button>
         )}
       </div>
 
       {activeFilters.length > 0 && (
         <div className="mt-3 text-xs text-text-secondary">
-          {activeFilters.length}개 판매 등급이 선택됨: {activeFilters.join(', ')}
+          {activeFilters.length}개 페트 등급이 선택됨: {activeFilters.join(', ')}
         </div>
       )}
     </div>
