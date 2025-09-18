@@ -1093,22 +1093,28 @@ const CalculatorPage: React.FC = () => {
             </h2>
 
             {/* 레벨 입력 */}
-            <div className="max-w-md mx-auto mb-6">
-              <label className="block text-text-primary font-medium mb-2 text-center">
-                페트 레벨 (1 ~ 140)
+            <div className="max-w-lg mx-auto mb-8">
+              <label className="block text-text-primary font-bold mb-4 text-center text-lg">
+                페트 레벨 입력
               </label>
-              <input
-                type="number"
-                min="1"
-                max="140"
-                value={petSaleLevel}
-                onChange={e => {
-                  const level = parseInt(e.target.value) || 1;
-                  setPetSaleLevel(Math.max(1, Math.min(140, level)));
-                }}
-                className="w-full px-4 py-3 bg-bg-tertiary border border-border rounded-lg text-text-primary text-center text-lg font-medium focus:outline-none focus:ring-2 focus:ring-accent"
-                placeholder="레벨을 입력하세요"
-              />
+              <div className="relative">
+                <input
+                  type="number"
+                  min="1"
+                  max="140"
+                  value={petSaleLevel}
+                  onChange={e => {
+                    const level = parseInt(e.target.value) || 1;
+                    setPetSaleLevel(Math.max(1, Math.min(140, level)));
+                  }}
+                  className="w-full px-6 py-4 bg-white dark:bg-gray-800 border-2 border-accent rounded-xl text-text-primary text-center text-2xl font-bold focus:outline-none focus:ring-4 focus:ring-accent/30 shadow-lg"
+                  placeholder="60"
+                />
+                <div className="absolute right-3 top-1/2 transform -translate-y-1/2 text-text-secondary text-sm font-medium">
+                  Lv
+                </div>
+              </div>
+              <div className="text-center mt-2 text-text-secondary text-sm">레벨 범위: 1 ~ 140</div>
             </div>
 
             {/* 계산 결과 */}
