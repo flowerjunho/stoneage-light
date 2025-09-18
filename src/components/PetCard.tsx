@@ -263,7 +263,9 @@ const PetCard: React.FC<PetCardProps> = ({ pet }) => {
             <div>
               {/* Name, Favorite and Share */}
               <div className="flex items-start justify-end gap-2">
-                <h3 className="text-xl font-bold text-text-primary iphone16:text-lg leading-tight text-right">{pet.name}</h3>
+                <div className="flex-1 min-w-0">
+                  <h3 className="text-xl font-bold text-text-primary iphone16:text-lg leading-tight text-right break-words">{pet.name}</h3>
+                </div>
                 <div className="flex gap-1 flex-shrink-0">
                   <div className="relative">
                     <button
@@ -404,7 +406,7 @@ const PetCard: React.FC<PetCardProps> = ({ pet }) => {
             </div>
 
             {/* 하단: Grade */}
-            <div className="flex justify-end">
+            <div className="flex justify-end mt-3">
               <span className={gradeBadgeClasses}>{pet.grade}</span>
             </div>
           </div>

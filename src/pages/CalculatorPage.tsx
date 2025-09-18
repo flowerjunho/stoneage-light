@@ -12,6 +12,7 @@ import { useRebirthCalculation, type StatInput } from '../hooks/useRebirthCalcul
 import RebirthCard from '../components/RebirthCard';
 import SaveModal from '../components/SaveModal';
 import LoadModal from '../components/LoadModal';
+import PetDetailModal from '../components/PetDetailModal';
 import petData from '../data/petData.json';
 
 const CalculatorPage: React.FC = () => {
@@ -29,6 +30,10 @@ const CalculatorPage: React.FC = () => {
     grade1: 0,
     grade2: 0,
   });
+
+  // 1등급과 2등급 펫 데이터
+  const grade1Pets = petData.pets.filter(pet => pet.grade === '1등급');
+  const grade2Pets = petData.pets.filter(pet => pet.grade === '2등급');
 
   // 페트성장 계산기 상태
   const [petLevel, setPetLevel] = useState(1);
@@ -61,6 +66,22 @@ const CalculatorPage: React.FC = () => {
   const [savedDataList, setSavedDataList] = useState<SavedData[]>([]);
   const [currentTitle, setCurrentTitle] = useState<string>(''); // 현재 불러온 데이터의 타이틀
 
+  // 페트 모달 관련 상태
+  const [selectedModalPet, setSelectedModalPet] = useState<(typeof petData.pets)[0] | null>(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  // 페트 클릭 핸들러
+  const handlePetClick = (pet: (typeof petData.pets)[0]) => {
+    setSelectedModalPet(pet);
+    setIsModalOpen(true);
+  };
+
+  // 모달 닫기 핸들러
+  const handleModalClose = () => {
+    setIsModalOpen(false);
+    setSelectedModalPet(null);
+  };
+
   // 계산 로직을 custom hook으로 분리
   const calculatedData = useRebirthCalculation(userInputs);
 
@@ -71,8 +92,8 @@ const CalculatorPage: React.FC = () => {
     }
 
     const result1 = (((level + 1) * level) / 2 - 1) * 20 + 10;
-    const result2 = result1 * 8;
-    const result3 = result1 * 5;
+    const result2 = result1 * 5; // 1등급: 5배
+    const result3 = result1 * 3; // 2등급: 3배
 
     return {
       normal: result1,
@@ -1254,6 +1275,55 @@ const CalculatorPage: React.FC = () => {
               </div>
             </div>
 
+            {/* 1등급과 2등급 펫 목록 */}
+            <div className="mt-6">
+              <h3 className="text-lg font-bold text-text-primary mb-4 text-center">
+                👑 1등급 & 2등급 페트 목록
+              </h3>
+              
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {/* 1등급 페트 목록 */}
+                <div className="bg-bg-tertiary rounded-lg p-4 border border-border">
+                  <div className="flex items-center gap-2 mb-3">
+                    <div className="text-purple-500 text-lg font-bold">1등급 페트</div>
+                    <div className="text-sm text-text-secondary">({grade1Pets.length}마리)</div>
+                  </div>
+                  <div className="space-y-2 max-h-48 overflow-y-auto">
+                    {grade1Pets.map((pet, index) => (
+                      <div 
+                        key={pet.id || index} 
+                        onClick={() => handlePetClick(pet)}
+                        className="flex items-center justify-between p-2 bg-bg-primary rounded border border-border cursor-pointer hover:bg-bg-tertiary hover:border-accent transition-all duration-200"
+                      >
+                        <span className="text-text-primary font-medium">{pet.name}</span>
+                        <span className="text-xs text-text-secondary">{pet.source}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                {/* 2등급 페트 목록 */}
+                <div className="bg-bg-tertiary rounded-lg p-4 border border-border">
+                  <div className="flex items-center gap-2 mb-3">
+                    <div className="text-yellow-500 text-lg font-bold">2등급 페트</div>
+                    <div className="text-sm text-text-secondary">({grade2Pets.length}마리)</div>
+                  </div>
+                  <div className="space-y-2 max-h-48 overflow-y-auto">
+                    {grade2Pets.map((pet, index) => (
+                      <div 
+                        key={pet.id || index} 
+                        onClick={() => handlePetClick(pet)}
+                        className="flex items-center justify-between p-2 bg-bg-primary rounded border border-border cursor-pointer hover:bg-bg-tertiary hover:border-accent transition-all duration-200"
+                      >
+                        <span className="text-text-primary font-medium">{pet.name}</span>
+                        <span className="text-xs text-text-secondary">{pet.source}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            </div>
+
             {/* 주의사항 */}
             <div className="mt-6 p-4 bg-orange-500/10 border border-orange-500/30 rounded-lg">
               <div className="flex items-start gap-3">
@@ -1272,6 +1342,15 @@ const CalculatorPage: React.FC = () => {
             </div>
           </div>
         </div>
+      )}
+
+      {/* Pet Detail Modal */}
+      {selectedModalPet && (
+        <PetDetailModal
+          isOpen={isModalOpen}
+          onClose={handleModalClose}
+          pet={selectedModalPet}
+        />
       )}
     </div>
   );

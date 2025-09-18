@@ -1,5 +1,5 @@
 {
-  "lastUpdated": "2025-09-18T03:55:09.699Z",
+  "lastUpdated": "2025-09-15T23:13:13.657Z",
   "totalCount": 454,
   "pets": [
     {
@@ -683,8 +683,8 @@
       "source": "전투포인트상점",
       "imageLink": "",
       "elementStats": {
-        "water": 0,
-        "fire": 0,
+        "water": 9,
+        "fire": 1,
         "wind": 0,
         "earth": 0
       },
@@ -710,7 +710,7 @@
       "source": "라돈타전리품",
       "imageLink": "",
       "elementStats": {
-        "water": 0,
+        "water": 10,
         "fire": 0,
         "wind": 0,
         "earth": 0
@@ -1008,8 +1008,8 @@
       "imageLink": "https://www.hwansoo.top/data/file/pets/aaf2f168a116f36b89970f01c25789d9_S9qxnKrt_465aeed4e082bf6721dc0d4888751804a868c518.gif",
       "elementStats": {
         "water": 0,
-        "fire": 0,
-        "wind": 0,
+        "fire": 9,
+        "wind": 1,
         "earth": 0
       },
       "baseStats": {
@@ -1188,7 +1188,7 @@
       },
       "rideable": "탑승가능",
       "totalGrowth": "5.136",
-      "grade": "1등급"
+      "grade": "일반등급"
     },
     {
       "id": "650",
@@ -2384,8 +2384,8 @@
       "source": "페트환생",
       "imageLink": "https://www.hwansoo.top/data/file/pets/ef4c654faa21cde1281edf5c0e4facc0_w4VOE2Zb_facd87302d72e898752e0acd3a01abaa3039825d.gif",
       "elementStats": {
-        "water": 1,
-        "fire": 9,
+        "water": 0,
+        "fire": 0,
         "wind": 0,
         "earth": 0
       },
@@ -2393,7 +2393,7 @@
         "attack": 12,
         "defense": 12,
         "agility": 3,
-        "vitality": 64
+        "vitality": 66
       },
       "growthStats": {
         "attack": 2.317,
@@ -3429,7 +3429,7 @@
       },
       "rideable": "탑승가능",
       "totalGrowth": "5.145",
-      "grade": "1등급"
+      "grade": ""
     },
     {
       "id": "563",
@@ -3807,7 +3807,7 @@
       },
       "rideable": "탑승불가",
       "totalGrowth": "5.026",
-      "grade": "1등급"
+      "grade": ""
     },
     {
       "id": "549",
@@ -3888,7 +3888,7 @@
       },
       "rideable": "탑승가능",
       "totalGrowth": "5.050",
-      "grade": "1등급"
+      "grade": ""
     },
     {
       "id": "546",
@@ -5751,7 +5751,7 @@
       },
       "rideable": "탑승가능",
       "totalGrowth": "5.178",
-      "grade": "2등급"
+      "grade": ""
     },
     {
       "id": "472",
@@ -9126,7 +9126,7 @@
       },
       "rideable": "탑승불가",
       "totalGrowth": "5.168",
-      "grade": "1등급"
+      "grade": ""
     },
     {
       "id": "126",
@@ -9153,7 +9153,7 @@
       },
       "rideable": "탑승불가",
       "totalGrowth": "5.140",
-      "grade": "2등급"
+      "grade": ""
     },
     {
       "id": "125",
@@ -9180,7 +9180,7 @@
       },
       "rideable": "탑승불가",
       "totalGrowth": "5.238",
-      "grade": "2등급"
+      "grade": ""
     },
     {
       "id": "124",
@@ -9207,7 +9207,7 @@
       },
       "rideable": "탑승불가",
       "totalGrowth": "5.071",
-      "grade": "2등급"
+      "grade": ""
     },
     {
       "id": "122",
@@ -9747,7 +9747,7 @@
       },
       "rideable": "탑승가능",
       "totalGrowth": "4.667",
-      "grade": "1등급"
+      "grade": ""
     },
     {
       "id": "100",
@@ -10071,7 +10071,7 @@
       },
       "rideable": "탑승불가",
       "totalGrowth": "4.947",
-      "grade": "1등급"
+      "grade": ""
     },
     {
       "id": "86",
@@ -10341,7 +10341,7 @@
       },
       "rideable": "탑승가능",
       "totalGrowth": "5.041",
-      "grade": "1등급"
+      "grade": ""
     },
     {
       "id": "76",
@@ -10584,7 +10584,7 @@
       },
       "rideable": "탑승불가",
       "totalGrowth": "4.928",
-      "grade": "2등급"
+      "grade": ""
     },
     {
       "id": "67",
@@ -10638,7 +10638,7 @@
       },
       "rideable": "탑승불가",
       "totalGrowth": "4.775",
-      "grade": "2등급"
+      "grade": ""
     },
     {
       "id": "65",
@@ -11178,7 +11178,7 @@
       },
       "rideable": "탑승불가",
       "totalGrowth": "5.055",
-      "grade": "2등급"
+      "grade": ""
     },
     {
       "id": "45",
@@ -12069,7 +12069,7 @@
       },
       "rideable": "탑승불가",
       "totalGrowth": "4.553",
-      "grade": "2등급"
+      "grade": ""
     },
     {
       "id": "12",
@@ -12150,7 +12150,7 @@
       },
       "rideable": "탑승불가",
       "totalGrowth": "4.921",
-      "grade": "1등급"
+      "grade": ""
     },
     {
       "id": "6",
@@ -12177,7 +12177,7 @@
       },
       "rideable": "탑승불가",
       "totalGrowth": "4.881",
-      "grade": "2등급"
+      "grade": ""
     },
     {
       "id": "5",

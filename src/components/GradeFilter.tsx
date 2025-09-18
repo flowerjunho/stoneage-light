@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 
-export type GradeType = '일반등급' | '일반페트' | '일반' | '희귀' | '영웅';
+export type GradeType = '일반' | '1등급' | '2등급' | '희귀' | '영웅';
 
 interface GradeFilterProps {
   onFilterChange: (filters: GradeType[]) => void;
@@ -22,28 +22,28 @@ const GradeFilter = ({
 
   const grades = [
     {
-      key: '일반등급' as GradeType,
-      label: '일반등급',
-      activeColor: 'bg-bg-tertiary text-text-secondary border border-border-primary',
-      inactiveColor: 'border-2 border-border-primary text-text-secondary hover:bg-bg-secondary',
-    },
-    {
-      key: '일반페트' as GradeType,
-      label: '일반페트',
-      activeColor: 'bg-bg-tertiary text-text-secondary border border-border-primary',
-      inactiveColor: 'border-2 border-border-primary text-text-secondary hover:bg-bg-secondary',
-    },
-    {
       key: '일반' as GradeType,
       label: '일반',
       activeColor: 'bg-bg-tertiary text-text-secondary border border-border-primary',
       inactiveColor: 'border-2 border-border-primary text-text-secondary hover:bg-bg-secondary',
     },
     {
-      key: '희귀' as GradeType,
-      label: '희귀',
+      key: '1등급' as GradeType,
+      label: '1등급',
       activeColor: 'bg-gradient-to-r from-purple-500 to-purple-400 text-white',
       inactiveColor: 'border-2 border-purple-500/50 text-purple-400 hover:bg-purple-500/10',
+    },
+    {
+      key: '2등급' as GradeType,
+      label: '2등급',
+      activeColor: 'bg-gradient-to-r from-blue-500 to-blue-400 text-white',
+      inactiveColor: 'border-2 border-blue-500/50 text-blue-400 hover:bg-blue-500/10',
+    },
+    {
+      key: '희귀' as GradeType,
+      label: '희귀',
+      activeColor: 'bg-gradient-to-r from-green-500 to-green-400 text-white',
+      inactiveColor: 'border-2 border-green-500/50 text-green-400 hover:bg-green-500/10',
     },
     {
       key: '영웅' as GradeType,

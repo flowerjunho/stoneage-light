@@ -42,7 +42,7 @@ const Header: React.FC = () => {
         </div>
         <div className="absolute bottom-5 left-1/2 transform -translate-x-1/2 text-center text-white z-10 w-full px-4">
           <h1 className="text-4xl font-bold mb-2 drop-shadow-2xl iphone16:text-2xl xs:text-xl leading-tight">
-            스톤에이지 환수강림 라이트 by.名家(명가)
+            스톤에이지 환수강림 라이트 by.명가
           </h1>
           <div className="flex justify-end pr-1 relative">
             <div className="flex items-center gap-1">
@@ -57,7 +57,7 @@ const Header: React.FC = () => {
                 i
               </button>
             </div>
-            
+
             {/* 툴팁 메시지 - 버튼 근처에 위치 */}
             {showTooltip && (
               <div className="absolute -top-16 right-0 max-w-xs z-50 pointer-events-none">

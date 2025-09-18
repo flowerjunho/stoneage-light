@@ -62,6 +62,11 @@ const PetGrid: React.FC<PetGridProps> = React.memo(
       // 등급 필터링 (선택된 등급 중 하나와 일치해야 함)
       if (gradeFilters.length > 0) {
         result = result.filter(pet => {
+          // "일반" 필터가 선택된 경우 일반 관련 등급들 모두 포함
+          if (gradeFilters.includes('일반') && pet.grade.includes('일반')) {
+            return true;
+          }
+          // 다른 등급들은 정확히 일치해야 함
           return gradeFilters.includes(pet.grade as GradeType);
         });
       }
