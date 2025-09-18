@@ -21,7 +21,14 @@
   clear: both !important;
   color: rgb(68 68 68) !important;
   font-family: '돋움' !important;
-  background-color: rgb(255 255 255) !important;
+  background-color: rgb(248 248 248) !important;
+}
+
+.quest-content .top_area {
+  clear: both !important;
+  color: rgb(68 68 68) !important;
+  font-family: '돋움' !important;
+  background-color: rgb(248 248 248) !important;
 }
 
 .quest-content .rd_body {
@@ -29,7 +36,7 @@
   clear: both !important;
   color: rgb(68 68 68) !important;
   font-family: '돋움' !important;
-  background-color: rgb(255 255 255) !important;
+  background-color: rgb(248 248 248) !important;
   height: auto !important;
 }
 
@@ -120,6 +127,11 @@
   display: block !important;
 }
 
+/* 테이블 컨테이너 - 반응형 스크롤 */
+.quest-content {
+  overflow-x: auto !important;
+}
+
 /* 테이블 스타일 - 원본 사이트 스타일 재현 */
 .quest-content table {
   border-collapse: collapse !important;
@@ -127,13 +139,22 @@
   font-family: Tahoma, '돋움', Dotum, Helvetica, 'Apple SD Gothic Neo', sans-serif !important;
   line-height: 1.5 !important;
   font-size: 12px !important;
+  width: 100% !important; /* 인라인 width 속성 오버라이드 */
+  max-width: 100% !important;
+  min-width: 300px !important; /* 최소 너비 보장 */
 }
 
 /* et_vars bd_tb 클래스 스타일 */
 .quest-content table.et_vars {
   width: 100% !important;
-  max-width: 910px !important;
+  max-width: 100% !important; /* 910px 제한 제거 */
   margin-bottom: 20px !important;
+}
+
+/* 인라인 width 속성이 있는 테이블 강제 반응형 적용 */
+.quest-content table[width] {
+  width: 100% !important;
+  max-width: 100% !important;
 }
 
 .quest-content td,
@@ -355,6 +376,15 @@ html.dark .quest-content span[style*="color: rgb(68,68,68)"] {
     overflow-x: auto !important;
     display: block !important;
     white-space: nowrap !important;
+    width: 100% !important;
+    max-width: 100% !important;
+  }
+  
+  /* 모바일에서 인라인 width 속성 강제 오버라이드 */
+  .quest-content table[width] {
+    width: 100% !important;
+    max-width: 100% !important;
+    min-width: unset !important;
   }
   
   .quest-content table.et_vars {
@@ -417,6 +447,15 @@ html.dark .quest-content span[style*="color: rgb(68,68,68)"] {
     overflow-x: auto !important;
     display: block !important;
     white-space: nowrap !important;
+    width: 100% !important;
+    max-width: 100% !important;
+  }
+  
+  /* 아이폰16에서 인라인 width 속성 강제 오버라이드 */
+  .quest-content table[width] {
+    width: 100% !important;
+    max-width: 100% !important;
+    min-width: unset !important;
   }
   
   .quest-content td,
@@ -440,7 +479,8 @@ html.dark .quest-content p {
 }
 
 html.dark .quest-content .rd_hd,
-html.dark .quest-content .rd_body {
+html.dark .quest-content .rd_body,
+html.dark .quest-content .top_area {
   background-color: #1a1a1a !important; /* --bg-secondary */
   color: #b0b0b0 !important; /* --text-secondary */
 }

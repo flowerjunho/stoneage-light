@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
 import SearchBar from '../components/SearchBar';
 import ElementFilter, { type ElementType } from '../components/ElementFilter';
@@ -7,11 +7,54 @@ import StatFilter, { type StatFilterItem } from '../components/StatFilter';
 import FavoriteFilter from '../components/FavoriteFilter';
 import PetGrid from '../components/PetGrid';
 import FloatingFilterButton from '../components/FloatingFilterButton';
+import skillsData from '../data/skills.json';
+import { searchMultipleFields } from '../utils/searchUtils';
 import type { Pet } from '../types';
 
+// 스킬 데이터 타입 정의
+interface Skill {
+  name: string;
+  description: string;
+  locations?: string[];
+  price?: string | number;
+  currency?: string;
+}
+
+interface SkillCategory {
+  categoryName: string;
+  skills: Skill[];
+}
+
+interface SkillsData {
+  petSkills: {
+    general: SkillCategory;
+    special: SkillCategory;
+  };
+}
+
 const PetsPage: React.FC = () => {
-  const [searchParams] = useSearchParams();
+  const [searchParams, setSearchParams] = useSearchParams();
   const navigate = useNavigate();
+
+  // 서브탭 상태 관리 (URL 쿼리 파라미터로 관리)
+  const [activeTab, setActiveTab] = useState(() => {
+    return searchParams.get('tab') || 'info';
+  });
+
+  // 탭 변경 함수 - 깜빡임 방지를 위한 간단한 구조
+  const handleTabChange = useCallback(
+    (tab: string) => {
+      if (tab === activeTab) return;
+
+      setActiveTab(tab);
+      setSearchParams(prev => {
+        const newParams = new URLSearchParams(prev);
+        newParams.set('tab', tab);
+        return newParams;
+      });
+    },
+    [activeTab, setSearchParams]
+  );
 
   const [searchTerm, setSearchTerm] = useState('');
   const [pets, setPets] = useState<Pet[]>([]);
@@ -19,6 +62,20 @@ const PetsPage: React.FC = () => {
   const [gradeFilters, setGradeFilters] = useState<GradeType[]>([]);
   const [statFilters, setStatFilters] = useState<StatFilterItem[]>([]);
   const [showFavoritesOnly, setShowFavoritesOnly] = useState(false);
+
+  // 기술 탭 관련 상태
+  const [skillSearchTerm, setSkillSearchTerm] = useState('');
+  const [activeSkillCategory, setActiveSkillCategory] = useState('general');
+  const [mapModalOpen, setMapModalOpen] = useState(false);
+  const [selectedMap, setSelectedMap] = useState<{ title: string; imageUrl: string } | null>(null);
+
+  // URL 파라미터 초기화만 처리 (mount 시점에만)
+  useEffect(() => {
+    const tabParam = searchParams.get('tab');
+    if (tabParam && (tabParam === 'info' || tabParam === 'skills')) {
+      setActiveTab(tabParam);
+    }
+  }, []); // 의존성 배열을 비워서 mount 시점에만 실행
 
   // 공유 모달 관련 상태
   const [isShareModalOpen, setIsShareModalOpen] = useState(false);
@@ -79,6 +136,17 @@ const PetsPage: React.FC = () => {
     setShowFavoritesOnly(favoritesOnly);
   };
 
+  // 지도 모달 핸들러
+  const handleMapClick = (title: string, imageUrl: string) => {
+    setSelectedMap({ title, imageUrl });
+    setMapModalOpen(true);
+  };
+
+  const handleMapModalClose = () => {
+    setMapModalOpen(false);
+    setSelectedMap(null);
+  };
+
   const handleClearAllFilters = () => {
     setElementFilters([]);
     setGradeFilters([]);
@@ -95,7 +163,7 @@ const PetsPage: React.FC = () => {
 
   // 모달이 열릴 때 body 스크롤 막기 및 ESC 키 처리
   useEffect(() => {
-    if (isShareModalOpen) {
+    if (isShareModalOpen || mapModalOpen) {
       document.body.style.overflow = 'hidden';
     } else {
       document.body.style.overflow = 'unset';
@@ -103,12 +171,16 @@ const PetsPage: React.FC = () => {
 
     // ESC 키로 모달 닫기
     const handleKeyDown = (event: KeyboardEvent) => {
-      if (event.key === 'Escape' && isShareModalOpen) {
-        handleShareModalClose();
+      if (event.key === 'Escape') {
+        if (isShareModalOpen) {
+          handleShareModalClose();
+        } else if (mapModalOpen) {
+          handleMapModalClose();
+        }
       }
     };
 
-    if (isShareModalOpen) {
+    if (isShareModalOpen || mapModalOpen) {
       document.addEventListener('keydown', handleKeyDown);
     }
 
@@ -117,50 +189,31 @@ const PetsPage: React.FC = () => {
       document.body.style.overflow = 'unset';
       document.removeEventListener('keydown', handleKeyDown);
     };
-  }, [isShareModalOpen, handleShareModalClose]);
+  }, [isShareModalOpen, mapModalOpen, handleShareModalClose]);
 
-  return (
-    <>
-      <div className="max-w-6xl mx-auto px-4 iphone16:px-3">
-        {/* 환수강림 라이트 사이트 링크 */}
-        <div className="text-right px-4 py-1">
-          <a
-            href="https://www.hwansoo.top/"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-flex items-center gap-2 px-3 py-1.5 text-accent hover:text-accent/80
-                     font-medium transition-all duration-200 hover:underline text-sm"
-          >
-            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"
-              />
-            </svg>
-            환수강림 라이트 사이트
-          </a>
-        </div>
-
-        <SearchBar searchTerm={searchTerm} onSearchChange={handleSearchChange} />
-        <ElementFilter
-          onFilterChange={handleElementFilterChange}
-          initialFilters={elementFilters}
-          onClearAllFilters={handleClearAllFilters}
-          hasFiltersActive={
-            elementFilters.length > 0 ||
-            gradeFilters.length > 0 ||
-            statFilters.filter(f => f.enabled).length > 0
-          }
-        />
-        <GradeFilter onFilterChange={handleGradeFilterChange} initialFilters={gradeFilters} />
-        <StatFilter onFilterChange={handleStatFilterChange} initialFilters={statFilters} />
-        <FavoriteFilter
-          onFilterChange={handleFavoriteFilterChange}
-          initialValue={showFavoritesOnly}
-        />
-      </div>
+  // useMemo로 탭 콘텐츠를 미리 렌더링
+  const infoTabContent = useMemo(() => (
+    <div>
+      <SearchBar searchTerm={searchTerm} onSearchChange={handleSearchChange} />
+      <ElementFilter
+        onFilterChange={handleElementFilterChange}
+        initialFilters={elementFilters}
+        onClearAllFilters={handleClearAllFilters}
+        hasFiltersActive={
+          elementFilters.length > 0 ||
+          gradeFilters.length > 0 ||
+          statFilters.filter(f => f.enabled).length > 0
+        }
+      />
+      <GradeFilter
+        onFilterChange={handleGradeFilterChange}
+        initialFilters={gradeFilters}
+      />
+      <StatFilter onFilterChange={handleStatFilterChange} initialFilters={statFilters} />
+      <FavoriteFilter
+        onFilterChange={handleFavoriteFilterChange}
+        initialValue={showFavoritesOnly}
+      />
 
       <PetGrid
         pets={pets}
@@ -181,6 +234,242 @@ const PetsPage: React.FC = () => {
         onStatFilterChange={handleStatFilterChange}
         onFavoriteFilterChange={handleFavoriteFilterChange}
       />
+    </div>
+  ), [
+    searchTerm, 
+    elementFilters, 
+    gradeFilters, 
+    statFilters, 
+    showFavoritesOnly, 
+    pets,
+    handleElementFilterChange,
+    handleGradeFilterChange,
+    handleStatFilterChange,
+    handleFavoriteFilterChange,
+    handleClearAllFilters,
+    handleSearchChange
+  ]);
+
+  const skillsTabContent = useMemo(() => (
+    <div className="space-y-6">
+      {/* 학습 지역 설명 */}
+      <div className="bg-bg-secondary rounded-lg p-4 border border-border">
+        <h3 className="text-sm font-medium text-text-primary mb-2">
+          📍 특수 학습 지역 안내
+        </h3>
+        <div className="space-y-1 text-xs text-text-secondary">
+          <div>
+            <button
+              onClick={() =>
+                handleMapClick(
+                  'SBC본부 지도',
+                  'http://pooyas.com/stoneage_info/map/cave/sainus/sbc.gif'
+                )
+              }
+              className="font-medium text-accent hover:text-accent/80 transition-colors cursor-pointer underline"
+            >
+              SBC(지도보기):
+            </button>
+            <span className="ml-1">쿠링의 대광산 꼭대기층 SBC본부</span>
+          </div>
+          <div>
+            <button
+              onClick={() =>
+                handleMapClick(
+                  'JBA본부 지도',
+                  'http://pooyas.com/stoneage_info/map/cave/zaru/ratotojba.gif'
+                )
+              }
+              className="font-medium text-accent hover:text-accent/80 transition-colors cursor-pointer underline"
+            >
+              JBA(지도보기):
+            </button>
+            <span className="ml-1">라토토의 대동굴 꼭대기층 JBA본부</span>
+          </div>
+        </div>
+      </div>
+
+      {/* 기술 검색 */}
+      <SearchBar
+        searchTerm={skillSearchTerm}
+        onSearchChange={setSkillSearchTerm}
+        placeholder="기술이름으로 초성검색 하세요."
+      />
+
+      {/* 기술 카테고리 탭 (서브-서브탭) */}
+      <div className="border-b border-border">
+        <nav className="flex">
+          {Object.entries((skillsData as SkillsData).petSkills).map(
+            ([categoryKey, category]) => {
+              const filteredSkills = skillSearchTerm
+                ? category.skills.filter((skill: Skill) =>
+                    searchMultipleFields(skillSearchTerm, [skill.name])
+                  )
+                : category.skills;
+              const count = filteredSkills.length;
+
+              return (
+                <button
+                  key={categoryKey}
+                  onClick={() => setActiveSkillCategory(categoryKey)}
+                  className={`px-4 py-3 text-sm font-medium border-b-2 transition-colors duration-200 ${
+                    activeSkillCategory === categoryKey
+                      ? 'border-accent text-accent'
+                      : 'border-transparent text-text-secondary hover:text-text-primary hover:border-border'
+                  }`}
+                >
+                  {category.categoryName}
+                  {skillSearchTerm && (
+                    <span className="ml-2 px-2 py-1 text-xs bg-accent/10 text-accent rounded-full">
+                      {count}
+                    </span>
+                  )}
+                </button>
+              );
+            }
+          )}
+        </nav>
+      </div>
+
+      {/* 선택된 카테고리의 기술 표시 */}
+      {(() => {
+        const category = (skillsData as SkillsData).petSkills[
+          activeSkillCategory as keyof typeof skillsData.petSkills
+        ];
+        if (!category) return null;
+
+        const filteredSkills = skillSearchTerm
+          ? category.skills.filter((skill: Skill) =>
+              searchMultipleFields(skillSearchTerm, [skill.name])
+            )
+          : category.skills;
+
+        if (filteredSkills.length === 0) {
+          return skillSearchTerm ? (
+            <div className="text-center py-12">
+              <div className="text-6xl mb-4">🔍</div>
+              <h3 className="text-xl font-bold text-text-primary mb-2">
+                검색 결과가 없습니다
+              </h3>
+              <p className="text-text-secondary">다른 검색어를 시도해보세요</p>
+            </div>
+          ) : null;
+        }
+
+        return (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            {filteredSkills.map((skill: Skill, index: number) => (
+              <div
+                key={`${activeSkillCategory}-${index}`}
+                className="bg-bg-secondary rounded-lg p-4 border border-border"
+              >
+                <h3 className="font-semibold text-text-primary mb-2">{skill.name}</h3>
+                <p className="text-text-secondary text-sm mb-3">{skill.description}</p>
+
+                <div className="space-y-2">
+                  {skill.price && skill.currency && (
+                    <div className="flex items-center gap-2">
+                      <span className="text-xs font-medium text-text-secondary">가격:</span>
+                      <span className="text-sm font-semibold text-accent">
+                        {skill.price} {skill.currency}
+                      </span>
+                    </div>
+                  )}
+
+                  <div>
+                    <span className="text-xs font-medium text-text-secondary block mb-1">
+                      학습 가능 지역:
+                    </span>
+                    <div className="flex flex-wrap gap-1">
+                      {skill.locations && skill.locations.length > 0 ? (
+                        skill.locations.map((location: string, locIndex: number) => (
+                          <span
+                            key={locIndex}
+                            className="inline-block px-2 py-1 bg-bg-tertiary text-text-primary text-xs rounded border border-border"
+                          >
+                            {location}
+                          </span>
+                        ))
+                      ) : (
+                        <span className="text-xs text-text-secondary">정보 없음</span>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        );
+      })()}
+    </div>
+  ), [skillSearchTerm, activeSkillCategory, handleMapClick]);
+
+  return (
+    <div className="max-w-6xl mx-auto px-4 iphone16:px-3">
+      {/* 환수강림 라이트 사이트 링크 */}
+      <div className="text-right px-4 py-1">
+        <a
+          href="https://www.hwansoo.top/"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="inline-flex items-center gap-2 px-3 py-1.5 text-accent hover:text-accent/80
+                   font-medium transition-all duration-200 hover:underline text-sm"
+        >
+          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"
+            />
+          </svg>
+          환수강림 라이트 사이트
+        </a>
+      </div>
+
+      {/* 서브탭 네비게이션 */}
+      <div className="mb-6">
+        <div className="flex space-x-1 bg-bg-secondary rounded-lg p-1">
+          <button
+            onClick={() => handleTabChange('info')}
+            className={`flex-1 py-2 px-4 rounded-md text-sm font-medium transition-colors duration-200 ${
+              activeTab === 'info'
+                ? 'bg-accent text-white shadow-sm'
+                : 'text-text-secondary hover:text-text-primary hover:bg-bg-tertiary'
+            }`}
+          >
+            정보
+          </button>
+          <button
+            onClick={() => handleTabChange('skills')}
+            className={`flex-1 py-2 px-4 rounded-md text-sm font-medium transition-colors duration-200 ${
+              activeTab === 'skills'
+                ? 'bg-accent text-white shadow-sm'
+                : 'text-text-secondary hover:text-text-primary hover:bg-bg-tertiary'
+            }`}
+          >
+            기술
+          </button>
+        </div>
+      </div>
+
+      {/* 탭 컨텐츠 영역 - useMemo로 미리 렌더링 후 display 전환 */}
+      <div className="min-h-screen">
+        <div 
+          className={`transition-opacity duration-100 ${
+            activeTab === 'info' ? 'opacity-100 block' : 'opacity-0 hidden'
+          }`}
+        >
+          {infoTabContent}
+        </div>
+        <div 
+          className={`transition-opacity duration-100 ${
+            activeTab === 'skills' ? 'opacity-100 block' : 'opacity-0 hidden'
+          }`}
+        >
+          {skillsTabContent}
+        </div>
+      </div>
 
       {/* 공유 모달 */}
       {isShareModalOpen && sharedPet && (
@@ -457,7 +746,48 @@ const PetsPage: React.FC = () => {
           </div>
         </div>
       )}
-    </>
+
+      {/* 지도 모달 */}
+      {mapModalOpen && selectedMap && (
+        <div
+          className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4"
+          onClick={handleMapModalClose}
+        >
+          <div
+            className="bg-bg-secondary rounded-lg border border-border max-w-4xl max-h-[90vh] overflow-hidden"
+            onClick={e => e.stopPropagation()}
+          >
+            {/* 모달 헤더 */}
+            <div className="flex items-center justify-between p-4 border-b border-border">
+              <h3 className="text-lg font-bold text-text-primary">{selectedMap.title}</h3>
+              <button
+                onClick={handleMapModalClose}
+                className="text-text-secondary hover:text-text-primary transition-colors"
+              >
+                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M6 18L18 6M6 6l12 12"
+                  />
+                </svg>
+              </button>
+            </div>
+
+            {/* 지도 이미지 */}
+            <div className="p-4">
+              <img
+                src={selectedMap.imageUrl}
+                alt={selectedMap.title}
+                className="w-full h-auto max-h-[70vh] object-contain rounded"
+                loading="lazy"
+              />
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
   );
 };
 

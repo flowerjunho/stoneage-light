@@ -870,13 +870,14 @@ const CalculatorPage: React.FC = () => {
                 </div>
               </div>
 
-              {/* 능력치 표 */}
+              {/* 능력치 상세 */}
               <div className="bg-bg-secondary rounded-xl p-6 border border-border">
                 <h3 className="text-lg font-bold text-text-primary mb-4 text-center">
                   능력치 상세
                 </h3>
-
-                <div className="overflow-x-auto">
+                
+                {/* 데스크톱 테이블 뷰 */}
+                <div className="hidden md:block overflow-x-auto">
                   <table className="w-full text-sm">
                     <thead>
                       <tr className="bg-bg-tertiary">
@@ -955,6 +956,53 @@ const CalculatorPage: React.FC = () => {
                       </tr>
                     </tbody>
                   </table>
+                </div>
+
+                {/* 모바일 카드 뷰 */}
+                <div className="block md:hidden space-y-3">
+                  {/* 현재 레벨 표시 */}
+                  <div className="bg-gradient-to-r from-purple-500 to-blue-500 rounded-lg p-3 text-white text-center mb-4">
+                    <div className="text-xl font-bold">Lv.{petLevel} S급 능력치</div>
+                  </div>
+
+                  {/* 능력치 그리드 */}
+                  <div className="grid grid-cols-2 gap-3">
+                    {[
+                      { key: 'attack', label: '공격력', color: 'bg-blue-500' },
+                      { key: 'defense', label: '방어력', color: 'bg-green-500' },
+                      { key: 'agility', label: '순발력', color: 'bg-yellow-500' },
+                      { key: 'vitality', label: '내구력', color: 'bg-red-500' }
+                    ].map(({ key, label, color }) => (
+                      <div key={key} className="bg-bg-tertiary rounded-lg p-3 border border-border">
+                        <div className="text-center">
+                          <div className="mb-2">
+                            <span className="text-text-primary font-medium text-sm">{label}</span>
+                          </div>
+                          
+                          <div className={`${color} text-white rounded-lg py-2 px-3 mb-3`}>
+                            <div className="font-bold text-lg">
+                              {calculatedPetStats[key as keyof typeof calculatedPetStats]}
+                            </div>
+                          </div>
+
+                          <div className="grid grid-cols-2 gap-2 text-xs">
+                            <div>
+                              <div className="text-text-secondary mb-1">초기치</div>
+                              <div className="font-mono text-text-primary bg-bg-primary rounded px-1 py-1">
+                                {selectedPet.baseStats[key as keyof typeof selectedPet.baseStats]}
+                              </div>
+                            </div>
+                            <div>
+                              <div className="text-text-secondary mb-1">성장률</div>
+                              <div className="font-mono text-accent bg-bg-primary rounded px-1 py-1">
+                                {selectedPet.growthStats[key as keyof typeof selectedPet.growthStats]}
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
                 </div>
               </div>
 
