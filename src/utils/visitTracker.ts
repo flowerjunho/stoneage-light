@@ -1,4 +1,4 @@
-import { doc, getDoc, setDoc, updateDoc, increment } from 'firebase/firestore';
+import { doc, getDoc, setDoc, updateDoc, increment, query, collection, where, getDocs } from 'firebase/firestore';
 import { db } from '../lib/firebase';
 
 // 방문자 추적을 위한 유틸리티 함수들
@@ -90,6 +90,45 @@ export class VisitTracker {
         
         results.push({ date: dateString, count });
       }
+      
+      return results;
+    } catch (error) {
+      console.error('주간 통계 조회 중 오류:', error);
+      return [];
+    }
+  }
+
+  // 특정 주간의 방문자 수 조회 (관리자용) - 배치 쿼리로 최적화
+  public static async getWeeklyStatsOptimized(weekStartDate: Date): Promise<Array<{ date: string; count: number }>> {
+    try {
+      const results: Array<{ date: string; count: number }> = [];
+      const dateStrings: string[] = [];
+      
+      // 7일간의 날짜 문자열 생성
+      for (let i = 0; i < 7; i++) {
+        const date = new Date(weekStartDate);
+        date.setDate(weekStartDate.getDate() + i);
+        const dateString = this.formatDate(date);
+        dateStrings.push(dateString);
+        results.push({ date: dateString, count: 0 }); // 기본값 0으로 초기화
+      }
+      
+      // Firestore에서 해당 주간의 모든 데이터를 한 번에 조회
+      const q = query(
+        collection(db, this.COLLECTION_NAME),
+        where('date', 'in', dateStrings)
+      );
+      
+      const querySnapshot = await getDocs(q);
+      
+      // 조회된 데이터를 결과 배열에 매핑
+      querySnapshot.forEach((doc) => {
+        const data = doc.data();
+        const dateIndex = dateStrings.indexOf(data.date);
+        if (dateIndex !== -1) {
+          results[dateIndex].count = data.count || 0;
+        }
+      });
       
       return results;
     } catch (error) {

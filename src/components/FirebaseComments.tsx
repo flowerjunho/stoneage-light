@@ -46,23 +46,15 @@ const FirebaseComments: React.FC = () => {
     return weekStart;
   };
 
-  // 방문자 통계 로드 함수 (관리자 전용)
+  // 방문자 통계 로드 함수 (관리자 전용) - 최적화된 단일 쿼리 사용
   const loadVisitorStats = useCallback(async (weekOffset: number = 0) => {
     try {
       const todayCount = await VisitTracker.getDailyStats();
       setDailyVisitors(todayCount);
 
-      // 특정 주의 통계 로드
+      // 특정 주의 통계 로드 - 최적화된 배치 쿼리 사용
       const weekStart = getWeekStartDate(weekOffset);
-      const weekStats: Array<{ date: string; count: number }> = [];
-      
-      for (let i = 0; i < 7; i++) {
-        const date = new Date(weekStart);
-        date.setDate(weekStart.getDate() + i);
-        const dateString = date.toISOString().split('T')[0];
-        const count = await VisitTracker.getDailyStats(dateString);
-        weekStats.push({ date: dateString, count });
-      }
+      const weekStats = await VisitTracker.getWeeklyStatsOptimized(weekStart);
       
       setWeeklyStats(weekStats);
     } catch (error) {
