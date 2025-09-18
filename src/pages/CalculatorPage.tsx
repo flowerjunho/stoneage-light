@@ -106,14 +106,14 @@ const CalculatorPage: React.FC = () => {
   const handlePetSaleLevelChange = (value: string) => {
     // 숫자가 아닌 문자 제거
     const numericValue = value.replace(/[^0-9]/g, '');
-    
+
     if (numericValue === '') {
       setPetSaleLevelInput('');
       return; // 빈 문자열일 때는 계산하지 않음
     }
-    
+
     const level = parseInt(numericValue);
-    
+
     if (!isNaN(level)) {
       // 141 이상이면 140으로 제한
       if (level > 140) {
@@ -681,6 +681,78 @@ const CalculatorPage: React.FC = () => {
             onDelete={handleDelete}
             formatTimestamp={formatTimestamp}
           />
+
+          {/* 보너스 스탯 정보 테이블 */}
+          <div className="mt-8">
+            <div className="bg-bg-secondary rounded-xl p-6 border border-border">
+              <h3 className="text-lg font-bold text-text-primary mb-4 text-center">
+                ⭐ 보너스 스탯 정보
+              </h3>
+              <div className="overflow-x-auto">
+                <table className="w-full text-sm">
+                  <thead>
+                    <tr className="bg-bg-tertiary">
+                      <th className="px-4 py-3 text-left font-semibold text-text-primary border-r border-border">
+                        스탯 조건
+                      </th>
+                      <th className="px-4 py-3 text-center font-semibold text-text-primary border-r border-border">
+                        공격력 보너스
+                      </th>
+                      <th className="px-4 py-3 text-center font-semibold text-text-primary">
+                        방어력 보너스
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr className="border-b border-border">
+                      <td className="px-4 py-3 text-text-primary font-medium border-r border-border">
+                        체력 10
+                      </td>
+                      <td className="px-4 py-3 text-center text-green-600 font-bold border-r border-border">
+                        +1
+                      </td>
+                      <td className="px-4 py-3 text-center text-blue-600 font-bold">
+                        +1
+                      </td>
+                    </tr>
+                    <tr className="border-b border-border">
+                      <td className="px-4 py-3 text-text-primary font-medium border-r border-border">
+                        건강 10
+                      </td>
+                      <td className="px-4 py-3 text-center text-green-600 font-bold border-r border-border">
+                        +1
+                      </td>
+                      <td className="px-4 py-3 text-center text-text-muted">
+                        -
+                      </td>
+                    </tr>
+                    <tr className="border-b border-border">
+                      <td className="px-4 py-3 text-text-primary font-medium border-r border-border">
+                        완력 10
+                      </td>
+                      <td className="px-4 py-3 text-center text-text-muted border-r border-border">
+                        -
+                      </td>
+                      <td className="px-4 py-3 text-center text-blue-600 font-bold">
+                        +1
+                      </td>
+                    </tr>
+                    <tr>
+                      <td className="px-4 py-3 text-text-primary font-medium border-r border-border">
+                        순발력 20
+                      </td>
+                      <td className="px-4 py-3 text-center text-green-600 font-bold border-r border-border">
+                        +1
+                      </td>
+                      <td className="px-4 py-3 text-center text-blue-600 font-bold">
+                        +1
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
         </div>
       )}
 
@@ -1280,7 +1352,7 @@ const CalculatorPage: React.FC = () => {
               <h3 className="text-lg font-bold text-text-primary mb-4 text-center">
                 👑 1등급 & 2등급 페트 목록
               </h3>
-              
+
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 {/* 1등급 페트 목록 */}
                 <div className="bg-bg-tertiary rounded-lg p-4 border border-border">
@@ -1290,8 +1362,8 @@ const CalculatorPage: React.FC = () => {
                   </div>
                   <div className="space-y-2 max-h-48 overflow-y-auto">
                     {grade1Pets.map((pet, index) => (
-                      <div 
-                        key={pet.id || index} 
+                      <div
+                        key={pet.id || index}
                         onClick={() => handlePetClick(pet)}
                         className="flex items-center justify-between p-2 bg-bg-primary rounded border border-border cursor-pointer hover:bg-bg-tertiary hover:border-accent transition-all duration-200"
                       >
@@ -1310,8 +1382,8 @@ const CalculatorPage: React.FC = () => {
                   </div>
                   <div className="space-y-2 max-h-48 overflow-y-auto">
                     {grade2Pets.map((pet, index) => (
-                      <div 
-                        key={pet.id || index} 
+                      <div
+                        key={pet.id || index}
                         onClick={() => handlePetClick(pet)}
                         className="flex items-center justify-between p-2 bg-bg-primary rounded border border-border cursor-pointer hover:bg-bg-tertiary hover:border-accent transition-all duration-200"
                       >
@@ -1346,11 +1418,7 @@ const CalculatorPage: React.FC = () => {
 
       {/* Pet Detail Modal */}
       {selectedModalPet && (
-        <PetDetailModal
-          isOpen={isModalOpen}
-          onClose={handleModalClose}
-          pet={selectedModalPet}
-        />
+        <PetDetailModal isOpen={isModalOpen} onClose={handleModalClose} pet={selectedModalPet} />
       )}
     </div>
   );

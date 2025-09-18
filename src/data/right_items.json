@@ -502,5 +502,54 @@
     "description": "공 +3~5 회피 명중 +3",
     "imageUrl": "https://cdn.discordapp.com/attachments/1337456342373236766/1418031979521249290/image.png?ex=68cca4b1&is=68cb5331&hm=6bd1c3bd2b25f9441c770f112d468cd69e2cb28deefe3c98fd517aeb21a47f59&",
     "materials": "타니토스의 신전에서 네메시스의 길로 퀘스트 클리어 보상"
+  },
+  {
+    "id": "73",
+    "name": "정장 툰가 변신 패드",
+    "description": "캐릭터를 변경합니다. (정장툰가)",
+    "imageUrl": "https://www.hwansoo.top/data/editor/2506/7cdf3dfe013dad6dfc7ecf62cb26dfd5_1750048235_3339.png",
+    "materials": "맘모스 쿠폰"
+  },
+  {
+    "id": "74",
+    "name": "인디언 툰가 변신 패드",
+    "description": "캐릭터를 변경합니다. (인디언 툰가)",
+    "imageUrl": "https://www.hwansoo.top/data/editor/2506/40531fb36c4a7f733684c9f2e95667a3_1750048337_3288.png",
+    "materials": ""
+  },
+  {
+    "id": "75",
+    "name": "교복 울보소녀 변신패드(3일)",
+    "description": "사용 시 교복 울보로 변신(경험치 +30%)",
+    "imageUrl": "https://hwansoo.net/data/editor/2505/acb2054d2a680138fbf7ba4938bea2f3_1747365608_7999.png",
+    "materials": "맘모스 쿠폰"
+  },
+  {
+    "id": "76",
+    "name": "페트 초기화 횟수 증가석",
+    "description": "초기화를 모두 소진한 페트의 횟수를 늘린다. (50% 성공) 실패 시 페트 소멸",
+    "imageUrl": "https://www.hwansoo.top/data/editor/2506/f7936ea8800fc88b38a9d3c8d50f2f70_1750834443_924.png",
+    "materials": "맘모스 쿠폰"
+  },
+  {
+    "id": "77",
+    "name": "페트 학습 팔찌 7일",
+    "description": " 페트의 경험치 50%추가 획득, 매력 +5",
+    "imageUrl": "https://hwansoo.net/data/editor/2505/a6638680ccebb74786b645d7fba0f50e_1748413163_8348.png",
+    "materials": "맘모스 쿠폰"
+  },
+  {
+    "id": "78",
+    "name": "배수의 진3",
+    "description": "사용 시 배수의 진 3을 배울 수 있음",
+    "imageUrl": "https://www.hwansoo.top/data/editor/2506/ea5cdfa6c66a6a20e9be9220cb0ab0b7_1750834568_494.png",
+    "materials": "맘모스 쿠폰"
+  },
+  {
+    "id": "79",
+    "name": "가드 브레이크2",
+    "description": "사용 시 가드 브레이크 2 기술을 배울 수 있음",
+    "imageUrl": "https://www.hwansoo.top/data/editor/2506/ea5cdfa6c66a6a20e9be9220cb0ab0b7_1750834568_494.png",
+    "materials": "맘모스 쿠폰"
   }
 ]

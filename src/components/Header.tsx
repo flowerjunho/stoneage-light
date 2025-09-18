@@ -46,8 +46,14 @@ const Header: React.FC = () => {
           </h1>
           <div className="flex justify-end pr-1 relative">
             <div className="flex items-center gap-1">
-              <p className="text-sm text-white/80 drop-shadow-lg iphone16:text-xs">
-                버그 수정, 피드백 및 추가 기능 문의는 왕/킹에게 DM 주세요.
+              <p className="text-sm text-white/80 drop-shadow-lg iphone16:text-xs flex items-center">
+                버그 수정, 피드백 및 추가 기능 문의는{' '}
+                <img 
+                  src="https://cdn.discordapp.com/avatars/749657866155065475/6720e8ea311b141c4c5d1599e328baab.webp?size=128" 
+                  alt="왕/킹 아바타" 
+                  className="w-[1em] h-[1em] rounded-full mx-1 inline-block"
+                />
+                왕/킹에게 DM 주세요.
               </p>
               <button
                 onClick={handleInfoClick}

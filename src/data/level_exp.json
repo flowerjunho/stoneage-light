@@ -1,0 +1,562 @@
+[
+  {
+    "level": 1,
+    "requiredExp": 20
+  },
+  {
+    "level": 2,
+    "requiredExp": 60
+  },
+  {
+    "level": 3,
+    "requiredExp": 100
+  },
+  {
+    "level": 4,
+    "requiredExp": 160
+  },
+  {
+    "level": 5,
+    "requiredExp": 240
+  },
+  {
+    "level": 6,
+    "requiredExp": 360
+  },
+  {
+    "level": 7,
+    "requiredExp": 500
+  },
+  {
+    "level": 8,
+    "requiredExp": 680
+  },
+  {
+    "level": 9,
+    "requiredExp": 800
+  },
+  {
+    "level": 10,
+    "requiredExp": 960
+  },
+  {
+    "level": 11,
+    "requiredExp": 1180
+  },
+  {
+    "level": 12,
+    "requiredExp": 1320
+  },
+  {
+    "level": 13,
+    "requiredExp": 1500
+  },
+  {
+    "level": 14,
+    "requiredExp": 1680
+  },
+  {
+    "level": 15,
+    "requiredExp": 1800
+  },
+  {
+    "level": 16,
+    "requiredExp": 2040
+  },
+  {
+    "level": 17,
+    "requiredExp": 2300
+  },
+  {
+    "level": 18,
+    "requiredExp": 2600
+  },
+  {
+    "level": 19,
+    "requiredExp": 2968
+  },
+  {
+    "level": 20,
+    "requiredExp": 3448
+  },
+  {
+    "level": 21,
+    "requiredExp": 3978
+  },
+  {
+    "level": 22,
+    "requiredExp": 4558
+  },
+  {
+    "level": 23,
+    "requiredExp": 5194
+  },
+  {
+    "level": 24,
+    "requiredExp": 5885
+  },
+  {
+    "level": 25,
+    "requiredExp": 6635
+  },
+  {
+    "level": 26,
+    "requiredExp": 7446
+  },
+  {
+    "level": 27,
+    "requiredExp": 8322
+  },
+  {
+    "level": 28,
+    "requiredExp": 9262
+  },
+  {
+    "level": 29,
+    "requiredExp": 10272
+  },
+  {
+    "level": 30,
+    "requiredExp": 11352
+  },
+  {
+    "level": 31,
+    "requiredExp": 12506
+  },
+  {
+    "level": 32,
+    "requiredExp": 13734
+  },
+  {
+    "level": 33,
+    "requiredExp": 15042
+  },
+  {
+    "level": 34,
+    "requiredExp": 16429
+  },
+  {
+    "level": 35,
+    "requiredExp": 17899
+  },
+  {
+    "level": 36,
+    "requiredExp": 19454
+  },
+  {
+    "level": 37,
+    "requiredExp": 21102
+  },
+  {
+    "level": 38,
+    "requiredExp": 22830
+  },
+  {
+    "level": 39,
+    "requiredExp": 24656
+  },
+  {
+    "level": 40,
+    "requiredExp": 26576
+  },
+  {
+    "level": 41,
+    "requiredExp": 28594
+  },
+  {
+    "level": 42,
+    "requiredExp": 30710
+  },
+  {
+    "level": 43,
+    "requiredExp": 32930
+  },
+  {
+    "level": 44,
+    "requiredExp": 35253
+  },
+  {
+    "level": 45,
+    "requiredExp": 37683
+  },
+  {
+    "level": 46,
+    "requiredExp": 40222
+  },
+  {
+    "level": 47,
+    "requiredExp": 42874
+  },
+  {
+    "level": 48,
+    "requiredExp": 45638
+  },
+  {
+    "level": 49,
+    "requiredExp": 48520
+  },
+  {
+    "level": 50,
+    "requiredExp": 51520
+  },
+  {
+    "level": 51,
+    "requiredExp": 54642
+  },
+  {
+    "level": 52,
+    "requiredExp": 57886
+  },
+  {
+    "level": 53,
+    "requiredExp": 61258
+  },
+  {
+    "level": 54,
+    "requiredExp": 64757
+  },
+  {
+    "level": 55,
+    "requiredExp": 68387
+  },
+  {
+    "level": 56,
+    "requiredExp": 72150
+  },
+  {
+    "level": 57,
+    "requiredExp": 76050
+  },
+  {
+    "level": 58,
+    "requiredExp": 80086
+  },
+  {
+    "level": 59,
+    "requiredExp": 84264
+  },
+  {
+    "level": 60,
+    "requiredExp": 106110
+  },
+  {
+    "level": 61,
+    "requiredExp": 113412
+  },
+  {
+    "level": 62,
+    "requiredExp": 121149
+  },
+  {
+    "level": 63,
+    "requiredExp": 129352
+  },
+  {
+    "level": 64,
+    "requiredExp": 138044
+  },
+  {
+    "level": 65,
+    "requiredExp": 147256
+  },
+  {
+    "level": 66,
+    "requiredExp": 157019
+  },
+  {
+    "level": 67,
+    "requiredExp": 167367
+  },
+  {
+    "level": 68,
+    "requiredExp": 178326
+  },
+  {
+    "level": 69,
+    "requiredExp": 189958
+  },
+  {
+    "level": 70,
+    "requiredExp": 202282
+  },
+  {
+    "level": 71,
+    "requiredExp": 215348
+  },
+  {
+    "level": 72,
+    "requiredExp": 229205
+  },
+  {
+    "level": 73,
+    "requiredExp": 243901
+  },
+  {
+    "level": 74,
+    "requiredExp": 259495
+  },
+  {
+    "level": 75,
+    "requiredExp": 276001
+  },
+  {
+    "level": 76,
+    "requiredExp": 293506
+  },
+  {
+    "level": 77,
+    "requiredExp": 312258
+  },
+  {
+    "level": 78,
+    "requiredExp": 332071
+  },
+  {
+    "level": 79,
+    "requiredExp": 353126
+  },
+  {
+    "level": 80,
+    "requiredExp": 375511
+  },
+  {
+    "level": 81,
+    "requiredExp": 399318
+  },
+  {
+    "level": 82,
+    "requiredExp": 424655
+  },
+  {
+    "level": 83,
+    "requiredExp": 451631
+  },
+  {
+    "level": 84,
+    "requiredExp": 480374
+  },
+  {
+    "level": 85,
+    "requiredExp": 511007
+  },
+  {
+    "level": 86,
+    "requiredExp": 543686
+  },
+  {
+    "level": 87,
+    "requiredExp": 578571
+  },
+  {
+    "level": 88,
+    "requiredExp": 615838
+  },
+  {
+    "level": 89,
+    "requiredExp": 655580
+  },
+  {
+    "level": 90,
+    "requiredExp": 698128
+  },
+  {
+    "level": 91,
+    "requiredExp": 743971
+  },
+  {
+    "level": 92,
+    "requiredExp": 792917
+  },
+  {
+    "level": 93,
+    "requiredExp": 845443
+  },
+  {
+    "level": 94,
+    "requiredExp": 901868
+  },
+  {
+    "level": 95,
+    "requiredExp": 962654
+  },
+  {
+    "level": 96,
+    "requiredExp": 1027999
+  },
+  {
+    "level": 97,
+    "requiredExp": 1092789
+  },
+  {
+    "level": 98,
+    "requiredExp": 1174420
+  },
+  {
+    "level": 99,
+    "requiredExp": 1256663
+  },
+  {
+    "level": 100,
+    "requiredExp": 1345723
+  },
+  {
+    "level": 101,
+    "requiredExp": 1442322
+  },
+  {
+    "level": 102,
+    "requiredExp": 1547281
+  },
+  {
+    "level": 103,
+    "requiredExp": 1661531
+  },
+  {
+    "level": 104,
+    "requiredExp": 1786178
+  },
+  {
+    "level": 105,
+    "requiredExp": 1922340
+  },
+  {
+    "level": 106,
+    "requiredExp": 2071235
+  },
+  {
+    "level": 107,
+    "requiredExp": 2235351
+  },
+  {
+    "level": 108,
+    "requiredExp": 2416927
+  },
+  {
+    "level": 109,
+    "requiredExp": 2614754
+  },
+  {
+    "level": 110,
+    "requiredExp": 2835137
+  },
+  {
+    "level": 111,
+    "requiredExp": 3079892
+  },
+  {
+    "level": 112,
+    "requiredExp": 3352633
+  },
+  {
+    "level": 113,
+    "requiredExp": 3657676
+  },
+  {
+    "level": 114,
+    "requiredExp": 4000195
+  },
+  {
+    "level": 115,
+    "requiredExp": 4386143
+  },
+  {
+    "level": 116,
+    "requiredExp": 4824041
+  },
+  {
+    "level": 117,
+    "requiredExp": 5329377
+  },
+  {
+    "level": 118,
+    "requiredExp": 5892866
+  },
+  {
+    "level": 119,
+    "requiredExp": 6550125
+  },
+  {
+    "level": 120,
+    "requiredExp": 12326614
+  },
+  {
+    "level": 121,
+    "requiredExp": 15496114
+  },
+  {
+    "level": 122,
+    "requiredExp": 20025638
+  },
+  {
+    "level": 123,
+    "requiredExp": 26828518
+  },
+  {
+    "level": 124,
+    "requiredExp": 37698249
+  },
+  {
+    "level": 125,
+    "requiredExp": 56734876
+  },
+  {
+    "level": 126,
+    "requiredExp": 80970265
+  },
+  {
+    "level": 127,
+    "requiredExp": 68290876
+  },
+  {
+    "level": 128,
+    "requiredExp": 68870688
+  },
+  {
+    "level": 129,
+    "requiredExp": 68687857
+  },
+  {
+    "level": 130,
+    "requiredExp": 68988671
+  },
+  {
+    "level": 131,
+    "requiredExp": 69495855
+  },
+  {
+    "level": 132,
+    "requiredExp": 69394639
+  },
+  {
+    "level": 133,
+    "requiredExp": 69904368
+  },
+  {
+    "level": 134,
+    "requiredExp": 69756319
+  },
+  {
+    "level": 135,
+    "requiredExp": 70173345
+  },
+  {
+    "level": 136,
+    "requiredExp": 70938953
+  },
+  {
+    "level": 137,
+    "requiredExp": 70627154
+  },
+  {
+    "level": 138,
+    "requiredExp": 70858959
+  },
+  {
+    "level": 139,
+    "requiredExp": 70854359
+  },
+  {
+    "level": 140,
+    "requiredExp": 71244161
+  }
+]
