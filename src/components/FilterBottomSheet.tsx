@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import ElementFilter, { type ElementType } from './ElementFilter';
+import ElementFilter, { type ElementFilterItem } from './ElementFilter';
 import GradeFilter, { type GradeType } from './GradeFilter';
 import StatFilter, { type StatFilterItem } from './StatFilter';
 import FavoriteFilter from './FavoriteFilter';
@@ -7,11 +7,11 @@ import FavoriteFilter from './FavoriteFilter';
 interface FilterBottomSheetProps {
   isOpen: boolean;
   onClose: () => void;
-  elementFilters: ElementType[];
+  elementFilters: ElementFilterItem[];
   gradeFilters: GradeType[];
   statFilters: StatFilterItem[];
   showFavoritesOnly: boolean;
-  onElementFilterChange: (filters: ElementType[]) => void;
+  onElementFilterChange: (filters: ElementFilterItem[]) => void;
   onGradeFilterChange: (filters: GradeType[]) => void;
   onStatFilterChange: (filters: StatFilterItem[]) => void;
   onFavoriteFilterChange: (favoritesOnly: boolean) => void;

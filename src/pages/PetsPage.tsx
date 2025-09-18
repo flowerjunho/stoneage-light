@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
 import SearchBar from '../components/SearchBar';
-import ElementFilter, { type ElementType } from '../components/ElementFilter';
+import ElementFilter, { type ElementFilterItem } from '../components/ElementFilter';
 import GradeFilter, { type GradeType } from '../components/GradeFilter';
 import StatFilter, { type StatFilterItem } from '../components/StatFilter';
 import FavoriteFilter from '../components/FavoriteFilter';
@@ -58,7 +58,7 @@ const PetsPage: React.FC = () => {
 
   const [searchTerm, setSearchTerm] = useState('');
   const [pets, setPets] = useState<Pet[]>([]);
-  const [elementFilters, setElementFilters] = useState<ElementType[]>([]);
+  const [elementFilters, setElementFilters] = useState<ElementFilterItem[]>([]);
   const [gradeFilters, setGradeFilters] = useState<GradeType[]>([]);
   const [statFilters, setStatFilters] = useState<StatFilterItem[]>([]);
   const [showFavoritesOnly, setShowFavoritesOnly] = useState(false);
@@ -121,7 +121,7 @@ const PetsPage: React.FC = () => {
     setSearchTerm(value);
   };
 
-  const handleElementFilterChange = (filters: ElementType[]) => {
+  const handleElementFilterChange = (filters: ElementFilterItem[]) => {
     setElementFilters(filters);
   };
 

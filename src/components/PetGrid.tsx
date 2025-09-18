@@ -1,6 +1,6 @@
 import React, { useMemo, useCallback } from 'react';
 import type { Pet } from '../types';
-import type { ElementType } from './ElementFilter';
+import type { ElementFilterItem } from './ElementFilter';
 import type { GradeType } from './GradeFilter';
 import type { StatFilterItem } from './StatFilter';
 import PetCard from './PetCard';
@@ -14,7 +14,7 @@ import { isFavorite } from '../utils/favorites';
 interface PetGridProps {
   pets: Pet[];
   searchTerm: string;
-  elementFilters: ElementType[];
+  elementFilters: ElementFilterItem[];
   gradeFilters: GradeType[];
   statFilters: StatFilterItem[];
   showFavoritesOnly: boolean;
@@ -39,21 +39,34 @@ const PetGrid: React.FC<PetGridProps> = React.memo(
         result = result.filter(pet => matchesConsonantSearch(pet.name, debouncedSearchTerm));
       }
 
-      // 속성 필터링 (선택된 속성 중 하나라도 0보다 큰 값을 가져야 함)
+      // 속성 필터링 (선택된 속성 중 하나라도 조건을 만족해야 함)
       if (elementFilters.length > 0) {
         result = result.filter(pet => {
-          return elementFilters.some(element => {
-            switch (element) {
+          return elementFilters.some(filter => {
+            let petValue: number;
+            
+            switch (filter.element) {
               case 'earth':
-                return pet.elementStats.earth > 0;
+                petValue = pet.elementStats.earth;
+                break;
               case 'water':
-                return pet.elementStats.water > 0;
+                petValue = pet.elementStats.water;
+                break;
               case 'fire':
-                return pet.elementStats.fire > 0;
+                petValue = pet.elementStats.fire;
+                break;
               case 'wind':
-                return pet.elementStats.wind > 0;
+                petValue = pet.elementStats.wind;
+                break;
               default:
                 return false;
+            }
+            
+            // exactValue가 있으면 정확한 값 매칭, 없으면 기존 로직 (> 0)
+            if (filter.exactValue !== undefined) {
+              return petValue === filter.exactValue;
+            } else {
+              return petValue > 0;
             }
           });
         });

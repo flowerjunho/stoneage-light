@@ -2,9 +2,14 @@ import React, { useState, useEffect } from 'react';
 
 export type ElementType = 'earth' | 'water' | 'fire' | 'wind';
 
+export interface ElementFilterItem {
+  element: ElementType;
+  exactValue?: number; // 정확한 값 매칭 (optional)
+}
+
 interface ElementFilterProps {
-  onFilterChange: (filters: ElementType[]) => void;
-  initialFilters?: ElementType[];
+  onFilterChange: (filters: ElementFilterItem[]) => void;
+  initialFilters?: ElementFilterItem[];
   onClearAllFilters?: () => void;
   hasFiltersActive?: boolean;
   hideLabel?: boolean;
@@ -18,7 +23,7 @@ const ElementFilter = React.memo(
     hasFiltersActive = false,
     hideLabel = false,
   }: ElementFilterProps) => {
-    const [activeFilters, setActiveFilters] = useState<ElementType[]>(initialFilters);
+    const [activeFilters, setActiveFilters] = useState<ElementFilterItem[]>(initialFilters);
 
     // 초기값이 변경될 때 상태 동기화
     useEffect(() => {
@@ -53,15 +58,30 @@ const ElementFilter = React.memo(
     ];
 
     const handleFilterClick = (element: ElementType) => {
-      let newFilters: ElementType[];
+      let newFilters: ElementFilterItem[];
+      const existingFilter = activeFilters.find(f => f.element === element);
 
-      if (activeFilters.includes(element)) {
+      if (existingFilter) {
         // 이미 활성화된 필터면 제거
-        newFilters = activeFilters.filter(f => f !== element);
+        newFilters = activeFilters.filter(f => f.element !== element);
       } else {
         // 새로운 필터 추가
-        newFilters = [...activeFilters, element];
+        newFilters = [...activeFilters, { element }];
       }
+
+      setActiveFilters(newFilters);
+      onFilterChange(newFilters);
+    };
+
+    const handleExactValueChange = (element: ElementType, value: string) => {
+      const numValue = value === '' ? undefined : parseInt(value, 10);
+      if (numValue !== undefined && (isNaN(numValue) || numValue < 0)) return;
+
+      const newFilters = activeFilters.map(filter => 
+        filter.element === element 
+          ? { ...filter, exactValue: numValue }
+          : filter
+      );
 
       setActiveFilters(newFilters);
       onFilterChange(newFilters);
@@ -81,21 +101,40 @@ const ElementFilter = React.memo(
             )}
 
             {elements.map(element => {
-              const isActive = activeFilters.includes(element.key);
+              const activeFilter = activeFilters.find(f => f.element === element.key);
+              const isActive = !!activeFilter;
               return (
-                <button
-                  key={element.key}
-                  onClick={() => handleFilterClick(element.key)}
-                  className={`
-                  px-4 py-2 rounded-lg font-semibold text-sm
-                  transition-all duration-200 transform hover:scale-105
-                  ${isActive ? element.inactiveColor + ' opacity-70' : element.activeColor}
-                  active:scale-95
-                `}
-                >
-                  {element.label}
-                  {isActive && <span className="ml-1">✓</span>}
-                </button>
+                <div key={element.key} className="flex items-center gap-2">
+                  <button
+                    onClick={() => handleFilterClick(element.key)}
+                    className={`
+                    px-4 py-2 rounded-lg font-semibold text-sm
+                    transition-all duration-200 transform hover:scale-105
+                    ${isActive ? element.inactiveColor + ' opacity-70' : element.activeColor}
+                    active:scale-95
+                  `}
+                  >
+                    {element.label}
+                    {isActive && <span className="ml-1">✓</span>}
+                  </button>
+                  
+                  {isActive && (
+                    <div className="flex items-center gap-1">
+                      <span className="text-xs text-text-secondary">=</span>
+                      <input
+                        type="number"
+                        min="0"
+                        max="10"
+                        value={activeFilter?.exactValue || ''}
+                        onChange={(e) => handleExactValueChange(element.key, e.target.value)}
+                        placeholder="개수"
+                        className="w-16 px-2 py-1 text-xs border border-border rounded
+                                 bg-bg-secondary text-text-primary placeholder-text-muted
+                                 focus:outline-none focus:border-accent"
+                      />
+                    </div>
+                  )}
+                </div>
               );
             })}
 
@@ -125,7 +164,10 @@ const ElementFilter = React.memo(
         {activeFilters.length > 0 && (
           <div className="mt-3 text-xs text-text-secondary">
             {activeFilters.length}개 속성이 선택됨:{' '}
-            {activeFilters.map(f => elements.find(e => e.key === f)?.label).join(', ')}
+            {activeFilters.map(f => {
+              const element = elements.find(e => e.key === f.element);
+              return f.exactValue ? `${element?.label}=${f.exactValue}` : element?.label;
+            }).join(', ')}
           </div>
         )}
       </div>

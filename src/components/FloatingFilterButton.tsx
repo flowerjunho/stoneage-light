@@ -1,15 +1,15 @@
 import { useState } from 'react';
 import FilterBottomSheet from './FilterBottomSheet';
-import type { ElementType } from './ElementFilter';
+import type { ElementFilterItem } from './ElementFilter';
 import type { GradeType } from './GradeFilter';
 import type { StatFilterItem } from './StatFilter';
 
 interface FloatingFilterButtonProps {
-  elementFilters: ElementType[];
+  elementFilters: ElementFilterItem[];
   gradeFilters: GradeType[];
   statFilters: StatFilterItem[];
   showFavoritesOnly: boolean;
-  onElementFilterChange: (filters: ElementType[]) => void;
+  onElementFilterChange: (filters: ElementFilterItem[]) => void;
   onGradeFilterChange: (filters: GradeType[]) => void;
   onStatFilterChange: (filters: StatFilterItem[]) => void;
   onFavoriteFilterChange: (favoritesOnly: boolean) => void;
