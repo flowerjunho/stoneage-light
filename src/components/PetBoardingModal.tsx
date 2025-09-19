@@ -69,10 +69,12 @@ const PetBoardingModal: React.FC<PetBoardingModalProps> = ({ isOpen, onClose, pe
         const cleanBoardingName = petName.replace('⭐️', '').trim();
         const cleanPetDataName = petNameToSearch
           .replace(/\s+/g, '')
-          .replace(/\(환\)/g, '');
+          .replace(/\(환\)/g, '')
+          .replace(/\(신\)/g, '신');
         const cleanBoardingNameForCompare = cleanBoardingName
           .replace(/\s+/g, '')
-          .replace(/\(환\)/g, '');
+          .replace(/\(환\)/g, '')
+          .replace(/\(신\)/g, '신');
         
         return cleanPetDataName === cleanBoardingNameForCompare;
       });
