@@ -7396,7 +7396,7 @@
         "agility": 1.68,
         "vitality": 9.911
       },
-      "rideable": "탑승불가",
+      "rideable": "탑승가능",
       "totalGrowth": "5.041",
       "grade": "일반"
     },
