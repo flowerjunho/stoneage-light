@@ -189,7 +189,9 @@ const PetCard: React.FC<PetCardProps> = ({ pet }) => {
       일반등급: `${baseClasses} bg-bg-tertiary text-text-secondary`,
       일반페트: `${baseClasses} bg-bg-tertiary text-text-secondary`,
       일반: `${baseClasses} bg-bg-tertiary text-text-secondary`,
-      희귀: `${baseClasses} bg-gradient-to-r from-purple-500 to-purple-400 text-white`,
+      '1등급': `${baseClasses} bg-gradient-to-r from-purple-500 to-purple-400 text-white`,
+      '2등급': `${baseClasses} bg-gradient-to-r from-blue-500 to-blue-400 text-white`,
+      희귀: `${baseClasses} bg-gradient-to-r from-green-500 to-green-400 text-white`,
       영웅: `${baseClasses} bg-gradient-to-r from-yellow-400 to-yellow-300 text-black`,
     } as const;
 
