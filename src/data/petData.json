@@ -3,6 +3,141 @@
   "totalCount": 454,
   "pets": [
     {
+      "id": "700",
+      "name": "엘르벨",
+      "source": "-",
+      "imageLink": "https://pooyas.com/files/extravar_upload/109631/762/257/23fcfc8bada69e4ca638b3c996febcb5.gif",
+      "elementStats": {
+        "water": 0,
+        "fire": 1,
+        "wind": 9,
+        "earth": 0
+      },
+      "baseStats": {
+        "attack": 0,
+        "defense": 0,
+        "agility": 0,
+        "vitality": 0
+      },
+      "growthStats": {
+        "attack": 0,
+        "defense": 0,
+        "agility": 0,
+        "vitality": 0
+      },
+      "rideable": "탑승불가",
+      "totalGrowth": "-",
+      "grade": "일반"
+    },
+    {
+      "id": "699",
+      "name": "청기룡",
+      "source": "전투 포인트 상점",
+      "imageLink": "https://media.discordapp.net/attachments/1337456342373236766/1418410829635784724/image.png?ex=68ce0586&is=68ccb406&hm=62e92bcd322e02a9013001b2227b2cd876562d01dc768dfb3108b697c34f582f&=&format=webp&quality=lossless&width=351&height=469",
+      "elementStats": {
+        "water": 0,
+        "fire": 0,
+        "wind": 10,
+        "earth": 0
+      },
+      "baseStats": {
+        "attack": 11,
+        "defense": 5,
+        "agility": 9,
+        "vitality": 55
+      },
+      "growthStats": {
+        "attack": 2.177,
+        "defense": 1.113,
+        "agility": 1.727,
+        "vitality": 10.432
+      },
+      "rideable": "탑승가능",
+      "totalGrowth": "5.017",
+      "grade": "일반"
+    },
+    {
+      "id": "698",
+      "name": "가이록스",
+      "source": "필드포획",
+      "imageLink": "https://pooyas.com/files/extravar_upload/109631/093/176/f7255595e84a205d61b7f19741a2aff4.gif",
+      "elementStats": {
+        "water": 8,
+        "fire": 2,
+        "wind": 0,
+        "earth": 0
+      },
+      "baseStats": {
+        "attack": 10,
+        "defense": 6,
+        "agility": 7,
+        "vitality": 51
+      },
+      "growthStats": {
+        "attack": 2.116,
+        "defense": 1.362,
+        "agility": 1.504,
+        "vitality": 10.082
+      },
+      "rideable": "탑승불가",
+      "totalGrowth": "4.982",
+      "grade": "일반"
+    },
+    {
+      "id": "697",
+      "name": "메가로돈",
+      "source": "금화상점",
+      "imageLink": "https://pooyas.com/files/extravar_upload/109631/558/186/14425c0f7ae6690b4723588b8b48875f.gif",
+      "elementStats": {
+        "water": 9,
+        "fire": 1,
+        "wind": 0,
+        "earth": 0
+      },
+      "baseStats": {
+        "attack": 12,
+        "defense": 7,
+        "agility": 7,
+        "vitality": 56
+      },
+      "growthStats": {
+        "attack": 2.331,
+        "defense": 1.352,
+        "agility": 1.396,
+        "vitality": 10.668
+      },
+      "rideable": "탑승불가",
+      "totalGrowth": "5.079",
+      "grade": "일반"
+    },
+    {
+      "id": "696",
+      "name": "메가죠",
+      "source": "금화상점",
+      "imageLink": "https://pooyas.com/files/extravar_upload/109631/735/186/4fc586fde6de2581cfaed6727981319f.gif",
+      "elementStats": {
+        "water": 5,
+        "fire": 5,
+        "wind": 0,
+        "earth": 0
+      },
+      "baseStats": {
+        "attack": 12,
+        "defense": 5,
+        "agility": 8,
+        "vitality": 54
+      },
+      "growthStats": {
+        "attack": 2.31,
+        "defense": 1.118,
+        "agility": 1.632,
+        "vitality": 10.29
+      },
+      "rideable": "탑승가능",
+      "totalGrowth": "5.06",
+      "grade": "일반"
+    },
+    {
       "id": "695",
       "name": "불그리",
       "source": "B코스 랜덤 획득",
