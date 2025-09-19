@@ -33,7 +33,7 @@
       "id": "694",
       "name": "메가만모",
       "source": "맘모스쿠폰",
-      "imageLink": "",
+      "imageLink": "https://media.discordapp.net/attachments/1337456342373236766/1418395534078513273/image.png?ex=68cdf747&is=68cca5c7&hm=a909bc2a4b46d9d2d0956c909245d10cee9f4e9c346196cdfc22742db81a2eb0&=&format=webp&quality=lossless&width=332&height=268",
       "elementStats": {
         "water": 10,
         "fire": 0,
@@ -60,7 +60,7 @@
       "id": "693",
       "name": "이무기(환)",
       "source": "페트 환생",
-      "imageLink": "",
+      "imageLink": "https://media.discordapp.net/attachments/1337456342373236766/1418395655415533668/image.png?ex=68cdf764&is=68cca5e4&hm=67e90c6d67d17808c97beafc7922eb8d9beb3ddbab2de2bba0cceb8fcc0b8060&=&format=webp&quality=lossless&width=311&height=373",
       "elementStats": {
         "water": 0,
         "fire": 9,
@@ -87,7 +87,7 @@
       "id": "692",
       "name": "이무기",
       "source": "맘모스쿠폰 100회",
-      "imageLink": "",
+      "imageLink": "https://media.discordapp.net/attachments/1337456342373236766/1418395655415533668/image.png?ex=68cdf764&is=68cca5e4&hm=67e90c6d67d17808c97beafc7922eb8d9beb3ddbab2de2bba0cceb8fcc0b8060&=&format=webp&quality=lossless&width=311&height=373",
       "elementStats": {
         "water": 0,
         "fire": 9,
@@ -114,7 +114,7 @@
       "id": "691",
       "name": "메가만모(환)",
       "source": "페트환생",
-      "imageLink": "",
+      "imageLink": "https://media.discordapp.net/attachments/1337456342373236766/1418395534078513273/image.png?ex=68cdf747&is=68cca5c7&hm=a909bc2a4b46d9d2d0956c909245d10cee9f4e9c346196cdfc22742db81a2eb0&=&format=webp&quality=lossless&width=332&height=268",
       "elementStats": {
         "water": 10,
         "fire": 0,
@@ -762,7 +762,7 @@
       "id": "667",
       "name": "금조",
       "source": "페트진화",
-      "imageLink": "",
+      "imageLink": "https://media.discordapp.net/attachments/1337456342373236766/1418395839591874652/image.png?ex=68cdf790&is=68cca610&hm=b1d2618c172a0e6057bd39a593a2acb2dbe883acc1d421a0e8f3863e331cbc88&=&format=webp&quality=lossless&width=399&height=338",
       "elementStats": {
         "water": 0,
         "fire": 9,
@@ -789,7 +789,7 @@
       "id": "666",
       "name": "어린금조",
       "source": "이벤트페트",
-      "imageLink": "",
+      "imageLink": "https://media.discordapp.net/attachments/1337456342373236766/1418395906788560957/image.png?ex=68cdf7a0&is=68cca620&hm=ca611c89987df0bcf77eca3b2dca68e6033244411fae9003b27aeba17b790b5e&=&format=webp&quality=lossless&width=316&height=273",
       "elementStats": {
         "water": 0,
         "fire": 9,
