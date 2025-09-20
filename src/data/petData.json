@@ -3,6 +3,60 @@
   "totalCount": 454,
   "pets": [
     {
+      "id": "702",
+      "name": "천룡",
+      "source": "-",
+      "imageLink": "https://www.hwansoo.top/data/editor/2506/6b471b6cb81fab3cd6c48e5f176e0836_1750834740_3886.gif",
+      "elementStats": {
+        "water": 0,
+        "fire": 9,
+        "wind": 1,
+        "earth": 0
+      },
+      "baseStats": {
+        "attack": 14,
+        "defense": 6,
+        "agility": 10,
+        "vitality": 59
+      },
+      "growthStats": {
+        "attack": 2.44,
+        "defense": 1.03,
+        "agility": 1.77,
+        "vitality": 10.101
+      },
+      "rideable": "탑승불가",
+      "totalGrowth": "5.249",
+      "grade": "일반"
+    },
+    {
+      "id": "701",
+      "name": "메가기룡",
+      "source": "천하제일 무술대회 준우승 상품",
+      "imageLink": "https://media.discordapp.net/attachments/1337456342373236766/1418851407263694858/image.png?ex=68cf9fd8&is=68ce4e58&hm=06ea47fa7f764d2e99e61f8901fc6985829bfafa1d1430fff1b11b96d9f49a19&=&format=webp&quality=lossless&width=496&height=469",
+      "elementStats": {
+        "water": 0,
+        "fire": 0,
+        "wind": 10,
+        "earth": 0
+      },
+      "baseStats": {
+        "attack": 12,
+        "defense": 6,
+        "agility": 10,
+        "vitality": 57
+      },
+      "growthStats": {
+        "attack": 2.222,
+        "defense": 1.158,
+        "agility": 1.869,
+        "vitality": 10.101
+      },
+      "rideable": "탑승불가",
+      "totalGrowth": "5.249",
+      "grade": "일반"
+    },
+    {
       "id": "700",
       "name": "엘르벨",
       "source": "-",
@@ -1472,19 +1526,19 @@
         "earth": 0
       },
       "baseStats": {
-        "attack": 10,
-        "defense": 5,
+        "attack": 11,
+        "defense": 6,
         "agility": 9,
-        "vitality": 52
+        "vitality": 53
       },
       "growthStats": {
-        "attack": 2.12,
-        "defense": 1.218,
-        "agility": 1.82,
-        "vitality": 10.145
+        "attack": 2.188,
+        "defense": 1.193,
+        "agility": 1.821,
+        "vitality": 10.148
       },
       "rideable": "탑승불가",
-      "totalGrowth": "5.093",
+      "totalGrowth": "5.112",
       "grade": "일반"
     },
     {
@@ -1499,19 +1553,19 @@
         "earth": 0
       },
       "baseStats": {
-        "attack": 11,
-        "defense": 6,
+        "attack": 12,
+        "defense": 7,
         "agility": 7,
-        "vitality": 53
+        "vitality": 55
       },
       "growthStats": {
-        "attack": 2.367,
-        "defense": 1.345,
-        "agility": 1.489,
+        "attack": 2.374,
+        "defense": 1.352,
+        "agility": 1.49,
         "vitality": 10.431
       },
       "rideable": "탑승불가",
-      "totalGrowth": "5.201",
+      "totalGrowth": "5.216",
       "grade": "일반"
     },
     {
@@ -1527,18 +1581,18 @@
       },
       "baseStats": {
         "attack": 11,
-        "defense": 7,
+        "defense": 8,
         "agility": 7,
         "vitality": 55
       },
       "growthStats": {
-        "attack": 2.209,
-        "defense": 1.532,
-        "agility": 1.439,
-        "vitality": 10.949
+        "attack": 2.215,
+        "defense": 1.534,
+        "agility": 1.443,
+        "vitality": 10.952
       },
       "rideable": "탑승불가",
-      "totalGrowth": "5.180",
+      "totalGrowth": "5.192",
       "grade": "일반"
     },
     {
@@ -1553,16 +1607,16 @@
         "earth": 10
       },
       "baseStats": {
-        "attack": 11,
+        "attack": 12,
         "defense": 7,
         "agility": 7,
-        "vitality": 53
+        "vitality": 55
       },
       "growthStats": {
-        "attack": 2.245,
-        "defense": 1.475,
-        "agility": 1.489,
-        "vitality": 10.432
+        "attack": 2.293,
+        "defense": 1.484,
+        "agility": 1.49,
+        "vitality": 10.479
       },
       "rideable": "탑승불가",
       "totalGrowth": "5.209",
