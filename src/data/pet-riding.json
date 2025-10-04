@@ -1,6 +1,10 @@
 {
   "곰아저씨": [
     {
+      "imageUrl": "/images/ride/곰아저씨_각테이.gif",
+      "name": "테이노스(각)"
+    },
+    {
       "imageUrl": "http://pooyas.com/files/attach/images/29222/853/031/69f0de01288a28c34908d654a74f8c55.gif",
       "name": "무이"
     },
@@ -42,6 +46,14 @@
     }
   ],
   "귀염둥이": [
+    {
+      "imageUrl": "/images/ride/귀염둥이_각테이.gif",
+      "name": "테이노스(각)"
+    },
+    {
+      "imageUrl": "/images/ride/귀염둥이_리어룬.gif",
+      "name": "리어룬"
+    },
     {
       "imageUrl": "http://pooyas.com/files/attach/images/29222/788/032/c917479ec11888528dcdceabd0728ef8.gif",
       "name": "지발리"
@@ -128,6 +140,10 @@
     }
   ],
   "물개소녀": [
+    {
+      "imageUrl": "/images/ride/물개소녀_각테이.gif",
+      "name": "테이노스(각)"
+    },
     {
       "imageUrl": "http://pooyas.com/files/attach/images/29222/175/033/19127b648b6f73d7d55e95770415155c.gif",
       "name": "무이"
@@ -263,6 +279,10 @@
   ],
   "바람소년": [
     {
+      "imageUrl": "/images/ride/바람소년_각테이.gif",
+      "name": "테이노스(각)"
+    },
+    {
       "imageUrl": "http://pooyas.com/files/attach/images/29222/226/033/f7ecab6a4184c90d4fa83235012d05c0.gif",
       "name": "무이"
     },
@@ -376,6 +396,10 @@
     }
   ],
   "불량소년": [
+    {
+      "imageUrl": "/images/ride/불량소년_각테이.gif",
+      "name": "테이노스(각)"
+    },
     {
       "imageUrl": "http://pooyas.com/files/attach/images/29222/107/034/e512d523c6e47752d78fe7f4c92ee755.gif",
       "name": "무이"
@@ -514,6 +538,10 @@
     }
   ],
   "사자소년": [
+    {
+      "imageUrl": "/images/ride/사자소년_각테이.gif",
+      "name": "테이노스(각)"
+    },
     {
       "imageUrl": "http://pooyas.com/files/attach/images/29222/306/034/ecfd8ae988fc7664ff5f5c967876b791.gif",
       "name": "무이"
@@ -739,6 +767,14 @@
   ],
   "석기미남": [
     {
+      "imageUrl": "/images/ride/석미_각테이.gif",
+      "name": "테이노스(각)"
+    },
+    {
+      "imageUrl": "/images/ride/석미_천호.gif",
+      "name": "천호"
+    },
+    {
       "imageUrl": "http://pooyas.com/files/attach/images/29222/391/034/89b3009923edccb947ebdca5654b77e4.gif",
       "name": "무이"
     },
@@ -885,13 +921,13 @@
     {
       "imageUrl": "https://pooyas.com/files/attach/images/29222/391/034/bdfda505ff0f20e44a609f56f3f0959a.gif",
       "name": "아스타로"
-    },
-    {
-      "imageUrl": "https://media.discordapp.net/attachments/1382927282213228604/1415677184194117663/bfd147de5ef99bd46978e95805598e33_1743257728_6216.gif?ex=68caab1e&is=68c9599e&hm=05dd343fb1496a84412890419c1676328404b9f09356e2134b3db811c8859198&=&width=302&height=283",
-      "name": "천호"
     }
   ],
   "어리버리맨": [
+    {
+      "imageUrl": "/images/ride/어리버리_각테이.gif",
+      "name": "테이노스(각)"
+    },
     {
       "imageUrl": "http://pooyas.com/files/attach/images/29222/453/034/c5d6d451abc78e85425fd95510e5a840.gif",
       "name": "무이"
@@ -1029,7 +1065,11 @@
       "name": "고르고르"
     }
   ],
-  "울보천사": [
+  "울보소녀": [
+    {
+      "imageUrl": "/images/ride/울보_각테이.gif",
+      "name": "테이노스(각)"
+    },
     {
       "imageUrl": "http://pooyas.com/files/attach/images/29222/101/035/f42cc8d5a8b865f72dc1cc6c8e60543a.gif",
       "name": "무이"
@@ -1136,6 +1176,10 @@
     }
   ],
   "정글소녀": [
+    {
+      "imageUrl": "/images/ride/정글소녀_각테이.gif",
+      "name": "테이노스(각)"
+    },
     {
       "imageUrl": "http://pooyas.com/files/attach/images/29222/980/035/93ee82a516fe03046e4d45a358716c19.gif",
       "name": "무이"
@@ -1250,6 +1294,10 @@
     }
   ],
   "터프소녀": [
+    {
+      "imageUrl": "/images/ride/터프소녀_각테이.gif",
+      "name": "테이노스(각)"
+    },
     {
       "imageUrl": "http://pooyas.com/files/attach/images/29222/019/036/3e483fbbf056c789c6a758ccff5107ad.gif",
       "name": "무이"
@@ -1385,6 +1433,10 @@
   ],
   "툰가": [
     {
+      "imageUrl": "/images/ride/툰가_시어룬.gif",
+      "name": "시어룬"
+    },
+    {
       "imageUrl": "http://pooyas.com/files/attach/images/29222/321/036/753ef12f6f33b49069c913c71c12d2ac.gif",
       "name": "무이"
     },
@@ -1498,6 +1550,10 @@
     }
   ],
   "몸짱아줌마": [
+    {
+      "imageUrl": "/images/ride/몸짱_각테이.gif",
+      "name": "테이노스(각)"
+    },
     {
       "imageUrl": "http://pooyas.com/files/attach/images/29222/095/033/f5f0c775560e2d928acea6baeb88947a.gif",
       "name": "무이"
@@ -1767,6 +1823,14 @@
   ],
   "꼬맹이(남)": [
     {
+      "imageUrl": "/images/ride/꼬맹이_남_각테이.gif",
+      "name": "테이노스(각)"
+    },
+    {
+      "imageUrl": "/images/ride/kkomangi_chokron.gif",
+      "name": "초크론"
+    },
+    {
       "imageUrl": "http://pooyas.com/files/attach/images/29222/244/029/384f71c0fe17e8b0b6d7829cd633ef04.gif",
       "name": "무이"
     },
@@ -1904,6 +1968,10 @@
     }
   ],
   "꼬맹이(여)": [
+    {
+      "imageUrl": "/images/ride/꼬맹이_여_각테이.gif",
+      "name": "테이노스(각)"
+    },
     {
       "imageUrl": "http://pooyas.com/files/attach/images/29222/975/032/ff50b52485ef23d72127f1c563c47455.gif",
       "name": "무이"

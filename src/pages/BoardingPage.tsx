@@ -745,8 +745,8 @@ const BoardingPage: React.FC = () => {
                       onClick={() => handlePetClick(pet, character)}
                     >
                       <div className="flex flex-col items-center text-center">
-                        {petImage && (
-                          <div className="mb-3 iphone16:mb-2">
+                        <div className="mb-3 iphone16:mb-2">
+                          {petImage ? (
                             <img
                               src={petImage}
                               alt={pet}
@@ -756,8 +756,12 @@ const BoardingPage: React.FC = () => {
                                 e.currentTarget.style.display = 'none';
                               }}
                             />
-                          </div>
-                        )}
+                          ) : (
+                            <div className="w-24 h-24 md:w-28 md:h-28 lg:w-32 lg:h-32 xl:w-36 xl:h-36 iphone16:w-20 iphone16:h-20 bg-bg-tertiary rounded flex items-center justify-center text-text-muted text-2xl">
+                              ?
+                            </div>
+                          )}
+                        </div>
                         <span className="text-text-primary text-sm font-medium iphone16:text-xs break-words">
                           {pet.startsWith('⭐️') ? (
                             <>

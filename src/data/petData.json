@@ -3,6 +3,195 @@
   "totalCount": 454,
   "pets": [
     {
+      "id": "710",
+      "name": "치크론",
+      "source": "금화상점",
+      "imageLink": "https://www.hwansoo.top/data/file/pets/56a287d704ccbcc4587e944994b7795f_QgOyKqGZ_7e44904776dc4222cc82f5b342b52dc047910fc8.gif",
+      "elementStats": {
+        "water": 0,
+        "fire": 0,
+        "wind": 10,
+        "earth": 0
+      },
+      "baseStats": {
+        "attack": 10,
+        "defense": 6,
+        "agility": 8,
+        "vitality": 53
+      },
+      "growthStats": {
+        "attack": 2.144,
+        "defense": 1.288,
+        "agility": 1.626,
+        "vitality": 10.475
+      },
+      "rideable": "탑승불가",
+      "totalGrowth": "5.058",
+      "grade": "일반"
+    },
+    {
+      "id": "709",
+      "name": "초크론",
+      "source": "금화상점",
+      "imageLink": "https://www.hwansoo.top/data/file/pets/dfd2e9c28f694849fc552ffb04cb9242_xWmFbGfv_bbfd724e6ec462439b5c5b60bc23b1d6eff5b418.gif",
+      "elementStats": {
+        "water": 0,
+        "fire": 0,
+        "wind": 0,
+        "earth": 10
+      },
+      "baseStats": {
+        "attack": 10,
+        "defense": 6,
+        "agility": 8,
+        "vitality": 53
+      },
+      "growthStats": {
+        "attack": 2.144,
+        "defense": 1.288,
+        "agility": 1.626,
+        "vitality": 10.475
+      },
+      "rideable": "탑승가능",
+      "totalGrowth": "5.058",
+      "grade": "일반"
+    },
+    {
+      "id": "708",
+      "name": "시어룬",
+      "source": "라돈타 70층",
+      "imageLink": "https://www.hwansoo.top/data/file/pets/ade71d98079b209fcfdc425e61692f36_YLvyr5eK_02e8d325748b89d685b182ae18ab47bd6246c053.gif",
+      "elementStats": {
+        "water": 9,
+        "fire": 1,
+        "wind": 0,
+        "earth": 0
+      },
+      "baseStats": {
+        "attack": 10,
+        "defense": 5,
+        "agility": 9,
+        "vitality": 54
+      },
+      "growthStats": {
+        "attack": 2.05,
+        "defense": 1.158,
+        "agility": 1.82,
+        "vitality": 10.816
+      },
+      "rideable": "탑승불가",
+      "totalGrowth": "5.028",
+      "grade": "일반"
+    },
+    {
+      "id": "707",
+      "name": "리어룬",
+      "source": "라돈타 80층",
+      "imageLink": "https://www.hwansoo.top/data/file/pets/f5b43ddfda9dbe12deee6fa50f96be6c_yEIj70Po_9bb6ebe8a3816a13702e1aafa76763d3820cf0d1.gif",
+      "elementStats": {
+        "water": 0,
+        "fire": 9,
+        "wind": 1,
+        "earth": 0
+      },
+      "baseStats": {
+        "attack": 10,
+        "defense": 5,
+        "agility": 9,
+        "vitality": 54
+      },
+      "growthStats": {
+        "attack": 2.05,
+        "defense": 1.158,
+        "agility": 1.82,
+        "vitality": 10.816
+      },
+      "rideable": "탑승불가",
+      "totalGrowth": "5.028",
+      "grade": "일반"
+    },
+    {
+      "id": "706",
+      "name": "어린풍백(환)",
+      "source": "어린풍백 환생",
+      "imageLink": "https://www.hwansoo.top/data/file/pets/b01436bccd2a57e6e3e9ab9d498def90_sI41yWoS_64d2ab1b3fd0cf427e6e04aca7c1dc462f678949.gif",
+      "elementStats": {
+        "water": 0,
+        "fire": 0,
+        "wind": 5,
+        "earth": 5
+      },
+      "baseStats": {
+        "attack": 13,
+        "defense": 6,
+        "agility": 9,
+        "vitality": 58
+      },
+      "growthStats": {
+        "attack": 2.36,
+        "defense": 1.122,
+        "agility": 1.77,
+        "vitality": 10.288
+      },
+      "rideable": "탑승불가",
+      "totalGrowth": "5.252",
+      "grade": "일반"
+    },
+    {
+      "id": "705",
+      "name": "블랙테이노스",
+      "source": "맘모스쿠폰 100회",
+      "imageLink": "",
+      "elementStats": {
+        "water": 5,
+        "fire": 5,
+        "wind": 0,
+        "earth": 0
+      },
+      "baseStats": {
+        "attack": 12,
+        "defense": 6,
+        "agility": 8,
+        "vitality": 59
+      },
+      "growthStats": {
+        "attack": 2.324,
+        "defense": 1.173,
+        "agility": 1.626,
+        "vitality": 10.899
+      },
+      "rideable": "탑승불가",
+      "totalGrowth": "5.123",
+      "grade": "일반"
+    },
+    {
+      "id": "704",
+      "name": "어린현무(환)",
+      "source": "어린현무 환생",
+      "imageLink": "https://www.hwansoo.top/data/file/pets/b01436bccd2a57e6e3e9ab9d498def90_WVwvxrKT_13c644e246ea9fdf1480aeb43ba5eed3e3c8f17d.gif",
+      "elementStats": {
+        "water": 1,
+        "fire": 0,
+        "wind": 0,
+        "earth": 9
+      },
+      "baseStats": {
+        "attack": 12,
+        "defense": 13,
+        "agility": 1,
+        "vitality": 71
+      },
+      "growthStats": {
+        "attack": 2.216,
+        "defense": 2.468,
+        "agility": 0.351,
+        "vitality": 12.986
+      },
+      "rideable": "탑승불가",
+      "totalGrowth": "5.035",
+      "grade": "일반"
+    },
+    {
       "id": "702",
       "name": "천룡",
       "source": "-",
@@ -592,7 +781,7 @@
         "agility": 1.821,
         "vitality": 11.142
       },
-      "rideable": "탑승불가",
+      "rideable": "탑승가능",
       "totalGrowth": "5.400",
       "grade": "일반"
     },
