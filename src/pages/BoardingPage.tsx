@@ -214,7 +214,11 @@ const BoardingPage: React.FC = () => {
         return cleanRidingName === cleanBoardingNameForCompare;
       });
 
-      if (ridingPet) {
+      if (ridingPet && ridingPet.imageUrl) {
+        // 로컬 이미지인 경우 base URL 추가
+        if (ridingPet.imageUrl.startsWith('/')) {
+          return `${import.meta.env.BASE_URL}${ridingPet.imageUrl.slice(1)}`;
+        }
         return ridingPet.imageUrl;
       }
     }
@@ -260,7 +264,11 @@ const BoardingPage: React.FC = () => {
         return cleanRidingName === cleanBoardingNameForCompare;
       });
 
-      if (ridingPet) {
+      if (ridingPet && ridingPet.imageUrl) {
+        // 로컬 이미지인 경우 base URL 추가
+        if (ridingPet.imageUrl.startsWith('/')) {
+          return `${import.meta.env.BASE_URL}${ridingPet.imageUrl.slice(1)}`;
+        }
         return ridingPet.imageUrl;
       }
     }
