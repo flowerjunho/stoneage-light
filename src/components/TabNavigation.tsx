@@ -6,7 +6,7 @@ const TabNavigation: React.FC = () => {
 
   const tabs = [
     { path: '/pets', label: '페트', name: 'pets' },
-    { path: '/boarding', label: '캐릭터/탑승', name: 'boarding' },
+    { path: '/boarding', label: '캐릭터/탑승', mobileLabel: '캐릭터/\n탑승', name: 'boarding' },
     { path: '/items', label: '아이템', name: 'items' },
     { path: '/quests', label: '퀘스트', name: 'quests' },
     { path: '/calculator', label: '계산기', name: 'calculator' },
@@ -32,7 +32,8 @@ const TabNavigation: React.FC = () => {
                     : 'border-transparent text-text-secondary hover:text-text-primary hover:border-text-muted'
                 }`}
               >
-                {tab.label}
+                <span className="hidden md:inline">{tab.label}</span>
+                <span className="md:hidden whitespace-pre-line">{tab.mobileLabel || tab.label}</span>
               </Link>
             );
           })}

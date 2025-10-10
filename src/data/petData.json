@@ -527,10 +527,10 @@
         "earth": 0
       },
       "baseStats": {
-        "attack": 51,
-        "defense": 9,
-        "agility": 5,
-        "vitality": 10
+        "attack": 9,
+        "defense": 5,
+        "agility": 10,
+        "vitality": 51
       },
       "growthStats": {
         "attack": 1.945,
