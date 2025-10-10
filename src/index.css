@@ -74,6 +74,9 @@ body {
   min-height: 100vh;
   background-color: var(--bg-primary);
   color: var(--text-primary);
+  /* 스크롤바를 오버레이로 표시하여 width 변화 방지 */
+  overflow-y: overlay;
+  scrollbar-gutter: stable;
 }
 
 #root {
@@ -83,19 +86,29 @@ body {
 /* Scrollbar styling for dark theme */
 ::-webkit-scrollbar {
   width: 8px;
+  /* 스크롤바가 컨텐츠 위에 오버레이 되도록 설정 */
+  background: transparent;
 }
 
 ::-webkit-scrollbar-track {
-  background: var(--bg-secondary);
+  background: transparent;
 }
 
 ::-webkit-scrollbar-thumb {
   background: var(--border);
   border-radius: 4px;
+  /* 스크롤하지 않을 때 투명하게 */
+  transition: background 0.2s;
 }
 
 ::-webkit-scrollbar-thumb:hover {
   background: var(--border-light);
+}
+
+/* Firefox에서 오버레이 스크롤바 설정 */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--border) transparent;
 }
 
 /* Focus styles */
