@@ -106,7 +106,14 @@ const BoardPage: React.FC = () => {
         </h1>
         <div className="text-center text-text-secondary space-y-2">
           <p className="text-base md:text-lg">
-            스톤에이지 환수강림 라이트에 관한 자유로운 소통 공간입니다
+            스톤에이지 환수강림 라이트에 관한 자유로운 소통 공간
+            <button
+              onClick={() => navigate('/radonta')}
+              className="text-text-secondary hover:text-text-secondary transition-colors cursor-default"
+              title="라돈타 공략 바로가기"
+            >
+              입니다
+            </button>
           </p>
           {activeTab === 'giscus' && (
             <p className="text-sm text-blue-600 dark:text-blue-400">

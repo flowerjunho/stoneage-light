@@ -12,11 +12,13 @@ import QuestsPage from './pages/QuestsPage';
 import QuestDetailPage from './pages/QuestDetailPage';
 import CalculatorPage from './pages/CalculatorPage';
 import BoardPage from './pages/BoardPage';
+import RadontaPage from './pages/RadontaPage';
 import { VisitTracker } from './utils/visitTracker';
 
 const AppContent: React.FC = () => {
   const location = useLocation();
   const hideTabNavigation = location.pathname.includes('/quests/') && location.pathname !== '/quests';
+  const isRadontaPage = location.pathname === '/radonta';
 
   // 앱 시작 시 방문자 추적
   useEffect(() => {
@@ -30,6 +32,15 @@ const AppContent: React.FC = () => {
       });
     }
   }, []); // 빈 dependency array로 한 번만 실행
+
+  // 라돈타 페이지는 레이아웃 없이 렌더링
+  if (isRadontaPage) {
+    return (
+      <Routes>
+        <Route path="/radonta" element={<RadontaPage />} />
+      </Routes>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-bg-primary text-text-primary">
