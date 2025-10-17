@@ -313,7 +313,7 @@ const RadontaPage: React.FC = () => {
             <li className="flex items-start gap-2">
               <span className="text-accent font-bold">•</span>
               <span className="text-text-secondary">
-                완캐 충견 + 환은 어중간한 완캐는 하지 말 것
+                완캐 충견 + 활은 어중간한 완캐는 하지 말 것
               </span>
             </li>
             <li className="flex items-start gap-2">
