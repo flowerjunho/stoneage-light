@@ -3,6 +3,141 @@
   "totalCount": 454,
   "pets": [
     {
+      "id": "715",
+      "name": "그란푸스",
+      "source": "페트진화",
+      "imageLink": "https://www.hwansoo.top/data/file/pets/404120487e6da3a9821cdc27fc962344_hBo8uIcG_27122a32a3e131a76a094c9ea1e660938e1aa730.gif",
+      "elementStats": {
+        "water": 0,
+        "fire": 0,
+        "wind": 7,
+        "earth": 3
+      },
+      "baseStats": {
+        "attack": 12,
+        "defense": 6,
+        "agility": 8,
+        "vitality": 55
+      },
+      "growthStats": {
+        "attack": 2.288,
+        "defense": 1.302,
+        "agility": 1.676,
+        "vitality": 10.662
+      },
+      "rideable": "탑승가능",
+      "totalGrowth": "5.266",
+      "grade": "일반"
+    },
+    {
+      "id": "714",
+      "name": "로즈란스",
+      "source": "페트진화",
+      "imageLink": "https://www.hwansoo.top/data/file/pets/c47b2f2ea832ed6f0d88e4e63531e6a3_X8gYMx6m_3c55f7d67414564a6b742d9170d27130b3c22822.gif",
+      "elementStats": {
+        "water": 7,
+        "fire": 0,
+        "wind": 0,
+        "earth": 3
+      },
+      "baseStats": {
+        "attack": 12,
+        "defense": 7,
+        "agility": 7,
+        "vitality": 60
+      },
+      "growthStats": {
+        "attack": 2.274,
+        "defense": 1.504,
+        "agility": 1.439,
+        "vitality": 11.705
+      },
+      "rideable": "탑승가능",
+      "totalGrowth": "5.217",
+      "grade": "일반"
+    },
+    {
+      "id": "713",
+      "name": "SD언딘(진)",
+      "source": "페트진화",
+      "imageLink": "https://www.hwansoo.top/data/file/pets/7cb71e8ed5773b012a61857b3c31d06e_Prk3Stle_60e189ff6ea79ea68f6c9f5fd808cf919fd32e46.gif",
+      "elementStats": {
+        "water": 0,
+        "fire": 9,
+        "wind": 1,
+        "earth": 0
+      },
+      "baseStats": {
+        "attack": 14,
+        "defense": 6,
+        "agility": 10,
+        "vitality": 60
+      },
+      "growthStats": {
+        "attack": 2.439,
+        "defense": 1.079,
+        "agility": 1.77,
+        "vitality": 10.144
+      },
+      "rideable": "탑승불가",
+      "totalGrowth": "5.288",
+      "grade": "일반"
+    },
+    {
+      "id": "712",
+      "name": "로즈란",
+      "source": "듀얼",
+      "imageLink": "https://www.hwansoo.top/data/file/pets/d950d3e7d6bceb6851d7132137c27589_o2Kbvhs0_e448232963cff5c0993bb75f4965d924ad0ceee5.gif",
+      "elementStats": {
+        "water": 7,
+        "fire": 0,
+        "wind": 0,
+        "earth": 3
+      },
+      "baseStats": {
+        "attack": 10,
+        "defense": 6,
+        "agility": 7,
+        "vitality": 53
+      },
+      "growthStats": {
+        "attack": 2.115,
+        "defense": 1.317,
+        "agility": 1.403,
+        "vitality": 10.525
+      },
+      "rideable": "탑승불가",
+      "totalGrowth": "4.835",
+      "grade": "일반"
+    },
+    {
+      "id": "711",
+      "name": "리오다",
+      "source": "듀얼",
+      "imageLink": "https://www.hwansoo.top/data/file/pets/dc9c2a5b7553c3666be319157183a616_WjPQYgrm_d4cb7876d2c1ccf91dbeb9b9f06840c8395667f6.gif",
+      "elementStats": {
+        "water": 0,
+        "fire": 0,
+        "wind": 7,
+        "earth": 3
+      },
+      "baseStats": {
+        "attack": 10,
+        "defense": 7,
+        "agility": 8,
+        "vitality": 52
+      },
+      "growthStats": {
+        "attack": 2.173,
+        "defense": 1.23,
+        "agility": 1.626,
+        "vitality": 9.906
+      },
+      "rideable": "탑승불가",
+      "totalGrowth": "5.029",
+      "grade": "일반"
+    },
+    {
       "id": "710",
       "name": "치크론",
       "source": "금화상점",
