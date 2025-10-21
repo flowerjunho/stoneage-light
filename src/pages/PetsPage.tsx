@@ -5,7 +5,7 @@ import ElementFilter, { type ElementFilterItem } from '../components/ElementFilt
 import GradeFilter, { type GradeType } from '../components/GradeFilter';
 import StatFilter, { type StatFilterItem } from '../components/StatFilter';
 import FavoriteFilter from '../components/FavoriteFilter';
-import SortDropdown, { type SortOption } from '../components/SortDropdown';
+import { type SortOption } from '../components/SortDropdown';
 import PetGrid from '../components/PetGrid';
 import FloatingFilterButton from '../components/FloatingFilterButton';
 import skillsData from '../data/skills.json';
@@ -77,7 +77,7 @@ const PetsPage: React.FC = () => {
     if (tabParam && (tabParam === 'info' || tabParam === 'skills')) {
       setActiveTab(tabParam);
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []); // 의존성 배열을 비워서 mount 시점에만 실행
 
   // 공유 모달 관련 상태
@@ -199,120 +199,118 @@ const PetsPage: React.FC = () => {
   }, [isShareModalOpen, mapModalOpen, handleShareModalClose]);
 
   // useMemo로 탭 콘텐츠를 미리 렌더링
-  const infoTabContent = useMemo(() => (
-    <div>
-      <SearchBar searchTerm={searchTerm} onSearchChange={handleSearchChange} />
+  const infoTabContent = useMemo(
+    () => (
+      <div>
+        <SearchBar searchTerm={searchTerm} onSearchChange={handleSearchChange} />
 
-      <ElementFilter
-        onFilterChange={handleElementFilterChange}
-        initialFilters={elementFilters}
-        onClearAllFilters={handleClearAllFilters}
-        hasFiltersActive={
-          elementFilters.length > 0 ||
-          gradeFilters.length > 0 ||
-          statFilters.filter(f => f.enabled).length > 0
-        }
-      />
-      <GradeFilter
-        onFilterChange={handleGradeFilterChange}
-        initialFilters={gradeFilters}
-      />
-      <StatFilter onFilterChange={handleStatFilterChange} initialFilters={statFilters} />
-      <FavoriteFilter
-        onFilterChange={handleFavoriteFilterChange}
-        initialValue={showFavoritesOnly}
-      />
+        <ElementFilter
+          onFilterChange={handleElementFilterChange}
+          initialFilters={elementFilters}
+          onClearAllFilters={handleClearAllFilters}
+          hasFiltersActive={
+            elementFilters.length > 0 ||
+            gradeFilters.length > 0 ||
+            statFilters.filter(f => f.enabled).length > 0
+          }
+        />
+        <GradeFilter onFilterChange={handleGradeFilterChange} initialFilters={gradeFilters} />
+        <StatFilter onFilterChange={handleStatFilterChange} initialFilters={statFilters} />
+        <FavoriteFilter
+          onFilterChange={handleFavoriteFilterChange}
+          initialValue={showFavoritesOnly}
+        />
 
-      <PetGrid
-        pets={pets}
-        searchTerm={searchTerm}
-        elementFilters={elementFilters}
-        gradeFilters={gradeFilters}
-        statFilters={statFilters}
-        showFavoritesOnly={showFavoritesOnly}
-        sortOption={sortOption}
-        onSortChange={handleSortChange}
-      />
+        <PetGrid
+          pets={pets}
+          searchTerm={searchTerm}
+          elementFilters={elementFilters}
+          gradeFilters={gradeFilters}
+          statFilters={statFilters}
+          showFavoritesOnly={showFavoritesOnly}
+          sortOption={sortOption}
+          onSortChange={handleSortChange}
+        />
 
-      <FloatingFilterButton
-        elementFilters={elementFilters}
-        gradeFilters={gradeFilters}
-        statFilters={statFilters}
-        showFavoritesOnly={showFavoritesOnly}
-        onElementFilterChange={handleElementFilterChange}
-        onGradeFilterChange={handleGradeFilterChange}
-        onStatFilterChange={handleStatFilterChange}
-        onFavoriteFilterChange={handleFavoriteFilterChange}
-      />
-    </div>
-  ), [
-    searchTerm,
-    elementFilters,
-    gradeFilters,
-    statFilters,
-    showFavoritesOnly,
-    sortOption,
-    pets,
-    handleElementFilterChange,
-    handleGradeFilterChange,
-    handleStatFilterChange,
-    handleFavoriteFilterChange,
-    handleSortChange,
-    handleClearAllFilters,
-    handleSearchChange
-  ]);
+        <FloatingFilterButton
+          elementFilters={elementFilters}
+          gradeFilters={gradeFilters}
+          statFilters={statFilters}
+          showFavoritesOnly={showFavoritesOnly}
+          onElementFilterChange={handleElementFilterChange}
+          onGradeFilterChange={handleGradeFilterChange}
+          onStatFilterChange={handleStatFilterChange}
+          onFavoriteFilterChange={handleFavoriteFilterChange}
+        />
+      </div>
+    ),
+    [
+      searchTerm,
+      elementFilters,
+      gradeFilters,
+      statFilters,
+      showFavoritesOnly,
+      sortOption,
+      pets,
+      handleElementFilterChange,
+      handleGradeFilterChange,
+      handleStatFilterChange,
+      handleFavoriteFilterChange,
+      handleSortChange,
+      handleClearAllFilters,
+      handleSearchChange,
+    ]
+  );
 
-  const skillsTabContent = useMemo(() => (
-    <div className="space-y-6">
-      {/* 학습 지역 설명 */}
-      <div className="bg-bg-secondary rounded-lg p-4 border border-border">
-        <h3 className="text-sm font-medium text-text-primary mb-2">
-          📍 특수 학습 지역 안내
-        </h3>
-        <div className="space-y-1 text-xs text-text-secondary">
-          <div>
-            <button
-              onClick={() =>
-                handleMapClick(
-                  'SBC본부 지도',
-                  'http://pooyas.com/stoneage_info/map/cave/sainus/sbc.gif'
-                )
-              }
-              className="font-medium text-accent hover:text-accent/80 transition-colors cursor-pointer underline"
-            >
-              SBC(지도보기):
-            </button>
-            <span className="ml-1">쿠링의 대광산 꼭대기층 SBC본부</span>
-          </div>
-          <div>
-            <button
-              onClick={() =>
-                handleMapClick(
-                  'JBA본부 지도',
-                  'http://pooyas.com/stoneage_info/map/cave/zaru/ratotojba.gif'
-                )
-              }
-              className="font-medium text-accent hover:text-accent/80 transition-colors cursor-pointer underline"
-            >
-              JBA(지도보기):
-            </button>
-            <span className="ml-1">라토토의 대동굴 꼭대기층 JBA본부</span>
+  const skillsTabContent = useMemo(
+    () => (
+      <div className="space-y-6">
+        {/* 학습 지역 설명 */}
+        <div className="bg-bg-secondary rounded-lg p-4 border border-border">
+          <h3 className="text-sm font-medium text-text-primary mb-2">📍 특수 학습 지역 안내</h3>
+          <div className="space-y-1 text-xs text-text-secondary">
+            <div>
+              <button
+                onClick={() =>
+                  handleMapClick(
+                    'SBC본부 지도',
+                    'http://pooyas.com/stoneage_info/map/cave/sainus/sbc.gif'
+                  )
+                }
+                className="font-medium text-accent hover:text-accent/80 transition-colors cursor-pointer underline"
+              >
+                SBC(지도보기):
+              </button>
+              <span className="ml-1">쿠링의 대광산 꼭대기층 SBC본부</span>
+            </div>
+            <div>
+              <button
+                onClick={() =>
+                  handleMapClick(
+                    'JBA본부 지도',
+                    'http://pooyas.com/stoneage_info/map/cave/zaru/ratotojba.gif'
+                  )
+                }
+                className="font-medium text-accent hover:text-accent/80 transition-colors cursor-pointer underline"
+              >
+                JBA(지도보기):
+              </button>
+              <span className="ml-1">라토토의 대동굴 꼭대기층 JBA본부</span>
+            </div>
           </div>
         </div>
-      </div>
 
-      {/* 기술 검색 */}
-      <SearchBar
-        searchTerm={skillSearchTerm}
-        onSearchChange={setSkillSearchTerm}
-        placeholder="기술이름으로 초성검색 하세요."
-      />
+        {/* 기술 검색 */}
+        <SearchBar
+          searchTerm={skillSearchTerm}
+          onSearchChange={setSkillSearchTerm}
+          placeholder="기술이름으로 초성검색 하세요."
+        />
 
-      {/* 기술 카테고리 탭 (서브-서브탭) */}
-      <div className="border-b border-border">
-        <nav className="flex">
-          {Object.entries((skillsData as SkillsData).petSkills).map(
-            ([categoryKey, category]) => {
+        {/* 기술 카테고리 탭 (서브-서브탭) */}
+        <div className="border-b border-border">
+          <nav className="flex">
+            {Object.entries((skillsData as SkillsData).petSkills).map(([categoryKey, category]) => {
               const filteredSkills = skillSearchTerm
                 ? category.skills.filter((skill: Skill) =>
                     searchMultipleFields(skillSearchTerm, [skill.name])
@@ -338,83 +336,82 @@ const PetsPage: React.FC = () => {
                   )}
                 </button>
               );
-            }
-          )}
-        </nav>
-      </div>
+            })}
+          </nav>
+        </div>
 
-      {/* 선택된 카테고리의 기술 표시 */}
-      {(() => {
-        const category = (skillsData as SkillsData).petSkills[
-          activeSkillCategory as keyof typeof skillsData.petSkills
-        ];
-        if (!category) return null;
+        {/* 선택된 카테고리의 기술 표시 */}
+        {(() => {
+          const category = (skillsData as SkillsData).petSkills[
+            activeSkillCategory as keyof typeof skillsData.petSkills
+          ];
+          if (!category) return null;
 
-        const filteredSkills = skillSearchTerm
-          ? category.skills.filter((skill: Skill) =>
-              searchMultipleFields(skillSearchTerm, [skill.name])
-            )
-          : category.skills;
+          const filteredSkills = skillSearchTerm
+            ? category.skills.filter((skill: Skill) =>
+                searchMultipleFields(skillSearchTerm, [skill.name])
+              )
+            : category.skills;
 
-        if (filteredSkills.length === 0) {
-          return skillSearchTerm ? (
-            <div className="text-center py-12">
-              <div className="text-6xl mb-4">🔍</div>
-              <h3 className="text-xl font-bold text-text-primary mb-2">
-                검색 결과가 없습니다
-              </h3>
-              <p className="text-text-secondary">다른 검색어를 시도해보세요</p>
-            </div>
-          ) : null;
-        }
+          if (filteredSkills.length === 0) {
+            return skillSearchTerm ? (
+              <div className="text-center py-12">
+                <div className="text-6xl mb-4">🔍</div>
+                <h3 className="text-xl font-bold text-text-primary mb-2">검색 결과가 없습니다</h3>
+                <p className="text-text-secondary">다른 검색어를 시도해보세요</p>
+              </div>
+            ) : null;
+          }
 
-        return (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {filteredSkills.map((skill: Skill, index: number) => (
-              <div
-                key={`${activeSkillCategory}-${index}`}
-                className="bg-bg-secondary rounded-lg p-4 border border-border"
-              >
-                <h3 className="font-semibold text-text-primary mb-2">{skill.name}</h3>
-                <p className="text-text-secondary text-sm mb-3">{skill.description}</p>
+          return (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              {filteredSkills.map((skill: Skill, index: number) => (
+                <div
+                  key={`${activeSkillCategory}-${index}`}
+                  className="bg-bg-secondary rounded-lg p-4 border border-border"
+                >
+                  <h3 className="font-semibold text-text-primary mb-2">{skill.name}</h3>
+                  <p className="text-text-secondary text-sm mb-3">{skill.description}</p>
 
-                <div className="space-y-2">
-                  {skill.price && skill.currency && (
-                    <div className="flex items-center gap-2">
-                      <span className="text-xs font-medium text-text-secondary">가격:</span>
-                      <span className="text-sm font-semibold text-accent">
-                        {skill.price} {skill.currency}
+                  <div className="space-y-2">
+                    {skill.price && skill.currency && (
+                      <div className="flex items-center gap-2">
+                        <span className="text-xs font-medium text-text-secondary">가격:</span>
+                        <span className="text-sm font-semibold text-accent">
+                          {skill.price} {skill.currency}
+                        </span>
+                      </div>
+                    )}
+
+                    <div>
+                      <span className="text-xs font-medium text-text-secondary block mb-1">
+                        학습 가능 지역:
                       </span>
-                    </div>
-                  )}
-
-                  <div>
-                    <span className="text-xs font-medium text-text-secondary block mb-1">
-                      학습 가능 지역:
-                    </span>
-                    <div className="flex flex-wrap gap-1">
-                      {skill.locations && skill.locations.length > 0 ? (
-                        skill.locations.map((location: string, locIndex: number) => (
-                          <span
-                            key={locIndex}
-                            className="inline-block px-2 py-1 bg-bg-tertiary text-text-primary text-xs rounded border border-border"
-                          >
-                            {location}
-                          </span>
-                        ))
-                      ) : (
-                        <span className="text-xs text-text-secondary">정보 없음</span>
-                      )}
+                      <div className="flex flex-wrap gap-1">
+                        {skill.locations && skill.locations.length > 0 ? (
+                          skill.locations.map((location: string, locIndex: number) => (
+                            <span
+                              key={locIndex}
+                              className="inline-block px-2 py-1 bg-bg-tertiary text-text-primary text-xs rounded border border-border"
+                            >
+                              {location}
+                            </span>
+                          ))
+                        ) : (
+                          <span className="text-xs text-text-secondary">정보 없음</span>
+                        )}
+                      </div>
                     </div>
                   </div>
                 </div>
-              </div>
-            ))}
-          </div>
-        );
-      })()}
-    </div>
-  ), [skillSearchTerm, activeSkillCategory, handleMapClick]);
+              ))}
+            </div>
+          );
+        })()}
+      </div>
+    ),
+    [skillSearchTerm, activeSkillCategory, handleMapClick]
+  );
 
   return (
     <div className="max-w-6xl mx-auto px-4 iphone16:px-3">
@@ -448,7 +445,7 @@ const PetsPage: React.FC = () => {
                      font-medium transition-all duration-200 hover:underline text-sm"
           >
             <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
-              <path d="M20.317 4.37a19.791 19.791 0 0 0-4.885-1.515.074.074 0 0 0-.079.037c-.211.375-.445.865-.608 1.25a18.27 18.27 0 0 0-5.487 0 12.64 12.64 0 0 0-.617-1.25.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057a.082.082 0 0 0 .031.057 19.9 19.9 0 0 0 5.993 3.03.078.078 0 0 0 .084-.028 14.09 14.09 0 0 0 1.226-1.994.076.076 0 0 0-.041-.106 13.107 13.107 0 0 1-1.872-.892.077.077 0 0 1-.008-.128 10.2 10.2 0 0 0 .372-.292.074.074 0 0 1 .077-.010c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 0 1 .078.01c.12.098.246.198.373.292a.077.077 0 0 1-.006.127 12.299 12.299 0 0 1-1.873.892.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028 19.839 19.839 0 0 0 6.002-3.03.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.03zM8.02 15.33c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.956-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.956 2.418-2.157 2.418zm7.975 0c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.955-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.946 2.418-2.157 2.418z"/>
+              <path d="M20.317 4.37a19.791 19.791 0 0 0-4.885-1.515.074.074 0 0 0-.079.037c-.211.375-.445.865-.608 1.25a18.27 18.27 0 0 0-5.487 0 12.64 12.64 0 0 0-.617-1.25.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057a.082.082 0 0 0 .031.057 19.9 19.9 0 0 0 5.993 3.03.078.078 0 0 0 .084-.028 14.09 14.09 0 0 0 1.226-1.994.076.076 0 0 0-.041-.106 13.107 13.107 0 0 1-1.872-.892.077.077 0 0 1-.008-.128 10.2 10.2 0 0 0 .372-.292.074.074 0 0 1 .077-.010c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 0 1 .078.01c.12.098.246.198.373.292a.077.077 0 0 1-.006.127 12.299 12.299 0 0 1-1.873.892.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028 19.839 19.839 0 0 0 6.002-3.03.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.03zM8.02 15.33c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.956-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.956 2.418-2.157 2.418zm7.975 0c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.955-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.946 2.418-2.157 2.418z" />
             </svg>
             환수강림 라이트 디스코드
           </a>
@@ -483,14 +480,14 @@ const PetsPage: React.FC = () => {
 
       {/* 탭 컨텐츠 영역 - useMemo로 미리 렌더링 후 display 전환 */}
       <div className="min-h-screen">
-        <div 
+        <div
           className={`transition-opacity duration-100 ${
             activeTab === 'info' ? 'opacity-100 block' : 'opacity-0 hidden'
           }`}
         >
           {infoTabContent}
         </div>
-        <div 
+        <div
           className={`transition-opacity duration-100 ${
             activeTab === 'skills' ? 'opacity-100 block' : 'opacity-0 hidden'
           }`}
