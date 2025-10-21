@@ -3,6 +3,8 @@ import type { Pet } from '../types';
 import type { ElementFilterItem } from './ElementFilter';
 import type { GradeType } from './GradeFilter';
 import type { StatFilterItem } from './StatFilter';
+import type { SortOption } from './SortDropdown';
+import SortDropdown from './SortDropdown';
 import PetCard from './PetCard';
 import PetCardSkeleton from './PetCardSkeleton';
 import { useInfiniteScroll } from '../hooks/useInfiniteScroll';
@@ -10,6 +12,7 @@ import { useIntersectionObserver } from '../hooks/useIntersectionObserver';
 import { useDebounce } from '../hooks/useDebounce';
 import { matchesConsonantSearch } from '../utils/korean';
 import { isFavorite } from '../utils/favorites';
+import { sortPets } from '../utils/petSorting';
 
 interface PetGridProps {
   pets: Pet[];
@@ -18,10 +21,12 @@ interface PetGridProps {
   gradeFilters: GradeType[];
   statFilters: StatFilterItem[];
   showFavoritesOnly: boolean;
+  sortOption: SortOption;
+  onSortChange: (sort: SortOption) => void;
 }
 
 const PetGrid: React.FC<PetGridProps> = React.memo(
-  ({ pets, searchTerm, elementFilters, gradeFilters, statFilters, showFavoritesOnly }) => {
+  ({ pets, searchTerm, elementFilters, gradeFilters, statFilters, showFavoritesOnly, sortOption, onSortChange }) => {
     // 디바운싱된 검색어
     const debouncedSearchTerm = useDebounce(searchTerm, 300);
 
@@ -111,8 +116,11 @@ const PetGrid: React.FC<PetGridProps> = React.memo(
         }
       }
 
+      // 정렬 적용 (필터링 후 마지막에 적용)
+      result = sortPets(result, sortOption);
+
       return result;
-    }, [pets, debouncedSearchTerm, elementFilters, gradeFilters, statFilters, showFavoritesOnly]);
+    }, [pets, debouncedSearchTerm, elementFilters, gradeFilters, statFilters, showFavoritesOnly, sortOption]);
 
     // 실시간 타이핑 중인지 확인
     const isTyping = searchTerm !== debouncedSearchTerm;
@@ -251,10 +259,12 @@ const PetGrid: React.FC<PetGridProps> = React.memo(
 
     return (
       <div className="max-w-6xl mx-auto px-4 iphone16:px-3">
-        <div className="mb-6 px-2 iphone16:mb-4">
+        {/* Pets shown 라인과 정렬 버튼 */}
+        <div className="mb-6 px-2 iphone16:mb-4 flex items-center justify-between">
           <span className="text-text-secondary text-sm font-medium">
             {displayedItems.length} of {filteredPets.length} pets shown
           </span>
+          <SortDropdown currentSort={sortOption} onSortChange={onSortChange} />
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8 md:gap-4 iphone16:gap-4 iphone16:mb-6">
           {displayedItems.map((pet, index) => (

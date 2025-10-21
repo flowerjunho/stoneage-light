@@ -5,6 +5,7 @@ import ElementFilter, { type ElementFilterItem } from '../components/ElementFilt
 import GradeFilter, { type GradeType } from '../components/GradeFilter';
 import StatFilter, { type StatFilterItem } from '../components/StatFilter';
 import FavoriteFilter from '../components/FavoriteFilter';
+import SortDropdown, { type SortOption } from '../components/SortDropdown';
 import PetGrid from '../components/PetGrid';
 import FloatingFilterButton from '../components/FloatingFilterButton';
 import skillsData from '../data/skills.json';
@@ -62,6 +63,7 @@ const PetsPage: React.FC = () => {
   const [gradeFilters, setGradeFilters] = useState<GradeType[]>([]);
   const [statFilters, setStatFilters] = useState<StatFilterItem[]>([]);
   const [showFavoritesOnly, setShowFavoritesOnly] = useState(false);
+  const [sortOption, setSortOption] = useState<SortOption>('default');
 
   // 기술 탭 관련 상태
   const [skillSearchTerm, setSkillSearchTerm] = useState('');
@@ -137,6 +139,10 @@ const PetsPage: React.FC = () => {
     setShowFavoritesOnly(favoritesOnly);
   };
 
+  const handleSortChange = (sort: SortOption) => {
+    setSortOption(sort);
+  };
+
   // 지도 모달 핸들러
   const handleMapClick = (title: string, imageUrl: string) => {
     setSelectedMap({ title, imageUrl });
@@ -196,6 +202,7 @@ const PetsPage: React.FC = () => {
   const infoTabContent = useMemo(() => (
     <div>
       <SearchBar searchTerm={searchTerm} onSearchChange={handleSearchChange} />
+
       <ElementFilter
         onFilterChange={handleElementFilterChange}
         initialFilters={elementFilters}
@@ -223,6 +230,8 @@ const PetsPage: React.FC = () => {
         gradeFilters={gradeFilters}
         statFilters={statFilters}
         showFavoritesOnly={showFavoritesOnly}
+        sortOption={sortOption}
+        onSortChange={handleSortChange}
       />
 
       <FloatingFilterButton
@@ -237,16 +246,18 @@ const PetsPage: React.FC = () => {
       />
     </div>
   ), [
-    searchTerm, 
-    elementFilters, 
-    gradeFilters, 
-    statFilters, 
-    showFavoritesOnly, 
+    searchTerm,
+    elementFilters,
+    gradeFilters,
+    statFilters,
+    showFavoritesOnly,
+    sortOption,
     pets,
     handleElementFilterChange,
     handleGradeFilterChange,
     handleStatFilterChange,
     handleFavoriteFilterChange,
+    handleSortChange,
     handleClearAllFilters,
     handleSearchChange
   ]);
