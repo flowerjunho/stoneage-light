@@ -32,17 +32,17 @@ type OrderType = 'asc' | 'desc';
 
 const SortDropdown: React.FC<SortDropdownProps> = ({ currentSort, onSortChange }) => {
   const [isOpen, setIsOpen] = useState(false);
-  const [selectedCategory, setSelectedCategory] = useState<CategoryType>('base');
-  const [selectedStat, setSelectedStat] = useState<StatType>('attack');
-  const [selectedOrder, setSelectedOrder] = useState<OrderType>('desc');
+  const [selectedCategory, setSelectedCategory] = useState<CategoryType | null>(null);
+  const [selectedStat, setSelectedStat] = useState<StatType | null>(null);
+  const [selectedOrder, setSelectedOrder] = useState<OrderType | null>(null);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
   // 현재 정렬 옵션에서 카테고리, 스탯, 순서 파싱
   useEffect(() => {
     if (currentSort === 'default') {
-      setSelectedCategory('base');
-      setSelectedStat('attack');
-      setSelectedOrder('desc');
+      setSelectedCategory(null);
+      setSelectedStat(null);
+      setSelectedOrder(null);
       return;
     }
 
@@ -50,7 +50,7 @@ const SortDropdown: React.FC<SortDropdownProps> = ({ currentSort, onSortChange }
 
     if (statPart === 'totalGrowth') {
       setSelectedCategory('totalGrowth');
-      setSelectedStat('attack'); // totalGrowth는 스탯 선택 불필요
+      setSelectedStat(null); // totalGrowth는 스탯 선택 불필요
       setSelectedOrder(order);
     } else if (statPart.endsWith('Growth')) {
       setSelectedCategory('growth');
@@ -82,7 +82,7 @@ const SortDropdown: React.FC<SortDropdownProps> = ({ currentSort, onSortChange }
 
   // 현재 선택 레이블 생성
   const getCurrentLabel = () => {
-    if (currentSort === 'default') return '정렬';
+    if (currentSort === 'default' || !selectedCategory || !selectedOrder) return '정렬';
 
     const categoryLabels = { base: '초기치', growth: '성장률', totalGrowth: '총성장률' };
     const statLabels = { attack: '공격력', defense: '방어력', agility: '순발력', vitality: '내구력' };
@@ -92,11 +92,17 @@ const SortDropdown: React.FC<SortDropdownProps> = ({ currentSort, onSortChange }
       return `${orderIcon} ${categoryLabels[selectedCategory]}`;
     }
 
+    if (!selectedStat) return '정렬';
+
     return `${orderIcon} ${categoryLabels[selectedCategory]} ${statLabels[selectedStat]}`;
   };
 
   // 선택 적용
   const handleApply = () => {
+    // 필수 값이 선택되지 않은 경우 리턴
+    if (!selectedCategory || !selectedOrder) return;
+    if (selectedCategory !== 'totalGrowth' && !selectedStat) return;
+
     let sortValue: SortOption;
 
     if (selectedCategory === 'totalGrowth') {
