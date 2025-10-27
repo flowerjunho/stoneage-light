@@ -3,6 +3,114 @@
   "totalCount": 454,
   "pets": [
     {
+      "id": "732",
+      "name": "화이트드래곤(진)",
+      "source": "페트진화",
+      "imageLink": "https://www.hwansoo.top/data/file/pets/6155d64358852ba7c5f4b5a51bc1b25b_pEc2IgCr_624b9bf1e7f8fcabaea4c5abc73f2a660f6f9331.gif",
+      "elementStats": {
+        "water": 7,
+        "fire": 3,
+        "wind": 0,
+        "earth": 0
+      },
+      "baseStats": {
+        "attack": 13,
+        "defense": 6,
+        "agility": 9,
+        "vitality": 57
+      },
+      "growthStats": {
+        "attack": 2.414,
+        "defense": 1.179,
+        "agility": 1.727,
+        "vitality": 10.526
+      },
+      "rideable": "탑승가능",
+      "totalGrowth": "5.320",
+      "grade": "일반"
+    },
+    {
+      "id": "731",
+      "name": "화이트드래곤",
+      "source": "충전보상",
+      "imageLink": "https://www.hwansoo.top/data/file/pets/6155d64358852ba7c5f4b5a51bc1b25b_Zy0SN5BW_1a560f70a193c22dec108270939e0b18c85d7558.gif",
+      "elementStats": {
+        "water": 7,
+        "fire": 3,
+        "wind": 0,
+        "earth": 0
+      },
+      "baseStats": {
+        "attack": 12,
+        "defense": 6,
+        "agility": 9,
+        "vitality": 56
+      },
+      "growthStats": {
+        "attack": 2.267,
+        "defense": 1.118,
+        "agility": 1.727,
+        "vitality": 10.337
+      },
+      "rideable": "탑승가능",
+      "totalGrowth": "5.112",
+      "grade": "일반"
+    },
+    {
+      "id": "730",
+      "name": "메가갈푸스",
+      "source": "충전보상",
+      "imageLink": "https://www.hwansoo.top/data/file/pets/74cb2dac05b94718e4baf6f4a5bebf2b_3FaCpIiE_2221120b73196c5a70a5e3ced34f9714a0bc50c1.gif",
+      "elementStats": {
+        "water": 3,
+        "fire": 7,
+        "wind": 0,
+        "earth": 0
+      },
+      "baseStats": {
+        "attack": 12,
+        "defense": 6,
+        "agility": 8,
+        "vitality": 57
+      },
+      "growthStats": {
+        "attack": 2.319,
+        "defense": 1.212,
+        "agility": 1.632,
+        "vitality": 10.385
+      },
+      "rideable": "탑승불가",
+      "totalGrowth": "5.164",
+      "grade": "일반"
+    },
+    {
+      "id": "729",
+      "name": "메가프라키",
+      "source": "맘모스 쿠폰",
+      "imageLink": "https://www.hwansoo.top/data/file/pets/6155d64358852ba7c5f4b5a51bc1b25b_DTOpjy9F_93f86b232b0664f96e204da052e0fe9de74397d8.gif",
+      "elementStats": {
+        "water": 9,
+        "fire": 0,
+        "wind": 0,
+        "earth": 1
+      },
+      "baseStats": {
+        "attack": 11,
+        "defense": 11,
+        "agility": 2,
+        "vitality": 72
+      },
+      "growthStats": {
+        "attack": 2.154,
+        "defense": 2.154,
+        "agility": 0.402,
+        "vitality": 13.223
+      },
+      "rideable": "탑승가능",
+      "totalGrowth": "5.710",
+      "grade": "일반"
+    },
+    {
       "id": "728",
       "name": "리바이어던",
       "source": "후르도 1등 복권",
