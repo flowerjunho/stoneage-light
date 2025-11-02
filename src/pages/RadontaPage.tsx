@@ -14,7 +14,7 @@ const RadontaPage: React.FC = () => {
     },
     {
       floor: 20,
-      setup: '수',
+      setup: '수 (상대: 오로라)',
       support: '수우대',
       rainbow: '헷지',
       boss: '파사트',
@@ -119,7 +119,7 @@ const RadontaPage: React.FC = () => {
     },
     {
       floor: 70,
-      setup: '지',
+      setup: '지 (상대: 오로라)',
       support: '지우대',
       rainbow: '혈기노, 흑갈푸스',
       boss: '스피온',
@@ -253,7 +253,7 @@ const RadontaPage: React.FC = () => {
     },
     {
       title: '정령왕 (지셋팅) ⭐ 추천',
-      setup: '지',
+      setup: '지 (상대: 오로라)',
       support: '지우대',
       rainbow: '엘크룬, 스노블, 케라스, 카무르',
       boss: '엘크론(부활), 홉킨스(부활)',
