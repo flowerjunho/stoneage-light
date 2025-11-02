@@ -1,7 +1,9 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import ThemeToggle from '../components/ThemeToggle';
 
 const RadontaPage: React.FC = () => {
+  const navigate = useNavigate();
   const floors = [
     {
       floor: 10,
@@ -286,8 +288,32 @@ const RadontaPage: React.FC = () => {
 
   return (
     <div className="w-full min-h-screen bg-bg-primary text-text-primary p-3 md:p-4">
-      <ThemeToggle />
       <div className="max-w-7xl mx-auto">
+        {/* 헤더 */}
+        <div className="flex items-center justify-between mb-4">
+          <button
+            onClick={() => navigate('/?tab=pet')}
+            className="flex items-center gap-2 px-3 py-2 bg-bg-secondary hover:bg-bg-tertiary border border-border rounded-lg transition-colors"
+            aria-label="홈으로 가기"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              className="h-5 w-5"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"
+              />
+            </svg>
+          </button>
+          <ThemeToggle />
+        </div>
+
         {/* 타이틀 */}
         <div className="text-center mb-4">
           <h1 className="text-3xl md:text-4xl font-bold mb-2 text-text-primary">라돈타 공략</h1>
