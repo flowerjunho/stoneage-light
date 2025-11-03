@@ -751,8 +751,7 @@ const DashboardPage: React.FC = () => {
             style={{
               cursor: dragging ? 'grabbing' : resizing ? 'nwse-resize' : 'default',
               width: '2000px',
-              height: '2000px',
-              touchAction: 'none' // 터치 드래그는 방지하되 스크롤은 부모에서 가능
+              height: '2000px'
             }}
           >
             {!selectedFolder ? (
