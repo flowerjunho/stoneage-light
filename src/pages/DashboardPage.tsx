@@ -21,8 +21,11 @@ interface ServerImage {
 
 const DashboardPage: React.FC = () => {
   const [uploading, setUploading] = useState(false);
-  const serverUrl = 'http://flowerjun.ipdisk.co.kr:5000'; // 고정 서버 URL
+
+  // Cloudflare Tunnel을 통한 HTTPS 접근 (모든 환경에서 사용)
+  const serverUrl = 'https://concern-plots-unique-yields.trycloudflare.com';
   const [error, setError] = useState<string | null>(null);
+  const [showMixedContentWarning, setShowMixedContentWarning] = useState(false); // Cloudflare 사용으로 경고 불필요
 
   // 폴더 관련 상태
   const [folders, setFolders] = useState<string[]>([]);
@@ -567,6 +570,36 @@ const DashboardPage: React.FC = () => {
               </label>
             </div>
           </div>
+
+          {/* Mixed Content 경고 (GitHub Pages 환경) */}
+          {showMixedContentWarning && (
+            <div className="mb-4 p-4 bg-yellow-500/10 border border-yellow-500/30 rounded">
+              <div className="flex items-start justify-between">
+                <div className="flex-1">
+                  <h3 className="text-yellow-600 dark:text-yellow-400 font-semibold mb-2">
+                    ⚠️ 브라우저 설정 필요
+                  </h3>
+                  <p className="text-sm text-yellow-600 dark:text-yellow-400 mb-2">
+                    이 페이지는 HTTPS이지만 이미지 서버는 HTTP입니다. 브라우저가 Mixed Content를 차단할 수 있습니다.
+                  </p>
+                  <div className="text-xs text-yellow-600 dark:text-yellow-400">
+                    <strong>해결 방법:</strong>
+                    <ul className="list-disc ml-5 mt-1 space-y-1">
+                      <li>Chrome: 주소창 오른쪽 방패 아이콘 → "안전하지 않은 콘텐츠 로드" 클릭</li>
+                      <li>Firefox: 주소창 자물쇠 아이콘 → "연결 안전하지 않음" → "보호 끄기"</li>
+                      <li>Safari: 설정 → 고급 → "안전하지 않은 콘텐츠 표시" 활성화</li>
+                    </ul>
+                  </div>
+                </div>
+                <button
+                  onClick={() => setShowMixedContentWarning(false)}
+                  className="ml-4 text-yellow-600 dark:text-yellow-400 hover:text-yellow-800 dark:hover:text-yellow-200"
+                >
+                  ✕
+                </button>
+              </div>
+            </div>
+          )}
 
           {/* 에러 메시지 */}
           {error && (
