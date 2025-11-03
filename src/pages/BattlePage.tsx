@@ -1844,7 +1844,7 @@ const BattlePage: React.FC = () => {
                           100% 감소
                         </td>
                         <td className="p-2 text-center border border-border font-bold text-accent">
-                          1 데미지
+                          0 데미지
                         </td>
                         <td className="p-2 text-center border border-border text-green-500">
                           완전 방어
@@ -1921,7 +1921,7 @@ const BattlePage: React.FC = () => {
                   <div className="space-y-2 text-sm text-text-secondary">
                     <div className="flex justify-between items-center p-2 bg-green-500/10 rounded">
                       <span>25% 확률 (완전 방어):</span>
-                      <span className="font-bold text-accent">1 데미지</span>
+                      <span className="font-bold text-accent">0 데미지</span>
                     </div>
                     <div className="flex justify-between items-center p-2 bg-green-500/10 rounded">
                       <span>25% 확률 (90% 감소):</span>
@@ -2276,7 +2276,12 @@ const BattlePage: React.FC = () => {
                       stroke="currentColor"
                       viewBox="0 0 24 24"
                     >
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16V4m0 0L3 8m4-4l4 4m6 0v12m0 0l4-4m-4 4l-4-4" />
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M7 16V4m0 0L3 8m4-4l4 4m6 0v12m0 0l4-4m-4 4l-4-4"
+                      />
                     </svg>
                   </button>
                 </div>
