@@ -9,6 +9,7 @@ interface CanvasImage {
   width: number;
   height: number;
   zIndex: number;
+  aspectRatio?: number; // 이미지의 가로/세로 비율 (width/height)
 }
 
 interface ServerImage {
@@ -168,22 +169,49 @@ const DashboardPage: React.FC = () => {
       const posData = await posResponse.json();
       const positions = posData.positions || {};
 
-      // 3. 서버 이미지 목록 기반으로 캔버스 이미지 생성
-      const folderImages: CanvasImage[] = serverImages.map((img: ServerImage, index: number) => {
+      // 3. 서버 이미지 목록 기반으로 캔버스 이미지 생성 (비동기로 비율 계산)
+      const folderImagesPromises = serverImages.map(async (img: ServerImage, index: number) => {
         const posKey = `${folderName}/${img.filename}`;
         const savedPosition = positions[posKey] as { x: number; y: number; width: number; height: number } | undefined;
 
-        return {
-          id: `img-${Date.now()}-${Math.random()}-${img.filename}`,
-          url: img.url,
-          x: savedPosition?.x ?? 100 + (index * 20), // 위치 정보 없으면 기본값
-          y: savedPosition?.y ?? 100 + (index * 20),
-          width: savedPosition?.width ?? 200,
-          height: savedPosition?.height ?? 200,
-          zIndex: index,
-        };
+        // 이미지 비율 계산
+        return new Promise<CanvasImage>((resolve) => {
+          const image = new Image();
+          image.onload = () => {
+            const aspectRatio = image.naturalWidth / image.naturalHeight;
+
+            // 저장된 크기가 있으면 사용, 없으면 기본값 + 비율 적용
+            const width = savedPosition?.width ?? 200;
+            const height = savedPosition?.height ?? width / aspectRatio;
+
+            resolve({
+              id: `img-${Date.now()}-${Math.random()}-${img.filename}`,
+              url: img.url,
+              x: savedPosition?.x ?? 100 + (index * 20),
+              y: savedPosition?.y ?? 100 + (index * 20),
+              width,
+              height,
+              zIndex: index,
+              aspectRatio,
+            });
+          };
+          image.onerror = () => {
+            // 이미지 로드 실패 시 기본값
+            resolve({
+              id: `img-${Date.now()}-${Math.random()}-${img.filename}`,
+              url: img.url,
+              x: savedPosition?.x ?? 100 + (index * 20),
+              y: savedPosition?.y ?? 100 + (index * 20),
+              width: savedPosition?.width ?? 200,
+              height: savedPosition?.height ?? 200,
+              zIndex: index,
+            });
+          };
+          image.src = img.url;
+        });
       });
 
+      const folderImages = await Promise.all(folderImagesPromises);
       setCanvasImages(folderImages);
       console.log(`Loaded ${folderImages.length} images from folder "${folderName}"`);
     } catch (err) {
@@ -226,19 +254,29 @@ const DashboardPage: React.FC = () => {
 
   // 캔버스에 이미지 추가 (새로 업로드된 이미지)
   const addImageToCanvas = (imageUrl: string) => {
-    const newImage: CanvasImage = {
-      id: `img-${Date.now()}-${Math.random()}`,
-      url: imageUrl,
-      x: 100,
-      y: 100,
-      width: 200,
-      height: 200,
-      zIndex: canvasImages.length,
-    };
-    setCanvasImages([...canvasImages, newImage]);
+    // 이미지를 로드하여 실제 비율 계산
+    const img = new Image();
+    img.onload = () => {
+      const aspectRatio = img.naturalWidth / img.naturalHeight;
+      const defaultWidth = 200;
+      const defaultHeight = defaultWidth / aspectRatio;
 
-    // 새 이미지 위치 즉시 저장
-    saveImagePosition(newImage);
+      const newImage: CanvasImage = {
+        id: `img-${Date.now()}-${Math.random()}`,
+        url: imageUrl,
+        x: 100,
+        y: 100,
+        width: defaultWidth,
+        height: defaultHeight,
+        zIndex: canvasImages.length,
+        aspectRatio: aspectRatio,
+      };
+      setCanvasImages([...canvasImages, newImage]);
+
+      // 새 이미지 위치 즉시 저장
+      saveImagePosition(newImage);
+    };
+    img.src = imageUrl;
   };
 
   // 마우스/터치에서 좌표 추출 헬퍼 함수
@@ -327,15 +365,22 @@ const DashboardPage: React.FC = () => {
       const deltaY = y - resizeStart.y;
       const delta = Math.max(deltaX, deltaY); // 대각선 방향으로 크기 조절
 
-      setCanvasImages(canvasImages.map(img =>
-        img.id === selectedImageId
-          ? {
-              ...img,
-              width: Math.max(50, resizeStart.width + delta),
-              height: Math.max(50, resizeStart.height + delta),
-            }
-          : img
-      ));
+      setCanvasImages(canvasImages.map(img => {
+        if (img.id === selectedImageId) {
+          const newWidth = Math.max(50, resizeStart.width + delta);
+          // aspectRatio가 있으면 비율을 유지하면서 높이 계산
+          const newHeight = img.aspectRatio
+            ? newWidth / img.aspectRatio
+            : Math.max(50, resizeStart.height + delta);
+
+          return {
+            ...img,
+            width: newWidth,
+            height: newHeight,
+          };
+        }
+        return img;
+      }));
     } else if (dragging && selectedImageId) {
       // 드래그 중
       const newX = x - dragOffset.x;
@@ -362,15 +407,22 @@ const DashboardPage: React.FC = () => {
       const deltaY = y - resizeStart.y;
       const delta = Math.max(deltaX, deltaY);
 
-      setCanvasImages(canvasImages.map(img =>
-        img.id === selectedImageId
-          ? {
-              ...img,
-              width: Math.max(50, resizeStart.width + delta),
-              height: Math.max(50, resizeStart.height + delta),
-            }
-          : img
-      ));
+      setCanvasImages(canvasImages.map(img => {
+        if (img.id === selectedImageId) {
+          const newWidth = Math.max(50, resizeStart.width + delta);
+          // aspectRatio가 있으면 비율을 유지하면서 높이 계산
+          const newHeight = img.aspectRatio
+            ? newWidth / img.aspectRatio
+            : Math.max(50, resizeStart.height + delta);
+
+          return {
+            ...img,
+            width: newWidth,
+            height: newHeight,
+          };
+        }
+        return img;
+      }));
     } else if (dragging && selectedImageId) {
       // 드래그 중
       const newX = x - dragOffset.x;
@@ -736,36 +788,40 @@ const DashboardPage: React.FC = () => {
                     draggable={false}
                   />
 
-                  {/* ... 메뉴 버튼 (오른쪽 상단) */}
-                  <button
-                    onClick={(e) => toggleMenu(e, img.id)}
-                    className="absolute -top-2 -right-2 w-8 h-8 bg-gray-700 hover:bg-gray-600 text-white rounded-full flex items-center justify-center shadow-lg z-10"
-                  >
-                    ⋮
-                  </button>
+                  {/* ... 메뉴 버튼 (이미지 중앙, 선택된 경우에만 표시) */}
+                  {selectedImageId === img.id && (
+                    <>
+                      <button
+                        onClick={(e) => toggleMenu(e, img.id)}
+                        className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-10 h-10 bg-gray-700/90 hover:bg-gray-600 text-white rounded-full flex items-center justify-center shadow-lg z-10"
+                      >
+                        ⋮
+                      </button>
 
-                  {/* 드롭다운 메뉴 */}
-                  {menuOpenId === img.id && (
-                    <div className="absolute top-6 right-0 bg-bg-primary border border-border-primary rounded shadow-lg overflow-hidden z-20">
-                      <button
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          copyImageUrl(img.url);
-                        }}
-                        className="w-full px-4 py-2 text-left hover:bg-bg-secondary transition-colors text-sm"
-                      >
-                        URL 복사
-                      </button>
-                      <button
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          removeFromCanvas(img.id);
-                        }}
-                        className="w-full px-4 py-2 text-left hover:bg-bg-secondary transition-colors text-sm text-red-500"
-                      >
-                        삭제
-                      </button>
-                    </div>
+                      {/* 드롭다운 메뉴 */}
+                      {menuOpenId === img.id && (
+                        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 translate-y-6 bg-bg-primary border border-border-primary rounded shadow-lg overflow-hidden z-20">
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              copyImageUrl(img.url);
+                            }}
+                            className="w-full px-4 py-2 text-left hover:bg-bg-secondary transition-colors text-sm whitespace-nowrap"
+                          >
+                            URL 복사
+                          </button>
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              removeFromCanvas(img.id);
+                            }}
+                            className="w-full px-4 py-2 text-left hover:bg-bg-secondary transition-colors text-sm text-red-500"
+                          >
+                            삭제
+                          </button>
+                        </div>
+                      )}
+                    </>
                   )}
 
                   {/* 리사이즈 핸들 (오른쪽 하단) */}
