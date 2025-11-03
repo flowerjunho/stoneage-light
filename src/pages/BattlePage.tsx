@@ -100,10 +100,13 @@ const BattlePage: React.FC = () => {
   const [defenderPet, setDefenderPet] = useState<PetStats | null>(null);
 
   // 역계산용 페트 상태 (petId와 레벨 저장)
-  const [reverseOpponentPet, setReverseOpponentPet] = useState<{ petId: string; lv: number } | null>(null);
+  const [reverseOpponentPet, setReverseOpponentPet] = useState<{
+    petId: string;
+    lv: number;
+  } | null>(null);
 
   // 탑승 가능한 페트 목록
-  const rideablePets = petDataJson.pets.filter((pet) => pet.rideable === '탑승가능');
+  const rideablePets = petDataJson.pets.filter(pet => pet.rideable === '탑승가능');
 
   // 탭 변경 시 URL 쿼리 업데이트
   useEffect(() => {
@@ -131,7 +134,7 @@ const BattlePage: React.FC = () => {
 
   // 페트 레벨에 따른 스탯 계산 (역계산용)
   const calculatePetStatsFromData = (petId: string, petLevel: number) => {
-    const pet = petDataJson.pets.find((p) => p.id === petId);
+    const pet = petDataJson.pets.find(p => p.id === petId);
     if (!pet) return null;
 
     return {
@@ -369,9 +372,9 @@ const BattlePage: React.FC = () => {
     const baseDamage = calculateBaseDamage(atk, def);
     const attrBonus = calculateAttributeBonus(finalAttacker, finalDefender);
     const critRate = calculateCriticalRate(finalAttacker.dex, finalDefender.dex);
-    // 회피율: 근접은 기본, 원거리는 +20% 보너스
+    // 회피율: 근접은 기본, 원거리는 +20% 보너스 (최대치 제한 없음)
     const baseDodgeRate = calculateDodgeRate(finalAttacker.dex, finalDefender.dex, 0);
-    const dodgeRate = weaponType === 'ranged' ? Math.min(baseDodgeRate + 20, 75) : baseDodgeRate;
+    const dodgeRate = weaponType === 'ranged' ? baseDodgeRate + 20 : baseDodgeRate;
 
     const finalMin = Math.round(baseDamage.min * attrBonus);
     const finalMax = Math.round(baseDamage.max * attrBonus);
@@ -1767,7 +1770,12 @@ const BattlePage: React.FC = () => {
                       <p>• DEX 스탯 극대화 (가장 중요!)</p>
                       <p>• LUCK 스탯 투자 (플레이어 전용)</p>
                       <p>• 주술 커맨드 사용 (K값 0.02 → 0.027)</p>
-                      <p>• <span className="text-yellow-400 font-bold">원거리 무기(활/석궁)로 공격받을 때 자동 +20% 보너스</span></p>
+                      <p>
+                        •{' '}
+                        <span className="text-yellow-400 font-bold">
+                          원거리 무기(활/석궁)로 공격받을 때 자동 +20% 보너스
+                        </span>
+                      </p>
                     </div>
                   </div>
 
@@ -2005,568 +2013,588 @@ const BattlePage: React.FC = () => {
             {calculatorSubTab === 'damage' && (
               <>
                 {/* 공격자 입력 */}
-            <div className="bg-bg-secondary rounded-lg p-4 md:p-5 border border-border shadow-lg">
-              <h2 className="text-xl font-bold mb-4 text-red-500 flex items-center gap-2">
-                <span>🗡️</span> 공격
-              </h2>
+                <div className="bg-bg-secondary rounded-lg p-4 md:p-5 border border-border shadow-lg">
+                  <h2 className="text-xl font-bold mb-4 text-red-500 flex items-center gap-2">
+                    <span>🗡️</span> 공격
+                  </h2>
 
-              {/* 기본 스탯 */}
-              <div className="grid grid-cols-2 md:grid-cols-5 gap-3 mb-4">
-                <div>
-                  <label className="block text-sm font-bold mb-1 text-text-secondary">
-                    레벨 (LV)
-                  </label>
-                  <input
-                    type="number"
-                    value={attacker.lv}
-                    onChange={e => setAttacker({ ...attacker, lv: Number(e.target.value) })}
-                    className="w-full px-3 py-2 bg-bg-tertiary border border-border rounded text-text-primary"
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-bold mb-1 text-text-secondary">
-                    내구력 (HP)
-                  </label>
-                  <input
-                    type="number"
-                    value={attacker.hp}
-                    onChange={e => setAttacker({ ...attacker, hp: Number(e.target.value) })}
-                    className="w-full px-3 py-2 bg-bg-tertiary border border-border rounded text-text-primary"
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-bold mb-1 text-text-secondary">
-                    공격력 (STR)
-                  </label>
-                  <input
-                    type="number"
-                    value={attacker.str}
-                    onChange={e => setAttacker({ ...attacker, str: Number(e.target.value) })}
-                    className="w-full px-3 py-2 bg-bg-tertiary border border-border rounded text-text-primary"
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-bold mb-1 text-text-secondary">
-                    방어력 (TGH)
-                  </label>
-                  <input
-                    type="number"
-                    value={attacker.tgh}
-                    onChange={e => setAttacker({ ...attacker, tgh: Number(e.target.value) })}
-                    className="w-full px-3 py-2 bg-bg-tertiary border border-border rounded text-text-primary"
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-bold mb-1 text-text-secondary">
-                    순발력 (DEX)
-                  </label>
-                  <input
-                    type="number"
-                    value={attacker.dex}
-                    onChange={e => setAttacker({ ...attacker, dex: Number(e.target.value) })}
-                    className="w-full px-3 py-2 bg-bg-tertiary border border-border rounded text-text-primary"
-                  />
-                </div>
-              </div>
+                  {/* 기본 스탯 */}
+                  <div className="grid grid-cols-2 md:grid-cols-5 gap-3 mb-4">
+                    <div>
+                      <label className="block text-sm font-bold mb-1 text-text-secondary">
+                        레벨 (LV)
+                      </label>
+                      <input
+                        type="number"
+                        value={attacker.lv}
+                        onChange={e => setAttacker({ ...attacker, lv: Number(e.target.value) })}
+                        className="w-full px-3 py-2 bg-bg-tertiary border border-border rounded text-text-primary"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-bold mb-1 text-text-secondary">
+                        내구력 (HP)
+                      </label>
+                      <input
+                        type="number"
+                        value={attacker.hp}
+                        onChange={e => setAttacker({ ...attacker, hp: Number(e.target.value) })}
+                        className="w-full px-3 py-2 bg-bg-tertiary border border-border rounded text-text-primary"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-bold mb-1 text-text-secondary">
+                        공격력 (STR)
+                      </label>
+                      <input
+                        type="number"
+                        value={attacker.str}
+                        onChange={e => setAttacker({ ...attacker, str: Number(e.target.value) })}
+                        className="w-full px-3 py-2 bg-bg-tertiary border border-border rounded text-text-primary"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-bold mb-1 text-text-secondary">
+                        방어력 (TGH)
+                      </label>
+                      <input
+                        type="number"
+                        value={attacker.tgh}
+                        onChange={e => setAttacker({ ...attacker, tgh: Number(e.target.value) })}
+                        className="w-full px-3 py-2 bg-bg-tertiary border border-border rounded text-text-primary"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-bold mb-1 text-text-secondary">
+                        순발력 (DEX)
+                      </label>
+                      <input
+                        type="number"
+                        value={attacker.dex}
+                        onChange={e => setAttacker({ ...attacker, dex: Number(e.target.value) })}
+                        className="w-full px-3 py-2 bg-bg-tertiary border border-border rounded text-text-primary"
+                      />
+                    </div>
+                  </div>
 
-              {/* 속성 선택 */}
-              <div>
-                <label className="block text-sm font-bold mb-2 text-text-secondary">
-                  속성 ({getAttributeTotal(attacker)}/10)
-                </label>
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+                  {/* 속성 선택 */}
                   <div>
-                    <label className="block text-xs font-bold mb-1 text-green-500">지</label>
-                    <input
-                      type="number"
-                      min="0"
-                      max="10"
-                      value={attacker.earth}
-                      onChange={e =>
-                        handleAttributeChange(
-                          attacker,
-                          setAttacker,
-                          'earth',
-                          Number(e.target.value)
-                        )
-                      }
-                      disabled={attacker.fire > 0}
-                      className="w-full px-3 py-2 bg-green-500 border border-green-500 rounded text-white font-bold disabled:opacity-50"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-xs font-bold mb-1 text-blue-500">수</label>
-                    <input
-                      type="number"
-                      min="0"
-                      max="10"
-                      value={attacker.water}
-                      onChange={e =>
-                        handleAttributeChange(
-                          attacker,
-                          setAttacker,
-                          'water',
-                          Number(e.target.value)
-                        )
-                      }
-                      disabled={attacker.wind > 0}
-                      className="w-full px-3 py-2 bg-blue-500 border border-blue-500 rounded text-white font-bold disabled:opacity-50"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-xs font-bold mb-1 text-red-500">화</label>
-                    <input
-                      type="number"
-                      min="0"
-                      max="10"
-                      value={attacker.fire}
-                      onChange={e =>
-                        handleAttributeChange(attacker, setAttacker, 'fire', Number(e.target.value))
-                      }
-                      disabled={attacker.earth > 0}
-                      className="w-full px-3 py-2 bg-red-500 border border-red-500 rounded text-white font-bold disabled:opacity-50"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-xs font-bold mb-1 text-yellow-500">풍</label>
-                    <input
-                      type="number"
-                      min="0"
-                      max="10"
-                      value={attacker.wind}
-                      onChange={e =>
-                        handleAttributeChange(attacker, setAttacker, 'wind', Number(e.target.value))
-                      }
-                      disabled={attacker.water > 0}
-                      className="w-full px-3 py-2 bg-yellow-500 border border-yellow-500 rounded text-white font-bold disabled:opacity-50"
-                    />
-                  </div>
-                </div>
-              </div>
-
-              {/* 페트 탑승 */}
-              <div className="mt-4 pt-4 border-t border-border">
-                <div className="flex items-center justify-between mb-3">
-                  <label className="block text-sm font-bold text-text-secondary">
-                    🐾 페트 탑승 (스탯 70% + 페트 30%)
-                  </label>
-                  {attackerPet && (
-                    <button
-                      onClick={() => setAttackerPet(null)}
-                      className="text-xs px-2 py-1 bg-red-500/20 text-red-500 rounded hover:bg-red-500/30"
-                    >
-                      해제
-                    </button>
-                  )}
-                </div>
-                {!attackerPet ? (
-                  <button
-                    onClick={() => setAttackerPet({ str: 0, tgh: 0, dex: 0, hp: 0 })}
-                    className="w-full px-3 py-2 bg-purple-500/20 text-purple-400 rounded hover:bg-purple-500/30 transition-colors text-sm"
-                  >
-                    + 페트 탑승 스탯 추가
-                  </button>
-                ) : (
-                  <div className="mt-3 p-3 bg-bg-tertiary rounded border border-border">
-                    <p className="font-bold text-purple-400 mb-3 text-sm">페트 스탯 입력:</p>
+                    <label className="block text-sm font-bold mb-2 text-text-secondary">
+                      속성 ({getAttributeTotal(attacker)}/10)
+                    </label>
                     <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
                       <div>
-                        <label className="block text-xs font-bold mb-1 text-text-secondary">
-                          공격력 (STR)
-                        </label>
+                        <label className="block text-xs font-bold mb-1 text-green-500">지</label>
                         <input
                           type="number"
                           min="0"
-                          value={attackerPet.str}
+                          max="10"
+                          value={attacker.earth}
                           onChange={e =>
-                            setAttackerPet({ ...attackerPet, str: Number(e.target.value) })
+                            handleAttributeChange(
+                              attacker,
+                              setAttacker,
+                              'earth',
+                              Number(e.target.value)
+                            )
                           }
-                          className="w-full px-2 py-1 bg-bg-primary border border-border rounded text-text-primary text-sm"
+                          disabled={attacker.fire > 0}
+                          className="w-full px-3 py-2 bg-green-500 border border-green-500 rounded text-white font-bold disabled:opacity-50"
                         />
                       </div>
                       <div>
-                        <label className="block text-xs font-bold mb-1 text-text-secondary">
-                          방어력 (TGH)
-                        </label>
+                        <label className="block text-xs font-bold mb-1 text-blue-500">수</label>
                         <input
                           type="number"
                           min="0"
-                          value={attackerPet.tgh}
+                          max="10"
+                          value={attacker.water}
                           onChange={e =>
-                            setAttackerPet({ ...attackerPet, tgh: Number(e.target.value) })
+                            handleAttributeChange(
+                              attacker,
+                              setAttacker,
+                              'water',
+                              Number(e.target.value)
+                            )
                           }
-                          className="w-full px-2 py-1 bg-bg-primary border border-border rounded text-text-primary text-sm"
+                          disabled={attacker.wind > 0}
+                          className="w-full px-3 py-2 bg-blue-500 border border-blue-500 rounded text-white font-bold disabled:opacity-50"
                         />
                       </div>
                       <div>
-                        <label className="block text-xs font-bold mb-1 text-text-secondary">
-                          순발력 (DEX)
-                        </label>
+                        <label className="block text-xs font-bold mb-1 text-red-500">화</label>
                         <input
                           type="number"
                           min="0"
-                          value={attackerPet.dex}
+                          max="10"
+                          value={attacker.fire}
                           onChange={e =>
-                            setAttackerPet({ ...attackerPet, dex: Number(e.target.value) })
+                            handleAttributeChange(
+                              attacker,
+                              setAttacker,
+                              'fire',
+                              Number(e.target.value)
+                            )
                           }
-                          className="w-full px-2 py-1 bg-bg-primary border border-border rounded text-text-primary text-sm"
+                          disabled={attacker.earth > 0}
+                          className="w-full px-3 py-2 bg-red-500 border border-red-500 rounded text-white font-bold disabled:opacity-50"
                         />
                       </div>
                       <div>
-                        <label className="block text-xs font-bold mb-1 text-text-secondary">
-                          내구력 (HP)
-                        </label>
+                        <label className="block text-xs font-bold mb-1 text-yellow-500">풍</label>
                         <input
                           type="number"
                           min="0"
-                          value={attackerPet.hp}
+                          max="10"
+                          value={attacker.wind}
                           onChange={e =>
-                            setAttackerPet({ ...attackerPet, hp: Number(e.target.value) })
+                            handleAttributeChange(
+                              attacker,
+                              setAttacker,
+                              'wind',
+                              Number(e.target.value)
+                            )
                           }
-                          className="w-full px-2 py-1 bg-bg-primary border border-border rounded text-text-primary text-sm"
+                          disabled={attacker.water > 0}
+                          className="w-full px-3 py-2 bg-yellow-500 border border-yellow-500 rounded text-white font-bold disabled:opacity-50"
                         />
                       </div>
                     </div>
                   </div>
-                )}
-              </div>
-            </div>
 
-            {/* 방어자 입력 */}
-            <div className="bg-bg-secondary rounded-lg p-4 md:p-5 border border-border shadow-lg">
-              <h2 className="text-xl font-bold mb-4 text-blue-500 flex items-center gap-2">
-                <span>🛡️</span> 방어
-              </h2>
-
-              {/* 기본 스탯 */}
-              <div className="grid grid-cols-2 md:grid-cols-5 gap-3 mb-4">
-                <div>
-                  <label className="block text-sm font-bold mb-1 text-text-secondary">
-                    레벨 (LV)
-                  </label>
-                  <input
-                    type="number"
-                    value={defender.lv}
-                    onChange={e => setDefender({ ...defender, lv: Number(e.target.value) })}
-                    className="w-full px-3 py-2 bg-bg-tertiary border border-border rounded text-text-primary"
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-bold mb-1 text-text-secondary">
-                    내구력 (HP)
-                  </label>
-                  <input
-                    type="number"
-                    value={defender.hp}
-                    onChange={e => setDefender({ ...defender, hp: Number(e.target.value) })}
-                    className="w-full px-3 py-2 bg-bg-tertiary border border-border rounded text-text-primary"
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-bold mb-1 text-text-secondary">
-                    공격력 (STR)
-                  </label>
-                  <input
-                    type="number"
-                    value={defender.str}
-                    onChange={e => setDefender({ ...defender, str: Number(e.target.value) })}
-                    className="w-full px-3 py-2 bg-bg-tertiary border border-border rounded text-text-primary"
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-bold mb-1 text-text-secondary">
-                    방어력 (TGH)
-                  </label>
-                  <input
-                    type="number"
-                    value={defender.tgh}
-                    onChange={e => setDefender({ ...defender, tgh: Number(e.target.value) })}
-                    className="w-full px-3 py-2 bg-bg-tertiary border border-border rounded text-text-primary"
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-bold mb-1 text-text-secondary">
-                    순발력 (DEX)
-                  </label>
-                  <input
-                    type="number"
-                    value={defender.dex}
-                    onChange={e => setDefender({ ...defender, dex: Number(e.target.value) })}
-                    className="w-full px-3 py-2 bg-bg-tertiary border border-border rounded text-text-primary"
-                  />
-                </div>
-              </div>
-
-              {/* 속성 선택 */}
-              <div>
-                <label className="block text-sm font-bold mb-2 text-text-secondary">
-                  속성 ({getAttributeTotal(defender)}/10)
-                </label>
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-                  <div>
-                    <label className="block text-xs font-bold mb-1 text-green-500">지</label>
-                    <input
-                      type="number"
-                      min="0"
-                      max="10"
-                      value={defender.earth}
-                      onChange={e =>
-                        handleAttributeChange(
-                          defender,
-                          setDefender,
-                          'earth',
-                          Number(e.target.value)
-                        )
-                      }
-                      disabled={defender.fire > 0}
-                      className="w-full px-3 py-2 bg-green-500 border border-green-500 rounded text-white font-bold disabled:opacity-50"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-xs font-bold mb-1 text-blue-500">수</label>
-                    <input
-                      type="number"
-                      min="0"
-                      max="10"
-                      value={defender.water}
-                      onChange={e =>
-                        handleAttributeChange(
-                          defender,
-                          setDefender,
-                          'water',
-                          Number(e.target.value)
-                        )
-                      }
-                      disabled={defender.wind > 0}
-                      className="w-full px-3 py-2 bg-blue-500 border border-blue-500 rounded text-white font-bold disabled:opacity-50"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-xs font-bold mb-1 text-red-500">화</label>
-                    <input
-                      type="number"
-                      min="0"
-                      max="10"
-                      value={defender.fire}
-                      onChange={e =>
-                        handleAttributeChange(defender, setDefender, 'fire', Number(e.target.value))
-                      }
-                      disabled={defender.earth > 0}
-                      className="w-full px-3 py-2 bg-red-500 border border-red-500 rounded text-white font-bold disabled:opacity-50"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-xs font-bold mb-1 text-yellow-500">풍</label>
-                    <input
-                      type="number"
-                      min="0"
-                      max="10"
-                      value={defender.wind}
-                      onChange={e =>
-                        handleAttributeChange(defender, setDefender, 'wind', Number(e.target.value))
-                      }
-                      disabled={defender.water > 0}
-                      className="w-full px-3 py-2 bg-yellow-500 border border-yellow-500 rounded text-white font-bold disabled:opacity-50"
-                    />
+                  {/* 페트 탑승 */}
+                  <div className="mt-4 pt-4 border-t border-border">
+                    <div className="flex items-center justify-between mb-3">
+                      <label className="block text-sm font-bold text-text-secondary">
+                        🐾 페트 탑승 (스탯 70% + 페트 30%)
+                      </label>
+                      {attackerPet && (
+                        <button
+                          onClick={() => setAttackerPet(null)}
+                          className="text-xs px-2 py-1 bg-red-500/20 text-red-500 rounded hover:bg-red-500/30"
+                        >
+                          해제
+                        </button>
+                      )}
+                    </div>
+                    {!attackerPet ? (
+                      <button
+                        onClick={() => setAttackerPet({ str: 0, tgh: 0, dex: 0, hp: 0 })}
+                        className="w-full px-3 py-2 bg-purple-500/20 text-purple-400 rounded hover:bg-purple-500/30 transition-colors text-sm"
+                      >
+                        + 페트 탑승 스탯 추가
+                      </button>
+                    ) : (
+                      <div className="mt-3 p-3 bg-bg-tertiary rounded border border-border">
+                        <p className="font-bold text-purple-400 mb-3 text-sm">페트 스탯 입력:</p>
+                        <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+                          <div>
+                            <label className="block text-xs font-bold mb-1 text-text-secondary">
+                              공격력 (STR)
+                            </label>
+                            <input
+                              type="number"
+                              min="0"
+                              value={attackerPet.str}
+                              onChange={e =>
+                                setAttackerPet({ ...attackerPet, str: Number(e.target.value) })
+                              }
+                              className="w-full px-2 py-1 bg-bg-primary border border-border rounded text-text-primary text-sm"
+                            />
+                          </div>
+                          <div>
+                            <label className="block text-xs font-bold mb-1 text-text-secondary">
+                              방어력 (TGH)
+                            </label>
+                            <input
+                              type="number"
+                              min="0"
+                              value={attackerPet.tgh}
+                              onChange={e =>
+                                setAttackerPet({ ...attackerPet, tgh: Number(e.target.value) })
+                              }
+                              className="w-full px-2 py-1 bg-bg-primary border border-border rounded text-text-primary text-sm"
+                            />
+                          </div>
+                          <div>
+                            <label className="block text-xs font-bold mb-1 text-text-secondary">
+                              순발력 (DEX)
+                            </label>
+                            <input
+                              type="number"
+                              min="0"
+                              value={attackerPet.dex}
+                              onChange={e =>
+                                setAttackerPet({ ...attackerPet, dex: Number(e.target.value) })
+                              }
+                              className="w-full px-2 py-1 bg-bg-primary border border-border rounded text-text-primary text-sm"
+                            />
+                          </div>
+                          <div>
+                            <label className="block text-xs font-bold mb-1 text-text-secondary">
+                              내구력 (HP)
+                            </label>
+                            <input
+                              type="number"
+                              min="0"
+                              value={attackerPet.hp}
+                              onChange={e =>
+                                setAttackerPet({ ...attackerPet, hp: Number(e.target.value) })
+                              }
+                              className="w-full px-2 py-1 bg-bg-primary border border-border rounded text-text-primary text-sm"
+                            />
+                          </div>
+                        </div>
+                      </div>
+                    )}
                   </div>
                 </div>
-              </div>
 
-              {/* 페트 탑승 */}
-              <div className="mt-4 pt-4 border-t border-border">
-                <div className="flex items-center justify-between mb-3">
-                  <label className="block text-sm font-bold text-text-secondary">
-                    🐾 페트 탑승 (스탯 70% + 페트 30%)
-                  </label>
-                  {defenderPet && (
-                    <button
-                      onClick={() => setDefenderPet(null)}
-                      className="text-xs px-2 py-1 bg-red-500/20 text-red-500 rounded hover:bg-red-500/30"
-                    >
-                      해제
-                    </button>
-                  )}
-                </div>
-                {!defenderPet ? (
-                  <button
-                    onClick={() => setDefenderPet({ str: 0, tgh: 0, dex: 0, hp: 0 })}
-                    className="w-full px-3 py-2 bg-purple-500/20 text-purple-400 rounded hover:bg-purple-500/30 transition-colors text-sm"
-                  >
-                    + 페트 탑승 스탯 추가
-                  </button>
-                ) : (
-                  <div className="mt-3 p-3 bg-bg-tertiary rounded border border-border">
-                    <p className="font-bold text-purple-400 mb-3 text-sm">페트 스탯 입력:</p>
+                {/* 방어자 입력 */}
+                <div className="bg-bg-secondary rounded-lg p-4 md:p-5 border border-border shadow-lg">
+                  <h2 className="text-xl font-bold mb-4 text-blue-500 flex items-center gap-2">
+                    <span>🛡️</span> 방어
+                  </h2>
+
+                  {/* 기본 스탯 */}
+                  <div className="grid grid-cols-2 md:grid-cols-5 gap-3 mb-4">
+                    <div>
+                      <label className="block text-sm font-bold mb-1 text-text-secondary">
+                        레벨 (LV)
+                      </label>
+                      <input
+                        type="number"
+                        value={defender.lv}
+                        onChange={e => setDefender({ ...defender, lv: Number(e.target.value) })}
+                        className="w-full px-3 py-2 bg-bg-tertiary border border-border rounded text-text-primary"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-bold mb-1 text-text-secondary">
+                        내구력 (HP)
+                      </label>
+                      <input
+                        type="number"
+                        value={defender.hp}
+                        onChange={e => setDefender({ ...defender, hp: Number(e.target.value) })}
+                        className="w-full px-3 py-2 bg-bg-tertiary border border-border rounded text-text-primary"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-bold mb-1 text-text-secondary">
+                        공격력 (STR)
+                      </label>
+                      <input
+                        type="number"
+                        value={defender.str}
+                        onChange={e => setDefender({ ...defender, str: Number(e.target.value) })}
+                        className="w-full px-3 py-2 bg-bg-tertiary border border-border rounded text-text-primary"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-bold mb-1 text-text-secondary">
+                        방어력 (TGH)
+                      </label>
+                      <input
+                        type="number"
+                        value={defender.tgh}
+                        onChange={e => setDefender({ ...defender, tgh: Number(e.target.value) })}
+                        className="w-full px-3 py-2 bg-bg-tertiary border border-border rounded text-text-primary"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-bold mb-1 text-text-secondary">
+                        순발력 (DEX)
+                      </label>
+                      <input
+                        type="number"
+                        value={defender.dex}
+                        onChange={e => setDefender({ ...defender, dex: Number(e.target.value) })}
+                        className="w-full px-3 py-2 bg-bg-tertiary border border-border rounded text-text-primary"
+                      />
+                    </div>
+                  </div>
+
+                  {/* 속성 선택 */}
+                  <div>
+                    <label className="block text-sm font-bold mb-2 text-text-secondary">
+                      속성 ({getAttributeTotal(defender)}/10)
+                    </label>
                     <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
                       <div>
-                        <label className="block text-xs font-bold mb-1 text-text-secondary">
-                          공격력 (STR)
-                        </label>
+                        <label className="block text-xs font-bold mb-1 text-green-500">지</label>
                         <input
                           type="number"
                           min="0"
-                          value={defenderPet.str}
+                          max="10"
+                          value={defender.earth}
                           onChange={e =>
-                            setDefenderPet({ ...defenderPet, str: Number(e.target.value) })
+                            handleAttributeChange(
+                              defender,
+                              setDefender,
+                              'earth',
+                              Number(e.target.value)
+                            )
                           }
-                          className="w-full px-2 py-1 bg-bg-primary border border-border rounded text-text-primary text-sm"
+                          disabled={defender.fire > 0}
+                          className="w-full px-3 py-2 bg-green-500 border border-green-500 rounded text-white font-bold disabled:opacity-50"
                         />
                       </div>
                       <div>
-                        <label className="block text-xs font-bold mb-1 text-text-secondary">
-                          방어력 (TGH)
-                        </label>
+                        <label className="block text-xs font-bold mb-1 text-blue-500">수</label>
                         <input
                           type="number"
                           min="0"
-                          value={defenderPet.tgh}
+                          max="10"
+                          value={defender.water}
                           onChange={e =>
-                            setDefenderPet({ ...defenderPet, tgh: Number(e.target.value) })
+                            handleAttributeChange(
+                              defender,
+                              setDefender,
+                              'water',
+                              Number(e.target.value)
+                            )
                           }
-                          className="w-full px-2 py-1 bg-bg-primary border border-border rounded text-text-primary text-sm"
+                          disabled={defender.wind > 0}
+                          className="w-full px-3 py-2 bg-blue-500 border border-blue-500 rounded text-white font-bold disabled:opacity-50"
                         />
                       </div>
                       <div>
-                        <label className="block text-xs font-bold mb-1 text-text-secondary">
-                          순발력 (DEX)
-                        </label>
+                        <label className="block text-xs font-bold mb-1 text-red-500">화</label>
                         <input
                           type="number"
                           min="0"
-                          value={defenderPet.dex}
+                          max="10"
+                          value={defender.fire}
                           onChange={e =>
-                            setDefenderPet({ ...defenderPet, dex: Number(e.target.value) })
+                            handleAttributeChange(
+                              defender,
+                              setDefender,
+                              'fire',
+                              Number(e.target.value)
+                            )
                           }
-                          className="w-full px-2 py-1 bg-bg-primary border border-border rounded text-text-primary text-sm"
+                          disabled={defender.earth > 0}
+                          className="w-full px-3 py-2 bg-red-500 border border-red-500 rounded text-white font-bold disabled:opacity-50"
                         />
                       </div>
                       <div>
-                        <label className="block text-xs font-bold mb-1 text-text-secondary">
-                          내구력 (HP)
-                        </label>
+                        <label className="block text-xs font-bold mb-1 text-yellow-500">풍</label>
                         <input
                           type="number"
                           min="0"
-                          value={defenderPet.hp}
+                          max="10"
+                          value={defender.wind}
                           onChange={e =>
-                            setDefenderPet({ ...defenderPet, hp: Number(e.target.value) })
+                            handleAttributeChange(
+                              defender,
+                              setDefender,
+                              'wind',
+                              Number(e.target.value)
+                            )
                           }
-                          className="w-full px-2 py-1 bg-bg-primary border border-border rounded text-text-primary text-sm"
+                          disabled={defender.water > 0}
+                          className="w-full px-3 py-2 bg-yellow-500 border border-yellow-500 rounded text-white font-bold disabled:opacity-50"
                         />
                       </div>
                     </div>
                   </div>
-                )}
-              </div>
-            </div>
 
-            {/* 결과 표시 */}
-            <div className="bg-bg-secondary rounded-lg p-4 md:p-5 border border-border shadow-lg">
-              <h2 className="text-xl font-bold mb-4 text-accent flex items-center gap-2">
-                <span>📊</span> 예상 데미지
-              </h2>
-
-              <div className="grid md:grid-cols-2 gap-4">
-                {/* 근접 무기 */}
-                {(() => {
-                  const result = calculateDamage('melee');
-                  return (
-                    <div className="bg-bg-tertiary rounded-lg p-4 border border-border">
-                      <h3 className="font-bold text-lg mb-3 text-green-500">🗡️ 근접 무기</h3>
-                      <div className="space-y-2 text-sm">
-                        <div className="flex justify-between">
-                          <span className="text-text-secondary">속성 보정:</span>
-                          <span className="font-bold text-accent">
-                            ×{result.attrBonus.toFixed(2)}
-                          </span>
-                        </div>
-                        <div className="flex justify-between">
-                          <span className="text-text-secondary">크리티컬 확률:</span>
-                          <span className="font-bold text-yellow-500">
-                            {(result.critRate / 100).toFixed(2)}%
-                          </span>
-                        </div>
-                        <div className="flex justify-between">
-                          <span className="text-text-secondary">방어자 회피율:</span>
-                          <span className="font-bold text-cyan-500">
-                            {result.dodgeRate.toFixed(2)}%
-                          </span>
-                        </div>
-                        <hr className="border-border" />
-                        <div>
-                          <div className="text-text-secondary mb-1">일반 데미지:</div>
-                          <div className="text-accent font-bold text-lg">
-                            {result.normal.min} ~ {result.normal.max}
+                  {/* 페트 탑승 */}
+                  <div className="mt-4 pt-4 border-t border-border">
+                    <div className="flex items-center justify-between mb-3">
+                      <label className="block text-sm font-bold text-text-secondary">
+                        🐾 페트 탑승 (스탯 70% + 페트 30%)
+                      </label>
+                      {defenderPet && (
+                        <button
+                          onClick={() => setDefenderPet(null)}
+                          className="text-xs px-2 py-1 bg-red-500/20 text-red-500 rounded hover:bg-red-500/30"
+                        >
+                          해제
+                        </button>
+                      )}
+                    </div>
+                    {!defenderPet ? (
+                      <button
+                        onClick={() => setDefenderPet({ str: 0, tgh: 0, dex: 0, hp: 0 })}
+                        className="w-full px-3 py-2 bg-purple-500/20 text-purple-400 rounded hover:bg-purple-500/30 transition-colors text-sm"
+                      >
+                        + 페트 탑승 스탯 추가
+                      </button>
+                    ) : (
+                      <div className="mt-3 p-3 bg-bg-tertiary rounded border border-border">
+                        <p className="font-bold text-purple-400 mb-3 text-sm">페트 스탯 입력:</p>
+                        <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+                          <div>
+                            <label className="block text-xs font-bold mb-1 text-text-secondary">
+                              공격력 (STR)
+                            </label>
+                            <input
+                              type="number"
+                              min="0"
+                              value={defenderPet.str}
+                              onChange={e =>
+                                setDefenderPet({ ...defenderPet, str: Number(e.target.value) })
+                              }
+                              className="w-full px-2 py-1 bg-bg-primary border border-border rounded text-text-primary text-sm"
+                            />
                           </div>
-                          <div className="text-xs text-text-secondary">
-                            평균: {result.normal.avg}
+                          <div>
+                            <label className="block text-xs font-bold mb-1 text-text-secondary">
+                              방어력 (TGH)
+                            </label>
+                            <input
+                              type="number"
+                              min="0"
+                              value={defenderPet.tgh}
+                              onChange={e =>
+                                setDefenderPet({ ...defenderPet, tgh: Number(e.target.value) })
+                              }
+                              className="w-full px-2 py-1 bg-bg-primary border border-border rounded text-text-primary text-sm"
+                            />
                           </div>
-                        </div>
-                        <div>
-                          <div className="text-text-secondary mb-1">크리티컬 데미지:</div>
-                          <div className="text-yellow-500 font-bold text-lg">
-                            {result.critical.min} ~ {result.critical.max}
+                          <div>
+                            <label className="block text-xs font-bold mb-1 text-text-secondary">
+                              순발력 (DEX)
+                            </label>
+                            <input
+                              type="number"
+                              min="0"
+                              value={defenderPet.dex}
+                              onChange={e =>
+                                setDefenderPet({ ...defenderPet, dex: Number(e.target.value) })
+                              }
+                              className="w-full px-2 py-1 bg-bg-primary border border-border rounded text-text-primary text-sm"
+                            />
                           </div>
-                          <div className="text-xs text-text-secondary">
-                            평균: {result.critical.avg}
+                          <div>
+                            <label className="block text-xs font-bold mb-1 text-text-secondary">
+                              내구력 (HP)
+                            </label>
+                            <input
+                              type="number"
+                              min="0"
+                              value={defenderPet.hp}
+                              onChange={e =>
+                                setDefenderPet({ ...defenderPet, hp: Number(e.target.value) })
+                              }
+                              className="w-full px-2 py-1 bg-bg-primary border border-border rounded text-text-primary text-sm"
+                            />
                           </div>
                         </div>
                       </div>
-                    </div>
-                  );
-                })()}
+                    )}
+                  </div>
+                </div>
 
-                {/* 원거리 무기 */}
-                {(() => {
-                  const result = calculateDamage('ranged');
-                  return (
-                    <div className="bg-bg-tertiary rounded-lg p-4 border border-border">
-                      <h3 className="font-bold text-lg mb-3 text-blue-500">🏹 원거리 무기</h3>
-                      <div className="space-y-2 text-sm">
-                        <div className="flex justify-between">
-                          <span className="text-text-secondary">속성 보정:</span>
-                          <span className="font-bold text-accent">
-                            ×{result.attrBonus.toFixed(2)}
-                          </span>
-                        </div>
-                        <div className="flex justify-between">
-                          <span className="text-text-secondary">크리티컬 확률:</span>
-                          <span className="font-bold text-yellow-500">
-                            {(result.critRate / 100).toFixed(2)}%
-                          </span>
-                        </div>
-                        <div className="flex justify-between">
-                          <span className="text-text-secondary">회피율:</span>
-                          <span className="font-bold text-green-500">
-                            {result.dodgeRate.toFixed(2)}%
-                            <span className="text-xs text-purple-400 ml-1">(+20% 보너스)</span>
-                          </span>
-                        </div>
-                        <hr className="border-border" />
-                        <div>
-                          <div className="text-text-secondary mb-1">일반 데미지:</div>
-                          <div className="text-accent font-bold text-lg">
-                            {result.normal.min} ~ {result.normal.max}
+                {/* 결과 표시 */}
+                <div className="bg-bg-secondary rounded-lg p-4 md:p-5 border border-border shadow-lg">
+                  <h2 className="text-xl font-bold mb-4 text-accent flex items-center gap-2">
+                    <span>📊</span> 예상 데미지
+                  </h2>
+
+                  <div className="grid md:grid-cols-2 gap-4">
+                    {/* 근접 무기 */}
+                    {(() => {
+                      const result = calculateDamage('melee');
+                      return (
+                        <div className="bg-bg-tertiary rounded-lg p-4 border border-border">
+                          <h3 className="font-bold text-lg mb-3 text-green-500">🗡️ 근접 무기</h3>
+                          <div className="space-y-2 text-sm">
+                            <div className="flex justify-between">
+                              <span className="text-text-secondary">속성 보정:</span>
+                              <span className="font-bold text-accent">
+                                ×{result.attrBonus.toFixed(2)}
+                              </span>
+                            </div>
+                            <div className="flex justify-between">
+                              <span className="text-text-secondary">크리티컬 확률:</span>
+                              <span className="font-bold text-yellow-500">
+                                {(result.critRate / 100).toFixed(2)}%
+                              </span>
+                            </div>
+                            <div className="flex justify-between">
+                              <span className="text-text-secondary">회피율:</span>
+                              <span className="font-bold text-cyan-500">
+                                {result.dodgeRate.toFixed(2)}%
+                              </span>
+                            </div>
+                            <hr className="border-border" />
+                            <div>
+                              <div className="text-text-secondary mb-1">일반 데미지:</div>
+                              <div className="text-accent font-bold text-lg">
+                                {result.normal.min} ~ {result.normal.max}
+                              </div>
+                              <div className="text-xs text-text-secondary">
+                                평균: {result.normal.avg}
+                              </div>
+                            </div>
+                            <div>
+                              <div className="text-text-secondary mb-1">크리티컬 데미지:</div>
+                              <div className="text-yellow-500 font-bold text-lg">
+                                {result.critical.min} ~ {result.critical.max}
+                              </div>
+                              <div className="text-xs text-text-secondary">
+                                평균: {result.critical.avg}
+                              </div>
+                            </div>
                           </div>
-                          <div className="text-xs text-text-secondary">
-                            평균: {result.normal.avg}
+                        </div>
+                      );
+                    })()}
+
+                    {/* 원거리 무기 */}
+                    {(() => {
+                      const result = calculateDamage('ranged');
+                      return (
+                        <div className="bg-bg-tertiary rounded-lg p-4 border border-border">
+                          <h3 className="font-bold text-lg mb-3 text-blue-500">🏹 원거리 무기</h3>
+                          <div className="space-y-2 text-sm">
+                            <div className="flex justify-between">
+                              <span className="text-text-secondary">속성 보정:</span>
+                              <span className="font-bold text-accent">
+                                ×{result.attrBonus.toFixed(2)}
+                              </span>
+                            </div>
+                            <div className="flex justify-between">
+                              <span className="text-text-secondary">크리티컬 확률:</span>
+                              <span className="font-bold text-yellow-500">
+                                {(result.critRate / 100).toFixed(2)}%
+                              </span>
+                            </div>
+                            <div className="flex justify-between">
+                              <span className="text-text-secondary">회피율:</span>
+                              <span className="font-bold text-green-500">
+                                {result.dodgeRate.toFixed(2)}%
+                                <span className="text-xs text-purple-400 ml-1">(+20% 보너스)</span>
+                              </span>
+                            </div>
+                            <hr className="border-border" />
+                            <div>
+                              <div className="text-text-secondary mb-1">일반 데미지:</div>
+                              <div className="text-accent font-bold text-lg">
+                                {result.normal.min} ~ {result.normal.max}
+                              </div>
+                              <div className="text-xs text-text-secondary">
+                                평균: {result.normal.avg}
+                              </div>
+                            </div>
+                            <div>
+                              <div className="text-text-secondary mb-1">크리티컬 데미지:</div>
+                              <div className="text-yellow-500 font-bold text-lg">
+                                {result.critical.min} ~ {result.critical.max}
+                              </div>
+                              <div className="text-xs text-text-secondary">
+                                평균: {result.critical.avg}
+                              </div>
+                            </div>
                           </div>
                         </div>
-                        <div>
-                          <div className="text-text-secondary mb-1">크리티컬 데미지:</div>
-                          <div className="text-yellow-500 font-bold text-lg">
-                            {result.critical.min} ~ {result.critical.max}
-                          </div>
-                          <div className="text-xs text-text-secondary">
-                            평균: {result.critical.avg}
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  );
-                })()}
-              </div>
-            </div>
+                      );
+                    })()}
+                  </div>
+                </div>
               </>
             )}
 
@@ -2579,7 +2607,8 @@ const BattlePage: React.FC = () => {
                     <span>🔍</span> 역계산: 속성/방어력 추정
                   </h2>
                   <p className="text-sm text-text-secondary">
-                    내 공격력, 속성과 실제로 받은 데미지를 입력하면, 상대방의 대략적인 속성이나 방어력을 추정할 수 있습니다.
+                    내 공격력, 속성과 실제로 받은 데미지를 입력하면, 상대방의 대략적인 속성이나
+                    방어력을 추정할 수 있습니다.
                   </p>
                 </div>
 
@@ -2609,7 +2638,12 @@ const BattlePage: React.FC = () => {
                     {/* 내 속성 입력 */}
                     <div>
                       <label className="block text-sm font-bold mb-2 text-text-secondary">
-                        내 속성 ({reverseCalc.myEarth + reverseCalc.myWater + reverseCalc.myFire + reverseCalc.myWind}/10)
+                        내 속성 (
+                        {reverseCalc.myEarth +
+                          reverseCalc.myWater +
+                          reverseCalc.myFire +
+                          reverseCalc.myWind}
+                        /10)
                       </label>
                       <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
                         <div>
@@ -2621,7 +2655,8 @@ const BattlePage: React.FC = () => {
                             value={reverseCalc.myEarth}
                             onChange={e => {
                               const val = Math.max(0, Math.min(10, Number(e.target.value)));
-                              const total = val + reverseCalc.myWater + reverseCalc.myFire + reverseCalc.myWind;
+                              const total =
+                                val + reverseCalc.myWater + reverseCalc.myFire + reverseCalc.myWind;
                               if (total <= 10) {
                                 setReverseCalc({ ...reverseCalc, myEarth: val, myFire: 0 });
                               }
@@ -2638,7 +2673,8 @@ const BattlePage: React.FC = () => {
                             value={reverseCalc.myWater}
                             onChange={e => {
                               const val = Math.max(0, Math.min(10, Number(e.target.value)));
-                              const total = reverseCalc.myEarth + val + reverseCalc.myFire + reverseCalc.myWind;
+                              const total =
+                                reverseCalc.myEarth + val + reverseCalc.myFire + reverseCalc.myWind;
                               if (total <= 10) {
                                 setReverseCalc({ ...reverseCalc, myWater: val, myWind: 0 });
                               }
@@ -2655,7 +2691,11 @@ const BattlePage: React.FC = () => {
                             value={reverseCalc.myFire}
                             onChange={e => {
                               const val = Math.max(0, Math.min(10, Number(e.target.value)));
-                              const total = reverseCalc.myEarth + reverseCalc.myWater + val + reverseCalc.myWind;
+                              const total =
+                                reverseCalc.myEarth +
+                                reverseCalc.myWater +
+                                val +
+                                reverseCalc.myWind;
                               if (total <= 10) {
                                 setReverseCalc({ ...reverseCalc, myFire: val, myEarth: 0 });
                               }
@@ -2672,7 +2712,11 @@ const BattlePage: React.FC = () => {
                             value={reverseCalc.myWind}
                             onChange={e => {
                               const val = Math.max(0, Math.min(10, Number(e.target.value)));
-                              const total = reverseCalc.myEarth + reverseCalc.myWater + reverseCalc.myFire + val;
+                              const total =
+                                reverseCalc.myEarth +
+                                reverseCalc.myWater +
+                                reverseCalc.myFire +
+                                val;
                               if (total <= 10) {
                                 setReverseCalc({ ...reverseCalc, myWind: val, myWater: 0 });
                               }
@@ -2764,30 +2808,37 @@ const BattlePage: React.FC = () => {
                               max="140"
                               value={reverseOpponentPet.lv}
                               onChange={e =>
-                                setReverseOpponentPet({ ...reverseOpponentPet, lv: Number(e.target.value) })
+                                setReverseOpponentPet({
+                                  ...reverseOpponentPet,
+                                  lv: Number(e.target.value),
+                                })
                               }
                               className="w-full px-3 py-2 bg-bg-tertiary border border-border rounded text-text-primary"
                             />
                           </div>
                         )}
                       </div>
-                      {reverseOpponentPet && (() => {
-                        const petStats = calculatePetStatsFromData(reverseOpponentPet.petId, reverseOpponentPet.lv);
-                        if (!petStats) return null;
-                        return (
-                          <div className="mt-3 p-3 bg-bg-tertiary rounded border border-border">
-                            <div className="text-xs text-text-secondary space-y-1">
-                              <p className="font-bold text-purple-400 mb-2">페트 스탯:</p>
-                              <div className="grid grid-cols-2 gap-2">
-                                <p>공격력: {petStats.str}</p>
-                                <p>방어력: {petStats.tgh}</p>
-                                <p>순발력: {petStats.dex}</p>
-                                <p>내구력: {petStats.hp}</p>
+                      {reverseOpponentPet &&
+                        (() => {
+                          const petStats = calculatePetStatsFromData(
+                            reverseOpponentPet.petId,
+                            reverseOpponentPet.lv
+                          );
+                          if (!petStats) return null;
+                          return (
+                            <div className="mt-3 p-3 bg-bg-tertiary rounded border border-border">
+                              <div className="text-xs text-text-secondary space-y-1">
+                                <p className="font-bold text-purple-400 mb-2">페트 스탯:</p>
+                                <div className="grid grid-cols-2 gap-2">
+                                  <p>공격력: {petStats.str}</p>
+                                  <p>방어력: {petStats.tgh}</p>
+                                  <p>순발력: {petStats.dex}</p>
+                                  <p>내구력: {petStats.hp}</p>
+                                </div>
                               </div>
                             </div>
-                          </div>
-                        );
-                      })()}
+                          );
+                        })()}
                     </div>
                   </div>
                 </div>
@@ -2804,7 +2855,10 @@ const BattlePage: React.FC = () => {
                       // 상대 페트 정보 가져오기
                       let opponentPetTgh = 0;
                       if (reverseOpponentPet) {
-                        const petStats = calculatePetStatsFromData(reverseOpponentPet.petId, reverseOpponentPet.lv);
+                        const petStats = calculatePetStatsFromData(
+                          reverseOpponentPet.petId,
+                          reverseOpponentPet.lv
+                        );
                         if (petStats) {
                           opponentPetTgh = petStats.tgh;
                         }
@@ -2818,12 +2872,18 @@ const BattlePage: React.FC = () => {
                       const myNone = 100 - (myFire + myWater + myEarth + myWind);
 
                       // 속성 보정 계산 함수
-                      const calcAttrBonus = (enEarth: number, enWater: number, enFire: number, enWind: number) => {
+                      const calcAttrBonus = (
+                        enEarth: number,
+                        enWater: number,
+                        enFire: number,
+                        enWind: number
+                      ) => {
                         const enEarthPercent = enEarth * 10;
                         const enWaterPercent = enWater * 10;
                         const enFirePercent = enFire * 10;
                         const enWindPercent = enWind * 10;
-                        const enNone = 100 - (enEarthPercent + enWaterPercent + enFirePercent + enWindPercent);
+                        const enNone =
+                          100 - (enEarthPercent + enWaterPercent + enFirePercent + enWindPercent);
 
                         const fireDmg =
                           myFire * enNone * 1.5 +
@@ -2872,19 +2932,39 @@ const BattlePage: React.FC = () => {
                       let advantageAttr = '';
                       let advantageValues = { earth: 0, water: 0, fire: 0, wind: 0 };
 
-                      if (myEarth >= myWater && myEarth >= myFire && myEarth >= myWind && myEarth > 0) {
+                      if (
+                        myEarth >= myWater &&
+                        myEarth >= myFire &&
+                        myEarth >= myWind &&
+                        myEarth > 0
+                      ) {
                         // 지가 제일 많으면 → 수 속성을 잡아먹음
                         advantageAttr = '수10';
                         advantageValues = { earth: 0, water: 10, fire: 0, wind: 0 };
-                      } else if (myWater >= myEarth && myWater >= myFire && myWater >= myWind && myWater > 0) {
+                      } else if (
+                        myWater >= myEarth &&
+                        myWater >= myFire &&
+                        myWater >= myWind &&
+                        myWater > 0
+                      ) {
                         // 수가 제일 많으면 → 화 속성을 잡아먹음
                         advantageAttr = '화10';
                         advantageValues = { earth: 0, water: 0, fire: 10, wind: 0 };
-                      } else if (myFire >= myEarth && myFire >= myWater && myFire >= myWind && myFire > 0) {
+                      } else if (
+                        myFire >= myEarth &&
+                        myFire >= myWater &&
+                        myFire >= myWind &&
+                        myFire > 0
+                      ) {
                         // 화가 제일 많으면 → 풍 속성을 잡아먹음
                         advantageAttr = '풍10';
                         advantageValues = { earth: 0, water: 0, fire: 0, wind: 10 };
-                      } else if (myWind >= myEarth && myWind >= myWater && myWind >= myFire && myWind > 0) {
+                      } else if (
+                        myWind >= myEarth &&
+                        myWind >= myWater &&
+                        myWind >= myFire &&
+                        myWind > 0
+                      ) {
                         // 풍이 제일 많으면 → 지 속성을 잡아먹음
                         advantageAttr = '지10';
                         advantageValues = { earth: 10, water: 0, fire: 0, wind: 0 };
@@ -2909,7 +2989,9 @@ const BattlePage: React.FC = () => {
                         let charDefense;
                         if (opponentPetTgh > 0) {
                           // 페트 탑승 시: 캐릭터 실제 방어력 계산
-                          charDefense = Math.round((advantageDef / 0.7 - opponentPetTgh * 0.3) / 0.7);
+                          charDefense = Math.round(
+                            (advantageDef / 0.7 - opponentPetTgh * 0.3) / 0.7
+                          );
                         } else {
                           // 페트 없으면 기존 방식
                           charDefense = Math.round(advantageDef / 0.7);
@@ -2928,19 +3010,39 @@ const BattlePage: React.FC = () => {
                       let disadvantageAttr = '';
                       let disadvantageValues = { earth: 0, water: 0, fire: 0, wind: 0 };
 
-                      if (myEarth >= myWater && myEarth >= myFire && myEarth >= myWind && myEarth > 0) {
+                      if (
+                        myEarth >= myWater &&
+                        myEarth >= myFire &&
+                        myEarth >= myWind &&
+                        myEarth > 0
+                      ) {
                         // 지가 제일 많으면 → 풍 속성에 약함
                         disadvantageAttr = '풍10';
                         disadvantageValues = { earth: 0, water: 0, fire: 0, wind: 10 };
-                      } else if (myWater >= myEarth && myWater >= myFire && myWater >= myWind && myWater > 0) {
+                      } else if (
+                        myWater >= myEarth &&
+                        myWater >= myFire &&
+                        myWater >= myWind &&
+                        myWater > 0
+                      ) {
                         // 수가 제일 많으면 → 지 속성에 약함
                         disadvantageAttr = '지10';
                         disadvantageValues = { earth: 10, water: 0, fire: 0, wind: 0 };
-                      } else if (myFire >= myEarth && myFire >= myWater && myFire >= myWind && myFire > 0) {
+                      } else if (
+                        myFire >= myEarth &&
+                        myFire >= myWater &&
+                        myFire >= myWind &&
+                        myFire > 0
+                      ) {
                         // 화가 제일 많으면 → 수 속성에 약함
                         disadvantageAttr = '수10';
                         disadvantageValues = { earth: 0, water: 10, fire: 0, wind: 0 };
-                      } else if (myWind >= myEarth && myWind >= myWater && myWind >= myFire && myWind > 0) {
+                      } else if (
+                        myWind >= myEarth &&
+                        myWind >= myWater &&
+                        myWind >= myFire &&
+                        myWind > 0
+                      ) {
                         // 풍이 제일 많으면 → 화 속성에 약함
                         disadvantageAttr = '화10';
                         disadvantageValues = { earth: 0, water: 0, fire: 10, wind: 0 };
@@ -2961,7 +3063,9 @@ const BattlePage: React.FC = () => {
                       if (disadvantageDef >= 0) {
                         let charDefense;
                         if (opponentPetTgh > 0) {
-                          charDefense = Math.round((disadvantageDef / 0.7 - opponentPetTgh * 0.3) / 0.7);
+                          charDefense = Math.round(
+                            (disadvantageDef / 0.7 - opponentPetTgh * 0.3) / 0.7
+                          );
                         } else {
                           charDefense = Math.round(disadvantageDef / 0.7);
                         }
@@ -2988,7 +3092,8 @@ const BattlePage: React.FC = () => {
                       if (neutralValues.water > 0) neutralAttrs.push(`수${neutralValues.water}`);
                       if (neutralValues.fire > 0) neutralAttrs.push(`화${neutralValues.fire}`);
                       if (neutralValues.wind > 0) neutralAttrs.push(`풍${neutralValues.wind}`);
-                      const neutralAttr = neutralAttrs.length > 0 ? neutralAttrs.join('') : '무속성';
+                      const neutralAttr =
+                        neutralAttrs.length > 0 ? neutralAttrs.join('') : '무속성';
 
                       const neutralBonus = calcAttrBonus(
                         neutralValues.earth,
