@@ -3,6 +3,7 @@ import { useNavigate, useSearchParams } from 'react-router-dom';
 import ThemeToggle from '../components/ThemeToggle';
 
 type TabType = 'info' | 'calculator';
+type CalculatorSubTab = 'damage' | 'reverse';
 type AttributeType = 'fire' | 'water' | 'earth' | 'wind';
 
 interface CharacterStats {
@@ -62,6 +63,7 @@ const BattlePage: React.FC = () => {
     tabFromQuery === 'calculator' || tabFromQuery === 'info' ? tabFromQuery : 'info';
 
   const [activeTab, setActiveTab] = useState<TabType>(initialTab);
+  const [calculatorSubTab, setCalculatorSubTab] = useState<CalculatorSubTab>('damage');
 
   // 공격자/방어자 스탯 (로컬 스토리지에서 불러오기)
   const [attacker, setAttacker] = useState<CharacterStats>(() =>
@@ -70,6 +72,16 @@ const BattlePage: React.FC = () => {
   const [defender, setDefender] = useState<CharacterStats>(() =>
     loadStatsFromStorage(STORAGE_KEY_DEFENDER)
   );
+
+  // 역계산용 상태
+  const [reverseCalc, setReverseCalc] = useState({
+    myAttack: 0,
+    receivedDamage: 0,
+    myEarth: 0,
+    myWater: 0,
+    myFire: 0,
+    myWind: 0,
+  });
 
   // 탭 변경 시 URL 쿼리 업데이트
   useEffect(() => {
@@ -1880,7 +1892,34 @@ const BattlePage: React.FC = () => {
         {/* 계산기 탭 */}
         {activeTab === 'calculator' && (
           <div className="space-y-4">
-            {/* 공격자 입력 */}
+            {/* 서브탭 네비게이션 */}
+            <div className="flex gap-2 justify-center mb-4">
+              <button
+                onClick={() => setCalculatorSubTab('damage')}
+                className={`px-4 py-1.5 text-sm rounded-full transition-all ${
+                  calculatorSubTab === 'damage'
+                    ? 'bg-accent text-white font-bold shadow-lg'
+                    : 'bg-bg-tertiary text-text-secondary hover:bg-bg-secondary border border-border'
+                }`}
+              >
+                📊 데미지 계산
+              </button>
+              <button
+                onClick={() => setCalculatorSubTab('reverse')}
+                className={`px-4 py-1.5 text-sm rounded-full transition-all ${
+                  calculatorSubTab === 'reverse'
+                    ? 'bg-accent text-white font-bold shadow-lg'
+                    : 'bg-bg-tertiary text-text-secondary hover:bg-bg-secondary border border-border'
+                }`}
+              >
+                🔍 속성 및 방어 파악
+              </button>
+            </div>
+
+            {/* 데미지 계산 서브탭 */}
+            {calculatorSubTab === 'damage' && (
+              <>
+                {/* 공격자 입력 */}
             <div className="bg-bg-secondary rounded-lg p-4 md:p-5 border border-border shadow-lg">
               <h2 className="text-xl font-bold mb-4 text-red-500 flex items-center gap-2">
                 <span>🗡️</span> 공격
@@ -2262,6 +2301,386 @@ const BattlePage: React.FC = () => {
                 })()}
               </div>
             </div>
+              </>
+            )}
+
+            {/* 속성 파악 서브탭 (역계산) */}
+            {calculatorSubTab === 'reverse' && (
+              <div className="space-y-4">
+                {/* 입력 섹션 */}
+                <div className="bg-bg-secondary rounded-lg p-4 md:p-5 border border-border shadow-lg">
+                  <h2 className="text-xl font-bold mb-4 text-purple-500 flex items-center gap-2">
+                    <span>🔍</span> 역계산: 속성/방어력 추정
+                  </h2>
+                  <p className="text-sm text-text-secondary mb-4">
+                    내 공격력, 속성과 실제로 받은 데미지를 입력하면, 상대방의 대략적인 속성이나 방어력을 추정할 수 있습니다.
+                  </p>
+
+                  <div className="grid md:grid-cols-2 gap-4 mb-4">
+                    <div>
+                      <label className="block text-sm font-bold mb-1 text-text-secondary">
+                        내 공격력 (STR)
+                      </label>
+                      <input
+                        type="number"
+                        value={reverseCalc.myAttack}
+                        onChange={e =>
+                          setReverseCalc({ ...reverseCalc, myAttack: Number(e.target.value) })
+                        }
+                        className="w-full px-3 py-2 bg-bg-tertiary border border-border rounded text-text-primary"
+                        placeholder="예: 1500"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-bold mb-1 text-text-secondary">
+                        실제 받은 데미지
+                      </label>
+                      <input
+                        type="number"
+                        value={reverseCalc.receivedDamage}
+                        onChange={e =>
+                          setReverseCalc({
+                            ...reverseCalc,
+                            receivedDamage: Number(e.target.value),
+                          })
+                        }
+                        className="w-full px-3 py-2 bg-bg-tertiary border border-border rounded text-text-primary"
+                        placeholder="예: 800"
+                      />
+                    </div>
+                  </div>
+
+                  {/* 내 속성 입력 */}
+                  <div>
+                    <label className="block text-sm font-bold mb-2 text-text-secondary">
+                      내 속성 ({reverseCalc.myEarth + reverseCalc.myWater + reverseCalc.myFire + reverseCalc.myWind}/10)
+                    </label>
+                    <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+                      <div>
+                        <label className="block text-xs font-bold mb-1 text-green-500">지</label>
+                        <input
+                          type="number"
+                          min="0"
+                          max="10"
+                          value={reverseCalc.myEarth}
+                          onChange={e => {
+                            const val = Math.max(0, Math.min(10, Number(e.target.value)));
+                            const total = val + reverseCalc.myWater + reverseCalc.myFire + reverseCalc.myWind;
+                            if (total <= 10) {
+                              setReverseCalc({ ...reverseCalc, myEarth: val, myFire: 0 });
+                            }
+                          }}
+                          className="w-full px-3 py-2 bg-green-500 border border-green-500 rounded text-white font-bold"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-xs font-bold mb-1 text-blue-500">수</label>
+                        <input
+                          type="number"
+                          min="0"
+                          max="10"
+                          value={reverseCalc.myWater}
+                          onChange={e => {
+                            const val = Math.max(0, Math.min(10, Number(e.target.value)));
+                            const total = reverseCalc.myEarth + val + reverseCalc.myFire + reverseCalc.myWind;
+                            if (total <= 10) {
+                              setReverseCalc({ ...reverseCalc, myWater: val, myWind: 0 });
+                            }
+                          }}
+                          className="w-full px-3 py-2 bg-blue-500 border border-blue-500 rounded text-white font-bold"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-xs font-bold mb-1 text-red-500">화</label>
+                        <input
+                          type="number"
+                          min="0"
+                          max="10"
+                          value={reverseCalc.myFire}
+                          onChange={e => {
+                            const val = Math.max(0, Math.min(10, Number(e.target.value)));
+                            const total = reverseCalc.myEarth + reverseCalc.myWater + val + reverseCalc.myWind;
+                            if (total <= 10) {
+                              setReverseCalc({ ...reverseCalc, myFire: val, myEarth: 0 });
+                            }
+                          }}
+                          className="w-full px-3 py-2 bg-red-500 border border-red-500 rounded text-white font-bold"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-xs font-bold mb-1 text-yellow-500">풍</label>
+                        <input
+                          type="number"
+                          min="0"
+                          max="10"
+                          value={reverseCalc.myWind}
+                          onChange={e => {
+                            const val = Math.max(0, Math.min(10, Number(e.target.value)));
+                            const total = reverseCalc.myEarth + reverseCalc.myWater + reverseCalc.myFire + val;
+                            if (total <= 10) {
+                              setReverseCalc({ ...reverseCalc, myWind: val, myWater: 0 });
+                            }
+                          }}
+                          className="w-full px-3 py-2 bg-yellow-500 border border-yellow-500 rounded text-white font-bold"
+                        />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* 결과 섹션 */}
+                {reverseCalc.myAttack > 0 && reverseCalc.receivedDamage > 0 && (
+                  <div className="bg-bg-secondary rounded-lg p-4 md:p-5 border border-border shadow-lg">
+                    <h3 className="text-lg font-bold mb-4 text-accent">📊 추정 결과</h3>
+
+                    {(() => {
+                      const atk = reverseCalc.myAttack;
+                      const dmg = reverseCalc.receivedDamage;
+
+                      // 내 속성 계산
+                      const myFire = reverseCalc.myFire * 10;
+                      const myWater = reverseCalc.myWater * 10;
+                      const myEarth = reverseCalc.myEarth * 10;
+                      const myWind = reverseCalc.myWind * 10;
+                      const myNone = 100 - (myFire + myWater + myEarth + myWind);
+
+                      // 속성 보정 계산 함수
+                      const calcAttrBonus = (enEarth: number, enWater: number, enFire: number, enWind: number) => {
+                        const enEarthPercent = enEarth * 10;
+                        const enWaterPercent = enWater * 10;
+                        const enFirePercent = enFire * 10;
+                        const enWindPercent = enWind * 10;
+                        const enNone = 100 - (enEarthPercent + enWaterPercent + enFirePercent + enWindPercent);
+
+                        const fireDmg =
+                          myFire * enNone * 1.5 +
+                          myFire * enFirePercent * 1.0 +
+                          myFire * enWaterPercent * 0.6 +
+                          myFire * enEarthPercent * 1.0 +
+                          myFire * enWindPercent * 1.5;
+
+                        const waterDmg =
+                          myWater * enNone * 1.5 +
+                          myWater * enFirePercent * 1.5 +
+                          myWater * enWaterPercent * 1.0 +
+                          myWater * enEarthPercent * 0.6 +
+                          myWater * enWindPercent * 1.0;
+
+                        const earthDmg =
+                          myEarth * enNone * 1.5 +
+                          myEarth * enFirePercent * 0.6 +
+                          myEarth * enWaterPercent * 1.5 +
+                          myEarth * enEarthPercent * 1.0 +
+                          myEarth * enWindPercent * 1.0;
+
+                        const windDmg =
+                          myWind * enNone * 1.5 +
+                          myWind * enFirePercent * 1.0 +
+                          myWind * enWaterPercent * 1.0 +
+                          myWind * enEarthPercent * 1.5 +
+                          myWind * enWindPercent * 1.0;
+
+                        const noneDmg =
+                          myNone * enNone * 1.0 +
+                          myNone * enFirePercent * 0.6 +
+                          myNone * enWaterPercent * 0.6 +
+                          myNone * enEarthPercent * 0.6 +
+                          myNone * enWindPercent * 0.6;
+
+                        const total = fireDmg + waterDmg + earthDmg + windDmg + noneDmg;
+                        return total * 0.0001;
+                      };
+
+                      // 2가지 케이스: 상성 유리 vs 상성 불리
+                      const results = [];
+
+                      // 케이스 1: 내가 상대를 잡아먹는 경우 (속성 보정 최대)
+                      // 지 → 수 잡음, 수 → 화 잡음, 화 → 풍 잡음, 풍 → 지 잡음
+                      let advantageAttr = '';
+                      let advantageValues = { earth: 0, water: 0, fire: 0, wind: 0 };
+
+                      if (myEarth >= myWater && myEarth >= myFire && myEarth >= myWind && myEarth > 0) {
+                        // 지가 제일 많으면 → 수 속성을 잡아먹음
+                        advantageAttr = '수10';
+                        advantageValues = { earth: 0, water: 10, fire: 0, wind: 0 };
+                      } else if (myWater >= myEarth && myWater >= myFire && myWater >= myWind && myWater > 0) {
+                        // 수가 제일 많으면 → 화 속성을 잡아먹음
+                        advantageAttr = '화10';
+                        advantageValues = { earth: 0, water: 0, fire: 10, wind: 0 };
+                      } else if (myFire >= myEarth && myFire >= myWater && myFire >= myWind && myFire > 0) {
+                        // 화가 제일 많으면 → 풍 속성을 잡아먹음
+                        advantageAttr = '풍10';
+                        advantageValues = { earth: 0, water: 0, fire: 0, wind: 10 };
+                      } else if (myWind >= myEarth && myWind >= myWater && myWind >= myFire && myWind > 0) {
+                        // 풍이 제일 많으면 → 지 속성을 잡아먹음
+                        advantageAttr = '지10';
+                        advantageValues = { earth: 10, water: 0, fire: 0, wind: 0 };
+                      } else {
+                        // 무속성이면 → 아무 속성
+                        advantageAttr = '화10';
+                        advantageValues = { earth: 0, water: 0, fire: 10, wind: 0 };
+                      }
+
+                      const advantageBonus = calcAttrBonus(
+                        advantageValues.earth,
+                        advantageValues.water,
+                        advantageValues.fire,
+                        advantageValues.wind
+                      );
+                      const advantageDef = atk - dmg / (2.0 * advantageBonus);
+
+                      if (advantageDef >= 0) {
+                        results.push({
+                          case: '상성 유리 (내가 상대 속성을 잡는 경우)',
+                          defense: Math.round(advantageDef / 0.7),
+                          enemyAttr: advantageAttr,
+                          attrBonus: advantageBonus,
+                        });
+                      }
+
+                      // 케이스 2: 상대가 나를 잡아먹는 경우 (속성 보정 최소)
+                      // 지 ← 풍에 약함, 수 ← 지에 약함, 화 ← 수에 약함, 풍 ← 화에 약함
+                      let disadvantageAttr = '';
+                      let disadvantageValues = { earth: 0, water: 0, fire: 0, wind: 0 };
+
+                      if (myEarth >= myWater && myEarth >= myFire && myEarth >= myWind && myEarth > 0) {
+                        // 지가 제일 많으면 → 풍 속성에 약함
+                        disadvantageAttr = '풍10';
+                        disadvantageValues = { earth: 0, water: 0, fire: 0, wind: 10 };
+                      } else if (myWater >= myEarth && myWater >= myFire && myWater >= myWind && myWater > 0) {
+                        // 수가 제일 많으면 → 지 속성에 약함
+                        disadvantageAttr = '지10';
+                        disadvantageValues = { earth: 10, water: 0, fire: 0, wind: 0 };
+                      } else if (myFire >= myEarth && myFire >= myWater && myFire >= myWind && myFire > 0) {
+                        // 화가 제일 많으면 → 수 속성에 약함
+                        disadvantageAttr = '수10';
+                        disadvantageValues = { earth: 0, water: 10, fire: 0, wind: 0 };
+                      } else if (myWind >= myEarth && myWind >= myWater && myWind >= myFire && myWind > 0) {
+                        // 풍이 제일 많으면 → 화 속성에 약함
+                        disadvantageAttr = '화10';
+                        disadvantageValues = { earth: 0, water: 0, fire: 10, wind: 0 };
+                      } else {
+                        // 무속성이면 → 아무 속성
+                        disadvantageAttr = '화10';
+                        disadvantageValues = { earth: 0, water: 0, fire: 10, wind: 0 };
+                      }
+
+                      const disadvantageBonus = calcAttrBonus(
+                        disadvantageValues.earth,
+                        disadvantageValues.water,
+                        disadvantageValues.fire,
+                        disadvantageValues.wind
+                      );
+                      const disadvantageDef = atk - dmg / (2.0 * disadvantageBonus);
+
+                      if (disadvantageDef >= 0) {
+                        results.push({
+                          case: '상성 불리 (상대가 내 속성을 잡는 경우)',
+                          defense: Math.round(disadvantageDef / 0.7),
+                          enemyAttr: disadvantageAttr,
+                          attrBonus: disadvantageBonus,
+                        });
+                      }
+
+                      // 케이스 3: 속성이 같은 경우 (속성 보정 1.0배)
+                      // 내 속성과 완전히 동일한 상대
+                      const neutralValues = {
+                        earth: reverseCalc.myEarth,
+                        water: reverseCalc.myWater,
+                        fire: reverseCalc.myFire,
+                        wind: reverseCalc.myWind,
+                      };
+
+                      const neutralAttrs = [];
+                      if (neutralValues.earth > 0) neutralAttrs.push(`지${neutralValues.earth}`);
+                      if (neutralValues.water > 0) neutralAttrs.push(`수${neutralValues.water}`);
+                      if (neutralValues.fire > 0) neutralAttrs.push(`화${neutralValues.fire}`);
+                      if (neutralValues.wind > 0) neutralAttrs.push(`풍${neutralValues.wind}`);
+                      const neutralAttr = neutralAttrs.length > 0 ? neutralAttrs.join('') : '무속성';
+
+                      const neutralBonus = calcAttrBonus(
+                        neutralValues.earth,
+                        neutralValues.water,
+                        neutralValues.fire,
+                        neutralValues.wind
+                      );
+                      const neutralDef = atk - dmg / (2.0 * neutralBonus);
+
+                      if (neutralDef >= 0) {
+                        results.push({
+                          case: '상성 없음 (속성이 같은 경우)',
+                          defense: Math.round(neutralDef / 0.7),
+                          enemyAttr: neutralAttr,
+                          attrBonus: neutralBonus,
+                        });
+                      }
+
+                      return (
+                        <div className="space-y-4">
+                          {results.length > 0 ? (
+                            results.map((result, idx) => (
+                              <div
+                                key={idx}
+                                className={`p-4 rounded-lg border ${
+                                  idx === 0
+                                    ? 'bg-green-500/10 border-green-500/30'
+                                    : idx === 1
+                                      ? 'bg-red-500/10 border-red-500/30'
+                                      : 'bg-blue-500/10 border-blue-500/30'
+                                }`}
+                              >
+                                <div className="mb-2">
+                                  <h4 className="font-bold text-accent text-lg">{result.case}</h4>
+                                </div>
+                                <div className="text-sm space-y-2">
+                                  <p>
+                                    <span className="text-text-secondary">추정 방어력(TGH): </span>
+                                    <span className="font-bold text-blue-500 text-lg">
+                                      약 {result.defense}
+                                    </span>
+                                  </p>
+                                  <p>
+                                    <span className="text-text-secondary">상대 추정 속성: </span>
+                                    <span className="font-bold text-yellow-500 text-lg">
+                                      {result.enemyAttr}
+                                    </span>
+                                  </p>
+                                  <p>
+                                    <span className="text-text-secondary">속성 보정: </span>
+                                    <span className="font-bold text-purple-500 text-lg">
+                                      ×{result.attrBonus.toFixed(2)}
+                                    </span>
+                                  </p>
+                                </div>
+                              </div>
+                            ))
+                          ) : (
+                            <div className="text-center py-8 text-text-secondary">
+                              <p>입력값으로 추정할 수 있는 경우가 없습니다.</p>
+                              <p className="text-xs mt-2">
+                                공격력과 데미지 값을 다시 확인해주세요.
+                              </p>
+                            </div>
+                          )}
+
+                          <div className="mt-4 p-4 bg-blue-500/10 border border-blue-500/30 rounded">
+                            <h4 className="font-bold text-blue-500 mb-2">💡 참고사항</h4>
+                            <ul className="text-xs text-text-secondary space-y-1">
+                              <li>• 추정값은 근사치이며, 실제와 다를 수 있습니다</li>
+                              <li>• 크리티컬 데미지는 일반 데미지보다 높으므로 주의하세요</li>
+                              <li>• 여러 케이스가 나올 경우, 신뢰도가 높은 것을 우선 참고하세요</li>
+                              <li>
+                                • 속성 보정이 0.6배면 상성 불리, 1.5배면 상성 유리를 의미합니다
+                              </li>
+                            </ul>
+                          </div>
+                        </div>
+                      );
+                    })()}
+                  </div>
+                )}
+              </div>
+            )}
           </div>
         )}
       </div>
