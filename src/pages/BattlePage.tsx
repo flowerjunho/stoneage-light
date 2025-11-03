@@ -132,6 +132,19 @@ const BattlePage: React.FC = () => {
     return char.fire + char.water + char.earth + char.wind;
   };
 
+  // 공격자와 방어자 정보 스왑
+  const handleSwapAttackerDefender = () => {
+    // 스탯 스왑
+    const tempAttacker = { ...attacker };
+    setAttacker({ ...defender });
+    setDefender(tempAttacker);
+
+    // 페트 정보 스왑
+    const tempAttackerPet = attackerPet;
+    setAttackerPet(defenderPet);
+    setDefenderPet(tempAttackerPet);
+  };
+
   // 페트 레벨에 따른 스탯 계산 (역계산용)
   const calculatePetStatsFromData = (petId: string, petLevel: number) => {
     const pet = petDataJson.pets.find(p => p.id === petId);
@@ -2248,6 +2261,24 @@ const BattlePage: React.FC = () => {
                       </div>
                     )}
                   </div>
+                </div>
+
+                {/* 스왑 버튼 */}
+                <div className="flex justify-center -my-2 relative z-10">
+                  <button
+                    onClick={handleSwapAttackerDefender}
+                    className="group bg-gradient-to-r from-red-500 to-blue-500 hover:from-red-600 hover:to-blue-600 text-white font-bold p-3 rounded-full shadow-lg transform transition-all duration-300 hover:scale-110 active:scale-95"
+                    title="공격자와 방어자 정보 교환"
+                  >
+                    <svg
+                      className="w-6 h-6 transform group-hover:rotate-180 transition-transform duration-500"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16V4m0 0L3 8m4-4l4 4m6 0v12m0 0l4-4m-4 4l-4-4" />
+                    </svg>
+                  </button>
                 </div>
 
                 {/* 방어자 입력 */}
