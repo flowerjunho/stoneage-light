@@ -13,12 +13,14 @@ import QuestDetailPage from './pages/QuestDetailPage';
 import CalculatorPage from './pages/CalculatorPage';
 import BoardPage from './pages/BoardPage';
 import RadontaPage from './pages/RadontaPage';
+import BattlePage from './pages/BattlePage';
 import { VisitTracker } from './utils/visitTracker';
 
 const AppContent: React.FC = () => {
   const location = useLocation();
   const hideTabNavigation = location.pathname.includes('/quests/') && location.pathname !== '/quests';
   const isRadontaPage = location.pathname === '/radonta';
+  const isBattlePage = location.pathname === '/battle';
 
   // 앱 시작 시 방문자 추적
   useEffect(() => {
@@ -38,6 +40,15 @@ const AppContent: React.FC = () => {
     return (
       <Routes>
         <Route path="/radonta" element={<RadontaPage />} />
+      </Routes>
+    );
+  }
+
+  // 배틀 페이지는 레이아웃 없이 렌더링
+  if (isBattlePage) {
+    return (
+      <Routes>
+        <Route path="/battle" element={<BattlePage />} />
       </Routes>
     );
   }
