@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import ThemeToggle from '../components/ThemeToggle';
+import petDataJson from '../data/petData.json';
 
 type TabType = 'info' | 'calculator';
 type CalculatorSubTab = 'damage' | 'reverse';
@@ -16,6 +17,13 @@ interface CharacterStats {
   water: number;
   earth: number;
   wind: number;
+}
+
+interface PetStats {
+  str: number;
+  tgh: number;
+  dex: number;
+  hp: number;
 }
 
 const STORAGE_KEY_ATTACKER = 'stoneage_battle_attacker';
@@ -87,6 +95,16 @@ const BattlePage: React.FC = () => {
     myWind: 0,
   });
 
+  // 페트 탑승 상태
+  const [attackerPet, setAttackerPet] = useState<PetStats | null>(null);
+  const [defenderPet, setDefenderPet] = useState<PetStats | null>(null);
+
+  // 역계산용 페트 상태 (petId와 레벨 저장)
+  const [reverseOpponentPet, setReverseOpponentPet] = useState<{ petId: string; lv: number } | null>(null);
+
+  // 탑승 가능한 페트 목록
+  const rideablePets = petDataJson.pets.filter((pet) => pet.rideable === '탑승가능');
+
   // 탭 변경 시 URL 쿼리 업데이트
   useEffect(() => {
     const params: { tab: string; subTab?: string } = { tab: activeTab };
@@ -109,6 +127,37 @@ const BattlePage: React.FC = () => {
   // 속성 총합 계산
   const getAttributeTotal = (char: CharacterStats) => {
     return char.fire + char.water + char.earth + char.wind;
+  };
+
+  // 페트 레벨에 따른 스탯 계산 (역계산용)
+  const calculatePetStatsFromData = (petId: string, petLevel: number) => {
+    const pet = petDataJson.pets.find((p) => p.id === petId);
+    if (!pet) return null;
+
+    return {
+      str: Math.floor(pet.baseStats.attack + pet.growthStats.attack * petLevel),
+      tgh: Math.floor(pet.baseStats.defense + pet.growthStats.defense * petLevel),
+      dex: Math.floor(pet.baseStats.agility + pet.growthStats.agility * petLevel),
+      hp: Math.floor(pet.baseStats.vitality + pet.growthStats.vitality * petLevel),
+    };
+  };
+
+  // 탑승 시 최종 스탯 계산 (캐릭터 70% + 페트 30%)
+  const calculateRidingStats = (char: CharacterStats, petStats: PetStats | null) => {
+    if (!petStats) return char;
+
+    return {
+      lv: char.lv,
+      hp: Math.floor(char.hp * 0.7 + petStats.hp * 0.3),
+      str: Math.floor(char.str * 0.7 + petStats.str * 0.3),
+      tgh: Math.floor(char.tgh * 0.7 + petStats.tgh * 0.3),
+      dex: Math.floor(char.dex * 0.7 + petStats.dex * 0.3),
+      // 속성은 캐릭터의 속성을 따라감
+      fire: char.fire,
+      water: char.water,
+      earth: char.earth,
+      wind: char.wind,
+    };
   };
 
   // 속성 업데이트 핸들러 (대립 속성 체크)
@@ -311,19 +360,25 @@ const BattlePage: React.FC = () => {
 
   // 전체 데미지 계산
   const calculateDamage = (weaponType: 'melee' | 'ranged') => {
-    const atk = attacker.str;
-    const def = defender.tgh;
+    // 페트 탑승 시 스탯 적용
+    const finalAttacker = calculateRidingStats(attacker, attackerPet);
+    const finalDefender = calculateRidingStats(defender, defenderPet);
+
+    const atk = finalAttacker.str;
+    const def = finalDefender.tgh;
     const baseDamage = calculateBaseDamage(atk, def);
-    const attrBonus = calculateAttributeBonus(attacker, defender);
-    const critRate = calculateCriticalRate(attacker.dex, defender.dex);
-    const dodgeRate = weaponType === 'melee' ? calculateDodgeRate(attacker.dex, defender.dex, 0) : 0; // 근접 무기만 회피율 계산
+    const attrBonus = calculateAttributeBonus(finalAttacker, finalDefender);
+    const critRate = calculateCriticalRate(finalAttacker.dex, finalDefender.dex);
+    // 회피율: 근접은 기본, 원거리는 +20% 보너스
+    const baseDodgeRate = calculateDodgeRate(finalAttacker.dex, finalDefender.dex, 0);
+    const dodgeRate = weaponType === 'ranged' ? Math.min(baseDodgeRate + 20, 75) : baseDodgeRate;
 
     const finalMin = Math.round(baseDamage.min * attrBonus);
     const finalMax = Math.round(baseDamage.max * attrBonus);
     const finalAvg = Math.round(baseDamage.avg * attrBonus);
 
     // 방어력 계산 (TGH × 0.7)
-    const defenderDefense = defender.tgh * 0.7;
+    const defenderDefense = finalDefender.tgh * 0.7;
 
     return {
       baseDamage,
@@ -1677,6 +1732,28 @@ const BattlePage: React.FC = () => {
                       <p className="text-accent font-bold mt-2">최종 회피율: 36.6%</p>
                     </div>
                   </div>
+
+                  {/* 예시 4 - 원거리 무기 */}
+                  <div className="p-3 bg-purple-500/10 border border-purple-500/30 rounded">
+                    <h4 className="font-bold text-purple-500 mb-2">
+                      예시 4: 원거리 무기(활/석궁) 공격받을 때 🏹
+                    </h4>
+                    <div className="text-sm text-text-secondary space-y-1">
+                      <p>공격자 DEX: 180, 방어자 DEX: 200, 방어자 LUCK: 5</p>
+                      <p className="font-mono text-xs mt-2">
+                        1. 기본 회피율: 36.6% (예시 3과 동일)
+                      </p>
+                      <p className="font-mono text-xs">
+                        2. 원거리 무기 보너스: 36.6% + 20% = 56.6%
+                      </p>
+                      <p className="text-purple-400 font-bold mt-2">
+                        ✨ 최종 회피율: 56.6% (근접 대비 +20%)
+                      </p>
+                      <p className="text-xs text-yellow-400 mt-2">
+                        💡 원거리 무기는 회피하기 쉽습니다!
+                      </p>
+                    </div>
+                  </div>
                 </div>
               </div>
 
@@ -1690,7 +1767,7 @@ const BattlePage: React.FC = () => {
                       <p>• DEX 스탯 극대화 (가장 중요!)</p>
                       <p>• LUCK 스탯 투자 (플레이어 전용)</p>
                       <p>• 주술 커맨드 사용 (K값 0.02 → 0.027)</p>
-                      <p>• 활/석궁 상대 시 자동 +20% 보너스</p>
+                      <p>• <span className="text-yellow-400 font-bold">원거리 무기(활/석궁)로 공격받을 때 자동 +20% 보너스</span></p>
                     </div>
                   </div>
 
@@ -2066,6 +2143,93 @@ const BattlePage: React.FC = () => {
                   </div>
                 </div>
               </div>
+
+              {/* 페트 탑승 */}
+              <div className="mt-4 pt-4 border-t border-border">
+                <div className="flex items-center justify-between mb-3">
+                  <label className="block text-sm font-bold text-text-secondary">
+                    🐾 페트 탑승 (스탯 70% + 페트 30%)
+                  </label>
+                  {attackerPet && (
+                    <button
+                      onClick={() => setAttackerPet(null)}
+                      className="text-xs px-2 py-1 bg-red-500/20 text-red-500 rounded hover:bg-red-500/30"
+                    >
+                      해제
+                    </button>
+                  )}
+                </div>
+                {!attackerPet ? (
+                  <button
+                    onClick={() => setAttackerPet({ str: 0, tgh: 0, dex: 0, hp: 0 })}
+                    className="w-full px-3 py-2 bg-purple-500/20 text-purple-400 rounded hover:bg-purple-500/30 transition-colors text-sm"
+                  >
+                    + 페트 탑승 스탯 추가
+                  </button>
+                ) : (
+                  <div className="mt-3 p-3 bg-bg-tertiary rounded border border-border">
+                    <p className="font-bold text-purple-400 mb-3 text-sm">페트 스탯 입력:</p>
+                    <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+                      <div>
+                        <label className="block text-xs font-bold mb-1 text-text-secondary">
+                          공격력 (STR)
+                        </label>
+                        <input
+                          type="number"
+                          min="0"
+                          value={attackerPet.str}
+                          onChange={e =>
+                            setAttackerPet({ ...attackerPet, str: Number(e.target.value) })
+                          }
+                          className="w-full px-2 py-1 bg-bg-primary border border-border rounded text-text-primary text-sm"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-xs font-bold mb-1 text-text-secondary">
+                          방어력 (TGH)
+                        </label>
+                        <input
+                          type="number"
+                          min="0"
+                          value={attackerPet.tgh}
+                          onChange={e =>
+                            setAttackerPet({ ...attackerPet, tgh: Number(e.target.value) })
+                          }
+                          className="w-full px-2 py-1 bg-bg-primary border border-border rounded text-text-primary text-sm"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-xs font-bold mb-1 text-text-secondary">
+                          순발력 (DEX)
+                        </label>
+                        <input
+                          type="number"
+                          min="0"
+                          value={attackerPet.dex}
+                          onChange={e =>
+                            setAttackerPet({ ...attackerPet, dex: Number(e.target.value) })
+                          }
+                          className="w-full px-2 py-1 bg-bg-primary border border-border rounded text-text-primary text-sm"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-xs font-bold mb-1 text-text-secondary">
+                          내구력 (HP)
+                        </label>
+                        <input
+                          type="number"
+                          min="0"
+                          value={attackerPet.hp}
+                          onChange={e =>
+                            setAttackerPet({ ...attackerPet, hp: Number(e.target.value) })
+                          }
+                          className="w-full px-2 py-1 bg-bg-primary border border-border rounded text-text-primary text-sm"
+                        />
+                      </div>
+                    </div>
+                  </div>
+                )}
+              </div>
             </div>
 
             {/* 방어자 입력 */}
@@ -2207,6 +2371,93 @@ const BattlePage: React.FC = () => {
                   </div>
                 </div>
               </div>
+
+              {/* 페트 탑승 */}
+              <div className="mt-4 pt-4 border-t border-border">
+                <div className="flex items-center justify-between mb-3">
+                  <label className="block text-sm font-bold text-text-secondary">
+                    🐾 페트 탑승 (스탯 70% + 페트 30%)
+                  </label>
+                  {defenderPet && (
+                    <button
+                      onClick={() => setDefenderPet(null)}
+                      className="text-xs px-2 py-1 bg-red-500/20 text-red-500 rounded hover:bg-red-500/30"
+                    >
+                      해제
+                    </button>
+                  )}
+                </div>
+                {!defenderPet ? (
+                  <button
+                    onClick={() => setDefenderPet({ str: 0, tgh: 0, dex: 0, hp: 0 })}
+                    className="w-full px-3 py-2 bg-purple-500/20 text-purple-400 rounded hover:bg-purple-500/30 transition-colors text-sm"
+                  >
+                    + 페트 탑승 스탯 추가
+                  </button>
+                ) : (
+                  <div className="mt-3 p-3 bg-bg-tertiary rounded border border-border">
+                    <p className="font-bold text-purple-400 mb-3 text-sm">페트 스탯 입력:</p>
+                    <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+                      <div>
+                        <label className="block text-xs font-bold mb-1 text-text-secondary">
+                          공격력 (STR)
+                        </label>
+                        <input
+                          type="number"
+                          min="0"
+                          value={defenderPet.str}
+                          onChange={e =>
+                            setDefenderPet({ ...defenderPet, str: Number(e.target.value) })
+                          }
+                          className="w-full px-2 py-1 bg-bg-primary border border-border rounded text-text-primary text-sm"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-xs font-bold mb-1 text-text-secondary">
+                          방어력 (TGH)
+                        </label>
+                        <input
+                          type="number"
+                          min="0"
+                          value={defenderPet.tgh}
+                          onChange={e =>
+                            setDefenderPet({ ...defenderPet, tgh: Number(e.target.value) })
+                          }
+                          className="w-full px-2 py-1 bg-bg-primary border border-border rounded text-text-primary text-sm"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-xs font-bold mb-1 text-text-secondary">
+                          순발력 (DEX)
+                        </label>
+                        <input
+                          type="number"
+                          min="0"
+                          value={defenderPet.dex}
+                          onChange={e =>
+                            setDefenderPet({ ...defenderPet, dex: Number(e.target.value) })
+                          }
+                          className="w-full px-2 py-1 bg-bg-primary border border-border rounded text-text-primary text-sm"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-xs font-bold mb-1 text-text-secondary">
+                          내구력 (HP)
+                        </label>
+                        <input
+                          type="number"
+                          min="0"
+                          value={defenderPet.hp}
+                          onChange={e =>
+                            setDefenderPet({ ...defenderPet, hp: Number(e.target.value) })
+                          }
+                          className="w-full px-2 py-1 bg-bg-primary border border-border rounded text-text-primary text-sm"
+                        />
+                      </div>
+                    </div>
+                  </div>
+                )}
+              </div>
             </div>
 
             {/* 결과 표시 */}
@@ -2284,6 +2535,13 @@ const BattlePage: React.FC = () => {
                             {(result.critRate / 100).toFixed(2)}%
                           </span>
                         </div>
+                        <div className="flex justify-between">
+                          <span className="text-text-secondary">회피율:</span>
+                          <span className="font-bold text-green-500">
+                            {result.dodgeRate.toFixed(2)}%
+                            <span className="text-xs text-purple-400 ml-1">(+20% 보너스)</span>
+                          </span>
+                        </div>
                         <hr className="border-border" />
                         <div>
                           <div className="text-text-secondary mb-1">일반 데미지:</div>
@@ -2315,16 +2573,24 @@ const BattlePage: React.FC = () => {
             {/* 속성 파악 서브탭 (역계산) */}
             {calculatorSubTab === 'reverse' && (
               <div className="space-y-4">
-                {/* 입력 섹션 */}
-                <div className="bg-bg-secondary rounded-lg p-4 md:p-5 border border-border shadow-lg">
-                  <h2 className="text-xl font-bold mb-4 text-purple-500 flex items-center gap-2">
+                {/* 설명 */}
+                <div className="bg-bg-secondary rounded-lg p-4 border border-border">
+                  <h2 className="text-xl font-bold mb-2 text-purple-500 flex items-center gap-2">
                     <span>🔍</span> 역계산: 속성/방어력 추정
                   </h2>
-                  <p className="text-sm text-text-secondary mb-4">
+                  <p className="text-sm text-text-secondary">
                     내 공격력, 속성과 실제로 받은 데미지를 입력하면, 상대방의 대략적인 속성이나 방어력을 추정할 수 있습니다.
                   </p>
+                </div>
 
-                  <div className="grid md:grid-cols-2 gap-4 mb-4">
+                {/* 내 정보 (공격자) */}
+                <div className="bg-bg-secondary rounded-lg p-4 md:p-5 border border-border shadow-lg">
+                  <h3 className="text-lg font-bold mb-4 text-red-500 flex items-center gap-2">
+                    <span>⚔️</span> 내 정보 (공격자)
+                  </h3>
+
+                  <div className="space-y-4">
+                    {/* 내 공격력 */}
                     <div>
                       <label className="block text-sm font-bold mb-1 text-text-secondary">
                         내 공격력 (STR)
@@ -2339,6 +2605,94 @@ const BattlePage: React.FC = () => {
                         placeholder="예: 1500"
                       />
                     </div>
+
+                    {/* 내 속성 입력 */}
+                    <div>
+                      <label className="block text-sm font-bold mb-2 text-text-secondary">
+                        내 속성 ({reverseCalc.myEarth + reverseCalc.myWater + reverseCalc.myFire + reverseCalc.myWind}/10)
+                      </label>
+                      <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+                        <div>
+                          <label className="block text-xs font-bold mb-1 text-green-500">지</label>
+                          <input
+                            type="number"
+                            min="0"
+                            max="10"
+                            value={reverseCalc.myEarth}
+                            onChange={e => {
+                              const val = Math.max(0, Math.min(10, Number(e.target.value)));
+                              const total = val + reverseCalc.myWater + reverseCalc.myFire + reverseCalc.myWind;
+                              if (total <= 10) {
+                                setReverseCalc({ ...reverseCalc, myEarth: val, myFire: 0 });
+                              }
+                            }}
+                            className="w-full px-3 py-2 bg-green-500 border border-green-500 rounded text-white font-bold"
+                          />
+                        </div>
+                        <div>
+                          <label className="block text-xs font-bold mb-1 text-blue-500">수</label>
+                          <input
+                            type="number"
+                            min="0"
+                            max="10"
+                            value={reverseCalc.myWater}
+                            onChange={e => {
+                              const val = Math.max(0, Math.min(10, Number(e.target.value)));
+                              const total = reverseCalc.myEarth + val + reverseCalc.myFire + reverseCalc.myWind;
+                              if (total <= 10) {
+                                setReverseCalc({ ...reverseCalc, myWater: val, myWind: 0 });
+                              }
+                            }}
+                            className="w-full px-3 py-2 bg-blue-500 border border-blue-500 rounded text-white font-bold"
+                          />
+                        </div>
+                        <div>
+                          <label className="block text-xs font-bold mb-1 text-red-500">화</label>
+                          <input
+                            type="number"
+                            min="0"
+                            max="10"
+                            value={reverseCalc.myFire}
+                            onChange={e => {
+                              const val = Math.max(0, Math.min(10, Number(e.target.value)));
+                              const total = reverseCalc.myEarth + reverseCalc.myWater + val + reverseCalc.myWind;
+                              if (total <= 10) {
+                                setReverseCalc({ ...reverseCalc, myFire: val, myEarth: 0 });
+                              }
+                            }}
+                            className="w-full px-3 py-2 bg-red-500 border border-red-500 rounded text-white font-bold"
+                          />
+                        </div>
+                        <div>
+                          <label className="block text-xs font-bold mb-1 text-yellow-500">풍</label>
+                          <input
+                            type="number"
+                            min="0"
+                            max="10"
+                            value={reverseCalc.myWind}
+                            onChange={e => {
+                              const val = Math.max(0, Math.min(10, Number(e.target.value)));
+                              const total = reverseCalc.myEarth + reverseCalc.myWater + reverseCalc.myFire + val;
+                              if (total <= 10) {
+                                setReverseCalc({ ...reverseCalc, myWind: val, myWater: 0 });
+                              }
+                            }}
+                            className="w-full px-3 py-2 bg-yellow-500 border border-yellow-500 rounded text-white font-bold"
+                          />
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* 상대 정보 (방어자) */}
+                <div className="bg-bg-secondary rounded-lg p-4 md:p-5 border border-border shadow-lg">
+                  <h3 className="text-lg font-bold mb-4 text-blue-500 flex items-center gap-2">
+                    <span>🛡️</span> 상대 정보 (방어자)
+                  </h3>
+
+                  <div className="space-y-4">
+                    {/* 실제 받은 데미지 */}
                     <div>
                       <label className="block text-sm font-bold mb-1 text-text-secondary">
                         실제 받은 데미지
@@ -2356,94 +2710,105 @@ const BattlePage: React.FC = () => {
                         placeholder="예: 800"
                       />
                     </div>
-                  </div>
 
-                  {/* 내 속성 입력 */}
-                  <div>
-                    <label className="block text-sm font-bold mb-2 text-text-secondary">
-                      내 속성 ({reverseCalc.myEarth + reverseCalc.myWater + reverseCalc.myFire + reverseCalc.myWind}/10)
-                    </label>
-                    <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-                      <div>
-                        <label className="block text-xs font-bold mb-1 text-green-500">지</label>
-                        <input
-                          type="number"
-                          min="0"
-                          max="10"
-                          value={reverseCalc.myEarth}
-                          onChange={e => {
-                            const val = Math.max(0, Math.min(10, Number(e.target.value)));
-                            const total = val + reverseCalc.myWater + reverseCalc.myFire + reverseCalc.myWind;
-                            if (total <= 10) {
-                              setReverseCalc({ ...reverseCalc, myEarth: val, myFire: 0 });
-                            }
-                          }}
-                          className="w-full px-3 py-2 bg-green-500 border border-green-500 rounded text-white font-bold"
-                        />
+                    {/* 상대 페트 탑승 */}
+                    <div>
+                      <div className="flex items-center justify-between mb-3">
+                        <label className="block text-sm font-bold text-purple-400">
+                          🐾 상대 페트 탑승 (선택)
+                        </label>
+                        {reverseOpponentPet && (
+                          <button
+                            onClick={() => setReverseOpponentPet(null)}
+                            className="text-xs px-2 py-1 bg-red-500/20 text-red-500 rounded hover:bg-red-500/30"
+                          >
+                            해제
+                          </button>
+                        )}
                       </div>
-                      <div>
-                        <label className="block text-xs font-bold mb-1 text-blue-500">수</label>
-                        <input
-                          type="number"
-                          min="0"
-                          max="10"
-                          value={reverseCalc.myWater}
-                          onChange={e => {
-                            const val = Math.max(0, Math.min(10, Number(e.target.value)));
-                            const total = reverseCalc.myEarth + val + reverseCalc.myFire + reverseCalc.myWind;
-                            if (total <= 10) {
-                              setReverseCalc({ ...reverseCalc, myWater: val, myWind: 0 });
-                            }
-                          }}
-                          className="w-full px-3 py-2 bg-blue-500 border border-blue-500 rounded text-white font-bold"
-                        />
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                        <div>
+                          <label className="block text-xs font-bold mb-1 text-text-secondary">
+                            페트 선택
+                          </label>
+                          <select
+                            value={reverseOpponentPet?.petId || ''}
+                            onChange={e => {
+                              if (e.target.value) {
+                                setReverseOpponentPet({
+                                  petId: e.target.value,
+                                  lv: reverseOpponentPet?.lv || 140,
+                                });
+                              } else {
+                                setReverseOpponentPet(null);
+                              }
+                            }}
+                            className="w-full px-3 py-2 bg-bg-tertiary border border-border rounded text-text-primary"
+                          >
+                            <option value="">탑승 안함</option>
+                            {rideablePets.map(pet => (
+                              <option key={pet.id} value={pet.id}>
+                                {pet.name}
+                              </option>
+                            ))}
+                          </select>
+                        </div>
+                        {reverseOpponentPet && (
+                          <div>
+                            <label className="block text-xs font-bold mb-1 text-text-secondary">
+                              페트 레벨
+                            </label>
+                            <input
+                              type="number"
+                              min="1"
+                              max="140"
+                              value={reverseOpponentPet.lv}
+                              onChange={e =>
+                                setReverseOpponentPet({ ...reverseOpponentPet, lv: Number(e.target.value) })
+                              }
+                              className="w-full px-3 py-2 bg-bg-tertiary border border-border rounded text-text-primary"
+                            />
+                          </div>
+                        )}
                       </div>
-                      <div>
-                        <label className="block text-xs font-bold mb-1 text-red-500">화</label>
-                        <input
-                          type="number"
-                          min="0"
-                          max="10"
-                          value={reverseCalc.myFire}
-                          onChange={e => {
-                            const val = Math.max(0, Math.min(10, Number(e.target.value)));
-                            const total = reverseCalc.myEarth + reverseCalc.myWater + val + reverseCalc.myWind;
-                            if (total <= 10) {
-                              setReverseCalc({ ...reverseCalc, myFire: val, myEarth: 0 });
-                            }
-                          }}
-                          className="w-full px-3 py-2 bg-red-500 border border-red-500 rounded text-white font-bold"
-                        />
-                      </div>
-                      <div>
-                        <label className="block text-xs font-bold mb-1 text-yellow-500">풍</label>
-                        <input
-                          type="number"
-                          min="0"
-                          max="10"
-                          value={reverseCalc.myWind}
-                          onChange={e => {
-                            const val = Math.max(0, Math.min(10, Number(e.target.value)));
-                            const total = reverseCalc.myEarth + reverseCalc.myWater + reverseCalc.myFire + val;
-                            if (total <= 10) {
-                              setReverseCalc({ ...reverseCalc, myWind: val, myWater: 0 });
-                            }
-                          }}
-                          className="w-full px-3 py-2 bg-yellow-500 border border-yellow-500 rounded text-white font-bold"
-                        />
-                      </div>
+                      {reverseOpponentPet && (() => {
+                        const petStats = calculatePetStatsFromData(reverseOpponentPet.petId, reverseOpponentPet.lv);
+                        if (!petStats) return null;
+                        return (
+                          <div className="mt-3 p-3 bg-bg-tertiary rounded border border-border">
+                            <div className="text-xs text-text-secondary space-y-1">
+                              <p className="font-bold text-purple-400 mb-2">페트 스탯:</p>
+                              <div className="grid grid-cols-2 gap-2">
+                                <p>공격력: {petStats.str}</p>
+                                <p>방어력: {petStats.tgh}</p>
+                                <p>순발력: {petStats.dex}</p>
+                                <p>내구력: {petStats.hp}</p>
+                              </div>
+                            </div>
+                          </div>
+                        );
+                      })()}
                     </div>
                   </div>
                 </div>
 
                 {/* 결과 섹션 */}
-                {reverseCalc.myAttack > 0 && reverseCalc.receivedDamage > 0 && (
+                {(reverseCalc.myAttack > 0 || reverseCalc.receivedDamage > 0) && (
                   <div className="bg-bg-secondary rounded-lg p-4 md:p-5 border border-border shadow-lg">
                     <h3 className="text-lg font-bold mb-4 text-accent">📊 추정 결과</h3>
 
                     {(() => {
                       const atk = reverseCalc.myAttack;
                       const dmg = reverseCalc.receivedDamage;
+
+                      // 상대 페트 정보 가져오기
+                      let opponentPetTgh = 0;
+                      if (reverseOpponentPet) {
+                        const petStats = calculatePetStatsFromData(reverseOpponentPet.petId, reverseOpponentPet.lv);
+                        if (petStats) {
+                          opponentPetTgh = petStats.tgh;
+                        }
+                      }
 
                       // 내 속성 계산
                       const myFire = reverseCalc.myFire * 10;
@@ -2538,9 +2903,21 @@ const BattlePage: React.FC = () => {
                       const advantageDef = atk - dmg / (2.0 * advantageBonus);
 
                       if (advantageDef >= 0) {
+                        // advantageDef는 최종 방어력 (탑승 적용된 값)
+                        // 페트가 있으면: finalTgh = charTgh * 0.7 + petTgh * 0.3
+                        // 역으로 계산: charTgh = (finalTgh - petTgh * 0.3) / 0.7
+                        let charDefense;
+                        if (opponentPetTgh > 0) {
+                          // 페트 탑승 시: 캐릭터 실제 방어력 계산
+                          charDefense = Math.round((advantageDef / 0.7 - opponentPetTgh * 0.3) / 0.7);
+                        } else {
+                          // 페트 없으면 기존 방식
+                          charDefense = Math.round(advantageDef / 0.7);
+                        }
+
                         results.push({
                           case: '상성 유리 (내가 상대 속성을 잡는 경우)',
-                          defense: Math.round(advantageDef / 0.7),
+                          defense: charDefense,
                           enemyAttr: advantageAttr,
                           attrBonus: advantageBonus,
                         });
@@ -2582,9 +2959,16 @@ const BattlePage: React.FC = () => {
                       const disadvantageDef = atk - dmg / (2.0 * disadvantageBonus);
 
                       if (disadvantageDef >= 0) {
+                        let charDefense;
+                        if (opponentPetTgh > 0) {
+                          charDefense = Math.round((disadvantageDef / 0.7 - opponentPetTgh * 0.3) / 0.7);
+                        } else {
+                          charDefense = Math.round(disadvantageDef / 0.7);
+                        }
+
                         results.push({
                           case: '상성 불리 (상대가 내 속성을 잡는 경우)',
-                          defense: Math.round(disadvantageDef / 0.7),
+                          defense: charDefense,
                           enemyAttr: disadvantageAttr,
                           attrBonus: disadvantageBonus,
                         });
@@ -2615,9 +2999,16 @@ const BattlePage: React.FC = () => {
                       const neutralDef = atk - dmg / (2.0 * neutralBonus);
 
                       if (neutralDef >= 0) {
+                        let charDefense;
+                        if (opponentPetTgh > 0) {
+                          charDefense = Math.round((neutralDef / 0.7 - opponentPetTgh * 0.3) / 0.7);
+                        } else {
+                          charDefense = Math.round(neutralDef / 0.7);
+                        }
+
                         results.push({
                           case: '상성 없음 (속성이 같은 경우)',
-                          defense: Math.round(neutralDef / 0.7),
+                          defense: charDefense,
                           enemyAttr: neutralAttr,
                           attrBonus: neutralBonus,
                         });
