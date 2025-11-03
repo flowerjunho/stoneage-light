@@ -182,12 +182,37 @@ const BattlePage: React.FC = () => {
 
   // 크리티컬 확률 계산 (10000 단위, 실제 % = 결과 / 100)
   const calculateCriticalRate = (atkDex: number, defDex: number): number => {
-    const dexDiff = atkDex - defDex;
-    if (dexDiff <= 0) return 0;
+    const divpara = 3.5; // 플레이어 vs 플레이어 기본값
 
-    const work = dexDiff / 3.5;
-    const per = Math.sqrt(work) * 100; // 10000 단위 값
-    return Math.min(10000, per); // 최대 10000 (100%)
+    let big: number;
+    let small: number;
+    let wari: number;
+
+    if (atkDex >= defDex) {
+      big = atkDex;
+      small = defDex;
+      wari = 1.0;
+    } else {
+      big = defDex;
+      small = atkDex;
+      if (big <= 0) {
+        wari = 0.0;
+      } else {
+        wari = small / big;
+      }
+    }
+
+    const work = (big - small) / divpara;
+    if (work <= 0) return 0;
+
+    let per = Math.sqrt(work);
+    per *= wari;
+    per *= 100; // 10000 단위로 변환
+
+    if (per < 0) per = 1;
+    if (per > 10000) per = 10000;
+
+    return Math.floor(per);
   };
 
   // 기본 데미지 계산
