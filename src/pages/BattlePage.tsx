@@ -62,8 +62,12 @@ const BattlePage: React.FC = () => {
   const initialTab =
     tabFromQuery === 'calculator' || tabFromQuery === 'info' ? tabFromQuery : 'info';
 
+  const subTabFromQuery = searchParams.get('subTab') as CalculatorSubTab | null;
+  const initialSubTab =
+    subTabFromQuery === 'damage' || subTabFromQuery === 'reverse' ? subTabFromQuery : 'damage';
+
   const [activeTab, setActiveTab] = useState<TabType>(initialTab);
-  const [calculatorSubTab, setCalculatorSubTab] = useState<CalculatorSubTab>('damage');
+  const [calculatorSubTab, setCalculatorSubTab] = useState<CalculatorSubTab>(initialSubTab);
 
   // 공격자/방어자 스탯 (로컬 스토리지에서 불러오기)
   const [attacker, setAttacker] = useState<CharacterStats>(() =>
@@ -85,8 +89,12 @@ const BattlePage: React.FC = () => {
 
   // 탭 변경 시 URL 쿼리 업데이트
   useEffect(() => {
-    setSearchParams({ tab: activeTab }, { replace: true });
-  }, [activeTab, setSearchParams]);
+    const params: { tab: string; subTab?: string } = { tab: activeTab };
+    if (activeTab === 'calculator') {
+      params.subTab = calculatorSubTab;
+    }
+    setSearchParams(params, { replace: true });
+  }, [activeTab, calculatorSubTab, setSearchParams]);
 
   // 공격자 스탯이 변경될 때마다 로컬 스토리지에 저장
   useEffect(() => {
