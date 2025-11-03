@@ -58,13 +58,18 @@ const BattlePage: React.FC = () => {
 
   // URL 쿼리에서 탭 상태 가져오기
   const tabFromQuery = searchParams.get('tab') as TabType | null;
-  const initialTab = tabFromQuery === 'calculator' || tabFromQuery === 'info' ? tabFromQuery : 'info';
+  const initialTab =
+    tabFromQuery === 'calculator' || tabFromQuery === 'info' ? tabFromQuery : 'info';
 
   const [activeTab, setActiveTab] = useState<TabType>(initialTab);
 
   // 공격자/방어자 스탯 (로컬 스토리지에서 불러오기)
-  const [attacker, setAttacker] = useState<CharacterStats>(() => loadStatsFromStorage(STORAGE_KEY_ATTACKER));
-  const [defender, setDefender] = useState<CharacterStats>(() => loadStatsFromStorage(STORAGE_KEY_DEFENDER));
+  const [attacker, setAttacker] = useState<CharacterStats>(() =>
+    loadStatsFromStorage(STORAGE_KEY_ATTACKER)
+  );
+  const [defender, setDefender] = useState<CharacterStats>(() =>
+    loadStatsFromStorage(STORAGE_KEY_DEFENDER)
+  );
 
   // 탭 변경 시 URL 쿼리 업데이트
   useEffect(() => {
@@ -260,7 +265,7 @@ const BattlePage: React.FC = () => {
   };
 
   // 전체 데미지 계산
-  const calculateDamage = (weaponType: 'melee' | 'ranged') => {
+  const calculateDamage = () => {
     const atk = attacker.str;
     const def = defender.tgh;
     const baseDamage = calculateBaseDamage(atk, def);
