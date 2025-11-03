@@ -735,9 +735,9 @@ const DashboardPage: React.FC = () => {
         </div>
       </div>
 
-      {/* 캔버스 섹션 - 전체 화면 */}
-      <div className="px-8">
-        <div className="max-w-full">
+      {/* 캔버스 섹션 - 스크롤 가능 */}
+      <div className="px-8 overflow-auto">
+        <div style={{ width: '2000px', height: '2000px' }}>
           {/* 캔버스 영역 */}
           <div
             ref={canvasRef}
@@ -747,12 +747,12 @@ const DashboardPage: React.FC = () => {
             onMouseLeave={handleMouseUp}
             onTouchMove={handleTouchMove}
             onTouchEnd={handleTouchEnd}
-            className="relative w-full bg-bg-secondary border-2 border-border-primary rounded-lg overflow-hidden"
+            className="relative bg-bg-secondary border-2 border-border-primary rounded-lg"
             style={{
               cursor: dragging ? 'grabbing' : resizing ? 'nwse-resize' : 'default',
-              height: 'calc(100vh + 20px)', // 300px 더 늘림 (원래 100vh - 280px에서 +300px = 100vh + 20px)
-              minHeight: '800px', // 최소 높이도 늘림
-              touchAction: 'none' // 터치 스크롤 방지
+              width: '2000px',
+              height: '2000px',
+              touchAction: 'none' // 터치 드래그는 방지하되 스크롤은 부모에서 가능
             }}
           >
             {!selectedFolder ? (
