@@ -28,6 +28,8 @@ interface PetStats {
 
 const STORAGE_KEY_ATTACKER = 'stoneage_battle_attacker';
 const STORAGE_KEY_DEFENDER = 'stoneage_battle_defender';
+const STORAGE_KEY_ATTACKER_PET = 'stoneage_battle_attacker_pet';
+const STORAGE_KEY_DEFENDER_PET = 'stoneage_battle_defender_pet';
 
 const getDefaultStats = (): CharacterStats => ({
   lv: 140,
@@ -58,6 +60,30 @@ const saveStatsToStorage = (key: string, stats: CharacterStats) => {
     localStorage.setItem(key, JSON.stringify(stats));
   } catch (error) {
     console.error('Failed to save stats to storage:', error);
+  }
+};
+
+const loadPetStatsFromStorage = (key: string): PetStats | null => {
+  try {
+    const stored = localStorage.getItem(key);
+    if (stored) {
+      return JSON.parse(stored);
+    }
+  } catch (error) {
+    console.error('Failed to load pet stats from storage:', error);
+  }
+  return null;
+};
+
+const savePetStatsToStorage = (key: string, petStats: PetStats | null) => {
+  try {
+    if (petStats === null) {
+      localStorage.removeItem(key);
+    } else {
+      localStorage.setItem(key, JSON.stringify(petStats));
+    }
+  } catch (error) {
+    console.error('Failed to save pet stats to storage:', error);
   }
 };
 
@@ -95,9 +121,13 @@ const BattlePage: React.FC = () => {
     myWind: 0,
   });
 
-  // 페트 탑승 상태
-  const [attackerPet, setAttackerPet] = useState<PetStats | null>(null);
-  const [defenderPet, setDefenderPet] = useState<PetStats | null>(null);
+  // 페트 탑승 상태 (로컬 스토리지에서 불러오기)
+  const [attackerPet, setAttackerPet] = useState<PetStats | null>(() =>
+    loadPetStatsFromStorage(STORAGE_KEY_ATTACKER_PET)
+  );
+  const [defenderPet, setDefenderPet] = useState<PetStats | null>(() =>
+    loadPetStatsFromStorage(STORAGE_KEY_DEFENDER_PET)
+  );
 
   // 역계산용 페트 상태 (petId와 레벨 저장)
   const [reverseOpponentPet, setReverseOpponentPet] = useState<{
@@ -126,6 +156,16 @@ const BattlePage: React.FC = () => {
   useEffect(() => {
     saveStatsToStorage(STORAGE_KEY_DEFENDER, defender);
   }, [defender]);
+
+  // 공격자 페트 스탯이 변경될 때마다 로컬 스토리지에 저장
+  useEffect(() => {
+    savePetStatsToStorage(STORAGE_KEY_ATTACKER_PET, attackerPet);
+  }, [attackerPet]);
+
+  // 방어자 페트 스탯이 변경될 때마다 로컬 스토리지에 저장
+  useEffect(() => {
+    savePetStatsToStorage(STORAGE_KEY_DEFENDER_PET, defenderPet);
+  }, [defenderPet]);
 
   // 속성 총합 계산
   const getAttributeTotal = (char: CharacterStats) => {
@@ -1906,8 +1946,7 @@ const BattlePage: React.FC = () => {
 
                 <div className="mt-4 p-3 bg-yellow-500/10 border border-yellow-500/30 rounded text-sm">
                   <strong>💡 핵심:</strong> 방어 커맨드 사용 시{' '}
-                  <strong>50%는 90% 이상 데미지 감소!</strong> (25% 완전방어 + 25% 슈퍼방어) 단,
-                  최소 데미지는 1
+                  <strong>50%는 90% 이상 데미지 감소!</strong> (25% 완전방어 + 25% 슈퍼방어)
                 </div>
               </div>
 
