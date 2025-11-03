@@ -265,13 +265,13 @@ const BattlePage: React.FC = () => {
   };
 
   // 전체 데미지 계산
-  const calculateDamage = () => {
+  const calculateDamage = (weaponType: 'melee' | 'ranged') => {
     const atk = attacker.str;
     const def = defender.tgh;
     const baseDamage = calculateBaseDamage(atk, def);
     const attrBonus = calculateAttributeBonus(attacker, defender);
     const critRate = calculateCriticalRate(attacker.dex, defender.dex);
-    const dodgeRate = calculateDodgeRate(attacker.dex, defender.dex, 0); // LUCK은 0으로 설정 (플레이어만 해당)
+    const dodgeRate = weaponType === 'melee' ? calculateDodgeRate(attacker.dex, defender.dex, 0) : 0; // 근접 무기만 회피율 계산
 
     const finalMin = Math.round(baseDamage.min * attrBonus);
     const finalMax = Math.round(baseDamage.max * attrBonus);
