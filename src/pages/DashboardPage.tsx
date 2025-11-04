@@ -12,6 +12,18 @@ interface CanvasImage {
   aspectRatio?: number; // 이미지의 가로/세로 비율 (width/height)
 }
 
+interface CanvasText {
+  id: string;
+  text: string;
+  x: number;
+  y: number;
+  width: number;
+  height: number;
+  zIndex: number;
+  fontSize: number;
+  color: string;
+}
+
 interface ServerImage {
   filename: string;
   folder: string | null;
@@ -36,7 +48,10 @@ const DashboardPage: React.FC = () => {
 
   // 캔버스 관련 상태
   const [canvasImages, setCanvasImages] = useState<CanvasImage[]>([]);
+  const [canvasTexts, setCanvasTexts] = useState<CanvasText[]>([]);
   const [selectedImageId, setSelectedImageId] = useState<string | null>(null);
+  const [selectedTextId, setSelectedTextId] = useState<string | null>(null);
+  const [editingTextId, setEditingTextId] = useState<string | null>(null);
   const [dragging, setDragging] = useState(false);
   const [resizing, setResizing] = useState(false);
   const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 });
@@ -218,9 +233,41 @@ const DashboardPage: React.FC = () => {
       const folderImages = await Promise.all(folderImagesPromises);
       setCanvasImages(folderImages);
       console.log(`Loaded ${folderImages.length} images from folder "${folderName}"`);
+
+      // 4. 텍스트 데이터 로드
+      const textsResponse = await fetch(`${serverUrl}/texts?folder=${folderName}`);
+      if (textsResponse.ok) {
+        const textsData = await textsResponse.json();
+        const textsObj = textsData.texts || {};
+
+        // Object를 array로 변환
+        const folderTexts = (Object.values(textsObj) as Array<{
+          id?: string;
+          content?: string;
+          x?: number;
+          y?: number;
+          width?: number;
+          height?: number;
+        }>).map((t, index) => ({
+          id: t.id || `text-${Date.now()}-${index}`,
+          text: t.content || '',
+          x: t.x ?? 100,
+          y: t.y ?? 100,
+          width: t.width ?? 200,
+          height: t.height ?? 100,
+          zIndex: folderImages.length + index,
+          fontSize: 16,
+          color: '#000000',
+        }));
+        setCanvasTexts(folderTexts);
+        console.log(`Loaded ${folderTexts.length} texts from folder "${folderName}"`);
+      } else {
+        setCanvasTexts([]);
+      }
     } catch (err) {
       console.error('Error loading folder images:', err);
       setCanvasImages([]);
+      setCanvasTexts([]);
     }
   };
 
@@ -278,6 +325,113 @@ const DashboardPage: React.FC = () => {
     }
   };
 
+  // 텍스트 박스 추가 (POST로 생성)
+  const addTextToCanvas = async () => {
+    if (!selectedFolder) {
+      console.log('No folder selected');
+      return;
+    }
+
+    const textData = {
+      folder: selectedFolder,
+      content: '텍스트를 입력하세요',
+      x: 100,
+      y: 100,
+      width: 200,
+      height: 100,
+    };
+
+    console.log('Creating text:', textData);
+
+    try {
+      const response = await fetch(`${serverUrl}/texts`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(textData),
+      });
+
+      console.log('Response status:', response.status);
+
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.error('Failed to create text:', errorText);
+        alert(`텍스트 생성 실패: ${errorText}`);
+        return;
+      }
+
+      const result = await response.json();
+      console.log('Server response:', result);
+      const createdText = result.text;
+
+      const newText: CanvasText = {
+        id: createdText.id,
+        text: createdText.content,
+        x: createdText.x,
+        y: createdText.y,
+        width: createdText.width,
+        height: createdText.height,
+        zIndex: canvasImages.length + canvasTexts.length,
+        fontSize: 16,
+        color: '#000000',
+      };
+
+      setCanvasTexts([...canvasTexts, newText]);
+      setSelectedTextId(newText.id);
+      setEditingTextId(newText.id);
+      console.log('Text created successfully:', newText.id);
+    } catch (err) {
+      console.error('Error creating text:', err);
+      alert(`텍스트 생성 중 오류 발생: ${err}`);
+    }
+  };
+
+  // 텍스트 위치/크기 저장 (POST로 업데이트)
+  const saveTextPosition = async (text: CanvasText) => {
+    if (!selectedFolder) return;
+
+    const textData = {
+      folder: selectedFolder,
+      content: text.text,
+      x: text.x,
+      y: text.y,
+      width: text.width,
+      height: text.height,
+    };
+
+    try {
+      const response = await fetch(`${serverUrl}/texts/update/${text.id}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(textData),
+      });
+
+      if (!response.ok) {
+        console.error('Failed to save text:', await response.text());
+      }
+
+      console.log('Text saved:', text.id);
+    } catch (err) {
+      console.error('Error saving text:', err);
+    }
+  };
+
+  // 텍스트 삭제
+  const removeText = async (textId: string) => {
+    if (!selectedFolder) return;
+
+    try {
+      await fetch(`${serverUrl}/texts/${textId}?folder=${selectedFolder}`, {
+        method: 'DELETE',
+      });
+
+      setCanvasTexts(canvasTexts.filter(t => t.id !== textId));
+      setSelectedTextId(null);
+      setMenuOpenId(null);
+    } catch (err) {
+      console.error('Error removing text:', err);
+    }
+  };
+
   // 캔버스에 이미지 추가 (새로 업로드된 이미지)
   const addImageToCanvas = (imageUrl: string) => {
     // 이미지를 로드하여 실제 비율 계산
@@ -320,6 +474,7 @@ const DashboardPage: React.FC = () => {
 
     const { x, y } = getClientPosition(e);
     setSelectedImageId(imageId);
+    setSelectedTextId(null);
     setDragging(true);
     setDragOffset({
       x: x - image.x,
@@ -327,6 +482,24 @@ const DashboardPage: React.FC = () => {
     });
     // 드래그 시작 위치 저장
     setDragStartPos({ x: image.x, y: image.y });
+  };
+
+  // 텍스트 드래그 시작 (마우스)
+  const handleTextMouseDown = (e: React.MouseEvent, textId: string) => {
+    if (editingTextId === textId) return; // 편집 중이면 드래그 안됨
+
+    const text = canvasTexts.find(t => t.id === textId);
+    if (!text) return;
+
+    const { x, y } = getClientPosition(e);
+    setSelectedTextId(textId);
+    setSelectedImageId(null);
+    setDragging(true);
+    setDragOffset({
+      x: x - text.x,
+      y: y - text.y,
+    });
+    setDragStartPos({ x: text.x, y: text.y });
   };
 
   // 이미지 드래그 시작 (터치)
@@ -381,20 +554,36 @@ const DashboardPage: React.FC = () => {
     });
   };
 
-  // 이미지 드래그 중 또는 리사이즈 중 (마우스)
+  // 텍스트 리사이즈 시작
+  const handleTextResizeStart = (e: React.MouseEvent, textId: string) => {
+    e.stopPropagation();
+    const text = canvasTexts.find(t => t.id === textId);
+    if (!text) return;
+
+    const { x, y } = getClientPosition(e);
+    setSelectedTextId(textId);
+    setResizing(true);
+    setResizeStart({
+      x,
+      y,
+      width: text.width,
+      height: text.height,
+    });
+  };
+
+  // 이미지/텍스트 드래그 중 또는 리사이즈 중 (마우스)
   const handleMouseMove = (e: React.MouseEvent) => {
     const { x, y } = getClientPosition(e);
 
     if (resizing && selectedImageId) {
-      // 리사이즈 중
+      // 이미지 리사이즈 중
       const deltaX = x - resizeStart.x;
       const deltaY = y - resizeStart.y;
-      const delta = Math.max(deltaX, deltaY); // 대각선 방향으로 크기 조절
+      const delta = Math.max(deltaX, deltaY);
 
       setCanvasImages(canvasImages.map(img => {
         if (img.id === selectedImageId) {
           const newWidth = Math.max(50, resizeStart.width + delta);
-          // aspectRatio가 있으면 비율을 유지하면서 높이 계산
           const newHeight = img.aspectRatio
             ? newWidth / img.aspectRatio
             : Math.max(50, resizeStart.height + delta);
@@ -407,8 +596,24 @@ const DashboardPage: React.FC = () => {
         }
         return img;
       }));
+    } else if (resizing && selectedTextId) {
+      // 텍스트 리사이즈 중
+      const deltaX = x - resizeStart.x;
+      const deltaY = y - resizeStart.y;
+      const delta = Math.max(deltaX, deltaY);
+
+      setCanvasTexts(canvasTexts.map(text => {
+        if (text.id === selectedTextId) {
+          return {
+            ...text,
+            width: Math.max(100, resizeStart.width + delta),
+            height: Math.max(50, resizeStart.height + delta),
+          };
+        }
+        return text;
+      }));
     } else if (dragging && selectedImageId) {
-      // 드래그 중
+      // 이미지 드래그 중
       const newX = x - dragOffset.x;
       const newY = y - dragOffset.y;
 
@@ -416,6 +621,16 @@ const DashboardPage: React.FC = () => {
         img.id === selectedImageId
           ? { ...img, x: newX, y: newY }
           : img
+      ));
+    } else if (dragging && selectedTextId) {
+      // 텍스트 드래그 중
+      const newX = x - dragOffset.x;
+      const newY = y - dragOffset.y;
+
+      setCanvasTexts(canvasTexts.map(text =>
+        text.id === selectedTextId
+          ? { ...text, x: newX, y: newY }
+          : text
       ));
     }
   };
@@ -462,19 +677,16 @@ const DashboardPage: React.FC = () => {
     }
   };
 
-  // 이미지 드래그 종료
+  // 드래그/리사이즈 종료
   const handleMouseUp = () => {
     if (selectedImageId) {
       const image = canvasImages.find(img => img.id === selectedImageId);
       if (image) {
         let shouldSave = false;
 
-        // 리사이즈는 항상 저장
         if (resizing) {
           shouldSave = true;
-        }
-        // 드래그는 5px 이상 이동했을 때만 저장
-        else if (dragging && dragStartPos) {
+        } else if (dragging && dragStartPos) {
           const deltaX = Math.abs(image.x - dragStartPos.x);
           const deltaY = Math.abs(image.y - dragStartPos.y);
           const distance = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
@@ -488,6 +700,27 @@ const DashboardPage: React.FC = () => {
           saveImagePosition(image);
         }
       }
+    } else if (selectedTextId) {
+      const text = canvasTexts.find(t => t.id === selectedTextId);
+      if (text) {
+        let shouldSave = false;
+
+        if (resizing) {
+          shouldSave = true;
+        } else if (dragging && dragStartPos) {
+          const deltaX = Math.abs(text.x - dragStartPos.x);
+          const deltaY = Math.abs(text.y - dragStartPos.y);
+          const distance = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
+
+          if (distance >= 5) {
+            shouldSave = true;
+          }
+        }
+
+        if (shouldSave) {
+          saveTextPosition(text);
+        }
+      }
     }
 
     setDragging(false);
@@ -497,14 +730,15 @@ const DashboardPage: React.FC = () => {
 
   // 터치 종료
   const handleTouchEnd = () => {
-    handleMouseUp(); // 마우스 종료와 동일한 로직
+    handleMouseUp();
   };
 
   // 캔버스 클릭 (빈 영역)
   const handleCanvasClick = (e: React.MouseEvent) => {
-    // 캔버스 자체를 클릭한 경우에만 선택 해제
     if (e.target === e.currentTarget) {
       setSelectedImageId(null);
+      setSelectedTextId(null);
+      setEditingTextId(null);
       setMenuOpenId(null);
     }
   };
@@ -614,8 +848,25 @@ const DashboardPage: React.FC = () => {
           <div className="mb-6">
             <h1 className="text-3xl font-bold mb-4">명가 듀얼 이미지 대시보드</h1>
 
-            {/* 이미지 업로드 아이콘 버튼 (오른쪽 정렬) */}
-            <div className="flex justify-end">
+            {/* 이미지 업로드 & 텍스트 추가 버튼 (오른쪽 정렬) */}
+            <div className="flex justify-end gap-2">
+              {/* 텍스트 추가 버튼 */}
+              <button
+                onClick={addTextToCanvas}
+                disabled={!selectedFolder}
+                className={`w-10 h-10 rounded-full flex items-center justify-center transition-all ${
+                  !selectedFolder
+                    ? 'bg-gray-400 cursor-not-allowed'
+                    : 'bg-green-600 hover:bg-green-700 hover:scale-110'
+                }`}
+                title="텍스트 추가"
+              >
+                <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                </svg>
+              </button>
+
+              {/* 이미지 업로드 버튼 */}
               <label className="relative cursor-pointer group">
                 <input
                   type="file"
@@ -820,12 +1071,14 @@ const DashboardPage: React.FC = () => {
               <div className="absolute inset-0 flex items-center justify-center text-text-secondary">
                 폴더를 선택해주세요
               </div>
-            ) : canvasImages.length === 0 ? (
+            ) : canvasImages.length === 0 && canvasTexts.length === 0 ? (
               <div className="absolute inset-0 flex items-center justify-center text-text-secondary">
-                이미지를 업로드하여 캔버스에 추가하세요
+                이미지를 업로드하거나 텍스트를 추가하세요
               </div>
             ) : (
-              canvasImages.map((img) => (
+              <>
+              {/* 이미지 렌더링 */}
+              {canvasImages.map((img) => (
                 <div
                   key={img.id}
                   onMouseDown={(e) => handleMouseDown(e, img.id)}
@@ -895,7 +1148,104 @@ const DashboardPage: React.FC = () => {
                     />
                   )}
                 </div>
-              ))
+              ))}
+
+              {/* 텍스트 렌더링 */}
+              {canvasTexts.map((text) => (
+                <div
+                  key={text.id}
+                  onMouseDown={(e) => handleTextMouseDown(e, text.id)}
+                  className={`absolute cursor-move ${
+                    selectedTextId === text.id ? 'ring-2 ring-green-500' : ''
+                  }`}
+                  style={{
+                    left: `${text.x}px`,
+                    top: `${text.y}px`,
+                    width: `${text.width}px`,
+                    height: `${text.height}px`,
+                    zIndex: text.zIndex,
+                  }}
+                >
+                  {editingTextId === text.id ? (
+                    <textarea
+                      autoFocus
+                      value={text.text}
+                      onChange={(e) => {
+                        const newText = e.target.value;
+                        setCanvasTexts(canvasTexts.map(t =>
+                          t.id === text.id ? { ...t, text: newText } : t
+                        ));
+                      }}
+                      onBlur={() => {
+                        setEditingTextId(null);
+                        saveTextPosition(text);
+                      }}
+                      className="w-full h-full p-2 bg-white border-2 border-green-500 rounded resize-none focus:outline-none"
+                      style={{
+                        fontSize: `${text.fontSize}px`,
+                        color: text.color,
+                      }}
+                    />
+                  ) : (
+                    <div
+                      onDoubleClick={() => setEditingTextId(text.id)}
+                      className="w-full h-full p-2 bg-white/90 border border-gray-300 rounded overflow-auto whitespace-pre-wrap break-words"
+                      style={{
+                        fontSize: `${text.fontSize}px`,
+                        color: text.color,
+                      }}
+                    >
+                      {text.text}
+                    </div>
+                  )}
+
+                  {/* ... 메뉴 버튼 (텍스트 중앙, 선택된 경우에만 표시) */}
+                  {selectedTextId === text.id && !editingTextId && (
+                    <>
+                      <button
+                        onClick={(e) => toggleMenu(e, text.id)}
+                        className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-10 h-10 bg-gray-700/90 hover:bg-gray-600 text-white rounded-full flex items-center justify-center shadow-lg z-10"
+                      >
+                        ⋮
+                      </button>
+
+                      {menuOpenId === text.id && (
+                        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 translate-y-6 bg-bg-primary border border-border-primary rounded shadow-lg overflow-hidden z-20">
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              setEditingTextId(text.id);
+                              setMenuOpenId(null);
+                            }}
+                            className="w-full px-4 py-2 text-left hover:bg-bg-secondary transition-colors text-sm whitespace-nowrap"
+                          >
+                            편집
+                          </button>
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              removeText(text.id);
+                            }}
+                            className="w-full px-4 py-2 text-left hover:bg-bg-secondary transition-colors text-sm text-red-500"
+                          >
+                            삭제
+                          </button>
+                        </div>
+                      )}
+                    </>
+                  )}
+
+                  {/* 리사이즈 핸들 (오른쪽 하단) */}
+                  {selectedTextId === text.id && !editingTextId && (
+                    <div
+                      onMouseDown={(e) => handleTextResizeStart(e, text.id)}
+                      className="absolute -bottom-1 -right-1 w-6 h-6 bg-green-500 rounded-full cursor-nwse-resize hover:bg-green-400 shadow-lg z-10"
+                      style={{ cursor: 'nwse-resize' }}
+                    />
+                  )}
+                </div>
+              ))}
+              </>
             )}
             </div>
           </div>
