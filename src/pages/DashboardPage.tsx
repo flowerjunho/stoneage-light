@@ -64,6 +64,9 @@ const DashboardPage: React.FC = () => {
   const [canvasZoom, setCanvasZoom] = useState(1);
   const canvasContainerRef = useRef<HTMLDivElement>(null);
 
+  // 클립보드 상태 (복사된 이미지 정보)
+  const [copiedImageUrl, setCopiedImageUrl] = useState<string | null>(null);
+
   // 폴더 목록 불러오기
   const fetchFolders = async () => {
     try {
@@ -799,6 +802,56 @@ const DashboardPage: React.FC = () => {
     setMenuOpenId(null);
   };
 
+  // 이미지 복사 (다른 폴더로 복사하기 위한 기능)
+  const copyImageForPaste = (imageUrl: string) => {
+    setCopiedImageUrl(imageUrl);
+    alert('이미지가 복사되었습니다! 다른 폴더에서 붙여넣기하세요.');
+    setMenuOpenId(null);
+  };
+
+  // 이미지 붙여넣기 (복사한 이미지를 현재 폴더에 업로드)
+  const pasteImage = async () => {
+    if (!copiedImageUrl || !selectedFolder) return;
+
+    try {
+      // 복사된 이미지 URL에서 이미지를 다운로드
+      const response = await fetch(copiedImageUrl);
+      const blob = await response.blob();
+
+      // 파일명 추출 및 고유한 이름 생성
+      const originalFilename = copiedImageUrl.split('/').pop() || 'image.jpg';
+      const extension = originalFilename.split('.').pop();
+      const nameWithoutExt = originalFilename.replace(`.${extension}`, '');
+      const timestamp = Date.now();
+      const newFilename = `${nameWithoutExt}_${timestamp}.${extension}`;
+
+      // FormData 생성
+      const formData = new FormData();
+      formData.append('image', blob, newFilename);
+
+      // 현재 폴더에 업로드
+      const uploadResponse = await fetch(`${serverUrl}/upload?folder=${selectedFolder}`, {
+        method: 'POST',
+        body: formData,
+      });
+
+      if (!uploadResponse.ok) {
+        throw new Error('이미지 업로드 실패');
+      }
+
+      const data = await uploadResponse.json();
+
+      // 업로드된 이미지를 캔버스에 추가
+      addImageToCanvas(data.data.url);
+
+      alert('이미지가 붙여넣기되었습니다!');
+      setCopiedImageUrl(null); // 붙여넣기 후 클립보드 초기화
+    } catch (err) {
+      console.error('Error pasting image:', err);
+      alert('이미지 붙여넣기 중 오류가 발생했습니다.');
+    }
+  };
+
   // 메뉴 토글
   const toggleMenu = (e: React.MouseEvent, imageId: string) => {
     e.stopPropagation();
@@ -848,8 +901,26 @@ const DashboardPage: React.FC = () => {
           <div className="mb-6">
             <h1 className="text-3xl font-bold mb-4">명가 듀얼 이미지 대시보드</h1>
 
-            {/* 이미지 업로드 & 텍스트 추가 버튼 (오른쪽 정렬) */}
+            {/* 이미지 업로드 & 텍스트 추가 & 붙여넣기 버튼 (오른쪽 정렬) */}
             <div className="flex justify-end gap-2">
+              {/* 이미지 붙여넣기 버튼 (복사된 이미지가 있을 때만 표시) */}
+              {copiedImageUrl && (
+                <button
+                  onClick={pasteImage}
+                  disabled={!selectedFolder}
+                  className={`w-10 h-10 rounded-full flex items-center justify-center transition-all ${
+                    !selectedFolder
+                      ? 'bg-gray-400 cursor-not-allowed'
+                      : 'bg-purple-600 hover:bg-purple-700 hover:scale-110'
+                  }`}
+                  title="이미지 붙여넣기"
+                >
+                  <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+                  </svg>
+                </button>
+              )}
+
               {/* 텍스트 추가 버튼 */}
               <button
                 onClick={addTextToCanvas}
@@ -1123,6 +1194,15 @@ const DashboardPage: React.FC = () => {
                             className="w-full px-4 py-2 text-left hover:bg-bg-secondary transition-colors text-sm whitespace-nowrap"
                           >
                             URL 복사
+                          </button>
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              copyImageForPaste(img.url);
+                            }}
+                            className="w-full px-4 py-2 text-left hover:bg-bg-secondary transition-colors text-sm whitespace-nowrap"
+                          >
+                            이미지 복사
                           </button>
                           <button
                             onClick={(e) => {
