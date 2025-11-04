@@ -45,6 +45,10 @@ const DashboardPage: React.FC = () => {
   const [menuOpenId, setMenuOpenId] = useState<string | null>(null);
   const canvasRef = useRef<HTMLDivElement>(null);
 
+  // 캔버스 줌 상태
+  const [canvasZoom, setCanvasZoom] = useState(1);
+  const canvasContainerRef = useRef<HTMLDivElement>(null);
+
   // 폴더 목록 불러오기
   const fetchFolders = async () => {
     try {
@@ -249,6 +253,28 @@ const DashboardPage: React.FC = () => {
       console.log('Position saved:', filename);
     } catch (err) {
       console.error('Error saving position:', err);
+    }
+  };
+
+  // 줌 컨트롤 함수
+  const handleZoomIn = () => {
+    setCanvasZoom(prev => Math.min(prev + 0.2, 3));
+  };
+
+  const handleZoomOut = () => {
+    setCanvasZoom(prev => Math.max(prev - 0.2, 0.3));
+  };
+
+  const handleZoomReset = () => {
+    setCanvasZoom(1);
+  };
+
+  // 휠 줌 (PC)
+  const handleWheel = (e: React.WheelEvent) => {
+    if (e.ctrlKey || e.metaKey) {
+      e.preventDefault();
+      const delta = e.deltaY > 0 ? -0.1 : 0.1;
+      setCanvasZoom(prev => Math.max(0.3, Math.min(3, prev + delta)));
     }
   };
 
@@ -736,24 +762,60 @@ const DashboardPage: React.FC = () => {
       </div>
 
       {/* 캔버스 섹션 - 스크롤 가능 */}
-      <div className="px-8 overflow-auto">
-        <div style={{ width: '2000px', height: '2000px' }}>
-          {/* 캔버스 영역 */}
-          <div
-            ref={canvasRef}
-            onClick={handleCanvasClick}
-            onMouseMove={handleMouseMove}
-            onMouseUp={handleMouseUp}
-            onMouseLeave={handleMouseUp}
-            onTouchMove={handleTouchMove}
-            onTouchEnd={handleTouchEnd}
-            className="relative bg-bg-secondary border-2 border-border-primary rounded-lg"
-            style={{
-              cursor: dragging ? 'grabbing' : resizing ? 'nwse-resize' : 'default',
-              width: '2000px',
-              height: '2000px'
-            }}
+      <div className="relative px-8">
+        {/* 줌 컨트롤 버튼 */}
+        <div className="fixed bottom-8 right-8 flex flex-col gap-2 z-50 bg-bg-primary border border-border-primary rounded-lg p-2 shadow-lg">
+          <button
+            onClick={handleZoomIn}
+            className="w-10 h-10 bg-blue-600 hover:bg-blue-700 text-white rounded flex items-center justify-center text-xl font-bold transition-colors"
+            title="확대 (Ctrl + 휠)"
           >
+            +
+          </button>
+          <button
+            onClick={handleZoomReset}
+            className="w-10 h-10 bg-gray-600 hover:bg-gray-700 text-white rounded flex items-center justify-center text-xs transition-colors"
+            title="초기화"
+          >
+            {Math.round(canvasZoom * 100)}%
+          </button>
+          <button
+            onClick={handleZoomOut}
+            className="w-10 h-10 bg-blue-600 hover:bg-blue-700 text-white rounded flex items-center justify-center text-xl font-bold transition-colors"
+            title="축소 (Ctrl + 휠)"
+          >
+            −
+          </button>
+        </div>
+
+        <div
+          ref={canvasContainerRef}
+          className="overflow-auto"
+          onWheel={handleWheel}
+        >
+          <div style={{
+            width: '2000px',
+            height: '2000px',
+            transform: `scale(${canvasZoom})`,
+            transformOrigin: '0 0',
+            transition: 'transform 0.1s ease-out'
+          }}>
+            {/* 캔버스 영역 */}
+            <div
+              ref={canvasRef}
+              onClick={handleCanvasClick}
+              onMouseMove={handleMouseMove}
+              onMouseUp={handleMouseUp}
+              onMouseLeave={handleMouseUp}
+              onTouchMove={handleTouchMove}
+              onTouchEnd={handleTouchEnd}
+              className="relative bg-bg-secondary border-2 border-border-primary rounded-lg"
+              style={{
+                cursor: dragging ? 'grabbing' : resizing ? 'nwse-resize' : 'default',
+                width: '2000px',
+                height: '2000px'
+              }}
+            >
             {!selectedFolder ? (
               <div className="absolute inset-0 flex items-center justify-center text-text-secondary">
                 폴더를 선택해주세요
@@ -835,12 +897,13 @@ const DashboardPage: React.FC = () => {
                 </div>
               ))
             )}
+            </div>
           </div>
-
-          <p className="mt-2 mb-4 text-xs text-text-secondary">
-            💡 이미지를 클릭하고 드래그하여 이동 | 오른쪽 하단 핸들로 크기 조절 | ... 버튼으로 URL 복사/삭제
-          </p>
         </div>
+
+        <p className="mt-2 mb-4 text-xs text-text-secondary">
+          💡 이미지를 클릭하고 드래그하여 이동 | 오른쪽 하단 핸들로 크기 조절 | ... 버튼으로 URL 복사/삭제 | Ctrl+휠로 확대/축소
+        </p>
       </div>
     </div>
   );
