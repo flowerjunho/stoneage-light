@@ -306,34 +306,64 @@ const BattlePage: React.FC = () => {
   };
 
   // 크리티컬 확률 계산 (10000 단위, 실제 % = 결과 / 100)
-  const calculateCriticalRate = (atkDex: number, defDex: number): number => {
-    const divpara = 3.5; // 플레이어 vs 플레이어 기본값
+  const calculateCriticalRate = (
+    atkDex: number,
+    defDex: number,
+    atkLuck: number = 0,
+    weaponCritBonus: number = 0,
+    atkType: 'PLAYER' | 'PET' | 'ENEMY' = 'PLAYER',
+    defType: 'PLAYER' | 'PET' | 'ENEMY' = 'ENEMY'
+  ): number => {
+    const gCriticalPara = 0.09;
+    let divpara = gCriticalPara;
+    let root = 1; // 제곱근 사용 여부
+    let modDefDex = defDex;
 
-    let big: number;
-    let small: number;
-    let wari: number;
-
-    if (atkDex >= defDex) {
-      big = atkDex;
-      small = defDex;
-      wari = 1.0;
-    } else {
-      big = defDex;
-      small = atkDex;
-      if (big <= 0) {
-        wari = 0.0;
-      } else {
-        wari = small / big;
-      }
+    // 타입별 보정
+    if (atkType === 'PLAYER' && defType !== 'PLAYER') {
+      // 플레이어 vs 적/펫
+      modDefDex *= 0.6;
+    } else if (atkType !== 'PLAYER' && defType === 'PLAYER') {
+      // 적/펫 vs 플레이어
+      divpara = 10.0;
+      root = 0;
+    } else if (atkType === 'PET' && defType === 'ENEMY') {
+      // 펫 vs 적
+      modDefDex *= 0.8;
+    } else if (atkType === 'ENEMY' && defType === 'PET') {
+      // 적 vs 펫
+      divpara = 10.0;
+      root = 0;
     }
 
-    const work = (big - small) / divpara;
-    if (work <= 0) return 0;
+    // Big/Small 판정
+    let big: number, small: number, wari: number;
+    if (atkDex >= modDefDex) {
+      big = atkDex;
+      small = modDefDex;
+      wari = 1.0;
+    } else {
+      big = modDefDex;
+      small = atkDex;
+      wari = big <= 0 ? 0.0 : small / big;
+    }
 
-    let per = Math.sqrt(work);
+    // 핵심 계산
+    let work = (big - small) / divpara;
+    if (work <= 0) work = 0;
+
+    let per: number;
+    if (root === 1) {
+      per = Math.sqrt(work) + weaponCritBonus * 0.5;
+    } else {
+      per = work + weaponCritBonus * 0.5;
+    }
+
     per *= wari;
+    per += atkLuck;
     per *= 100; // 10000 단위로 변환
 
+    // 범위 제한
     if (per < 0) per = 1;
     if (per > 10000) per = 10000;
 
@@ -424,7 +454,14 @@ const BattlePage: React.FC = () => {
     const def = finalDefender.tgh;
     const baseDamage = calculateBaseDamage(atk, def);
     const attrBonus = calculateAttributeBonus(finalAttacker, finalDefender);
-    const critRate = calculateCriticalRate(finalAttacker.dex, finalDefender.dex);
+    const critRate = calculateCriticalRate(
+      finalAttacker.dex,
+      finalDefender.dex,
+      0, // 운(LUCK) - 추후 입력 가능하도록 확장 가능
+      0, // 무기 크리보너스 - 추후 입력 가능하도록 확장 가능
+      'PLAYER', // 공격자 타입 (기본: 플레이어)
+      'ENEMY' // 방어자 타입 (기본: 적)
+    );
     // 회피율: 근접은 기본, 원거리는 +20% 보너스 (최대치 제한 없음)
     const baseDodgeRate = calculateDodgeRate(finalAttacker.dex, finalDefender.dex, 0);
     const dodgeRate = weaponType === 'ranged' ? baseDodgeRate + 20 : baseDodgeRate;
@@ -1096,19 +1133,27 @@ const BattlePage: React.FC = () => {
                   <h4 className="font-bold text-accent mb-2">크리티컬 확률 계산</h4>
                   <div className="text-sm space-y-2 text-text-secondary">
                     <p>
-                      <strong>기본 공식:</strong>
+                      <strong>기본 공식 (플레이어 vs 적):</strong>
                     </p>
                     <code className="block bg-bg-primary px-3 py-2 rounded text-xs md:text-sm">
-                      크리확률 = (√(DEX차이 ÷ 3.5) + 무기크리옵션×0.5 + 행운) × 100
+                      크리확률 = ((√(DEX차이 ÷ 0.09) + 무기크리×0.5) × wari + 행운) × 100
                     </code>
                     <p className="mt-2">
-                      <strong>DEX 차이:</strong> 공격자 DEX - 방어자 DEX
+                      <strong>계산 순서:</strong>
                     </p>
-                    <p>
-                      <strong>무기 크리티컬 옵션:</strong> 무기에 부여된 크리티컬 수치
+                    <ol className="list-decimal list-inside text-xs space-y-1 ml-2">
+                      <li>DEX 차이 계산: 공격자 DEX - (방어자 DEX × 0.6)</li>
+                      <li>제곱근 계산: √(DEX차이 ÷ 0.09)</li>
+                      <li>무기 크리 가산: 결과 + (무기크리옵션 × 0.5)</li>
+                      <li>wari 배율 적용: 결과 × wari (기본값 1.0)</li>
+                      <li>행운 가산: 결과 + 행운</li>
+                      <li>백분율 변환: 결과 × 100</li>
+                    </ol>
+                    <p className="text-yellow-500 mt-2">
+                      ⚠️ <strong>중요:</strong> 플레이어가 공격할 때 적의 DEX는 0.6배로 계산!
                     </p>
-                    <p>
-                      <strong>행운:</strong> 캐릭터의 행운 수치
+                    <p className="text-blue-400 text-xs mt-1">
+                      💡 <strong>wari:</strong> 특수 상황 배율 (기본 1.0, 특정 조건에서 2.0 등)
                     </p>
                   </div>
                 </div>
@@ -1150,16 +1195,16 @@ const BattlePage: React.FC = () => {
                   <div className="p-3 bg-bg-tertiary border border-border rounded">
                     <h4 className="font-bold text-accent mb-2">크리 확률 예제</h4>
                     <div className="text-sm text-text-secondary space-y-1">
-                      <p>공격자 DEX: 305</p>
-                      <p>방어자 DEX: 150</p>
+                      <p>공격자 DEX: 305 (플레이어)</p>
+                      <p>방어자 DEX: 150 → 보정 후 90 (적)</p>
                       <p>무기 크리옵션: 0</p>
                       <p>행운: 0</p>
                       <hr className="my-1 border-border" />
-                      <p>DEX 차이: 155</p>
+                      <p>DEX 차이: 305 - 90 = 215</p>
                       <p>
-                        크리확률: <strong className="text-accent">√(155÷3.5) × 100 ≈ 665%</strong>
+                        크리확률: <strong className="text-accent">√(215÷0.09) × 100 ≈ 4882%</strong>
                       </p>
-                      <p className="text-xs text-yellow-500">※ 실제: 6.65% (10000 단위)</p>
+                      <p className="text-xs text-green-500">※ 실제: 48.82% (10000 단위)</p>
                     </div>
                   </div>
                 </div>
