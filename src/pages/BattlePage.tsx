@@ -1145,15 +1145,24 @@ const BattlePage: React.FC = () => {
                       <li>DEX 차이 계산: 공격자 DEX - (방어자 DEX × 0.6)</li>
                       <li>제곱근 계산: √(DEX차이 ÷ 0.09)</li>
                       <li>무기 크리 가산: 결과 + (무기크리옵션 × 0.5)</li>
-                      <li>wari 배율 적용: 결과 × wari (기본값 1.0)</li>
+                      <li>wari 배율 적용: 결과 × wari</li>
                       <li>행운 가산: 결과 + 행운</li>
                       <li>백분율 변환: 결과 × 100</li>
                     </ol>
+                    <div className="mt-3 p-3 bg-blue-500/10 border border-blue-500/30 rounded">
+                      <p className="font-bold text-blue-400 text-sm mb-1">wari (DEX 역전 페널티)</p>
+                      <code className="block bg-bg-primary px-2 py-1 rounded text-xs">
+                        wari = 공격자 DEX ≥ 방어자 DEX ? 1.0 : (공격자 DEX ÷ 방어자 DEX)
+                      </code>
+                      <p className="text-xs text-text-secondary mt-2">
+                        💡 공격자가 방어자보다 느리면 (DEX가 낮으면) 크리티컬 확률이 비율만큼 감소합니다.
+                      </p>
+                      <p className="text-xs text-text-secondary">
+                        예: 공격자 DEX 100 vs 방어자 DEX 200 → wari = 0.5 (크리 확률 50%로 감소)
+                      </p>
+                    </div>
                     <p className="text-yellow-500 mt-2">
                       ⚠️ <strong>중요:</strong> 플레이어가 공격할 때 적의 DEX는 0.6배로 계산!
-                    </p>
-                    <p className="text-blue-400 text-xs mt-1">
-                      💡 <strong>wari:</strong> 특수 상황 배율 (기본 1.0, 특정 조건에서 2.0 등)
                     </p>
                   </div>
                 </div>
