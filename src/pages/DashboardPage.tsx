@@ -36,7 +36,7 @@ const DashboardPage: React.FC = () => {
   const [uploading, setUploading] = useState(false);
 
   // Cloudflare Tunnel을 통한 HTTPS 접근 (모든 환경에서 사용)
-  const serverUrl = 'https://concern-plots-unique-yields.trycloudflare.com';
+  const serverUrl = 'https://invoice-finder-deferred-static.trycloudflare.com';
   const [error, setError] = useState<string | null>(null);
   const [showMixedContentWarning, setShowMixedContentWarning] = useState(false); // Cloudflare 사용으로 경고 불필요
 
@@ -194,10 +194,12 @@ const DashboardPage: React.FC = () => {
       // 3. 서버 이미지 목록 기반으로 캔버스 이미지 생성 (비동기로 비율 계산)
       const folderImagesPromises = serverImages.map(async (img: ServerImage, index: number) => {
         const posKey = `${folderName}/${img.filename}`;
-        const savedPosition = positions[posKey] as { x: number; y: number; width: number; height: number } | undefined;
+        const savedPosition = positions[posKey] as
+          | { x: number; y: number; width: number; height: number }
+          | undefined;
 
         // 이미지 비율 계산
-        return new Promise<CanvasImage>((resolve) => {
+        return new Promise<CanvasImage>(resolve => {
           const image = new Image();
           image.onload = () => {
             const aspectRatio = image.naturalWidth / image.naturalHeight;
@@ -209,8 +211,8 @@ const DashboardPage: React.FC = () => {
             resolve({
               id: `img-${Date.now()}-${Math.random()}-${img.filename}`,
               url: img.url,
-              x: savedPosition?.x ?? 100 + (index * 20),
-              y: savedPosition?.y ?? 100 + (index * 20),
+              x: savedPosition?.x ?? 100 + index * 20,
+              y: savedPosition?.y ?? 100 + index * 20,
               width,
               height,
               zIndex: index,
@@ -222,8 +224,8 @@ const DashboardPage: React.FC = () => {
             resolve({
               id: `img-${Date.now()}-${Math.random()}-${img.filename}`,
               url: img.url,
-              x: savedPosition?.x ?? 100 + (index * 20),
-              y: savedPosition?.y ?? 100 + (index * 20),
+              x: savedPosition?.x ?? 100 + index * 20,
+              y: savedPosition?.y ?? 100 + index * 20,
               width: savedPosition?.width ?? 200,
               height: savedPosition?.height ?? 200,
               zIndex: index,
@@ -244,14 +246,16 @@ const DashboardPage: React.FC = () => {
         const textsObj = textsData.texts || {};
 
         // Object를 array로 변환
-        const folderTexts = (Object.values(textsObj) as Array<{
-          id?: string;
-          content?: string;
-          x?: number;
-          y?: number;
-          width?: number;
-          height?: number;
-        }>).map((t, index) => ({
+        const folderTexts = (
+          Object.values(textsObj) as Array<{
+            id?: string;
+            content?: string;
+            x?: number;
+            y?: number;
+            width?: number;
+            height?: number;
+          }>
+        ).map((t, index) => ({
           id: t.id || `text-${Date.now()}-${index}`,
           text: t.content || '',
           x: t.x ?? 100,
@@ -584,57 +588,57 @@ const DashboardPage: React.FC = () => {
       const deltaY = y - resizeStart.y;
       const delta = Math.max(deltaX, deltaY);
 
-      setCanvasImages(canvasImages.map(img => {
-        if (img.id === selectedImageId) {
-          const newWidth = Math.max(50, resizeStart.width + delta);
-          const newHeight = img.aspectRatio
-            ? newWidth / img.aspectRatio
-            : Math.max(50, resizeStart.height + delta);
+      setCanvasImages(
+        canvasImages.map(img => {
+          if (img.id === selectedImageId) {
+            const newWidth = Math.max(50, resizeStart.width + delta);
+            const newHeight = img.aspectRatio
+              ? newWidth / img.aspectRatio
+              : Math.max(50, resizeStart.height + delta);
 
-          return {
-            ...img,
-            width: newWidth,
-            height: newHeight,
-          };
-        }
-        return img;
-      }));
+            return {
+              ...img,
+              width: newWidth,
+              height: newHeight,
+            };
+          }
+          return img;
+        })
+      );
     } else if (resizing && selectedTextId) {
       // 텍스트 리사이즈 중
       const deltaX = x - resizeStart.x;
       const deltaY = y - resizeStart.y;
       const delta = Math.max(deltaX, deltaY);
 
-      setCanvasTexts(canvasTexts.map(text => {
-        if (text.id === selectedTextId) {
-          return {
-            ...text,
-            width: Math.max(100, resizeStart.width + delta),
-            height: Math.max(50, resizeStart.height + delta),
-          };
-        }
-        return text;
-      }));
+      setCanvasTexts(
+        canvasTexts.map(text => {
+          if (text.id === selectedTextId) {
+            return {
+              ...text,
+              width: Math.max(100, resizeStart.width + delta),
+              height: Math.max(50, resizeStart.height + delta),
+            };
+          }
+          return text;
+        })
+      );
     } else if (dragging && selectedImageId) {
       // 이미지 드래그 중
       const newX = x - dragOffset.x;
       const newY = y - dragOffset.y;
 
-      setCanvasImages(canvasImages.map(img =>
-        img.id === selectedImageId
-          ? { ...img, x: newX, y: newY }
-          : img
-      ));
+      setCanvasImages(
+        canvasImages.map(img => (img.id === selectedImageId ? { ...img, x: newX, y: newY } : img))
+      );
     } else if (dragging && selectedTextId) {
       // 텍스트 드래그 중
       const newX = x - dragOffset.x;
       const newY = y - dragOffset.y;
 
-      setCanvasTexts(canvasTexts.map(text =>
-        text.id === selectedTextId
-          ? { ...text, x: newX, y: newY }
-          : text
-      ));
+      setCanvasTexts(
+        canvasTexts.map(text => (text.id === selectedTextId ? { ...text, x: newX, y: newY } : text))
+      );
     }
   };
 
@@ -651,32 +655,32 @@ const DashboardPage: React.FC = () => {
       const deltaY = y - resizeStart.y;
       const delta = Math.max(deltaX, deltaY);
 
-      setCanvasImages(canvasImages.map(img => {
-        if (img.id === selectedImageId) {
-          const newWidth = Math.max(50, resizeStart.width + delta);
-          // aspectRatio가 있으면 비율을 유지하면서 높이 계산
-          const newHeight = img.aspectRatio
-            ? newWidth / img.aspectRatio
-            : Math.max(50, resizeStart.height + delta);
+      setCanvasImages(
+        canvasImages.map(img => {
+          if (img.id === selectedImageId) {
+            const newWidth = Math.max(50, resizeStart.width + delta);
+            // aspectRatio가 있으면 비율을 유지하면서 높이 계산
+            const newHeight = img.aspectRatio
+              ? newWidth / img.aspectRatio
+              : Math.max(50, resizeStart.height + delta);
 
-          return {
-            ...img,
-            width: newWidth,
-            height: newHeight,
-          };
-        }
-        return img;
-      }));
+            return {
+              ...img,
+              width: newWidth,
+              height: newHeight,
+            };
+          }
+          return img;
+        })
+      );
     } else if (dragging && selectedImageId) {
       // 드래그 중
       const newX = x - dragOffset.x;
       const newY = y - dragOffset.y;
 
-      setCanvasImages(canvasImages.map(img =>
-        img.id === selectedImageId
-          ? { ...img, x: newX, y: newY }
-          : img
-      ));
+      setCanvasImages(
+        canvasImages.map(img => (img.id === selectedImageId ? { ...img, x: newX, y: newY } : img))
+      );
     }
   };
 
@@ -791,7 +795,9 @@ const DashboardPage: React.FC = () => {
       console.log('Image deleted successfully:', { folder: selectedFolder, filename });
     } catch (err) {
       console.error('Error deleting image:', err);
-      alert(`이미지 삭제 중 오류가 발생했습니다: ${err instanceof Error ? err.message : '알 수 없는 오류'}`);
+      alert(
+        `이미지 삭제 중 오류가 발생했습니다: ${err instanceof Error ? err.message : '알 수 없는 오류'}`
+      );
     }
   };
 
@@ -915,8 +921,18 @@ const DashboardPage: React.FC = () => {
                   }`}
                   title="이미지 붙여넣기"
                 >
-                  <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+                  <svg
+                    className="w-5 h-5 text-white"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"
+                    />
                   </svg>
                 </button>
               )}
@@ -932,8 +948,18 @@ const DashboardPage: React.FC = () => {
                 }`}
                 title="텍스트 추가"
               >
-                <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                <svg
+                  className="w-5 h-5 text-white"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+                  />
                 </svg>
               </button>
 
@@ -946,19 +972,47 @@ const DashboardPage: React.FC = () => {
                   disabled={uploading}
                   className="hidden"
                 />
-                <div className={`w-10 h-10 rounded-full flex items-center justify-center transition-all ${
-                  uploading
-                    ? 'bg-gray-400 cursor-not-allowed'
-                    : 'bg-blue-600 hover:bg-blue-700 hover:scale-110'
-                }`}>
+                <div
+                  className={`w-10 h-10 rounded-full flex items-center justify-center transition-all ${
+                    uploading
+                      ? 'bg-gray-400 cursor-not-allowed'
+                      : 'bg-blue-600 hover:bg-blue-700 hover:scale-110'
+                  }`}
+                >
                   {uploading ? (
-                    <svg className="animate-spin w-5 h-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                    <svg
+                      className="animate-spin w-5 h-5 text-white"
+                      xmlns="http://www.w3.org/2000/svg"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                    >
+                      <circle
+                        className="opacity-25"
+                        cx="12"
+                        cy="12"
+                        r="10"
+                        stroke="currentColor"
+                        strokeWidth="4"
+                      ></circle>
+                      <path
+                        className="opacity-75"
+                        fill="currentColor"
+                        d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                      ></path>
                     </svg>
                   ) : (
-                    <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                    <svg
+                      className="w-5 h-5 text-white"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
+                      />
                     </svg>
                   )}
                 </div>
@@ -980,7 +1034,8 @@ const DashboardPage: React.FC = () => {
                     ⚠️ 브라우저 설정 필요
                   </h3>
                   <p className="text-sm text-yellow-600 dark:text-yellow-400 mb-2">
-                    이 페이지는 HTTPS이지만 이미지 서버는 HTTP입니다. 브라우저가 Mixed Content를 차단할 수 있습니다.
+                    이 페이지는 HTTPS이지만 이미지 서버는 HTTP입니다. 브라우저가 Mixed Content를
+                    차단할 수 있습니다.
                   </p>
                   <div className="text-xs text-yellow-600 dark:text-yellow-400">
                     <strong>해결 방법:</strong>
@@ -1011,74 +1066,74 @@ const DashboardPage: React.FC = () => {
           {/* 폴더 관리 섹션 */}
           <div className="mb-4">
             <div className="flex items-center justify-between mb-4">
-            <h2 className="text-xl font-bold">폴더 ({folders.length}개)</h2>
-            <div className="flex gap-2">
-              {showFolderInput ? (
-                <>
-                  <input
-                    type="text"
-                    value={newFolderName}
-                    onChange={(e) => setNewFolderName(e.target.value)}
-                    onKeyPress={(e) => e.key === 'Enter' && createFolder()}
-                    placeholder="폴더 이름"
-                    className="px-3 py-2 bg-bg-primary border border-border-primary rounded text-text-primary"
-                    autoFocus
-                  />
+              <h2 className="text-xl font-bold">폴더 ({folders.length}개)</h2>
+              <div className="flex gap-2">
+                {showFolderInput ? (
+                  <>
+                    <input
+                      type="text"
+                      value={newFolderName}
+                      onChange={e => setNewFolderName(e.target.value)}
+                      onKeyPress={e => e.key === 'Enter' && createFolder()}
+                      placeholder="폴더 이름"
+                      className="px-3 py-2 bg-bg-primary border border-border-primary rounded text-text-primary"
+                      autoFocus
+                    />
+                    <button
+                      onClick={createFolder}
+                      className="px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded transition-colors"
+                    >
+                      생성
+                    </button>
+                    <button
+                      onClick={() => {
+                        setShowFolderInput(false);
+                        setNewFolderName('');
+                      }}
+                      className="px-4 py-2 bg-gray-600 hover:bg-gray-700 text-white rounded transition-colors"
+                    >
+                      취소
+                    </button>
+                  </>
+                ) : (
                   <button
-                    onClick={createFolder}
-                    className="px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded transition-colors"
+                    onClick={() => setShowFolderInput(true)}
+                    className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded transition-colors"
                   >
-                    생성
+                    + 폴더 추가
                   </button>
-                  <button
-                    onClick={() => {
-                      setShowFolderInput(false);
-                      setNewFolderName('');
-                    }}
-                    className="px-4 py-2 bg-gray-600 hover:bg-gray-700 text-white rounded transition-colors"
-                  >
-                    취소
-                  </button>
-                </>
-              ) : (
-                <button
-                  onClick={() => setShowFolderInput(true)}
-                  className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded transition-colors"
+                )}
+              </div>
+            </div>
+
+            {/* 폴더 리스트 */}
+            <div className="flex gap-2 flex-wrap">
+              {folders.map(folder => (
+                <div
+                  key={folder}
+                  className={`group relative px-4 py-2 rounded cursor-pointer transition-colors ${
+                    selectedFolder === folder
+                      ? 'bg-blue-600 text-white'
+                      : 'bg-bg-secondary hover:bg-bg-tertiary border border-border-primary'
+                  }`}
+                  onClick={() => setSelectedFolder(folder)}
                 >
-                  + 폴더 추가
-                </button>
+                  <span>{folder}</span>
+                  <button
+                    onClick={e => {
+                      e.stopPropagation();
+                      deleteFolder(folder);
+                    }}
+                    className="absolute -top-2 -right-2 w-5 h-5 bg-red-600 hover:bg-red-700 text-white rounded-full text-xs opacity-0 group-hover:opacity-100 transition-opacity"
+                  >
+                    ×
+                  </button>
+                </div>
+              ))}
+              {folders.length === 0 && (
+                <p className="text-text-secondary text-sm">폴더가 없습니다. 폴더를 추가해주세요.</p>
               )}
             </div>
-          </div>
-
-          {/* 폴더 리스트 */}
-          <div className="flex gap-2 flex-wrap">
-            {folders.map((folder) => (
-              <div
-                key={folder}
-                className={`group relative px-4 py-2 rounded cursor-pointer transition-colors ${
-                  selectedFolder === folder
-                    ? 'bg-blue-600 text-white'
-                    : 'bg-bg-secondary hover:bg-bg-tertiary border border-border-primary'
-                }`}
-                onClick={() => setSelectedFolder(folder)}
-              >
-                <span>{folder}</span>
-                <button
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    deleteFolder(folder);
-                  }}
-                  className="absolute -top-2 -right-2 w-5 h-5 bg-red-600 hover:bg-red-700 text-white rounded-full text-xs opacity-0 group-hover:opacity-100 transition-opacity"
-                >
-                  ×
-                </button>
-              </div>
-            ))}
-            {folders.length === 0 && (
-              <p className="text-text-secondary text-sm">폴더가 없습니다. 폴더를 추가해주세요.</p>
-            )}
-          </div>
           </div>
         </div>
       </div>
@@ -1110,18 +1165,16 @@ const DashboardPage: React.FC = () => {
           </button>
         </div>
 
-        <div
-          ref={canvasContainerRef}
-          className="overflow-auto"
-          onWheel={handleWheel}
-        >
-          <div style={{
-            width: '2000px',
-            height: '2000px',
-            transform: `scale(${canvasZoom})`,
-            transformOrigin: '0 0',
-            transition: 'transform 0.1s ease-out'
-          }}>
+        <div ref={canvasContainerRef} className="overflow-auto" onWheel={handleWheel}>
+          <div
+            style={{
+              width: '2000px',
+              height: '2000px',
+              transform: `scale(${canvasZoom})`,
+              transformOrigin: '0 0',
+              transition: 'transform 0.1s ease-out',
+            }}
+          >
             {/* 캔버스 영역 */}
             <div
               ref={canvasRef}
@@ -1135,204 +1188,205 @@ const DashboardPage: React.FC = () => {
               style={{
                 cursor: dragging ? 'grabbing' : resizing ? 'nwse-resize' : 'default',
                 width: '2000px',
-                height: '2000px'
+                height: '2000px',
               }}
             >
-            {!selectedFolder ? (
-              <div className="absolute inset-0 flex items-center justify-center text-text-secondary">
-                폴더를 선택해주세요
-              </div>
-            ) : canvasImages.length === 0 && canvasTexts.length === 0 ? (
-              <div className="absolute inset-0 flex items-center justify-center text-text-secondary">
-                이미지를 업로드하거나 텍스트를 추가하세요
-              </div>
-            ) : (
-              <>
-              {/* 이미지 렌더링 */}
-              {canvasImages.map((img) => (
-                <div
-                  key={img.id}
-                  onMouseDown={(e) => handleMouseDown(e, img.id)}
-                  onTouchStart={(e) => handleTouchStart(e, img.id)}
-                  className={`absolute cursor-grab ${
-                    selectedImageId === img.id ? 'ring-2 ring-blue-500' : ''
-                  }`}
-                  style={{
-                    left: `${img.x}px`,
-                    top: `${img.y}px`,
-                    width: `${img.width}px`,
-                    height: `${img.height}px`,
-                    zIndex: img.zIndex,
-                    touchAction: 'none'
-                  }}
-                >
-                  <img
-                    src={img.url}
-                    alt="canvas-img"
-                    className="w-full h-full object-contain pointer-events-none"
-                    draggable={false}
-                  />
-
-                  {/* ... 메뉴 버튼 (이미지 중앙, 선택된 경우에만 표시) */}
-                  {selectedImageId === img.id && (
-                    <>
-                      <button
-                        onClick={(e) => toggleMenu(e, img.id)}
-                        className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-10 h-10 bg-gray-700/90 hover:bg-gray-600 text-white rounded-full flex items-center justify-center shadow-lg z-10"
-                      >
-                        ⋮
-                      </button>
-
-                      {/* 드롭다운 메뉴 */}
-                      {menuOpenId === img.id && (
-                        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 translate-y-6 bg-bg-primary border border-border-primary rounded shadow-lg overflow-hidden z-20">
-                          <button
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              copyImageUrl(img.url);
-                            }}
-                            className="w-full px-4 py-2 text-left hover:bg-bg-secondary transition-colors text-sm whitespace-nowrap"
-                          >
-                            URL 복사
-                          </button>
-                          <button
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              copyImageForPaste(img.url);
-                            }}
-                            className="w-full px-4 py-2 text-left hover:bg-bg-secondary transition-colors text-sm whitespace-nowrap"
-                          >
-                            이미지 복사
-                          </button>
-                          <button
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              removeFromCanvas(img.id);
-                            }}
-                            className="w-full px-4 py-2 text-left hover:bg-bg-secondary transition-colors text-sm text-red-500"
-                          >
-                            삭제
-                          </button>
-                        </div>
-                      )}
-                    </>
-                  )}
-
-                  {/* 리사이즈 핸들 (오른쪽 하단) */}
-                  {selectedImageId === img.id && (
-                    <div
-                      onMouseDown={(e) => handleResizeStart(e, img.id)}
-                      onTouchStart={(e) => handleResizeTouchStart(e, img.id)}
-                      className="absolute -bottom-1 -right-1 w-6 h-6 bg-blue-500 rounded-full cursor-nwse-resize hover:bg-blue-400 shadow-lg z-10"
-                      style={{ cursor: 'nwse-resize', touchAction: 'none' }}
-                    />
-                  )}
+              {!selectedFolder ? (
+                <div className="absolute inset-0 flex items-center justify-center text-text-secondary">
+                  폴더를 선택해주세요
                 </div>
-              ))}
-
-              {/* 텍스트 렌더링 */}
-              {canvasTexts.map((text) => (
-                <div
-                  key={text.id}
-                  onMouseDown={(e) => handleTextMouseDown(e, text.id)}
-                  className={`absolute cursor-move ${
-                    selectedTextId === text.id ? 'ring-2 ring-green-500' : ''
-                  }`}
-                  style={{
-                    left: `${text.x}px`,
-                    top: `${text.y}px`,
-                    width: `${text.width}px`,
-                    height: `${text.height}px`,
-                    zIndex: text.zIndex,
-                  }}
-                >
-                  {editingTextId === text.id ? (
-                    <textarea
-                      autoFocus
-                      value={text.text}
-                      onChange={(e) => {
-                        const newText = e.target.value;
-                        setCanvasTexts(canvasTexts.map(t =>
-                          t.id === text.id ? { ...t, text: newText } : t
-                        ));
-                      }}
-                      onBlur={() => {
-                        setEditingTextId(null);
-                        saveTextPosition(text);
-                      }}
-                      className="w-full h-full p-2 bg-white border-2 border-green-500 rounded resize-none focus:outline-none"
-                      style={{
-                        fontSize: `${text.fontSize}px`,
-                        color: text.color,
-                      }}
-                    />
-                  ) : (
+              ) : canvasImages.length === 0 && canvasTexts.length === 0 ? (
+                <div className="absolute inset-0 flex items-center justify-center text-text-secondary">
+                  이미지를 업로드하거나 텍스트를 추가하세요
+                </div>
+              ) : (
+                <>
+                  {/* 이미지 렌더링 */}
+                  {canvasImages.map(img => (
                     <div
-                      onDoubleClick={() => setEditingTextId(text.id)}
-                      className="w-full h-full p-2 bg-white/90 border border-gray-300 rounded overflow-auto whitespace-pre-wrap break-words"
+                      key={img.id}
+                      onMouseDown={e => handleMouseDown(e, img.id)}
+                      onTouchStart={e => handleTouchStart(e, img.id)}
+                      className={`absolute cursor-grab ${
+                        selectedImageId === img.id ? 'ring-2 ring-blue-500' : ''
+                      }`}
                       style={{
-                        fontSize: `${text.fontSize}px`,
-                        color: text.color,
+                        left: `${img.x}px`,
+                        top: `${img.y}px`,
+                        width: `${img.width}px`,
+                        height: `${img.height}px`,
+                        zIndex: img.zIndex,
+                        touchAction: 'none',
                       }}
                     >
-                      {text.text}
+                      <img
+                        src={img.url}
+                        alt="canvas-img"
+                        className="w-full h-full object-contain pointer-events-none"
+                        draggable={false}
+                      />
+
+                      {/* ... 메뉴 버튼 (이미지 중앙, 선택된 경우에만 표시) */}
+                      {selectedImageId === img.id && (
+                        <>
+                          <button
+                            onClick={e => toggleMenu(e, img.id)}
+                            className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-10 h-10 bg-gray-700/90 hover:bg-gray-600 text-white rounded-full flex items-center justify-center shadow-lg z-10"
+                          >
+                            ⋮
+                          </button>
+
+                          {/* 드롭다운 메뉴 */}
+                          {menuOpenId === img.id && (
+                            <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 translate-y-6 bg-bg-primary border border-border-primary rounded shadow-lg overflow-hidden z-20">
+                              <button
+                                onClick={e => {
+                                  e.stopPropagation();
+                                  copyImageUrl(img.url);
+                                }}
+                                className="w-full px-4 py-2 text-left hover:bg-bg-secondary transition-colors text-sm whitespace-nowrap"
+                              >
+                                URL 복사
+                              </button>
+                              <button
+                                onClick={e => {
+                                  e.stopPropagation();
+                                  copyImageForPaste(img.url);
+                                }}
+                                className="w-full px-4 py-2 text-left hover:bg-bg-secondary transition-colors text-sm whitespace-nowrap"
+                              >
+                                이미지 복사
+                              </button>
+                              <button
+                                onClick={e => {
+                                  e.stopPropagation();
+                                  removeFromCanvas(img.id);
+                                }}
+                                className="w-full px-4 py-2 text-left hover:bg-bg-secondary transition-colors text-sm text-red-500"
+                              >
+                                삭제
+                              </button>
+                            </div>
+                          )}
+                        </>
+                      )}
+
+                      {/* 리사이즈 핸들 (오른쪽 하단) */}
+                      {selectedImageId === img.id && (
+                        <div
+                          onMouseDown={e => handleResizeStart(e, img.id)}
+                          onTouchStart={e => handleResizeTouchStart(e, img.id)}
+                          className="absolute -bottom-1 -right-1 w-6 h-6 bg-blue-500 rounded-full cursor-nwse-resize hover:bg-blue-400 shadow-lg z-10"
+                          style={{ cursor: 'nwse-resize', touchAction: 'none' }}
+                        />
+                      )}
                     </div>
-                  )}
+                  ))}
 
-                  {/* ... 메뉴 버튼 (텍스트 중앙, 선택된 경우에만 표시) */}
-                  {selectedTextId === text.id && !editingTextId && (
-                    <>
-                      <button
-                        onClick={(e) => toggleMenu(e, text.id)}
-                        className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-10 h-10 bg-gray-700/90 hover:bg-gray-600 text-white rounded-full flex items-center justify-center shadow-lg z-10"
-                      >
-                        ⋮
-                      </button>
-
-                      {menuOpenId === text.id && (
-                        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 translate-y-6 bg-bg-primary border border-border-primary rounded shadow-lg overflow-hidden z-20">
-                          <button
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              setEditingTextId(text.id);
-                              setMenuOpenId(null);
-                            }}
-                            className="w-full px-4 py-2 text-left hover:bg-bg-secondary transition-colors text-sm whitespace-nowrap"
-                          >
-                            편집
-                          </button>
-                          <button
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              removeText(text.id);
-                            }}
-                            className="w-full px-4 py-2 text-left hover:bg-bg-secondary transition-colors text-sm text-red-500"
-                          >
-                            삭제
-                          </button>
+                  {/* 텍스트 렌더링 */}
+                  {canvasTexts.map(text => (
+                    <div
+                      key={text.id}
+                      onMouseDown={e => handleTextMouseDown(e, text.id)}
+                      className={`absolute cursor-move ${
+                        selectedTextId === text.id ? 'ring-2 ring-green-500' : ''
+                      }`}
+                      style={{
+                        left: `${text.x}px`,
+                        top: `${text.y}px`,
+                        width: `${text.width}px`,
+                        height: `${text.height}px`,
+                        zIndex: text.zIndex,
+                      }}
+                    >
+                      {editingTextId === text.id ? (
+                        <textarea
+                          autoFocus
+                          value={text.text}
+                          onChange={e => {
+                            const newText = e.target.value;
+                            setCanvasTexts(
+                              canvasTexts.map(t => (t.id === text.id ? { ...t, text: newText } : t))
+                            );
+                          }}
+                          onBlur={() => {
+                            setEditingTextId(null);
+                            saveTextPosition(text);
+                          }}
+                          className="w-full h-full p-2 bg-white border-2 border-green-500 rounded resize-none focus:outline-none"
+                          style={{
+                            fontSize: `${text.fontSize}px`,
+                            color: text.color,
+                          }}
+                        />
+                      ) : (
+                        <div
+                          onDoubleClick={() => setEditingTextId(text.id)}
+                          className="w-full h-full p-2 bg-white/90 border border-gray-300 rounded overflow-auto whitespace-pre-wrap break-words"
+                          style={{
+                            fontSize: `${text.fontSize}px`,
+                            color: text.color,
+                          }}
+                        >
+                          {text.text}
                         </div>
                       )}
-                    </>
-                  )}
 
-                  {/* 리사이즈 핸들 (오른쪽 하단) */}
-                  {selectedTextId === text.id && !editingTextId && (
-                    <div
-                      onMouseDown={(e) => handleTextResizeStart(e, text.id)}
-                      className="absolute -bottom-1 -right-1 w-6 h-6 bg-green-500 rounded-full cursor-nwse-resize hover:bg-green-400 shadow-lg z-10"
-                      style={{ cursor: 'nwse-resize' }}
-                    />
-                  )}
-                </div>
-              ))}
-              </>
-            )}
+                      {/* ... 메뉴 버튼 (텍스트 중앙, 선택된 경우에만 표시) */}
+                      {selectedTextId === text.id && !editingTextId && (
+                        <>
+                          <button
+                            onClick={e => toggleMenu(e, text.id)}
+                            className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-10 h-10 bg-gray-700/90 hover:bg-gray-600 text-white rounded-full flex items-center justify-center shadow-lg z-10"
+                          >
+                            ⋮
+                          </button>
+
+                          {menuOpenId === text.id && (
+                            <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 translate-y-6 bg-bg-primary border border-border-primary rounded shadow-lg overflow-hidden z-20">
+                              <button
+                                onClick={e => {
+                                  e.stopPropagation();
+                                  setEditingTextId(text.id);
+                                  setMenuOpenId(null);
+                                }}
+                                className="w-full px-4 py-2 text-left hover:bg-bg-secondary transition-colors text-sm whitespace-nowrap"
+                              >
+                                편집
+                              </button>
+                              <button
+                                onClick={e => {
+                                  e.stopPropagation();
+                                  removeText(text.id);
+                                }}
+                                className="w-full px-4 py-2 text-left hover:bg-bg-secondary transition-colors text-sm text-red-500"
+                              >
+                                삭제
+                              </button>
+                            </div>
+                          )}
+                        </>
+                      )}
+
+                      {/* 리사이즈 핸들 (오른쪽 하단) */}
+                      {selectedTextId === text.id && !editingTextId && (
+                        <div
+                          onMouseDown={e => handleTextResizeStart(e, text.id)}
+                          className="absolute -bottom-1 -right-1 w-6 h-6 bg-green-500 rounded-full cursor-nwse-resize hover:bg-green-400 shadow-lg z-10"
+                          style={{ cursor: 'nwse-resize' }}
+                        />
+                      )}
+                    </div>
+                  ))}
+                </>
+              )}
             </div>
           </div>
         </div>
 
         <p className="mt-2 mb-4 text-xs text-text-secondary">
-          💡 이미지를 클릭하고 드래그하여 이동 | 오른쪽 하단 핸들로 크기 조절 | ... 버튼으로 URL 복사/삭제 | Ctrl+휠로 확대/축소
+          💡 이미지를 클릭하고 드래그하여 이동 | 오른쪽 하단 핸들로 크기 조절 | ... 버튼으로 URL
+          복사/삭제 | Ctrl+휠로 확대/축소
         </p>
       </div>
     </div>
