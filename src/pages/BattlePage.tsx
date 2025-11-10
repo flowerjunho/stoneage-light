@@ -2136,7 +2136,7 @@ const BattlePage: React.FC = () => {
                   💡 활용 전략
                 </button>
                 <button onClick={() => handleTocClick('combo-cases')} className="p-2 hover:bg-bg-tertiary rounded transition-colors cursor-pointer text-text-secondary hover:text-accent text-left">
-                  📖 실전 케이스 (17개)
+                  📖 실전 케이스 (20개)
                 </button>
               </div>
             </div>
@@ -2154,7 +2154,7 @@ const BattlePage: React.FC = () => {
                 <p>🐾 <strong className="text-purple-400">캐릭터와 펫이 섞여서 콤보 가능!</strong> (예: 캐릭A → 펫B → 캐릭C)</p>
                 <p>⚡ 각자 <strong className="text-accent">독립적으로</strong> 크리티컬 및 속성 보정 적용</p>
                 <p className="pt-2 border-t border-border">
-                  📊 <strong className="text-green-400">아래 실전 상황 분석 17가지 케이스</strong>를 확인하여 콤보 성공 조건을 완벽히 파악하세요!
+                  📊 <strong className="text-green-400">아래 실전 상황 분석 20가지 케이스</strong>를 확인하여 콤보 성공 조건을 완벽히 파악하세요!
                 </p>
               </div>
             </div>
@@ -3102,6 +3102,138 @@ const BattlePage: React.FC = () => {
                       💡 핵심: 가드가 콤보를 끊어도 그 뒤에서 새 콤보 시작 가능!<br/>
                       🛡️ 전략: 가드를 중간에 배치해도 앞뒤로 콤보 형성 가능!<br/>
                       ⚠️ 주의: 각 콤보는 50% 확률을 독립적으로 통과해야 함!
+                    </p>
+                  </div>
+                </div>
+
+                {/* 케이스 12: 다중 타겟 그룹 콤보 */}
+                <div className="p-4 bg-emerald-500/10 border border-emerald-500/30 rounded">
+                  <h3 className="text-lg font-bold text-emerald-400 mb-3">✅ 케이스 12: 다중 타겟 - 그룹별 콤보 성공!</h3>
+                  <div className="space-y-2 text-sm">
+                    <p className="font-bold text-accent">상황:</p>
+                    <p className="text-text-secondary pl-4">
+                      우리팀 DEX: 50, 40, 30, 20, 10<br/>
+                      적 A(HP 1000), 적 B(HP 1500)<br/>
+                      타겟 선택: 50→A, 40→A, 30→B, 20→B, 10→B
+                    </p>
+
+                    <p className="font-bold text-accent mt-3">전투 순서:</p>
+                    <p className="text-text-secondary pl-4">
+                      <strong className="text-yellow-400">50(→A) → 40(→A) → 30(→B) → 20(→B) → 10(→B)</strong>
+                    </p>
+
+                    <p className="font-bold text-accent mt-3">진행:</p>
+                    <div className="pl-4 space-y-1 text-text-secondary">
+                      <p>1. 우리1(50) → A 공격 → 50% 성공 → 대기 (ComboId=2)</p>
+                      <p>2. 우리2(40) → A 공격 → enemy(A) == oldenemy(A) → <strong className="text-green-400">콤보 합류!</strong></p>
+                      <p>3. 우리3(30) → B 공격 → enemy(B) != oldenemy(A) → <strong className="text-red-400">콤보 종료!</strong></p>
+                      <p className="ml-4">→ 새로 50% 체크 → 성공! → 대기 (ComboId=3)</p>
+                      <p>4. 우리4(20) → B 공격 → enemy(B) == oldenemy(B) → <strong className="text-green-400">콤보 합류!</strong></p>
+                      <p>5. 우리5(10) → B 공격 → enemy(B) == oldenemy(B) → <strong className="text-green-400">콤보 합류!</strong></p>
+                    </div>
+
+                    <p className="font-bold text-accent mt-3">결과:</p>
+                    <p className="text-text-secondary pl-4">
+                      <strong className="text-emerald-400 text-lg">한 턴에 2개의 콤보 성공!</strong><br/>
+                      • <strong className="text-green-400">그룹 1 (ComboId=2):</strong> 50+40 → A 타겟 = <strong className="text-green-400">580 데미지</strong><br/>
+                      • <strong className="text-green-400">그룹 2 (ComboId=3):</strong> 30+20+10 → B 타겟 = <strong className="text-green-400">720 데미지</strong><br/>
+                      총 <strong className="text-yellow-400">1300 데미지!</strong> (모두 회피 불가)<br/>
+                      적 A는 거의 죽음, 적 B도 절반 이하!
+                    </p>
+
+                    <p className="font-bold text-yellow-400 mt-3 text-xs">
+                      💡 핵심: DEX 순서대로 그룹을 나누면 여러 타겟에 동시 콤보 가능!<br/>
+                      🎯 전략: 약한 적을 먼저 제거하거나, 강한 적 2마리를 동시에 약화!<br/>
+                      ✨ 연속성이 핵심: 같은 타겟을 연속으로 공격해야 그룹 형성!
+                    </p>
+                  </div>
+                </div>
+
+                {/* 케이스 13: 교차 타겟 실패 */}
+                <div className="p-4 bg-red-500/10 border border-red-500/30 rounded">
+                  <h3 className="text-lg font-bold text-red-400 mb-3">❌ 케이스 13: 교차 타겟 - 콤보 완전 실패!</h3>
+                  <div className="space-y-2 text-sm">
+                    <p className="font-bold text-accent">상황:</p>
+                    <p className="text-text-secondary pl-4">
+                      우리팀 DEX: 50, 40, 30, 20, 10<br/>
+                      적 A, 적 B<br/>
+                      타겟 선택: 50→A, 40→B, 30→A, 20→B, 10→A (교차!)
+                    </p>
+
+                    <p className="font-bold text-accent mt-3">전투 순서:</p>
+                    <p className="text-text-secondary pl-4">
+                      <strong className="text-red-400">50(→A) → 40(→B) → 30(→A) → 20(→B) → 10(→A)</strong>
+                    </p>
+
+                    <p className="font-bold text-accent mt-3">진행:</p>
+                    <div className="pl-4 space-y-1 text-text-secondary">
+                      <p>1. 우리1(50) → A 공격 → 50% 성공 → 대기 (ComboId=2)</p>
+                      <p>2. 우리2(40) → B 공격 → <strong className="text-red-400">enemy(B) != oldenemy(A) → 콤보 종료!</strong></p>
+                      <p className="ml-4">→ 50% 성공 → 대기 (ComboId=3)</p>
+                      <p>3. 우리3(30) → A 공격 → <strong className="text-red-400">enemy(A) != oldenemy(B) → 콤보 종료!</strong></p>
+                      <p className="ml-4">→ 50% 성공 → 대기 (ComboId=4)</p>
+                      <p>4. 우리4(20) → B 공격 → <strong className="text-red-400">enemy(B) != oldenemy(A) → 콤보 종료!</strong></p>
+                      <p className="ml-4">→ 50% 성공 → 대기 (ComboId=5)</p>
+                      <p>5. 우리5(10) → A 공격 → <strong className="text-red-400">enemy(A) != oldenemy(B) → 콤보 종료!</strong></p>
+                      <p className="ml-4">→ 50% 성공해도 혼자 (2명 이상 필요!)</p>
+                    </div>
+
+                    <p className="font-bold text-accent mt-3">결과:</p>
+                    <p className="text-text-secondary pl-4">
+                      <strong className="text-red-400 text-lg">5개의 ComboId 생성, 모두 불발!</strong><br/>
+                      • ComboId=2: 우리1만 → 1명 (콤보 불발)<br/>
+                      • ComboId=3: 우리2만 → 1명 (콤보 불발)<br/>
+                      • ComboId=4: 우리3만 → 1명 (콤보 불발)<br/>
+                      • ComboId=5: 우리4만 → 1명 (콤보 불발)<br/>
+                      • ComboId=6: 우리5만 → 1명 (콤보 불발)<br/>
+                      <strong className="text-red-400">모두 일반 공격!</strong> (회피 가능 + 데미지 분산 = 최악!)
+                    </p>
+
+                    <p className="font-bold text-yellow-400 mt-3 text-xs">
+                      ⚠️ 치명적 실수: 타겟을 교차로 선택하면 절대 콤보 불가!<br/>
+                      💡 해결: 같은 타겟을 연속으로 선택하여 그룹 형성!<br/>
+                      🎯 올바른 예: A-A-B-B-B 또는 A-A-A-B-B (그룹별로!)
+                    </p>
+                  </div>
+                </div>
+
+                {/* 케이스 14: 전략적 타겟 분배 */}
+                <div className="p-4 bg-violet-500/10 border border-violet-500/30 rounded">
+                  <h3 className="text-lg font-bold text-violet-400 mb-3">🎯 케이스 14: 전략적 타겟 분배</h3>
+                  <div className="space-y-2 text-sm">
+                    <p className="font-bold text-accent">상황:</p>
+                    <p className="text-text-secondary pl-4">
+                      우리팀 DEX: 60, 50, 40, 30, 20<br/>
+                      적 A(약함, HP 800), 적 B(강함, HP 2500)<br/>
+                      전략: 약한 적 A를 우선 제거!
+                    </p>
+
+                    <p className="font-bold text-accent mt-3">타겟 선택 전략:</p>
+                    <div className="pl-4 space-y-2 text-text-secondary">
+                      <p><strong className="text-green-400">전략 1:</strong> 60→A, 50→A, 40→A | 30→B, 20→B</p>
+                      <p className="ml-4">→ 3명 콤보(A) = 850 데미지 → <strong className="text-green-400">적 A 제거!</strong></p>
+                      <p className="ml-4">→ 2명 콤보(B) = 550 데미지 → 적 B 약화</p>
+
+                      <p className="mt-2"><strong className="text-yellow-400">전략 2:</strong> 60→A, 50→A | 40→B, 30→B, 20→B</p>
+                      <p className="ml-4">→ 2명 콤보(A) = 600 데미지 → 적 A 거의 죽음</p>
+                      <p className="ml-4">→ 3명 콤보(B) = 750 데미지 → 적 B 크게 약화</p>
+
+                      <p className="mt-2"><strong className="text-red-400">나쁜 전략:</strong> 60→A, 50→B, 40→A, 30→B, 20→A (교차)</p>
+                      <p className="ml-4">→ 모두 일반 공격 → 데미지 분산 + 회피 가능 = 최악!</p>
+                    </div>
+
+                    <p className="font-bold text-accent mt-3">최적 결과 (전략 1):</p>
+                    <p className="text-text-secondary pl-4">
+                      <strong className="text-violet-400 text-lg">1턴만에 적 1마리 제거!</strong><br/>
+                      • 적 A: 제거됨 → 다음 턴부터 공격 1명 감소<br/>
+                      • 적 B: HP 1950 남음 → 2턴 안에 제거 가능<br/>
+                      <strong className="text-green-400">피해 최소화 전략 성공!</strong>
+                    </p>
+
+                    <p className="font-bold text-yellow-400 mt-3 text-xs">
+                      💡 핵심: 약한 적부터 제거하여 다음 턴 피해 감소!<br/>
+                      🎯 그룹 구성: DEX 순서대로 타겟 그룹을 명확히 나누기!<br/>
+                      ⚠️ 절대 금지: 타겟 교차 선택은 콤보 완전 불발!
                     </p>
                   </div>
                 </div>
