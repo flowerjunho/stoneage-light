@@ -3,7 +3,7 @@ import { useNavigate, useSearchParams } from 'react-router-dom';
 import ThemeToggle from '../components/ThemeToggle';
 import petDataJson from '../data/petData.json';
 
-type TabType = 'info' | 'calculator';
+type TabType = 'info' | 'combo' | 'calculator';
 type CalculatorSubTab = 'damage' | 'reverse';
 type AttributeType = 'fire' | 'water' | 'earth' | 'wind';
 
@@ -94,7 +94,7 @@ const BattlePage: React.FC = () => {
   // URL 쿼리에서 탭 상태 가져오기
   const tabFromQuery = searchParams.get('tab') as TabType | null;
   const initialTab =
-    tabFromQuery === 'calculator' || tabFromQuery === 'info' ? tabFromQuery : 'info';
+    tabFromQuery === 'calculator' || tabFromQuery === 'info' || tabFromQuery === 'combo' ? tabFromQuery : 'info';
 
   const subTabFromQuery = searchParams.get('subTab') as CalculatorSubTab | null;
   const initialSubTab =
@@ -534,6 +534,16 @@ const BattlePage: React.FC = () => {
             }`}
           >
             정보
+          </button>
+          <button
+            onClick={() => setActiveTab('combo')}
+            className={`flex-1 px-4 py-2 font-bold transition-colors ${
+              activeTab === 'combo'
+                ? 'text-accent border-b-2 border-accent'
+                : 'text-text-secondary hover:text-text-primary'
+            }`}
+          >
+            콤보
           </button>
           <button
             onClick={() => setActiveTab('calculator')}
@@ -2086,6 +2096,814 @@ const BattlePage: React.FC = () => {
               </div>
             </div>
           </>
+        )}
+
+        {/* 콤보 탭 */}
+        {activeTab === 'combo' && (
+          <div className="space-y-6">
+            {/* 개요 */}
+            <div className="bg-gradient-to-r from-purple-500/20 to-pink-500/20 rounded-lg p-5 border border-purple-500/50">
+              <h2 className="text-2xl font-bold mb-3 text-purple-400">⚔️ 콤보 시스템이란?</h2>
+              <p className="text-text-primary mb-3">
+                콤보는 <strong className="text-yellow-400">2~5명이 같은 적을 연속으로 공격</strong>하여 누적 데미지를 한 번에 가하는 시스템입니다.
+              </p>
+              <div className="bg-bg-tertiary rounded p-4 space-y-2 text-sm">
+                <p>🎯 <strong className="text-red-400">회피 불가!</strong> 일반 공격과 달리 반드시 명중합니다</p>
+                <p>💥 각자의 데미지를 계산하여 <strong className="text-accent">마지막에 모아서 한 번에</strong> 적용</p>
+                <p>👥 최대 <strong className="text-accent">5명</strong>까지 참여 가능</p>
+                <p>🐾 <strong className="text-purple-400">캐릭터와 펫이 섞여서 콤보 가능!</strong> (예: 캐릭A → 펫B → 캐릭C)</p>
+                <p>⚡ 각자 <strong className="text-accent">독립적으로</strong> 크리티컬 및 속성 보정 적용</p>
+                <p className="pt-2 border-t border-border">
+                  📊 <strong className="text-green-400">아래 실전 상황 분석 13가지 케이스</strong>를 확인하여 콤보 성공 조건을 완벽히 파악하세요!
+                </p>
+              </div>
+            </div>
+
+            {/* 콤보 발동 조건 */}
+            <div className="bg-bg-secondary rounded-lg p-5 border border-border">
+              <h2 className="text-xl font-bold mb-4 text-accent">🎲 콤보 발동 조건</h2>
+
+              {/* 턴 순서와 확률 */}
+              <div className="mb-6">
+                <h3 className="text-lg font-bold mb-3 text-green-400">1. 핵심 원리: DEX 순서와 확률</h3>
+
+                <div className="mb-4 p-4 bg-purple-500/10 border border-purple-500/30 rounded">
+                  <p className="font-bold text-purple-400 mb-2">⚡ 전투 순서는 DEX(순발력) 내림차순!</p>
+                  <p className="text-sm text-text-secondary">
+                    DEX가 높을수록 먼저 행동합니다. 예: DEX 300 → 200 → 100 → 50 순서로 공격
+                  </p>
+                </div>
+
+                <div className="grid md:grid-cols-2 gap-4">
+                  <div className="bg-blue-500/10 border border-blue-500/30 rounded p-4">
+                    <div className="text-center mb-2">
+                      <span className="text-3xl font-bold text-blue-400">50%</span>
+                    </div>
+                    <p className="text-center text-sm text-text-secondary font-bold">플레이어 캐릭터 / 펫</p>
+                    <p className="text-xs text-center text-text-tertiary mt-2">
+                      <strong className="text-yellow-400">첫 번째만</strong> 확률 판정!<br/>
+                      통과하면 "대기 상태" 진입<br/>
+                      <span className="text-purple-400">캐릭터든 펫이든 동일!</span>
+                    </p>
+                  </div>
+                  <div className="bg-red-500/10 border border-red-500/30 rounded p-4">
+                    <div className="text-center mb-2">
+                      <span className="text-3xl font-bold text-red-400">20%</span>
+                    </div>
+                    <p className="text-center text-sm text-text-secondary font-bold">적</p>
+                    <p className="text-xs text-center text-text-tertiary mt-2">
+                      <strong className="text-yellow-400">첫 번째 적만</strong> 확률 판정!<br/>
+                      통과하면 "대기 상태" 진입
+                    </p>
+                  </div>
+                </div>
+
+                <div className="mt-3 p-3 bg-green-500/10 border border-green-500/30 rounded text-sm">
+                  <p className="text-green-400 font-bold mb-1">
+                    ✅ 중요: 두 번째 사람부터는 확률 판정 없음!
+                  </p>
+                  <p className="text-text-secondary text-xs">
+                    조건만 맞으면 자동으로 콤보에 합류합니다. 즉, 첫 사람의 확률만 뚫으면 나머지는 조건만 체크!
+                  </p>
+                </div>
+              </div>
+
+              {/* 필수 조건 */}
+              <div className="mb-6">
+                <h3 className="text-lg font-bold mb-3 text-green-400">2. 필수 조건</h3>
+                <div className="space-y-3">
+                  <div className="flex items-start gap-3 p-3 bg-bg-tertiary rounded">
+                    <span className="text-2xl">✅</span>
+                    <div className="flex-1">
+                      <p className="font-bold text-accent mb-1">일반 공격만 가능</p>
+                      <p className="text-sm text-text-secondary">방어, 스킬, 주술 등은 콤보 불가</p>
+                    </div>
+                  </div>
+                  <div className="flex items-start gap-3 p-3 bg-bg-tertiary rounded">
+                    <span className="text-2xl">✅</span>
+                    <div className="flex-1">
+                      <p className="font-bold text-accent mb-1">근접 무기만 가능</p>
+                      <p className="text-sm text-text-secondary">활, 투척 무기는 콤보 불가</p>
+                    </div>
+                  </div>
+                  <div className="flex items-start gap-3 p-3 bg-bg-tertiary rounded">
+                    <span className="text-2xl">✅</span>
+                    <div className="flex-1">
+                      <p className="font-bold text-accent mb-1">같은 적을 공격</p>
+                      <p className="text-sm text-text-secondary">첫 번째 사람이 선택한 적을 나머지도 공격해야 함</p>
+                    </div>
+                  </div>
+                  <div className="flex items-start gap-3 p-3 bg-bg-tertiary rounded">
+                    <span className="text-2xl">✅</span>
+                    <div className="flex-1">
+                      <p className="font-bold text-accent mb-1">같은 편이어야 함</p>
+                      <p className="text-sm text-text-secondary">아군끼리, 적끼리만 콤보 가능</p>
+                    </div>
+                  </div>
+                  <div className="flex items-start gap-3 p-3 bg-bg-tertiary rounded">
+                    <span className="text-2xl">✅</span>
+                    <div className="flex-1">
+                      <p className="font-bold text-accent mb-1">행동 가능 상태</p>
+                      <p className="text-sm text-text-secondary">HP가 0이 아니고, 상태이상으로 행동 불가가 아니어야 함</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* 최소 인원 */}
+              <div className="p-4 bg-gradient-to-r from-red-500/20 to-orange-500/20 border border-red-500/50 rounded">
+                <p className="text-lg font-bold text-red-400 mb-2">⚠️ 최소 2명 이상이어야 콤보 성립!</p>
+                <p className="text-sm text-text-secondary">
+                  1명이 확률에 성공해도, 다음 사람이 조건을 만족하지 않으면 콤보가 불발되고 일반 공격으로 처리됩니다.
+                </p>
+              </div>
+            </div>
+
+            {/* 콤보 발동 과정 */}
+            <div className="bg-bg-secondary rounded-lg p-5 border border-border">
+              <h2 className="text-xl font-bold mb-4 text-accent">🔄 콤보 발동 과정</h2>
+
+              <div className="space-y-4">
+                {/* 단계 1 */}
+                <div className="bg-purple-500/10 border border-purple-500/30 rounded p-4">
+                  <div className="flex items-center gap-3 mb-3">
+                    <span className="bg-purple-500 text-white rounded-full w-8 h-8 flex items-center justify-center font-bold">1</span>
+                    <h3 className="text-lg font-bold text-purple-400">첫 번째 사람 - 확률 체크</h3>
+                  </div>
+                  <div className="pl-11 space-y-2 text-sm">
+                    <p>• A가 적 X를 일반 공격 (근접 무기)</p>
+                    <p>• 50% 확률 체크 → <strong className="text-green-400">성공!</strong></p>
+                    <p>• A는 "대기 상태"가 됨 (아직 콤보 아님)</p>
+                    <p className="text-yellow-400">→ 다음 사람을 기다림...</p>
+                  </div>
+                </div>
+
+                {/* 단계 2 */}
+                <div className="bg-blue-500/10 border border-blue-500/30 rounded p-4">
+                  <div className="flex items-center gap-3 mb-3">
+                    <span className="bg-blue-500 text-white rounded-full w-8 h-8 flex items-center justify-center font-bold">2</span>
+                    <h3 className="text-lg font-bold text-blue-400">두 번째 사람 - 조인 (확률 없음!)</h3>
+                  </div>
+                  <div className="pl-11 space-y-2 text-sm">
+                    <p>• B가 같은 적 X를 공격 (근접 무기)</p>
+                    <p>• <strong className="text-yellow-400">확률 체크 없이</strong> 조건만 확인!</p>
+                    <p>• 모든 조건 만족 → <strong className="text-green-400">자동 조인!</strong></p>
+                    <p>• A와 B 모두 "콤보" 상태로 변경</p>
+                    <p>• 콤보 그룹 ID 부여 (예: ComboId=2)</p>
+                    <p className="text-green-400">→ 2명 콤보 성립!</p>
+                  </div>
+                </div>
+
+                {/* 단계 3 */}
+                <div className="bg-green-500/10 border border-green-500/30 rounded p-4">
+                  <div className="flex items-center gap-3 mb-3">
+                    <span className="bg-green-500 text-white rounded-full w-8 h-8 flex items-center justify-center font-bold">3</span>
+                    <h3 className="text-lg font-bold text-green-400">추가 참여 (선택)</h3>
+                  </div>
+                  <div className="pl-11 space-y-2 text-sm">
+                    <p>• C, D, E도 조건을 만족하면 계속 참여 가능</p>
+                    <p>• 같은 콤보 그룹 ID 부여</p>
+                    <p>• 최대 5명까지 가능</p>
+                    <p className="text-green-400">→ 5명 콤보!</p>
+                  </div>
+                </div>
+
+                {/* 중단 케이스 */}
+                <div className="bg-red-500/10 border border-red-500/30 rounded p-4">
+                  <div className="flex items-center gap-3 mb-3">
+                    <span className="bg-red-500 text-white rounded-full w-8 h-8 flex items-center justify-center font-bold">✕</span>
+                    <h3 className="text-lg font-bold text-red-400">콤보 중단 조건</h3>
+                  </div>
+                  <div className="pl-11 space-y-2 text-sm">
+                    <p>• 다른 적을 공격하면 콤보 종료</p>
+                    <p>• 원거리 무기 사용자가 나오면 종료</p>
+                    <p>• 방어/스킬을 쓰면 종료</p>
+                    <p>• HP 0이거나 행동 불가 상태면 스킵</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* 콤보 데미지 계산 */}
+            <div className="bg-bg-secondary rounded-lg p-5 border border-border">
+              <h2 className="text-xl font-bold mb-4 text-accent">💥 콤보 데미지 계산</h2>
+
+              <div className="mb-4 p-4 bg-yellow-500/10 border border-yellow-500/30 rounded">
+                <p className="font-bold text-yellow-400 mb-2">핵심 원리</p>
+                <p className="text-sm text-text-secondary">
+                  각자의 데미지를 <strong>개별 계산</strong>한 후 <strong>누적</strong>하여,
+                  마지막 사람 차례에 <strong>한 번에</strong> 적용합니다!
+                </p>
+              </div>
+
+              <div className="space-y-4">
+                {/* 단계별 설명 */}
+                <div className="space-y-3">
+                  <div className="flex items-start gap-3 p-3 bg-bg-tertiary rounded">
+                    <span className="text-xl">①</span>
+                    <div className="flex-1">
+                      <p className="font-bold text-accent">A의 데미지 계산</p>
+                      <p className="text-sm text-text-secondary">
+                        공격력 200 vs 방어력 100 → 속성 보정 1.2배 → 크리티컬! → <strong className="text-yellow-400">336 데미지</strong>
+                      </p>
+                      <p className="text-xs text-text-tertiary mt-1">AllDamage = 336</p>
+                    </div>
+                  </div>
+
+                  <div className="flex items-start gap-3 p-3 bg-bg-tertiary rounded">
+                    <span className="text-xl">②</span>
+                    <div className="flex-1">
+                      <p className="font-bold text-accent">B의 데미지 계산</p>
+                      <p className="text-sm text-text-secondary">
+                        공격력 180 vs 방어력 100 → 속성 보정 1.5배 → 일반 → <strong className="text-blue-400">270 데미지</strong>
+                      </p>
+                      <p className="text-xs text-text-tertiary mt-1">AllDamage = 336 + 270 = 606</p>
+                    </div>
+                  </div>
+
+                  <div className="flex items-start gap-3 p-3 bg-bg-tertiary rounded">
+                    <span className="text-xl">③</span>
+                    <div className="flex-1">
+                      <p className="font-bold text-accent">C의 데미지 계산 (마지막)</p>
+                      <p className="text-sm text-text-secondary">
+                        공격력 220 vs 방어력 100 → 속성 보정 1.0배 → 일반 → <strong className="text-green-400">220 데미지</strong>
+                      </p>
+                      <p className="text-xs text-text-tertiary mt-1">AllDamage = 606 + 220 = 826</p>
+                    </div>
+                  </div>
+
+                  <div className="flex items-start gap-3 p-4 bg-gradient-to-r from-purple-500/20 to-pink-500/20 border border-purple-500/50 rounded">
+                    <span className="text-2xl">💥</span>
+                    <div className="flex-1">
+                      <p className="font-bold text-purple-400 text-lg">최종 데미지 적용</p>
+                      <p className="text-sm text-text-secondary mt-1">
+                        C의 차례에 <strong className="text-accent text-xl">826 데미지</strong>를 한 번에 적용!
+                      </p>
+                      <p className="text-xs text-text-tertiary mt-2">
+                        <strong className="text-red-400">회피 불가</strong> → 적 HP 1000 → 174
+                      </p>
+                    </div>
+                  </div>
+                </div>
+
+                {/* 특징 */}
+                <div className="grid md:grid-cols-2 gap-4 mt-4">
+                  <div className="p-4 bg-green-500/10 border border-green-500/30 rounded">
+                    <p className="font-bold text-green-400 mb-2">✅ 크리티컬</p>
+                    <p className="text-sm text-text-secondary">
+                      각자 독립적으로 판정! A만 크리티컬 나면 A의 데미지만 1.4배
+                    </p>
+                  </div>
+                  <div className="p-4 bg-blue-500/10 border border-blue-500/30 rounded">
+                    <p className="font-bold text-blue-400 mb-2">✅ 속성 보정</p>
+                    <p className="text-sm text-text-secondary">
+                      각자의 속성으로 독립 계산! A는 1.2배, B는 1.5배 가능
+                    </p>
+                  </div>
+                  <div className="p-4 bg-red-500/10 border border-red-500/30 rounded">
+                    <p className="font-bold text-red-400 mb-2">🚫 회피 불가</p>
+                    <p className="text-sm text-text-secondary">
+                      콤보 공격은 <strong className="text-red-400">회피 판정이 없음</strong> → 반드시 명중!
+                    </p>
+                  </div>
+                  <div className="p-4 bg-red-500/10 border border-red-500/30 rounded">
+                    <p className="font-bold text-red-400 mb-2">⚠️ 반격</p>
+                    <p className="text-sm text-text-secondary">
+                      마지막에 1회만 판정! 반격은 마지막 공격자에게만 적용
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* 콤보 vs 일반 공격 */}
+            <div className="bg-bg-secondary rounded-lg p-5 border border-border">
+              <h2 className="text-xl font-bold mb-4 text-accent">⚔️ 콤보 vs 일반 공격 비교</h2>
+
+              <div className="overflow-x-auto">
+                <table className="w-full border-collapse text-sm">
+                  <thead>
+                    <tr className="bg-bg-tertiary">
+                      <th className="p-3 border border-border text-left">항목</th>
+                      <th className="p-3 border border-border text-center">일반 공격</th>
+                      <th className="p-3 border border-border text-center">콤보 공격</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td className="p-3 border border-border font-bold">발동 확률</td>
+                      <td className="p-3 border border-border text-center">없음</td>
+                      <td className="p-3 border border-border text-center text-yellow-400">플레이어 50% / 적 20%</td>
+                    </tr>
+                    <tr className="bg-bg-tertiary">
+                      <td className="p-3 border border-border font-bold">최소 인원</td>
+                      <td className="p-3 border border-border text-center">1명</td>
+                      <td className="p-3 border border-border text-center text-accent">2명</td>
+                    </tr>
+                    <tr>
+                      <td className="p-3 border border-border font-bold">최대 인원</td>
+                      <td className="p-3 border border-border text-center">1명</td>
+                      <td className="p-3 border border-border text-center text-accent">5명</td>
+                    </tr>
+                    <tr className="bg-bg-tertiary">
+                      <td className="p-3 border border-border font-bold">무기 제한</td>
+                      <td className="p-3 border border-border text-center">없음</td>
+                      <td className="p-3 border border-border text-center text-red-400">근접 무기만</td>
+                    </tr>
+                    <tr>
+                      <td className="p-3 border border-border font-bold">데미지 적용</td>
+                      <td className="p-3 border border-border text-center">즉시</td>
+                      <td className="p-3 border border-border text-center text-purple-400">누적 후 한 번에</td>
+                    </tr>
+                    <tr className="bg-bg-tertiary">
+                      <td className="p-3 border border-border font-bold">회피 판정</td>
+                      <td className="p-3 border border-border text-center">공격마다 1회</td>
+                      <td className="p-3 border border-border text-center text-red-400 font-bold">불가능 (반드시 명중)</td>
+                    </tr>
+                    <tr>
+                      <td className="p-3 border border-border font-bold">반격 판정</td>
+                      <td className="p-3 border border-border text-center">공격마다 1회</td>
+                      <td className="p-3 border border-border text-center text-green-400">전체에 대해 1회만</td>
+                    </tr>
+                    <tr className="bg-bg-tertiary">
+                      <td className="p-3 border border-border font-bold">크리티컬</td>
+                      <td className="p-3 border border-border text-center">1회 판정</td>
+                      <td className="p-3 border border-border text-center text-blue-400">각자 독립 판정</td>
+                    </tr>
+                    <tr>
+                      <td className="p-3 border border-border font-bold">속성 보정</td>
+                      <td className="p-3 border border-border text-center">1회 적용</td>
+                      <td className="p-3 border border-border text-center text-blue-400">각자 독립 적용</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+            {/* 전략 팁 */}
+            <div className="bg-gradient-to-r from-green-500/20 to-blue-500/20 rounded-lg p-5 border border-green-500/50">
+              <h2 className="text-xl font-bold mb-4 text-green-400">💡 콤보 활용 전략</h2>
+
+              <div className="space-y-3">
+                <div className="flex items-start gap-3">
+                  <span className="text-2xl">✅</span>
+                  <div className="flex-1">
+                    <p className="font-bold text-accent mb-1">반드시 명중하는 강력한 공격!</p>
+                    <p className="text-sm text-text-secondary">
+                      콤보는 <strong className="text-red-400">회피 불가</strong>! 일반 공격과 달리 반드시 명중하므로 큰 데미지를 안정적으로 넣을 수 있습니다.
+                    </p>
+                  </div>
+                </div>
+
+                <div className="flex items-start gap-3">
+                  <span className="text-2xl">⚠️</span>
+                  <div className="flex-1">
+                    <p className="font-bold text-red-400 mb-1">DEX 관리가 생명! (매우 중요)</p>
+                    <p className="text-sm text-text-secondary">
+                      <strong className="text-yellow-400">적이 중간에 끼면 콤보가 끊깁니다!</strong><br/>
+                      예: 우리(200) → <span className="text-red-400">적(185)</span> → 우리(170) → 콤보 불가!<br/>
+                      <strong className="text-green-400">해결책:</strong> 우리팀의 DEX를 모두 적보다 높게 만들거나, 모두 낮게 만들어 연속 공격!
+                    </p>
+                  </div>
+                </div>
+
+                <div className="flex items-start gap-3">
+                  <span className="text-2xl">✅</span>
+                  <div className="flex-1">
+                    <p className="font-bold text-accent mb-1">속성 다양화</p>
+                    <p className="text-sm text-text-secondary">
+                      각자 독립 계산이므로 다양한 속성을 가진 파티가 유리! 불, 물, 지, 바람을 골고루 배치하세요.
+                    </p>
+                  </div>
+                </div>
+
+                <div className="flex items-start gap-3">
+                  <span className="text-2xl">⚠️</span>
+                  <div className="flex-1">
+                    <p className="font-bold text-red-400 mb-1">반격/흡수/반사 주의</p>
+                    <p className="text-sm text-text-secondary">
+                      콤보는 회피는 불가능하지만 반격, 흡수, 반사는 가능! 반격/흡수/반사 능력이 있는 적에게는 주의하세요.
+                    </p>
+                  </div>
+                </div>
+
+                <div className="flex items-start gap-3">
+                  <span className="text-2xl">⚠️</span>
+                  <div className="flex-1">
+                    <p className="font-bold text-red-400 mb-1">근접 무기 필수</p>
+                    <p className="text-sm text-text-secondary">
+                      활, 투척 무기는 콤보 불가! 콤보를 노린다면 반드시 근접 무기를 장착하세요.
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* 실전 상황 분석 */}
+            <div className="bg-bg-secondary rounded-lg p-5 border border-border">
+              <h2 className="text-xl font-bold mb-4 text-accent">📊 실전 상황 분석: 콤보 가능 여부 판단</h2>
+              <p className="text-sm text-text-secondary mb-4">
+                다양한 전투 상황에서 콤보 성공/실패 케이스를 분석하여 실전 대처 능력을 향상시키세요.
+              </p>
+
+              <div className="space-y-4">
+                {/* 성공 예시 */}
+                <div className="p-4 bg-green-500/10 border border-green-500/30 rounded">
+                  <h3 className="text-lg font-bold text-green-400 mb-3">✅ 성공 사례: 완벽한 5명 콤보</h3>
+                  <div className="space-y-2 text-sm">
+                    <p className="font-bold text-accent">상황:</p>
+                    <p className="text-text-secondary pl-4">
+                      파티: A(DEX 200), B(DEX 180), C(DEX 170), D(DEX 160), E(DEX 150)<br/>
+                      모두 근접 무기, 적 X (HP 3000) 공격
+                    </p>
+
+                    <p className="font-bold text-accent mt-3">진행:</p>
+                    <div className="pl-4 space-y-1 text-text-secondary">
+                      <p>1. A가 50% 체크 성공 → 콤보 시작 (대기)</p>
+                      <p>2. B가 조인 → A, B 콤보 성립 (ComboId=2)</p>
+                      <p>3. C가 조인 → 3명 콤보</p>
+                      <p>4. D가 조인 → 4명 콤보</p>
+                      <p>5. E가 조인 → 5명 콤보!</p>
+                    </div>
+
+                    <p className="font-bold text-accent mt-3">결과:</p>
+                    <p className="text-text-secondary pl-4">
+                      A(300) + B(280크리) + C(260) + D(240) + E(220) = <strong className="text-green-400 text-lg">1300 데미지!</strong><br/>
+                      <strong className="text-red-400">회피 불가!</strong> → 반드시 명중 → 적 HP 3000 → 1700
+                    </p>
+                  </div>
+                </div>
+
+                {/* DEX 차이 예시 - 사용자 질문 */}
+                <div className="p-4 bg-blue-500/10 border border-blue-500/30 rounded">
+                  <h3 className="text-lg font-bold text-blue-400 mb-3">🎯 특수 케이스: 적의 DEX가 더 높을 때</h3>
+                  <div className="space-y-2 text-sm">
+                    <p className="font-bold text-accent">상황:</p>
+                    <p className="text-text-secondary pl-4">
+                      우리팀: A(DEX 200), B(DEX 100), C(DEX 50), D(DEX 20), E(DEX 10)<br/>
+                      적: X(DEX 300) ← 모두보다 빠름!
+                    </p>
+
+                    <p className="font-bold text-accent mt-3">전투 순서:</p>
+                    <p className="text-text-secondary pl-4">
+                      <strong className="text-yellow-400">X(300) → A(200) → B(100) → C(50) → D(20) → E(10)</strong>
+                    </p>
+
+                    <p className="font-bold text-accent mt-3">진행:</p>
+                    <div className="pl-4 space-y-1 text-text-secondary">
+                      <p>1. 적 X가 먼저 공격 (우리를 공격)</p>
+                      <p>2. A가 X를 공격 → 50% 체크 → 성공! (대기 상태)</p>
+                      <p>3. B가 X를 공격 → 조건 만족 → <strong className="text-green-400">콤보 성립!</strong></p>
+                      <p>4. C, D, E도 조건 맞으면 계속 참여 가능</p>
+                    </div>
+
+                    <p className="font-bold text-accent mt-3">결론:</p>
+                    <p className="text-text-secondary pl-4">
+                      <strong className="text-green-400">✅ 콤보 가능합니다!</strong><br/>
+                      DEX는 단지 <strong className="text-yellow-400">행동 순서만</strong> 결정합니다.<br/>
+                      적이 먼저 행동하더라도, 우리가 같은 적을 연속으로 공격하면 콤보가 성립합니다!
+                    </p>
+                  </div>
+                </div>
+
+                {/* 10 vs 10 예시 */}
+                <div className="p-4 bg-purple-500/10 border border-purple-500/30 rounded">
+                  <h3 className="text-lg font-bold text-purple-400 mb-3">🐾 특별 케이스: 캐릭터와 펫 혼합 콤보</h3>
+                  <div className="space-y-2 text-sm">
+                    <p className="font-bold text-accent">상황:</p>
+                    <p className="text-text-secondary pl-4">
+                      10 vs 10 전투 (캐릭 5명 + 펫 5마리 vs 적 5명 + 펫 5마리)<br/>
+                      전투 순서: 캐릭A(DEX 200) → 펫B(DEX 180) → 캐릭C(DEX 150) → 펫A(DEX 120) → 캐릭B(DEX 100)
+                    </p>
+
+                    <p className="font-bold text-accent mt-3">진행:</p>
+                    <div className="pl-4 space-y-1 text-text-secondary">
+                      <p>1. 캐릭A가 적X 공격 → 50% 체크 → 성공! (대기)</p>
+                      <p>2. 펫B가 적X 공격 → <strong className="text-green-400">50% 아님! 확률 없이 조건만 체크!</strong> → 조인!</p>
+                      <p>3. 캐릭C가 적X 공격 → 조건 만족 → 조인!</p>
+                      <p>4. 펫A가 적X 공격 → 조건 만족 → 조인!</p>
+                      <p>5. 캐릭B가 적X 공격 → 조건 만족 → 조인!</p>
+                    </div>
+
+                    <p className="font-bold text-accent mt-3">결과:</p>
+                    <p className="text-text-secondary pl-4">
+                      <strong className="text-purple-400 text-lg">캐릭-펫-캐릭-펫-캐릭 5명 콤보 성립!</strong><br/>
+                      캐릭A(350) + 펫B(280) + 캐릭C(320) + 펫A(250) + 캐릭B(300) = <strong className="text-green-400">1500 데미지!</strong><br/>
+                      <strong className="text-red-400">회피 불가</strong> → 반드시 명중!
+                    </p>
+
+                    <p className="font-bold text-yellow-400 mt-3 text-xs">
+                      💡 핵심: 캐릭터와 펫은 완전히 동등! 같은 편(side)이면 누구든 콤보 가능!
+                    </p>
+                  </div>
+                </div>
+
+                {/* DEX 실패 예시 - 사용자 질문 */}
+                <div className="p-4 bg-red-500/10 border border-red-500/30 rounded">
+                  <h3 className="text-lg font-bold text-red-400 mb-3">❌ 치명적 실패: 적이 중간에 끼는 경우</h3>
+                  <div className="space-y-2 text-sm">
+                    <p className="font-bold text-accent">상황:</p>
+                    <p className="text-text-secondary pl-4">
+                      우리팀 DEX: 100, 200, 150, 170, 130<br/>
+                      적 X: DEX 185
+                    </p>
+
+                    <p className="font-bold text-accent mt-3">전투 순서:</p>
+                    <p className="text-text-secondary pl-4">
+                      <strong className="text-yellow-400">200 → 185(적) → 170 → 150 → 130 → 100</strong>
+                    </p>
+
+                    <p className="font-bold text-accent mt-3">진행:</p>
+                    <div className="pl-4 space-y-1 text-text-secondary">
+                      <p>1. 우리 200 DEX가 적X 공격 → 50% 성공 → 대기 상태</p>
+                      <p>2. <strong className="text-red-400">적X(185)가 우리 공격</strong> → side 바뀜 → <strong className="text-red-400">콤보 종료!</strong></p>
+                      <p>3. 우리 170 DEX → 일반 공격으로 처리</p>
+                      <p>4. 우리 150 DEX → 일반 공격</p>
+                      <p>5. 콤보 불가능...</p>
+                    </div>
+
+                    <p className="font-bold text-accent mt-3">결과:</p>
+                    <p className="text-text-secondary pl-4">
+                      <strong className="text-red-400">콤보 완전 실패!</strong><br/>
+                      모든 공격이 일반 공격으로 처리됨<br/>
+                      회피 가능 + 데미지 분산 = 최악의 시나리오
+                    </p>
+
+                    <p className="font-bold text-yellow-400 mt-3 text-xs">
+                      ⚠️ 해결: 우리팀 전원의 DEX를 185 이상으로 올리거나, 전원 185 이하로 낮춰서 연속 공격!
+                    </p>
+                  </div>
+                </div>
+
+                {/* 불발 예시 */}
+                <div className="p-4 bg-yellow-500/10 border border-yellow-500/30 rounded">
+                  <h3 className="text-lg font-bold text-yellow-400 mb-3">⚠️ 불발 사례: 타겟 불일치</h3>
+                  <div className="space-y-2 text-sm">
+                    <p className="font-bold text-accent">상황:</p>
+                    <p className="text-text-secondary pl-4">
+                      A가 적 X 공격, B가 적 Y 공격 (다른 적 선택)
+                    </p>
+
+                    <p className="font-bold text-accent mt-3">진행:</p>
+                    <div className="pl-4 space-y-1 text-text-secondary">
+                      <p>1. A가 50% 체크 성공 → 콤보 시작 (대기)</p>
+                      <p>2. B가 다른 적(Y)을 공격 → enemy 불일치 → 콤보 종료</p>
+                    </div>
+
+                    <p className="font-bold text-accent mt-3">결과:</p>
+                    <p className="text-text-secondary pl-4">
+                      A, B 모두 일반 공격으로 처리<br/>
+                      A의 확률 성공은 의미 없어짐
+                    </p>
+                  </div>
+                </div>
+
+                {/* 케이스 1: 다수 적 상황 */}
+                <div className="p-4 bg-orange-500/10 border border-orange-500/30 rounded">
+                  <h3 className="text-lg font-bold text-orange-400 mb-3">🎯 케이스 1: 적이 2마리 이상일 때</h3>
+                  <div className="space-y-2 text-sm">
+                    <p className="font-bold text-accent">상황:</p>
+                    <p className="text-text-secondary pl-4">
+                      우리팀 DEX: 180, 170, 160, 150, 140 (모두 근접 무기)<br/>
+                      적 X(DEX 100, HP 2000), 적 Y(DEX 90, HP 1500)
+                    </p>
+
+                    <p className="font-bold text-accent mt-3">전투 순서:</p>
+                    <p className="text-text-secondary pl-4">
+                      <strong className="text-yellow-400">180 → 170 → 160 → 150 → 140 → X(100) → Y(90)</strong>
+                    </p>
+
+                    <p className="font-bold text-accent mt-3">판단:</p>
+                    <p className="text-text-secondary pl-4">
+                      <strong className="text-green-400">✅ 콤보 완벽 가능!</strong><br/>
+                      우리팀 5명이 모두 적보다 빠르므로 연속 공격 가능<br/>
+                      <strong className="text-yellow-400">전략:</strong> 약한 적 Y를 5명이 집중 공격하여 한 방에 제거!
+                    </p>
+
+                    <p className="font-bold text-yellow-400 mt-3 text-xs">
+                      💡 팁: 다수 적 상황에서는 약한 적부터 제거하여 피해 최소화!
+                    </p>
+                  </div>
+                </div>
+
+                {/* 케이스 2: DEX가 엇갈린 상황 */}
+                <div className="p-4 bg-red-500/10 border border-red-500/30 rounded">
+                  <h3 className="text-lg font-bold text-red-400 mb-3">❌ 케이스 2: DEX가 엇갈려서 완전 실패</h3>
+                  <div className="space-y-2 text-sm">
+                    <p className="font-bold text-accent">상황:</p>
+                    <p className="text-text-secondary pl-4">
+                      우리팀 DEX: 250, 180, 120, 80, 50<br/>
+                      적 X(DEX 200), Y(DEX 150), Z(DEX 100)
+                    </p>
+
+                    <p className="font-bold text-accent mt-3">전투 순서:</p>
+                    <p className="text-text-secondary pl-4">
+                      <strong className="text-red-400">250(우리) → 200(X) → 180(우리) → 150(Y) → 120(우리) → 100(Z) → 80(우리) → 50(우리)</strong>
+                    </p>
+
+                    <p className="font-bold text-accent mt-3">판단:</p>
+                    <p className="text-text-secondary pl-4">
+                      <strong className="text-red-400">❌ 콤보 불가능!</strong><br/>
+                      적들이 우리팀 사이사이에 끼어서 콤보가 계속 끊김<br/>
+                      최대 2명 콤보만 가능 (250+180 또는 120만 단독 등)
+                    </p>
+
+                    <p className="font-bold text-yellow-400 mt-3 text-xs">
+                      ⚠️ 해결: DEX 장비/스킬로 전원 200 이상 또는 100 이하로 조정 필요!
+                    </p>
+                  </div>
+                </div>
+
+                {/* 케이스 3: 원거리 무기 혼합 */}
+                <div className="p-4 bg-red-500/10 border border-red-500/30 rounded">
+                  <h3 className="text-lg font-bold text-red-400 mb-3">❌ 케이스 3: 원거리 무기 착용자가 끼는 경우</h3>
+                  <div className="space-y-2 text-sm">
+                    <p className="font-bold text-accent">상황:</p>
+                    <p className="text-text-secondary pl-4">
+                      우리팀 DEX: 200(근접), 180(활 장착!), 170(근접), 160(근접), 150(근접)<br/>
+                      적 X(DEX 100, 약함)
+                    </p>
+
+                    <p className="font-bold text-accent mt-3">전투 순서:</p>
+                    <p className="text-text-secondary pl-4">
+                      200 → 180(활) → 170 → 160 → 150 → X(100)
+                    </p>
+
+                    <p className="font-bold text-accent mt-3">진행:</p>
+                    <div className="pl-4 space-y-1 text-text-secondary">
+                      <p>1. 200 DEX(근접)가 X 공격 → 50% 성공 → 대기</p>
+                      <p>2. 180 DEX(활)가 X 공격 → <strong className="text-red-400">armtype == 1</strong> → 콤보 종료!</p>
+                      <p>3. 170 DEX → 일반 공격...</p>
+                    </div>
+
+                    <p className="font-bold text-accent mt-3">판단:</p>
+                    <p className="text-text-secondary pl-4">
+                      <strong className="text-red-400">❌ 2명 콤보 불가! 모두 일반 공격!</strong><br/>
+                      원거리 무기 착용자가 중간에 끼면 콤보가 끊김
+                    </p>
+
+                    <p className="font-bold text-yellow-400 mt-3 text-xs">
+                      ⚠️ 해결: 활 착용자는 DEX를 가장 낮게 만들어 마지막에 행동하게 하거나, 근접 무기로 교체!
+                    </p>
+                  </div>
+                </div>
+
+                {/* 케이스 4: 방어 명령 사용자 */}
+                <div className="p-4 bg-red-500/10 border border-red-500/30 rounded">
+                  <h3 className="text-lg font-bold text-red-400 mb-3">❌ 케이스 4: 방어 명령을 쓰는 경우</h3>
+                  <div className="space-y-2 text-sm">
+                    <p className="font-bold text-accent">상황:</p>
+                    <p className="text-text-secondary pl-4">
+                      우리팀 DEX: 200, 180, 170, 160, 150 (모두 근접 무기)<br/>
+                      적 X(DEX 100)<br/>
+                      180 DEX 캐릭터가 방어 명령 선택!
+                    </p>
+
+                    <p className="font-bold text-accent mt-3">진행:</p>
+                    <div className="pl-4 space-y-1 text-text-secondary">
+                      <p>1. 200 DEX가 X 공격 → 50% 성공 → 대기</p>
+                      <p>2. 180 DEX가 방어 → <strong className="text-red-400">com != ATTACK</strong> → 콤보 종료!</p>
+                      <p>3. 170 DEX → 일반 공격...</p>
+                    </div>
+
+                    <p className="font-bold text-accent mt-3">판단:</p>
+                    <p className="text-text-secondary pl-4">
+                      <strong className="text-red-400">❌ 콤보 불가!</strong><br/>
+                      방어, 스킬, 주술 등 공격이 아닌 명령은 콤보를 끊음
+                    </p>
+
+                    <p className="font-bold text-yellow-400 mt-3 text-xs">
+                      💡 전략: 콤보를 노린다면 모든 팀원이 "공격" 명령을 선택해야 함!
+                    </p>
+                  </div>
+                </div>
+
+                {/* 케이스 5: 확률 실패 */}
+                <div className="p-4 bg-yellow-500/10 border border-yellow-500/30 rounded">
+                  <h3 className="text-lg font-bold text-yellow-400 mb-3">🎲 케이스 5: 첫 번째 확률 실패</h3>
+                  <div className="space-y-2 text-sm">
+                    <p className="font-bold text-accent">상황:</p>
+                    <p className="text-text-secondary pl-4">
+                      완벽한 조건! 우리팀 DEX 모두 적보다 높음, 모두 근접 무기, 같은 적 공격
+                    </p>
+
+                    <p className="font-bold text-accent mt-3">진행:</p>
+                    <div className="pl-4 space-y-1 text-text-secondary">
+                      <p>1. 첫 번째 캐릭터 공격 → 50% 체크 → <strong className="text-red-400">실패!</strong></p>
+                      <p>2. 일반 공격으로 처리</p>
+                      <p>3. 두 번째 캐릭터 → 일반 공격 (콤보 시작 안됨)</p>
+                    </div>
+
+                    <p className="font-bold text-accent mt-3">판단:</p>
+                    <p className="text-text-secondary pl-4">
+                      <strong className="text-yellow-400">⚠️ 운이 나쁘면 콤보 불발!</strong><br/>
+                      조건이 완벽해도 첫 번째 확률을 뚫어야 함<br/>
+                      평균적으로 2턴에 1번 콤보 기회 (50% 확률)
+                    </p>
+
+                    <p className="font-bold text-yellow-400 mt-3 text-xs">
+                      💡 팁: 확률이므로 여러 전투에서 평균적으로 50% 성공!
+                    </p>
+                  </div>
+                </div>
+
+                {/* 케이스 6: 적 펫 포함 */}
+                <div className="p-4 bg-blue-500/10 border border-blue-500/30 rounded">
+                  <h3 className="text-lg font-bold text-blue-400 mb-3">🐾 케이스 6: 적도 펫이 있는 10 vs 10</h3>
+                  <div className="space-y-2 text-sm">
+                    <p className="font-bold text-accent">상황:</p>
+                    <p className="text-text-secondary pl-4">
+                      우리 캐릭A(DEX 200) + 우리 펫들(170, 160, 150, 140)<br/>
+                      적 캐릭X(DEX 190) + 적 펫Y(DEX 180)
+                    </p>
+
+                    <p className="font-bold text-accent mt-3">전투 순서:</p>
+                    <p className="text-text-secondary pl-4">
+                      <strong className="text-red-400">200(우리) → 190(적X) → 180(적Y펫) → 170(우리) → 160(우리)...</strong>
+                    </p>
+
+                    <p className="font-bold text-accent mt-3">판단:</p>
+                    <p className="text-text-secondary pl-4">
+                      <strong className="text-red-400">❌ 콤보 불가!</strong><br/>
+                      적 캐릭과 적 펫이 우리 사이에 2명 끼면 콤보 끊김
+                    </p>
+
+                    <p className="font-bold text-yellow-400 mt-3 text-xs">
+                      ⚠️ 해결: 우리 펫들의 DEX를 190 이상으로 올려서 적보다 빠르게!
+                    </p>
+                  </div>
+                </div>
+
+                {/* 케이스 7: 부분 성공 */}
+                <div className="p-4 bg-green-500/10 border border-green-500/30 rounded">
+                  <h3 className="text-lg font-bold text-green-400 mb-3">✅ 케이스 7: 2~3명 콤보도 충분히 강력!</h3>
+                  <div className="space-y-2 text-sm">
+                    <p className="font-bold text-accent">상황:</p>
+                    <p className="text-text-secondary pl-4">
+                      우리팀 DEX: 220, 210 (근접), 200(활 장착), 190, 180<br/>
+                      적 X(DEX 100)
+                    </p>
+
+                    <p className="font-bold text-accent mt-3">진행:</p>
+                    <div className="pl-4 space-y-1 text-text-secondary">
+                      <p>1. 220 DEX → X 공격 → 50% 성공 → 대기</p>
+                      <p>2. 210 DEX → X 공격 → 조인 → <strong className="text-green-400">2명 콤보 성립!</strong></p>
+                      <p>3. 200 DEX(활) → X 공격 → 원거리 무기 → 콤보 종료</p>
+                      <p>4. 190, 180은 일반 공격</p>
+                    </div>
+
+                    <p className="font-bold text-accent mt-3">판단:</p>
+                    <p className="text-text-secondary pl-4">
+                      <strong className="text-green-400">✅ 2명 콤보 성공!</strong><br/>
+                      5명 콤보가 아니어도 <strong className="text-yellow-400">회피 불가 + 데미지 집중</strong>은 여전히 강력!<br/>
+                      220(400) + 210(380) = <strong className="text-green-400">780 데미지</strong> 반드시 명중!
+                    </p>
+
+                    <p className="font-bold text-yellow-400 mt-3 text-xs">
+                      💡 중요: 5명 콤보에 집착하지 말고, 2~3명 콤보도 충분히 활용!
+                    </p>
+                  </div>
+                </div>
+
+                {/* 케이스 8: 최악의 상황에서 역전 */}
+                <div className="p-4 bg-purple-500/10 border border-purple-500/30 rounded">
+                  <h3 className="text-lg font-bold text-purple-400 mb-3">🎯 케이스 8: DEX가 불리해도 전략으로 극복</h3>
+                  <div className="space-y-2 text-sm">
+                    <p className="font-bold text-accent">상황:</p>
+                    <p className="text-text-secondary pl-4">
+                      우리팀 DEX: 모두 100~150 (약함)<br/>
+                      적들 DEX: 모두 160~200 (빠름!)<br/>
+                      하지만 우리 전원 근접 무기, 적 X는 혼자!
+                    </p>
+
+                    <p className="font-bold text-accent mt-3">전투 순서:</p>
+                    <p className="text-text-secondary pl-4">
+                      <strong className="text-yellow-400">적들 → 우리(150) → 우리(140) → 우리(130) → 우리(120) → 우리(100)</strong>
+                    </p>
+
+                    <p className="font-bold text-accent mt-3">전략:</p>
+                    <div className="pl-4 space-y-1 text-text-secondary">
+                      <p>1. 적들의 공격을 모두 받음 (어쩔 수 없음)</p>
+                      <p>2. 우리 150 DEX → 적X 공격 → 50% 성공 → 대기</p>
+                      <p>3. 우리 140, 130, 120, 100 → 모두 적X 공격 → <strong className="text-green-400">5명 콤보!</strong></p>
+                      <p>4. 누적 데미지로 적 X 제거!</p>
+                    </div>
+
+                    <p className="font-bold text-accent mt-3">판단:</p>
+                    <p className="text-text-secondary pl-4">
+                      <strong className="text-green-400">✅ 콤보 가능!</strong><br/>
+                      적들이 먼저 공격하지만, <strong className="text-yellow-400">우리끼리 연속으로 행동</strong>하면 콤보 성립!<br/>
+                      DEX가 낮아도 전원 같은 범위에 있으면 오히려 유리!
+                    </p>
+
+                    <p className="font-bold text-yellow-400 mt-3 text-xs">
+                      💡 핵심: DEX가 낮다고 포기하지 마! 우리끼리 뭉쳐있으면 콤보 가능!
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
         )}
 
         {/* 계산기 탭 */}
