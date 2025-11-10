@@ -2724,6 +2724,96 @@ const BattlePage: React.FC = () => {
                     })()}
                   </div>
                 </div>
+
+                {/* 속성 상성 정보 */}
+                {(() => {
+                  // 속성은 항상 캐릭터 스탯 사용 (펫에는 속성이 없음)
+                  const attrBonus = calculateAttributeBonus(attacker, defender);
+
+                  const atkTotal = attacker.fire + attacker.water + attacker.earth + attacker.wind;
+                  const defTotal = defender.fire + defender.water + defender.earth + defender.wind;
+
+                  // 속성이 하나라도 있으면 표시
+                  if (atkTotal > 0 || defTotal > 0) {
+                    const getAttributeLabel = (char: CharacterStats) => {
+                      const attrs = [];
+                      if (char.fire > 0) attrs.push(`불${char.fire}`);
+                      if (char.water > 0) attrs.push(`물${char.water}`);
+                      if (char.earth > 0) attrs.push(`지${char.earth}`);
+                      if (char.wind > 0) attrs.push(`바람${char.wind}`);
+                      const none = 10 - (char.fire + char.water + char.earth + char.wind);
+                      if (none > 0) attrs.push(`무${none}`);
+                      return attrs.join(' + ');
+                    };
+
+                    return (
+                      <div className="bg-gradient-to-r from-purple-500/10 to-pink-500/10 rounded-lg p-4 md:p-5 border border-purple-500/30 shadow-lg">
+                        <h2 className="text-xl font-bold mb-4 text-purple-400 flex items-center gap-2">
+                          <span>✨</span> 속성 상성 분석
+                        </h2>
+
+                        <div className="space-y-4">
+                          {/* 공격자 속성 */}
+                          <div className="bg-bg-tertiary rounded-lg p-3 border border-border">
+                            <div className="flex justify-between items-center mb-2">
+                              <span className="text-sm font-bold text-green-400">⚔️ 공격자 속성</span>
+                              <span className="text-xs text-text-secondary">총합: {atkTotal}/10</span>
+                            </div>
+                            <div className="text-sm text-text-primary">
+                              {getAttributeLabel(attacker)}
+                            </div>
+                          </div>
+
+                          {/* 방어자 속성 */}
+                          <div className="bg-bg-tertiary rounded-lg p-3 border border-border">
+                            <div className="flex justify-between items-center mb-2">
+                              <span className="text-sm font-bold text-blue-400">🛡️ 방어자 속성</span>
+                              <span className="text-xs text-text-secondary">총합: {defTotal}/10</span>
+                            </div>
+                            <div className="text-sm text-text-primary">
+                              {getAttributeLabel(defender)}
+                            </div>
+                          </div>
+
+                          {/* 속성 보정 결과 */}
+                          <div className="bg-gradient-to-r from-yellow-500/20 to-orange-500/20 rounded-lg p-4 border border-yellow-500/50">
+                            <div className="flex justify-between items-center">
+                              <div>
+                                <div className="text-sm font-bold text-yellow-300 mb-1">최종 속성 보정값</div>
+                                <div className="text-xs text-text-secondary">
+                                  데미지에 곱해지는 배율
+                                </div>
+                              </div>
+                              <div className="text-right">
+                                <div className="text-3xl font-bold text-yellow-400">
+                                  ×{attrBonus.toFixed(4)}
+                                </div>
+                                <div className="text-xs text-text-secondary mt-1">
+                                  {attrBonus > 1.0 ? '🔥 상성 유리!' : attrBonus < 1.0 ? '💧 상성 불리' : '⚖️ 보통'}
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+
+                          {/* 예시 계산 */}
+                          <div className="bg-bg-tertiary rounded-lg p-3 border border-border">
+                            <div className="text-xs text-text-secondary space-y-1">
+                              <p className="font-bold text-accent mb-2">💡 계산 예시</p>
+                              <p>• 기본 데미지가 1000이라면</p>
+                              <p className="text-yellow-400 font-bold pl-4">
+                                → 속성 적용 후: {(1000 * attrBonus).toFixed(0)} 데미지
+                              </p>
+                              <p className="text-xs text-text-tertiary mt-2">
+                                ※ 속성 보정은 모든 데미지에 적용됩니다
+                              </p>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    );
+                  }
+                  return null;
+                })()}
               </>
             )}
 
