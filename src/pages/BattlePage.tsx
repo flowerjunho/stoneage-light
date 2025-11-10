@@ -147,6 +147,18 @@ const BattlePage: React.FC = () => {
     setSearchParams(params, { replace: true });
   }, [activeTab, calculatorSubTab, setSearchParams]);
 
+  // 목차 클릭 시 스크롤 처리
+  const handleTocClick = (sectionId: string) => {
+    const element = document.getElementById(sectionId);
+    if (element) {
+      const offsetTop = element.offsetTop - 20; // 상단 여유 공간 (약간의 패딩)
+      window.scrollTo({
+        top: offsetTop,
+        behavior: 'smooth'
+      });
+    }
+  };
+
   // 공격자 스탯이 변경될 때마다 로컬 스토리지에 저장
   useEffect(() => {
     saveStatsToStorage(STORAGE_KEY_ATTACKER, attacker);
@@ -2102,35 +2114,35 @@ const BattlePage: React.FC = () => {
         {activeTab === 'combo' && (
           <div className="space-y-6">
             {/* 목차 */}
-            <div className="bg-bg-secondary rounded-lg p-5 border border-border sticky top-4 z-10 shadow-lg">
+            <div className="bg-bg-secondary rounded-lg p-5 border border-border shadow-lg">
               <h2 className="text-lg font-bold mb-3 text-accent">📑 목차</h2>
               <div className="grid md:grid-cols-2 gap-2 text-sm">
-                <a href="#combo-overview" className="p-2 hover:bg-bg-tertiary rounded transition-colors cursor-pointer text-text-secondary hover:text-accent">
+                <button onClick={() => handleTocClick('combo-overview')} className="p-2 hover:bg-bg-tertiary rounded transition-colors cursor-pointer text-text-secondary hover:text-accent text-left">
                   ⚔️ 콤보 시스템 개요
-                </a>
-                <a href="#combo-conditions" className="p-2 hover:bg-bg-tertiary rounded transition-colors cursor-pointer text-text-secondary hover:text-accent">
+                </button>
+                <button onClick={() => handleTocClick('combo-conditions')} className="p-2 hover:bg-bg-tertiary rounded transition-colors cursor-pointer text-text-secondary hover:text-accent text-left">
                   🎲 발동 조건
-                </a>
-                <a href="#combo-process" className="p-2 hover:bg-bg-tertiary rounded transition-colors cursor-pointer text-text-secondary hover:text-accent">
+                </button>
+                <button onClick={() => handleTocClick('combo-process')} className="p-2 hover:bg-bg-tertiary rounded transition-colors cursor-pointer text-text-secondary hover:text-accent text-left">
                   🔄 발동 과정
-                </a>
-                <a href="#combo-calculation" className="p-2 hover:bg-bg-tertiary rounded transition-colors cursor-pointer text-text-secondary hover:text-accent">
+                </button>
+                <button onClick={() => handleTocClick('combo-calculation')} className="p-2 hover:bg-bg-tertiary rounded transition-colors cursor-pointer text-text-secondary hover:text-accent text-left">
                   💥 데미지 계산
-                </a>
-                <a href="#combo-comparison" className="p-2 hover:bg-bg-tertiary rounded transition-colors cursor-pointer text-text-secondary hover:text-accent">
+                </button>
+                <button onClick={() => handleTocClick('combo-comparison')} className="p-2 hover:bg-bg-tertiary rounded transition-colors cursor-pointer text-text-secondary hover:text-accent text-left">
                   📊 일반 공격 비교
-                </a>
-                <a href="#combo-strategy" className="p-2 hover:bg-bg-tertiary rounded transition-colors cursor-pointer text-text-secondary hover:text-accent">
+                </button>
+                <button onClick={() => handleTocClick('combo-strategy')} className="p-2 hover:bg-bg-tertiary rounded transition-colors cursor-pointer text-text-secondary hover:text-accent text-left">
                   💡 활용 전략
-                </a>
-                <a href="#combo-cases" className="p-2 hover:bg-bg-tertiary rounded transition-colors cursor-pointer text-text-secondary hover:text-accent">
+                </button>
+                <button onClick={() => handleTocClick('combo-cases')} className="p-2 hover:bg-bg-tertiary rounded transition-colors cursor-pointer text-text-secondary hover:text-accent text-left">
                   📖 실전 케이스 (17개)
-                </a>
+                </button>
               </div>
             </div>
 
             {/* 개요 */}
-            <div id="combo-overview" className="bg-gradient-to-r from-purple-500/20 to-pink-500/20 rounded-lg p-5 border border-purple-500/50 scroll-mt-20">
+            <div id="combo-overview" className="bg-gradient-to-r from-purple-500/20 to-pink-500/20 rounded-lg p-5 border border-purple-500/50 scroll-mt-6">
               <h2 className="text-2xl font-bold mb-3 text-purple-400">⚔️ 콤보 시스템이란?</h2>
               <p className="text-text-primary mb-3">
                 콤보는 <strong className="text-yellow-400">2~5명이 같은 적을 연속으로 공격</strong>하여 누적 데미지를 한 번에 가하는 시스템입니다.
@@ -2148,7 +2160,7 @@ const BattlePage: React.FC = () => {
             </div>
 
             {/* 콤보 발동 조건 */}
-            <div id="combo-conditions" className="bg-bg-secondary rounded-lg p-5 border border-border scroll-mt-20">
+            <div id="combo-conditions" className="bg-bg-secondary rounded-lg p-5 border border-border scroll-mt-6">
               <h2 className="text-xl font-bold mb-4 text-accent">🎲 콤보 발동 조건</h2>
 
               {/* 턴 순서와 확률 */}
@@ -2248,7 +2260,7 @@ const BattlePage: React.FC = () => {
             </div>
 
             {/* 콤보 발동 과정 */}
-            <div id="combo-process" className="bg-bg-secondary rounded-lg p-5 border border-border scroll-mt-20">
+            <div id="combo-process" className="bg-bg-secondary rounded-lg p-5 border border-border scroll-mt-6">
               <h2 className="text-xl font-bold mb-4 text-accent">🔄 콤보 발동 과정</h2>
 
               <div className="space-y-4">
@@ -2313,7 +2325,7 @@ const BattlePage: React.FC = () => {
             </div>
 
             {/* 콤보 데미지 계산 */}
-            <div id="combo-calculation" className="bg-bg-secondary rounded-lg p-5 border border-border scroll-mt-20">
+            <div id="combo-calculation" className="bg-bg-secondary rounded-lg p-5 border border-border scroll-mt-6">
               <h2 className="text-xl font-bold mb-4 text-accent">💥 콤보 데미지 계산</h2>
 
               <div className="mb-4 p-4 bg-yellow-500/10 border border-yellow-500/30 rounded">
@@ -2405,7 +2417,7 @@ const BattlePage: React.FC = () => {
             </div>
 
             {/* 콤보 vs 일반 공격 */}
-            <div id="combo-comparison" className="bg-bg-secondary rounded-lg p-5 border border-border scroll-mt-20">
+            <div id="combo-comparison" className="bg-bg-secondary rounded-lg p-5 border border-border scroll-mt-6">
               <h2 className="text-xl font-bold mb-4 text-accent">⚔️ 콤보 vs 일반 공격 비교</h2>
 
               <div className="overflow-x-auto">
@@ -2469,7 +2481,7 @@ const BattlePage: React.FC = () => {
             </div>
 
             {/* 전략 팁 */}
-            <div id="combo-strategy" className="bg-gradient-to-r from-green-500/20 to-blue-500/20 rounded-lg p-5 border border-green-500/50 scroll-mt-20">
+            <div id="combo-strategy" className="bg-gradient-to-r from-green-500/20 to-blue-500/20 rounded-lg p-5 border border-green-500/50 scroll-mt-6">
               <h2 className="text-xl font-bold mb-4 text-green-400">💡 콤보 활용 전략</h2>
 
               <div className="space-y-3">
@@ -2528,7 +2540,7 @@ const BattlePage: React.FC = () => {
             </div>
 
             {/* 실전 상황 분석 */}
-            <div id="combo-cases" className="bg-bg-secondary rounded-lg p-5 border border-border scroll-mt-20">
+            <div id="combo-cases" className="bg-bg-secondary rounded-lg p-5 border border-border scroll-mt-6">
               <h2 className="text-xl font-bold mb-4 text-accent">📊 실전 상황 분석: 콤보 가능 여부 판단</h2>
               <p className="text-sm text-text-secondary mb-4">
                 다양한 전투 상황에서 콤보 성공/실패 케이스를 분석하여 실전 대처 능력을 향상시키세요.
