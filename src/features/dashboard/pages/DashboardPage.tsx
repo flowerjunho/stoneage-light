@@ -34,6 +34,35 @@ interface ServerImage {
 
 const DashboardPage: React.FC = () => {
   const [uploading, setUploading] = useState(false);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [password, setPassword] = useState('');
+  const [showPasswordError, setShowPasswordError] = useState(false);
+
+  // Check authentication on mount
+  useEffect(() => {
+    const authKey = localStorage.getItem('DASHBOARD_AUTH');
+    if (authKey === 'authenticated') {
+      setIsAuthenticated(true);
+    }
+  }, []);
+
+  // Password validation
+  const handlePasswordSubmit = () => {
+    const correctPassword = '2580';
+    if (password === correctPassword) {
+      localStorage.setItem('DASHBOARD_AUTH', 'authenticated');
+      setIsAuthenticated(true);
+      setShowPasswordError(false);
+    } else {
+      setShowPasswordError(true);
+    }
+  };
+
+  const handleKeyPress = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter') {
+      handlePasswordSubmit();
+    }
+  };
 
   // Cloudflare Tunnel을 통한 HTTPS 접근 (모든 환경에서 사용)
   const serverUrl = 'https://invoice-finder-deferred-static.trycloudflare.com';
@@ -895,6 +924,40 @@ const DashboardPage: React.FC = () => {
       loadFolderImages(selectedFolder);
     }
   }, [selectedFolder]);
+
+  // Password protection UI
+  if (!isAuthenticated) {
+    return (
+      <div className="w-full min-h-screen bg-bg-primary text-text-primary flex items-center justify-center">
+        <div className="bg-bg-secondary rounded-lg p-8 border border-border shadow-lg max-w-md w-full mx-4">
+          <h2 className="text-2xl font-bold text-center mb-6">🔐 비밀번호 입력</h2>
+          <p className="text-text-secondary text-center mb-6">
+            대시보드에 접근하려면 비밀번호를 입력하세요.
+          </p>
+          <div className="space-y-4">
+            <input
+              type="password"
+              value={password}
+              onChange={e => setPassword(e.target.value)}
+              onKeyPress={handleKeyPress}
+              placeholder="비밀번호를 입력하세요"
+              className="w-full px-4 py-2 bg-bg-primary border border-border rounded-lg focus:outline-none focus:border-blue-500 text-text-primary"
+              autoFocus
+            />
+            {showPasswordError && (
+              <p className="text-red-500 text-sm text-center">비밀번호가 올바르지 않습니다.</p>
+            )}
+            <button
+              onClick={handlePasswordSubmit}
+              className="w-full py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors font-medium"
+            >
+              확인
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-bg-primary text-text-primary">

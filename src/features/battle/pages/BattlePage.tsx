@@ -90,11 +90,16 @@ const savePetStatsToStorage = (key: string, petStats: PetStats | null) => {
 const BattlePage: React.FC = () => {
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [password, setPassword] = useState('');
+  const [showPasswordError, setShowPasswordError] = useState(false);
 
   // URL 쿼리에서 탭 상태 가져오기
   const tabFromQuery = searchParams.get('tab') as TabType | null;
   const initialTab =
-    tabFromQuery === 'calculator' || tabFromQuery === 'info' || tabFromQuery === 'combo' ? tabFromQuery : 'info';
+    tabFromQuery === 'calculator' || tabFromQuery === 'info' || tabFromQuery === 'combo'
+      ? tabFromQuery
+      : 'info';
 
   const subTabFromQuery = searchParams.get('subTab') as CalculatorSubTab | null;
   const initialSubTab =
@@ -138,6 +143,28 @@ const BattlePage: React.FC = () => {
   // 탑승 가능한 페트 목록
   const rideablePets = petDataJson.pets.filter(pet => pet.rideable === '탑승가능');
 
+  // 인증 확인
+  useEffect(() => {
+    const authKey = localStorage.getItem('BATTLE_AUTH');
+    if (authKey === 'authenticated') {
+      setIsAuthenticated(true);
+    }
+  }, []);
+
+  // 비밀번호 확인
+  const handlePasswordSubmit = () => {
+    // 비밀번호 설정 (원하는 비밀번호로 변경 가능)
+    const correctPassword = '2580';
+
+    if (password === correctPassword) {
+      localStorage.setItem('BATTLE_AUTH', 'authenticated');
+      setIsAuthenticated(true);
+      setShowPasswordError(false);
+    } else {
+      setShowPasswordError(true);
+    }
+  };
+
   // 탭 변경 시 URL 쿼리 업데이트
   useEffect(() => {
     const params: { tab: string; subTab?: string } = { tab: activeTab };
@@ -154,7 +181,7 @@ const BattlePage: React.FC = () => {
       const offsetTop = element.offsetTop - 20; // 상단 여유 공간 (약간의 패딩)
       window.scrollTo({
         top: offsetTop,
-        behavior: 'smooth'
+        behavior: 'smooth',
       });
     }
   };
@@ -498,6 +525,38 @@ const BattlePage: React.FC = () => {
       },
     };
   };
+
+  // 비밀번호 입력 화면
+  if (!isAuthenticated) {
+    return (
+      <div className="w-full min-h-screen bg-bg-primary text-text-primary flex items-center justify-center">
+        <div className="bg-bg-secondary rounded-lg p-8 border border-border shadow-lg max-w-md w-full mx-4">
+          <h2 className="text-2xl font-bold text-center mb-6">🔐 비밀번호 입력</h2>
+          <div className="space-y-4">
+            <input
+              type="password"
+              value={password}
+              onChange={e => setPassword(e.target.value)}
+              onKeyPress={e => {
+                if (e.key === 'Enter') {
+                  handlePasswordSubmit();
+                }
+              }}
+              placeholder="비밀번호를 입력하세요"
+              className="w-full px-4 py-2 bg-bg-tertiary border border-border rounded-lg focus:outline-none focus:border-accent"
+            />
+            {showPasswordError && <p className="text-red-500 text-sm">잘못된 비밀번호입니다.</p>}
+            <button
+              onClick={handlePasswordSubmit}
+              className="w-full px-4 py-2 bg-accent text-white rounded-lg hover:bg-accent/90 transition-colors"
+            >
+              확인
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="w-full min-h-screen bg-bg-primary text-text-primary p-3 md:p-4">
@@ -1177,7 +1236,8 @@ const BattlePage: React.FC = () => {
                         wari = 공격자 DEX ≥ 방어자 DEX ? 1.0 : (공격자 DEX ÷ 방어자 DEX)
                       </code>
                       <p className="text-xs text-text-secondary mt-2">
-                        💡 공격자가 방어자보다 느리면 (DEX가 낮으면) 크리티컬 확률이 비율만큼 감소합니다.
+                        💡 공격자가 방어자보다 느리면 (DEX가 낮으면) 크리티컬 확률이 비율만큼
+                        감소합니다.
                       </p>
                       <p className="text-xs text-text-secondary">
                         예: 공격자 DEX 100 vs 방어자 DEX 200 → wari = 0.5 (크리 확률 50%로 감소)
@@ -2117,58 +2177,105 @@ const BattlePage: React.FC = () => {
             <div className="bg-bg-secondary rounded-lg p-5 border border-border shadow-lg">
               <h2 className="text-lg font-bold mb-3 text-accent">📑 목차</h2>
               <div className="grid md:grid-cols-2 gap-2 text-sm">
-                <button onClick={() => handleTocClick('combo-overview')} className="p-2 hover:bg-bg-tertiary rounded transition-colors cursor-pointer text-text-secondary hover:text-accent text-left">
+                <button
+                  onClick={() => handleTocClick('combo-overview')}
+                  className="p-2 hover:bg-bg-tertiary rounded transition-colors cursor-pointer text-text-secondary hover:text-accent text-left"
+                >
                   ⚔️ 콤보 시스템 개요
                 </button>
-                <button onClick={() => handleTocClick('combo-conditions')} className="p-2 hover:bg-bg-tertiary rounded transition-colors cursor-pointer text-text-secondary hover:text-accent text-left">
+                <button
+                  onClick={() => handleTocClick('combo-conditions')}
+                  className="p-2 hover:bg-bg-tertiary rounded transition-colors cursor-pointer text-text-secondary hover:text-accent text-left"
+                >
                   🎲 발동 조건
                 </button>
-                <button onClick={() => handleTocClick('combo-process')} className="p-2 hover:bg-bg-tertiary rounded transition-colors cursor-pointer text-text-secondary hover:text-accent text-left">
+                <button
+                  onClick={() => handleTocClick('combo-process')}
+                  className="p-2 hover:bg-bg-tertiary rounded transition-colors cursor-pointer text-text-secondary hover:text-accent text-left"
+                >
                   🔄 발동 과정
                 </button>
-                <button onClick={() => handleTocClick('combo-calculation')} className="p-2 hover:bg-bg-tertiary rounded transition-colors cursor-pointer text-text-secondary hover:text-accent text-left">
+                <button
+                  onClick={() => handleTocClick('combo-calculation')}
+                  className="p-2 hover:bg-bg-tertiary rounded transition-colors cursor-pointer text-text-secondary hover:text-accent text-left"
+                >
                   💥 데미지 계산
                 </button>
-                <button onClick={() => handleTocClick('combo-comparison')} className="p-2 hover:bg-bg-tertiary rounded transition-colors cursor-pointer text-text-secondary hover:text-accent text-left">
+                <button
+                  onClick={() => handleTocClick('combo-comparison')}
+                  className="p-2 hover:bg-bg-tertiary rounded transition-colors cursor-pointer text-text-secondary hover:text-accent text-left"
+                >
                   📊 일반 공격 비교
                 </button>
-                <button onClick={() => handleTocClick('combo-strategy')} className="p-2 hover:bg-bg-tertiary rounded transition-colors cursor-pointer text-text-secondary hover:text-accent text-left">
+                <button
+                  onClick={() => handleTocClick('combo-strategy')}
+                  className="p-2 hover:bg-bg-tertiary rounded transition-colors cursor-pointer text-text-secondary hover:text-accent text-left"
+                >
                   💡 활용 전략
                 </button>
-                <button onClick={() => handleTocClick('combo-cases')} className="p-2 hover:bg-bg-tertiary rounded transition-colors cursor-pointer text-text-secondary hover:text-accent text-left">
+                <button
+                  onClick={() => handleTocClick('combo-cases')}
+                  className="p-2 hover:bg-bg-tertiary rounded transition-colors cursor-pointer text-text-secondary hover:text-accent text-left"
+                >
                   📖 실전 케이스 (20개)
                 </button>
               </div>
             </div>
 
             {/* 개요 */}
-            <div id="combo-overview" className="bg-gradient-to-r from-purple-500/20 to-pink-500/20 rounded-lg p-5 border border-purple-500/50 scroll-mt-6">
+            <div
+              id="combo-overview"
+              className="bg-gradient-to-r from-purple-500/20 to-pink-500/20 rounded-lg p-5 border border-purple-500/50 scroll-mt-6"
+            >
               <h2 className="text-2xl font-bold mb-3 text-purple-400">⚔️ 콤보 시스템이란?</h2>
               <p className="text-text-primary mb-3">
-                콤보는 <strong className="text-yellow-400">2~5명이 같은 적을 연속으로 공격</strong>하여 누적 데미지를 한 번에 가하는 시스템입니다.
+                콤보는 <strong className="text-yellow-400">2~5명이 같은 적을 연속으로 공격</strong>
+                하여 누적 데미지를 한 번에 가하는 시스템입니다.
               </p>
               <div className="bg-bg-tertiary rounded p-4 space-y-2 text-sm">
-                <p>🎯 <strong className="text-red-400">회피 불가!</strong> 일반 공격과 달리 반드시 명중합니다</p>
-                <p>💥 각자의 데미지를 계산하여 <strong className="text-accent">마지막에 모아서 한 번에</strong> 적용</p>
-                <p>👥 최대 <strong className="text-accent">5명</strong>까지 참여 가능</p>
-                <p>🐾 <strong className="text-purple-400">캐릭터와 펫이 섞여서 콤보 가능!</strong> (예: 캐릭A → 펫B → 캐릭C)</p>
-                <p>⚡ 각자 <strong className="text-accent">독립적으로</strong> 크리티컬 및 속성 보정 적용</p>
+                <p>
+                  🎯 <strong className="text-red-400">회피 불가!</strong> 일반 공격과 달리 반드시
+                  명중합니다
+                </p>
+                <p>
+                  💥 각자의 데미지를 계산하여{' '}
+                  <strong className="text-accent">마지막에 모아서 한 번에</strong> 적용
+                </p>
+                <p>
+                  👥 최대 <strong className="text-accent">5명</strong>까지 참여 가능
+                </p>
+                <p>
+                  🐾 <strong className="text-purple-400">캐릭터와 펫이 섞여서 콤보 가능!</strong>{' '}
+                  (예: 캐릭A → 펫B → 캐릭C)
+                </p>
+                <p>
+                  ⚡ 각자 <strong className="text-accent">독립적으로</strong> 크리티컬 및 속성 보정
+                  적용
+                </p>
                 <p className="pt-2 border-t border-border">
-                  📊 <strong className="text-green-400">아래 실전 상황 분석 20가지 케이스</strong>를 확인하여 콤보 성공 조건을 완벽히 파악하세요!
+                  📊 <strong className="text-green-400">아래 실전 상황 분석 20가지 케이스</strong>를
+                  확인하여 콤보 성공 조건을 완벽히 파악하세요!
                 </p>
               </div>
             </div>
 
             {/* 콤보 발동 조건 */}
-            <div id="combo-conditions" className="bg-bg-secondary rounded-lg p-5 border border-border scroll-mt-6">
+            <div
+              id="combo-conditions"
+              className="bg-bg-secondary rounded-lg p-5 border border-border scroll-mt-6"
+            >
               <h2 className="text-xl font-bold mb-4 text-accent">🎲 콤보 발동 조건</h2>
 
               {/* 턴 순서와 확률 */}
               <div className="mb-6">
-                <h3 className="text-lg font-bold mb-3 text-green-400">1. 핵심 원리: DEX 순서와 확률</h3>
+                <h3 className="text-lg font-bold mb-3 text-green-400">
+                  1. 핵심 원리: DEX 순서와 확률
+                </h3>
 
                 <div className="mb-4 p-4 bg-purple-500/10 border border-purple-500/30 rounded">
-                  <p className="font-bold text-purple-400 mb-2">⚡ 전투 순서는 DEX(순발력) 내림차순!</p>
+                  <p className="font-bold text-purple-400 mb-2">
+                    ⚡ 전투 순서는 DEX(순발력) 내림차순!
+                  </p>
                   <p className="text-sm text-text-secondary">
                     DEX가 높을수록 먼저 행동합니다. 예: DEX 300 → 200 → 100 → 50 순서로 공격
                   </p>
@@ -2179,10 +2286,14 @@ const BattlePage: React.FC = () => {
                     <div className="text-center mb-2">
                       <span className="text-3xl font-bold text-blue-400">50%</span>
                     </div>
-                    <p className="text-center text-sm text-text-secondary font-bold">플레이어 캐릭터 / 펫</p>
+                    <p className="text-center text-sm text-text-secondary font-bold">
+                      플레이어 캐릭터 / 펫
+                    </p>
                     <p className="text-xs text-center text-text-tertiary mt-2">
-                      <strong className="text-yellow-400">첫 번째만</strong> 확률 판정!<br/>
-                      통과하면 "대기 상태" 진입<br/>
+                      <strong className="text-yellow-400">첫 번째만</strong> 확률 판정!
+                      <br />
+                      통과하면 "대기 상태" 진입
+                      <br />
                       <span className="text-purple-400">캐릭터든 펫이든 동일!</span>
                     </p>
                   </div>
@@ -2192,7 +2303,8 @@ const BattlePage: React.FC = () => {
                     </div>
                     <p className="text-center text-sm text-text-secondary font-bold">적</p>
                     <p className="text-xs text-center text-text-tertiary mt-2">
-                      <strong className="text-yellow-400">첫 번째 적만</strong> 확률 판정!<br/>
+                      <strong className="text-yellow-400">첫 번째 적만</strong> 확률 판정!
+                      <br />
                       통과하면 "대기 상태" 진입
                     </p>
                   </div>
@@ -2203,7 +2315,8 @@ const BattlePage: React.FC = () => {
                     ✅ 중요: 두 번째 사람부터는 확률 판정 없음!
                   </p>
                   <p className="text-text-secondary text-xs">
-                    조건만 맞으면 자동으로 콤보에 합류합니다. 즉, 첫 사람의 확률만 뚫으면 나머지는 조건만 체크!
+                    조건만 맞으면 자동으로 콤보에 합류합니다. 즉, 첫 사람의 확률만 뚫으면 나머지는
+                    조건만 체크!
                   </p>
                 </div>
               </div>
@@ -2230,7 +2343,9 @@ const BattlePage: React.FC = () => {
                     <span className="text-2xl">✅</span>
                     <div className="flex-1">
                       <p className="font-bold text-accent mb-1">같은 적을 공격</p>
-                      <p className="text-sm text-text-secondary">첫 번째 사람이 선택한 적을 나머지도 공격해야 함</p>
+                      <p className="text-sm text-text-secondary">
+                        첫 번째 사람이 선택한 적을 나머지도 공격해야 함
+                      </p>
                     </div>
                   </div>
                   <div className="flex items-start gap-3 p-3 bg-bg-tertiary rounded">
@@ -2244,7 +2359,9 @@ const BattlePage: React.FC = () => {
                     <span className="text-2xl">✅</span>
                     <div className="flex-1">
                       <p className="font-bold text-accent mb-1">행동 가능 상태</p>
-                      <p className="text-sm text-text-secondary">HP가 0이 아니고, 상태이상으로 행동 불가가 아니어야 함</p>
+                      <p className="text-sm text-text-secondary">
+                        HP가 0이 아니고, 상태이상으로 행동 불가가 아니어야 함
+                      </p>
                     </div>
                   </div>
                 </div>
@@ -2252,27 +2369,37 @@ const BattlePage: React.FC = () => {
 
               {/* 최소 인원 */}
               <div className="p-4 bg-gradient-to-r from-red-500/20 to-orange-500/20 border border-red-500/50 rounded">
-                <p className="text-lg font-bold text-red-400 mb-2">⚠️ 최소 2명 이상이어야 콤보 성립!</p>
+                <p className="text-lg font-bold text-red-400 mb-2">
+                  ⚠️ 최소 2명 이상이어야 콤보 성립!
+                </p>
                 <p className="text-sm text-text-secondary">
-                  1명이 확률에 성공해도, 다음 사람이 조건을 만족하지 않으면 콤보가 불발되고 일반 공격으로 처리됩니다.
+                  1명이 확률에 성공해도, 다음 사람이 조건을 만족하지 않으면 콤보가 불발되고 일반
+                  공격으로 처리됩니다.
                 </p>
               </div>
             </div>
 
             {/* 콤보 발동 과정 */}
-            <div id="combo-process" className="bg-bg-secondary rounded-lg p-5 border border-border scroll-mt-6">
+            <div
+              id="combo-process"
+              className="bg-bg-secondary rounded-lg p-5 border border-border scroll-mt-6"
+            >
               <h2 className="text-xl font-bold mb-4 text-accent">🔄 콤보 발동 과정</h2>
 
               <div className="space-y-4">
                 {/* 단계 1 */}
                 <div className="bg-purple-500/10 border border-purple-500/30 rounded p-4">
                   <div className="flex items-center gap-3 mb-3">
-                    <span className="bg-purple-500 text-white rounded-full w-8 h-8 flex items-center justify-center font-bold">1</span>
+                    <span className="bg-purple-500 text-white rounded-full w-8 h-8 flex items-center justify-center font-bold">
+                      1
+                    </span>
                     <h3 className="text-lg font-bold text-purple-400">첫 번째 사람 - 확률 체크</h3>
                   </div>
                   <div className="pl-11 space-y-2 text-sm">
                     <p>• A가 적 X를 일반 공격 (근접 무기)</p>
-                    <p>• 50% 확률 체크 → <strong className="text-green-400">성공!</strong></p>
+                    <p>
+                      • 50% 확률 체크 → <strong className="text-green-400">성공!</strong>
+                    </p>
                     <p>• A는 "대기 상태"가 됨 (아직 콤보 아님)</p>
                     <p className="text-yellow-400">→ 다음 사람을 기다림...</p>
                   </div>
@@ -2281,13 +2408,21 @@ const BattlePage: React.FC = () => {
                 {/* 단계 2 */}
                 <div className="bg-blue-500/10 border border-blue-500/30 rounded p-4">
                   <div className="flex items-center gap-3 mb-3">
-                    <span className="bg-blue-500 text-white rounded-full w-8 h-8 flex items-center justify-center font-bold">2</span>
-                    <h3 className="text-lg font-bold text-blue-400">두 번째 사람 - 조인 (확률 없음!)</h3>
+                    <span className="bg-blue-500 text-white rounded-full w-8 h-8 flex items-center justify-center font-bold">
+                      2
+                    </span>
+                    <h3 className="text-lg font-bold text-blue-400">
+                      두 번째 사람 - 조인 (확률 없음!)
+                    </h3>
                   </div>
                   <div className="pl-11 space-y-2 text-sm">
                     <p>• B가 같은 적 X를 공격 (근접 무기)</p>
-                    <p>• <strong className="text-yellow-400">확률 체크 없이</strong> 조건만 확인!</p>
-                    <p>• 모든 조건 만족 → <strong className="text-green-400">자동 조인!</strong></p>
+                    <p>
+                      • <strong className="text-yellow-400">확률 체크 없이</strong> 조건만 확인!
+                    </p>
+                    <p>
+                      • 모든 조건 만족 → <strong className="text-green-400">자동 조인!</strong>
+                    </p>
                     <p>• A와 B 모두 "콤보" 상태로 변경</p>
                     <p>• 콤보 그룹 ID 부여 (예: ComboId=2)</p>
                     <p className="text-green-400">→ 2명 콤보 성립!</p>
@@ -2297,7 +2432,9 @@ const BattlePage: React.FC = () => {
                 {/* 단계 3 */}
                 <div className="bg-green-500/10 border border-green-500/30 rounded p-4">
                   <div className="flex items-center gap-3 mb-3">
-                    <span className="bg-green-500 text-white rounded-full w-8 h-8 flex items-center justify-center font-bold">3</span>
+                    <span className="bg-green-500 text-white rounded-full w-8 h-8 flex items-center justify-center font-bold">
+                      3
+                    </span>
                     <h3 className="text-lg font-bold text-green-400">추가 참여 (선택)</h3>
                   </div>
                   <div className="pl-11 space-y-2 text-sm">
@@ -2311,7 +2448,9 @@ const BattlePage: React.FC = () => {
                 {/* 중단 케이스 */}
                 <div className="bg-red-500/10 border border-red-500/30 rounded p-4">
                   <div className="flex items-center gap-3 mb-3">
-                    <span className="bg-red-500 text-white rounded-full w-8 h-8 flex items-center justify-center font-bold">✕</span>
+                    <span className="bg-red-500 text-white rounded-full w-8 h-8 flex items-center justify-center font-bold">
+                      ✕
+                    </span>
                     <h3 className="text-lg font-bold text-red-400">콤보 중단 조건</h3>
                   </div>
                   <div className="pl-11 space-y-2 text-sm">
@@ -2325,14 +2464,17 @@ const BattlePage: React.FC = () => {
             </div>
 
             {/* 콤보 데미지 계산 */}
-            <div id="combo-calculation" className="bg-bg-secondary rounded-lg p-5 border border-border scroll-mt-6">
+            <div
+              id="combo-calculation"
+              className="bg-bg-secondary rounded-lg p-5 border border-border scroll-mt-6"
+            >
               <h2 className="text-xl font-bold mb-4 text-accent">💥 콤보 데미지 계산</h2>
 
               <div className="mb-4 p-4 bg-yellow-500/10 border border-yellow-500/30 rounded">
                 <p className="font-bold text-yellow-400 mb-2">핵심 원리</p>
                 <p className="text-sm text-text-secondary">
-                  각자의 데미지를 <strong>개별 계산</strong>한 후 <strong>누적</strong>하여,
-                  마지막 사람 차례에 <strong>한 번에</strong> 적용합니다!
+                  각자의 데미지를 <strong>개별 계산</strong>한 후 <strong>누적</strong>하여, 마지막
+                  사람 차례에 <strong>한 번에</strong> 적용합니다!
                 </p>
               </div>
 
@@ -2344,7 +2486,8 @@ const BattlePage: React.FC = () => {
                     <div className="flex-1">
                       <p className="font-bold text-accent">A의 데미지 계산</p>
                       <p className="text-sm text-text-secondary">
-                        공격력 200 vs 방어력 100 → 속성 보정 1.2배 → 크리티컬! → <strong className="text-yellow-400">336 데미지</strong>
+                        공격력 200 vs 방어력 100 → 속성 보정 1.2배 → 크리티컬! →{' '}
+                        <strong className="text-yellow-400">336 데미지</strong>
                       </p>
                       <p className="text-xs text-text-tertiary mt-1">AllDamage = 336</p>
                     </div>
@@ -2355,7 +2498,8 @@ const BattlePage: React.FC = () => {
                     <div className="flex-1">
                       <p className="font-bold text-accent">B의 데미지 계산</p>
                       <p className="text-sm text-text-secondary">
-                        공격력 180 vs 방어력 100 → 속성 보정 1.5배 → 일반 → <strong className="text-blue-400">270 데미지</strong>
+                        공격력 180 vs 방어력 100 → 속성 보정 1.5배 → 일반 →{' '}
+                        <strong className="text-blue-400">270 데미지</strong>
                       </p>
                       <p className="text-xs text-text-tertiary mt-1">AllDamage = 336 + 270 = 606</p>
                     </div>
@@ -2366,7 +2510,8 @@ const BattlePage: React.FC = () => {
                     <div className="flex-1">
                       <p className="font-bold text-accent">C의 데미지 계산 (마지막)</p>
                       <p className="text-sm text-text-secondary">
-                        공격력 220 vs 방어력 100 → 속성 보정 1.0배 → 일반 → <strong className="text-green-400">220 데미지</strong>
+                        공격력 220 vs 방어력 100 → 속성 보정 1.0배 → 일반 →{' '}
+                        <strong className="text-green-400">220 데미지</strong>
                       </p>
                       <p className="text-xs text-text-tertiary mt-1">AllDamage = 606 + 220 = 826</p>
                     </div>
@@ -2377,7 +2522,8 @@ const BattlePage: React.FC = () => {
                     <div className="flex-1">
                       <p className="font-bold text-purple-400 text-lg">최종 데미지 적용</p>
                       <p className="text-sm text-text-secondary mt-1">
-                        C의 차례에 <strong className="text-accent text-xl">826 데미지</strong>를 한 번에 적용!
+                        C의 차례에 <strong className="text-accent text-xl">826 데미지</strong>를 한
+                        번에 적용!
                       </p>
                       <p className="text-xs text-text-tertiary mt-2">
                         <strong className="text-red-400">회피 불가</strong> → 적 HP 1000 → 174
@@ -2403,7 +2549,8 @@ const BattlePage: React.FC = () => {
                   <div className="p-4 bg-red-500/10 border border-red-500/30 rounded">
                     <p className="font-bold text-red-400 mb-2">🚫 회피 불가</p>
                     <p className="text-sm text-text-secondary">
-                      콤보 공격은 <strong className="text-red-400">회피 판정이 없음</strong> → 반드시 명중!
+                      콤보 공격은 <strong className="text-red-400">회피 판정이 없음</strong> →
+                      반드시 명중!
                     </p>
                   </div>
                   <div className="p-4 bg-red-500/10 border border-red-500/30 rounded">
@@ -2417,7 +2564,10 @@ const BattlePage: React.FC = () => {
             </div>
 
             {/* 콤보 vs 일반 공격 */}
-            <div id="combo-comparison" className="bg-bg-secondary rounded-lg p-5 border border-border scroll-mt-6">
+            <div
+              id="combo-comparison"
+              className="bg-bg-secondary rounded-lg p-5 border border-border scroll-mt-6"
+            >
               <h2 className="text-xl font-bold mb-4 text-accent">⚔️ 콤보 vs 일반 공격 비교</h2>
 
               <div className="overflow-x-auto">
@@ -2433,7 +2583,9 @@ const BattlePage: React.FC = () => {
                     <tr>
                       <td className="p-3 border border-border font-bold">발동 확률</td>
                       <td className="p-3 border border-border text-center">없음</td>
-                      <td className="p-3 border border-border text-center text-yellow-400">플레이어 50% / 적 20%</td>
+                      <td className="p-3 border border-border text-center text-yellow-400">
+                        플레이어 50% / 적 20%
+                      </td>
                     </tr>
                     <tr className="bg-bg-tertiary">
                       <td className="p-3 border border-border font-bold">최소 인원</td>
@@ -2448,32 +2600,44 @@ const BattlePage: React.FC = () => {
                     <tr className="bg-bg-tertiary">
                       <td className="p-3 border border-border font-bold">무기 제한</td>
                       <td className="p-3 border border-border text-center">없음</td>
-                      <td className="p-3 border border-border text-center text-red-400">근접 무기만</td>
+                      <td className="p-3 border border-border text-center text-red-400">
+                        근접 무기만
+                      </td>
                     </tr>
                     <tr>
                       <td className="p-3 border border-border font-bold">데미지 적용</td>
                       <td className="p-3 border border-border text-center">즉시</td>
-                      <td className="p-3 border border-border text-center text-purple-400">누적 후 한 번에</td>
+                      <td className="p-3 border border-border text-center text-purple-400">
+                        누적 후 한 번에
+                      </td>
                     </tr>
                     <tr className="bg-bg-tertiary">
                       <td className="p-3 border border-border font-bold">회피 판정</td>
                       <td className="p-3 border border-border text-center">공격마다 1회</td>
-                      <td className="p-3 border border-border text-center text-red-400 font-bold">불가능 (반드시 명중)</td>
+                      <td className="p-3 border border-border text-center text-red-400 font-bold">
+                        불가능 (반드시 명중)
+                      </td>
                     </tr>
                     <tr>
                       <td className="p-3 border border-border font-bold">반격 판정</td>
                       <td className="p-3 border border-border text-center">공격마다 1회</td>
-                      <td className="p-3 border border-border text-center text-green-400">전체에 대해 1회만</td>
+                      <td className="p-3 border border-border text-center text-green-400">
+                        전체에 대해 1회만
+                      </td>
                     </tr>
                     <tr className="bg-bg-tertiary">
                       <td className="p-3 border border-border font-bold">크리티컬</td>
                       <td className="p-3 border border-border text-center">1회 판정</td>
-                      <td className="p-3 border border-border text-center text-blue-400">각자 독립 판정</td>
+                      <td className="p-3 border border-border text-center text-blue-400">
+                        각자 독립 판정
+                      </td>
                     </tr>
                     <tr>
                       <td className="p-3 border border-border font-bold">속성 보정</td>
                       <td className="p-3 border border-border text-center">1회 적용</td>
-                      <td className="p-3 border border-border text-center text-blue-400">각자 독립 적용</td>
+                      <td className="p-3 border border-border text-center text-blue-400">
+                        각자 독립 적용
+                      </td>
                     </tr>
                   </tbody>
                 </table>
@@ -2481,7 +2645,10 @@ const BattlePage: React.FC = () => {
             </div>
 
             {/* 전략 팁 */}
-            <div id="combo-strategy" className="bg-gradient-to-r from-green-500/20 to-blue-500/20 rounded-lg p-5 border border-green-500/50 scroll-mt-6">
+            <div
+              id="combo-strategy"
+              className="bg-gradient-to-r from-green-500/20 to-blue-500/20 rounded-lg p-5 border border-green-500/50 scroll-mt-6"
+            >
               <h2 className="text-xl font-bold mb-4 text-green-400">💡 콤보 활용 전략</h2>
 
               <div className="space-y-3">
@@ -2490,7 +2657,8 @@ const BattlePage: React.FC = () => {
                   <div className="flex-1">
                     <p className="font-bold text-accent mb-1">반드시 명중하는 강력한 공격!</p>
                     <p className="text-sm text-text-secondary">
-                      콤보는 <strong className="text-red-400">회피 불가</strong>! 일반 공격과 달리 반드시 명중하므로 큰 데미지를 안정적으로 넣을 수 있습니다.
+                      콤보는 <strong className="text-red-400">회피 불가</strong>! 일반 공격과 달리
+                      반드시 명중하므로 큰 데미지를 안정적으로 넣을 수 있습니다.
                     </p>
                   </div>
                 </div>
@@ -2500,9 +2668,13 @@ const BattlePage: React.FC = () => {
                   <div className="flex-1">
                     <p className="font-bold text-red-400 mb-1">DEX 관리가 생명! (매우 중요)</p>
                     <p className="text-sm text-text-secondary">
-                      <strong className="text-yellow-400">적이 중간에 끼면 콤보가 끊깁니다!</strong><br/>
-                      예: 우리(200) → <span className="text-red-400">적(185)</span> → 우리(170) → 콤보 불가!<br/>
-                      <strong className="text-green-400">해결책:</strong> 우리팀의 DEX를 모두 적보다 높게 만들거나, 모두 낮게 만들어 연속 공격!
+                      <strong className="text-yellow-400">적이 중간에 끼면 콤보가 끊깁니다!</strong>
+                      <br />
+                      예: 우리(200) → <span className="text-red-400">적(185)</span> → 우리(170) →
+                      콤보 불가!
+                      <br />
+                      <strong className="text-green-400">해결책:</strong> 우리팀의 DEX를 모두 적보다
+                      높게 만들거나, 모두 낮게 만들어 연속 공격!
                     </p>
                   </div>
                 </div>
@@ -2512,7 +2684,8 @@ const BattlePage: React.FC = () => {
                   <div className="flex-1">
                     <p className="font-bold text-accent mb-1">속성 다양화</p>
                     <p className="text-sm text-text-secondary">
-                      각자 독립 계산이므로 다양한 속성을 가진 파티가 유리! 불, 물, 지, 바람을 골고루 배치하세요.
+                      각자 독립 계산이므로 다양한 속성을 가진 파티가 유리! 불, 물, 지, 바람을 골고루
+                      배치하세요.
                     </p>
                   </div>
                 </div>
@@ -2522,7 +2695,8 @@ const BattlePage: React.FC = () => {
                   <div className="flex-1">
                     <p className="font-bold text-red-400 mb-1">반격/흡수/반사 주의</p>
                     <p className="text-sm text-text-secondary">
-                      콤보는 회피는 불가능하지만 반격, 흡수, 반사는 가능! 반격/흡수/반사 능력이 있는 적에게는 주의하세요.
+                      콤보는 회피는 불가능하지만 반격, 흡수, 반사는 가능! 반격/흡수/반사 능력이 있는
+                      적에게는 주의하세요.
                     </p>
                   </div>
                 </div>
@@ -2540,8 +2714,13 @@ const BattlePage: React.FC = () => {
             </div>
 
             {/* 실전 상황 분석 */}
-            <div id="combo-cases" className="bg-bg-secondary rounded-lg p-5 border border-border scroll-mt-6">
-              <h2 className="text-xl font-bold mb-4 text-accent">📊 실전 상황 분석: 콤보 가능 여부 판단</h2>
+            <div
+              id="combo-cases"
+              className="bg-bg-secondary rounded-lg p-5 border border-border scroll-mt-6"
+            >
+              <h2 className="text-xl font-bold mb-4 text-accent">
+                📊 실전 상황 분석: 콤보 가능 여부 판단
+              </h2>
               <p className="text-sm text-text-secondary mb-4">
                 다양한 전투 상황에서 콤보 성공/실패 케이스를 분석하여 실전 대처 능력을 향상시키세요.
               </p>
@@ -2549,11 +2728,14 @@ const BattlePage: React.FC = () => {
               <div className="space-y-4">
                 {/* 성공 예시 */}
                 <div className="p-4 bg-green-500/10 border border-green-500/30 rounded">
-                  <h3 className="text-lg font-bold text-green-400 mb-3">✅ 성공 사례: 완벽한 5명 콤보</h3>
+                  <h3 className="text-lg font-bold text-green-400 mb-3">
+                    ✅ 성공 사례: 완벽한 5명 콤보
+                  </h3>
                   <div className="space-y-2 text-sm">
                     <p className="font-bold text-accent">상황:</p>
                     <p className="text-text-secondary pl-4">
-                      파티: A(DEX 200), B(DEX 180), C(DEX 170), D(DEX 160), E(DEX 150)<br/>
+                      파티: A(DEX 200), B(DEX 180), C(DEX 170), D(DEX 160), E(DEX 150)
+                      <br />
                       모두 근접 무기, 적 X (HP 3000) 공격
                     </p>
 
@@ -2568,39 +2750,53 @@ const BattlePage: React.FC = () => {
 
                     <p className="font-bold text-accent mt-3">결과:</p>
                     <p className="text-text-secondary pl-4">
-                      A(300) + B(280크리) + C(260) + D(240) + E(220) = <strong className="text-green-400 text-lg">1300 데미지!</strong><br/>
-                      <strong className="text-red-400">회피 불가!</strong> → 반드시 명중 → 적 HP 3000 → 1700
+                      A(300) + B(280크리) + C(260) + D(240) + E(220) ={' '}
+                      <strong className="text-green-400 text-lg">1300 데미지!</strong>
+                      <br />
+                      <strong className="text-red-400">회피 불가!</strong> → 반드시 명중 → 적 HP
+                      3000 → 1700
                     </p>
                   </div>
                 </div>
 
                 {/* DEX 차이 예시 - 사용자 질문 */}
                 <div className="p-4 bg-blue-500/10 border border-blue-500/30 rounded">
-                  <h3 className="text-lg font-bold text-blue-400 mb-3">🎯 특수 케이스: 적의 DEX가 더 높을 때</h3>
+                  <h3 className="text-lg font-bold text-blue-400 mb-3">
+                    🎯 특수 케이스: 적의 DEX가 더 높을 때
+                  </h3>
                   <div className="space-y-2 text-sm">
                     <p className="font-bold text-accent">상황:</p>
                     <p className="text-text-secondary pl-4">
-                      우리팀: A(DEX 200), B(DEX 100), C(DEX 50), D(DEX 20), E(DEX 10)<br/>
+                      우리팀: A(DEX 200), B(DEX 100), C(DEX 50), D(DEX 20), E(DEX 10)
+                      <br />
                       적: X(DEX 300) ← 모두보다 빠름!
                     </p>
 
                     <p className="font-bold text-accent mt-3">전투 순서:</p>
                     <p className="text-text-secondary pl-4">
-                      <strong className="text-yellow-400">X(300) → A(200) → B(100) → C(50) → D(20) → E(10)</strong>
+                      <strong className="text-yellow-400">
+                        X(300) → A(200) → B(100) → C(50) → D(20) → E(10)
+                      </strong>
                     </p>
 
                     <p className="font-bold text-accent mt-3">진행:</p>
                     <div className="pl-4 space-y-1 text-text-secondary">
                       <p>1. 적 X가 먼저 공격 (우리를 공격)</p>
                       <p>2. A가 X를 공격 → 50% 체크 → 성공! (대기 상태)</p>
-                      <p>3. B가 X를 공격 → 조건 만족 → <strong className="text-green-400">콤보 성립!</strong></p>
+                      <p>
+                        3. B가 X를 공격 → 조건 만족 →{' '}
+                        <strong className="text-green-400">콤보 성립!</strong>
+                      </p>
                       <p>4. C, D, E도 조건 맞으면 계속 참여 가능</p>
                     </div>
 
                     <p className="font-bold text-accent mt-3">결론:</p>
                     <p className="text-text-secondary pl-4">
-                      <strong className="text-green-400">✅ 콤보 가능합니다!</strong><br/>
-                      DEX는 단지 <strong className="text-yellow-400">행동 순서만</strong> 결정합니다.<br/>
+                      <strong className="text-green-400">✅ 콤보 가능합니다!</strong>
+                      <br />
+                      DEX는 단지 <strong className="text-yellow-400">행동 순서만</strong>{' '}
+                      결정합니다.
+                      <br />
                       적이 먼저 행동하더라도, 우리가 같은 적을 연속으로 공격하면 콤보가 성립합니다!
                     </p>
                   </div>
@@ -2608,18 +2804,26 @@ const BattlePage: React.FC = () => {
 
                 {/* 10 vs 10 예시 */}
                 <div className="p-4 bg-purple-500/10 border border-purple-500/30 rounded">
-                  <h3 className="text-lg font-bold text-purple-400 mb-3">🐾 특별 케이스: 캐릭터와 펫 혼합 콤보</h3>
+                  <h3 className="text-lg font-bold text-purple-400 mb-3">
+                    🐾 특별 케이스: 캐릭터와 펫 혼합 콤보
+                  </h3>
                   <div className="space-y-2 text-sm">
                     <p className="font-bold text-accent">상황:</p>
                     <p className="text-text-secondary pl-4">
-                      10 vs 10 전투 (캐릭 5명 + 펫 5마리 vs 적 5명 + 펫 5마리)<br/>
-                      전투 순서: 캐릭A(DEX 200) → 펫B(DEX 180) → 캐릭C(DEX 150) → 펫A(DEX 120) → 캐릭B(DEX 100)
+                      10 vs 10 전투 (캐릭 5명 + 펫 5마리 vs 적 5명 + 펫 5마리)
+                      <br />
+                      전투 순서: 캐릭A(DEX 200) → 펫B(DEX 180) → 캐릭C(DEX 150) → 펫A(DEX 120) →
+                      캐릭B(DEX 100)
                     </p>
 
                     <p className="font-bold text-accent mt-3">진행:</p>
                     <div className="pl-4 space-y-1 text-text-secondary">
                       <p>1. 캐릭A가 적X 공격 → 50% 체크 → 성공! (대기)</p>
-                      <p>2. 펫B가 적X 공격 → <strong className="text-green-400">50% 아님! 확률 없이 조건만 체크!</strong> → 조인!</p>
+                      <p>
+                        2. 펫B가 적X 공격 →{' '}
+                        <strong className="text-green-400">50% 아님! 확률 없이 조건만 체크!</strong>{' '}
+                        → 조인!
+                      </p>
                       <p>3. 캐릭C가 적X 공격 → 조건 만족 → 조인!</p>
                       <p>4. 펫A가 적X 공격 → 조건 만족 → 조인!</p>
                       <p>5. 캐릭B가 적X 공격 → 조건 만족 → 조인!</p>
@@ -2627,8 +2831,13 @@ const BattlePage: React.FC = () => {
 
                     <p className="font-bold text-accent mt-3">결과:</p>
                     <p className="text-text-secondary pl-4">
-                      <strong className="text-purple-400 text-lg">캐릭-펫-캐릭-펫-캐릭 5명 콤보 성립!</strong><br/>
-                      캐릭A(350) + 펫B(280) + 캐릭C(320) + 펫A(250) + 캐릭B(300) = <strong className="text-green-400">1500 데미지!</strong><br/>
+                      <strong className="text-purple-400 text-lg">
+                        캐릭-펫-캐릭-펫-캐릭 5명 콤보 성립!
+                      </strong>
+                      <br />
+                      캐릭A(350) + 펫B(280) + 캐릭C(320) + 펫A(250) + 캐릭B(300) ={' '}
+                      <strong className="text-green-400">1500 데미지!</strong>
+                      <br />
                       <strong className="text-red-400">회피 불가</strong> → 반드시 명중!
                     </p>
 
@@ -2640,40 +2849,63 @@ const BattlePage: React.FC = () => {
 
                 {/* DEX 실패 예시 - 수정된 케이스 */}
                 <div className="p-4 bg-orange-500/10 border border-orange-500/30 rounded">
-                  <h3 className="text-lg font-bold text-orange-400 mb-3">⚠️ 부분 성공: 적이 중간에 끼는 경우</h3>
+                  <h3 className="text-lg font-bold text-orange-400 mb-3">
+                    ⚠️ 부분 성공: 적이 중간에 끼는 경우
+                  </h3>
                   <div className="space-y-2 text-sm">
                     <p className="font-bold text-accent">상황:</p>
                     <p className="text-text-secondary pl-4">
-                      우리팀 DEX: 200, 190, 180, 170, 160<br/>
+                      우리팀 DEX: 200, 190, 180, 170, 160
+                      <br />
                       적팀: DEX 195 (5마리 모두 동일)
                     </p>
 
                     <p className="font-bold text-accent mt-3">전투 순서:</p>
                     <p className="text-text-secondary pl-4">
-                      <strong className="text-yellow-400">200(우리) → 195(적1) → 195(적2) → 195(적3) → 195(적4) → 195(적5) → 190(우리) → 180(우리) → 170(우리) → 160(우리)</strong>
+                      <strong className="text-yellow-400">
+                        200(우리) → 195(적1) → 195(적2) → 195(적3) → 195(적4) → 195(적5) → 190(우리)
+                        → 180(우리) → 170(우리) → 160(우리)
+                      </strong>
                     </p>
 
                     <p className="font-bold text-accent mt-3">진행:</p>
                     <div className="pl-4 space-y-1 text-text-secondary">
                       <p>1. 우리1(200) → 50% 성공 → 대기 (ComboId=2)</p>
-                      <p>2. <strong className="text-red-400">적1(195) 공격</strong> → side != oldside → <strong className="text-red-400">콤보 종료!</strong></p>
+                      <p>
+                        2. <strong className="text-red-400">적1(195) 공격</strong> → side != oldside
+                        → <strong className="text-red-400">콤보 종료!</strong>
+                      </p>
                       <p>3. 적2(195) → 20% 체크 → 성공 가정 → 대기 (ComboId=3)</p>
-                      <p>4. 적3, 적4, 적5 → 조건 만족 → <strong className="text-green-400">적 4명 콤보!</strong> (ComboId=3)</p>
+                      <p>
+                        4. 적3, 적4, 적5 → 조건 만족 →{' '}
+                        <strong className="text-green-400">적 4명 콤보!</strong> (ComboId=3)
+                      </p>
                       <p>5. 우리2(190) → 새로 50% 체크 → 성공! → 대기 (ComboId=4)</p>
-                      <p>6. 우리3, 우리4, 우리5 → <strong className="text-green-400">우리 4명 콤보!</strong> (ComboId=4)</p>
+                      <p>
+                        6. 우리3, 우리4, 우리5 →{' '}
+                        <strong className="text-green-400">우리 4명 콤보!</strong> (ComboId=4)
+                      </p>
                     </div>
 
                     <p className="font-bold text-accent mt-3">결과:</p>
                     <p className="text-text-secondary pl-4">
-                      <strong className="text-cyan-400">한 턴에 3개의 독립적인 콤보 시도!</strong><br/>
-                      • 우리1(200): 일반 공격 (ComboId=2 불발)<br/>
-                      • 적팀: 4명 콤보 (ComboId=3)<br/>
-                      • 우리팀: 4명 콤보 (ComboId=4)<br/>
-                      <strong className="text-yellow-400">적이 끼면 각 그룹이 독립적으로 콤보 형성!</strong>
+                      <strong className="text-cyan-400">한 턴에 3개의 독립적인 콤보 시도!</strong>
+                      <br />
+                      • 우리1(200): 일반 공격 (ComboId=2 불발)
+                      <br />
+                      • 적팀: 4명 콤보 (ComboId=3)
+                      <br />
+                      • 우리팀: 4명 콤보 (ComboId=4)
+                      <br />
+                      <strong className="text-yellow-400">
+                        적이 끼면 각 그룹이 독립적으로 콤보 형성!
+                      </strong>
                     </p>
 
                     <p className="font-bold text-yellow-400 mt-3 text-xs">
-                      💡 핵심: 적이 중간에 끼어도 그 뒤에서 새 콤보 시작 가능! 각 콤보는 독립적인 ComboId를 가짐!<br/>
+                      💡 핵심: 적이 중간에 끼어도 그 뒤에서 새 콤보 시작 가능! 각 콤보는 독립적인
+                      ComboId를 가짐!
+                      <br />
                       ⚠️ 최적화: 우리팀 전원을 195 이상 또는 이하로 맞춰야 5명 콤보 가능!
                     </p>
                   </div>
@@ -2681,7 +2913,9 @@ const BattlePage: React.FC = () => {
 
                 {/* 불발 예시 */}
                 <div className="p-4 bg-yellow-500/10 border border-yellow-500/30 rounded">
-                  <h3 className="text-lg font-bold text-yellow-400 mb-3">⚠️ 불발 사례: 타겟 불일치</h3>
+                  <h3 className="text-lg font-bold text-yellow-400 mb-3">
+                    ⚠️ 불발 사례: 타겟 불일치
+                  </h3>
                   <div className="space-y-2 text-sm">
                     <p className="font-bold text-accent">상황:</p>
                     <p className="text-text-secondary pl-4">
@@ -2696,7 +2930,8 @@ const BattlePage: React.FC = () => {
 
                     <p className="font-bold text-accent mt-3">결과:</p>
                     <p className="text-text-secondary pl-4">
-                      A, B 모두 일반 공격으로 처리<br/>
+                      A, B 모두 일반 공격으로 처리
+                      <br />
                       A의 확률 성공은 의미 없어짐
                     </p>
                   </div>
@@ -2704,24 +2939,31 @@ const BattlePage: React.FC = () => {
 
                 {/* 케이스 1: 다수 적 상황 */}
                 <div className="p-4 bg-orange-500/10 border border-orange-500/30 rounded">
-                  <h3 className="text-lg font-bold text-orange-400 mb-3">🎯 케이스 1: 적이 2마리 이상일 때</h3>
+                  <h3 className="text-lg font-bold text-orange-400 mb-3">
+                    🎯 케이스 1: 적이 2마리 이상일 때
+                  </h3>
                   <div className="space-y-2 text-sm">
                     <p className="font-bold text-accent">상황:</p>
                     <p className="text-text-secondary pl-4">
-                      우리팀 DEX: 180, 170, 160, 150, 140 (모두 근접 무기)<br/>
-                      적 X(DEX 100, HP 2000), 적 Y(DEX 90, HP 1500)
+                      우리팀 DEX: 180, 170, 160, 150, 140 (모두 근접 무기)
+                      <br />적 X(DEX 100, HP 2000), 적 Y(DEX 90, HP 1500)
                     </p>
 
                     <p className="font-bold text-accent mt-3">전투 순서:</p>
                     <p className="text-text-secondary pl-4">
-                      <strong className="text-yellow-400">180 → 170 → 160 → 150 → 140 → X(100) → Y(90)</strong>
+                      <strong className="text-yellow-400">
+                        180 → 170 → 160 → 150 → 140 → X(100) → Y(90)
+                      </strong>
                     </p>
 
                     <p className="font-bold text-accent mt-3">판단:</p>
                     <p className="text-text-secondary pl-4">
-                      <strong className="text-green-400">✅ 콤보 완벽 가능!</strong><br/>
-                      우리팀 5명이 모두 적보다 빠르므로 연속 공격 가능<br/>
-                      <strong className="text-yellow-400">전략:</strong> 약한 적 Y를 5명이 집중 공격하여 한 방에 제거!
+                      <strong className="text-green-400">✅ 콤보 완벽 가능!</strong>
+                      <br />
+                      우리팀 5명이 모두 적보다 빠르므로 연속 공격 가능
+                      <br />
+                      <strong className="text-yellow-400">전략:</strong> 약한 적 Y를 5명이 집중
+                      공격하여 한 방에 제거!
                     </p>
 
                     <p className="font-bold text-yellow-400 mt-3 text-xs">
@@ -2732,17 +2974,22 @@ const BattlePage: React.FC = () => {
 
                 {/* 케이스 2: DEX가 엇갈린 상황 */}
                 <div className="p-4 bg-orange-500/10 border border-orange-500/30 rounded">
-                  <h3 className="text-lg font-bold text-orange-400 mb-3">⚠️ 케이스 2: DEX가 엇갈려도 부분 콤보 가능!</h3>
+                  <h3 className="text-lg font-bold text-orange-400 mb-3">
+                    ⚠️ 케이스 2: DEX가 엇갈려도 부분 콤보 가능!
+                  </h3>
                   <div className="space-y-2 text-sm">
                     <p className="font-bold text-accent">상황:</p>
                     <p className="text-text-secondary pl-4">
-                      우리팀 DEX: 250, 180, 120, 80, 50<br/>
-                      적 X(DEX 200), Y(DEX 150), Z(DEX 100)
+                      우리팀 DEX: 250, 180, 120, 80, 50
+                      <br />적 X(DEX 200), Y(DEX 150), Z(DEX 100)
                     </p>
 
                     <p className="font-bold text-accent mt-3">전투 순서:</p>
                     <p className="text-text-secondary pl-4">
-                      <strong className="text-red-400">250(우리1) → 200(적X) → 180(우리2) → 150(적Y) → 120(우리3) → 100(적Z) → 80(우리4) → 50(우리5)</strong>
+                      <strong className="text-red-400">
+                        250(우리1) → 200(적X) → 180(우리2) → 150(적Y) → 120(우리3) → 100(적Z) →
+                        80(우리4) → 50(우리5)
+                      </strong>
                     </p>
 
                     <p className="font-bold text-accent mt-3">진행:</p>
@@ -2754,21 +3001,34 @@ const BattlePage: React.FC = () => {
                       <p>5. 우리3(120) → 새로 50% 체크 → 성공 → 대기 (ComboId=4)</p>
                       <p>6. 적Z(100) → side 다름 → 콤보 종료!</p>
                       <p>7. 우리4(80) → 새로 50% 체크 → 성공 → 대기 (ComboId=5)</p>
-                      <p>8. 우리5(50) → 조건 만족 → <strong className="text-green-400">2명 콤보 성립!</strong></p>
+                      <p>
+                        8. 우리5(50) → 조건 만족 →{' '}
+                        <strong className="text-green-400">2명 콤보 성립!</strong>
+                      </p>
                     </div>
 
                     <p className="font-bold text-accent mt-3">결과:</p>
                     <p className="text-text-secondary pl-4">
-                      <strong className="text-orange-400">⚠️ 5명 콤보는 불가능하지만 부분 콤보 가능!</strong><br/>
-                      • 우리1: 일반 공격 (ComboId=2 불발)<br/>
-                      • 우리2: 일반 공격 (ComboId=3 불발)<br/>
-                      • 우리3: 일반 공격 (ComboId=4 불발)<br/>
-                      • <strong className="text-green-400">우리4+5: 2명 콤보!</strong> (ComboId=5)<br/>
-                      <strong className="text-yellow-400">확률에 따라 여러 번의 콤보 시도 기회!</strong>
+                      <strong className="text-orange-400">
+                        ⚠️ 5명 콤보는 불가능하지만 부분 콤보 가능!
+                      </strong>
+                      <br />
+                      • 우리1: 일반 공격 (ComboId=2 불발)
+                      <br />
+                      • 우리2: 일반 공격 (ComboId=3 불발)
+                      <br />
+                      • 우리3: 일반 공격 (ComboId=4 불발)
+                      <br />• <strong className="text-green-400">우리4+5: 2명 콤보!</strong>{' '}
+                      (ComboId=5)
+                      <br />
+                      <strong className="text-yellow-400">
+                        확률에 따라 여러 번의 콤보 시도 기회!
+                      </strong>
                     </p>
 
                     <p className="font-bold text-yellow-400 mt-3 text-xs">
-                      💡 핵심: 적이 끼어도 각 구간마다 새로운 콤보 시도 가능!<br/>
+                      💡 핵심: 적이 끼어도 각 구간마다 새로운 콤보 시도 가능!
+                      <br />
                       ⚠️ 최적화: DEX를 200 이상 또는 100 이하로 맞춰야 5명 콤보 가능!
                     </p>
                   </div>
@@ -2776,12 +3036,14 @@ const BattlePage: React.FC = () => {
 
                 {/* 케이스 3: 원거리 무기 혼합 */}
                 <div className="p-4 bg-red-500/10 border border-red-500/30 rounded">
-                  <h3 className="text-lg font-bold text-red-400 mb-3">❌ 케이스 3: 원거리 무기 착용자가 끼는 경우</h3>
+                  <h3 className="text-lg font-bold text-red-400 mb-3">
+                    ❌ 케이스 3: 원거리 무기 착용자가 끼는 경우
+                  </h3>
                   <div className="space-y-2 text-sm">
                     <p className="font-bold text-accent">상황:</p>
                     <p className="text-text-secondary pl-4">
-                      우리팀 DEX: 200(근접), 180(활 장착!), 170(근접), 160(근접), 150(근접)<br/>
-                      적 X(DEX 100, 약함)
+                      우리팀 DEX: 200(근접), 180(활 장착!), 170(근접), 160(근접), 150(근접)
+                      <br />적 X(DEX 100, 약함)
                     </p>
 
                     <p className="font-bold text-accent mt-3">전투 순서:</p>
@@ -2792,72 +3054,102 @@ const BattlePage: React.FC = () => {
                     <p className="font-bold text-accent mt-3">진행:</p>
                     <div className="pl-4 space-y-1 text-text-secondary">
                       <p>1. 200 DEX(근접)가 X 공격 → 50% 성공 → 대기</p>
-                      <p>2. 180 DEX(활)가 X 공격 → <strong className="text-red-400">armtype == 1</strong> → 콤보 종료!</p>
+                      <p>
+                        2. 180 DEX(활)가 X 공격 →{' '}
+                        <strong className="text-red-400">armtype == 1</strong> → 콤보 종료!
+                      </p>
                       <p>3. 170 DEX → 일반 공격...</p>
                     </div>
 
                     <p className="font-bold text-accent mt-3">판단:</p>
                     <p className="text-text-secondary pl-4">
-                      <strong className="text-red-400">❌ 2명 콤보 불가! 모두 일반 공격!</strong><br/>
+                      <strong className="text-red-400">❌ 2명 콤보 불가! 모두 일반 공격!</strong>
+                      <br />
                       원거리 무기 착용자가 중간에 끼면 콤보가 끊김
                     </p>
 
                     <p className="font-bold text-yellow-400 mt-3 text-xs">
-                      ⚠️ 해결: 활 착용자는 DEX를 가장 낮게 만들어 마지막에 행동하게 하거나, 근접 무기로 교체!
+                      ⚠️ 해결: 활 착용자는 DEX를 가장 낮게 만들어 마지막에 행동하게 하거나, 근접
+                      무기로 교체!
                     </p>
                   </div>
                 </div>
 
                 {/* 케이스 4: 방어 명령 사용자 */}
                 <div className="p-4 bg-red-500/10 border border-red-500/30 rounded">
-                  <h3 className="text-lg font-bold text-red-400 mb-3">❌ 케이스 4: 방어 명령으로 콤보 끊기기 (순서 중요!)</h3>
+                  <h3 className="text-lg font-bold text-red-400 mb-3">
+                    ❌ 케이스 4: 방어 명령으로 콤보 끊기기 (순서 중요!)
+                  </h3>
                   <div className="space-y-2 text-sm">
                     <p className="font-bold text-accent">상황 A: 가드가 먼저 행동 (✅ 콤보 가능)</p>
                     <p className="text-text-secondary pl-4">
-                      우리팀 DEX: 50(가드), 40(공격), 30(공격)<br/>
-                      적 X(DEX 20)
+                      우리팀 DEX: 50(가드), 40(공격), 30(공격)
+                      <br />적 X(DEX 20)
                     </p>
 
                     <p className="font-bold text-accent mt-3">진행:</p>
                     <div className="pl-4 space-y-1 text-text-secondary">
                       <p>1. 50 DEX 가드 → 콤보 시작 안됨 (com != ATTACK)</p>
                       <p>2. 40 DEX 공격 → 50% 체크 → 성공! → 대기</p>
-                      <p>3. 30 DEX 공격 → 조건 만족 → <strong className="text-green-400">콤보 성립!</strong></p>
+                      <p>
+                        3. 30 DEX 공격 → 조건 만족 →{' '}
+                        <strong className="text-green-400">콤보 성립!</strong>
+                      </p>
                     </div>
 
                     <p className="font-bold text-accent mt-3">결과:</p>
                     <p className="text-text-secondary pl-4">
-                      <strong className="text-green-400">✅ 40+30 2명 콤보 성공!</strong><br/>
+                      <strong className="text-green-400">✅ 40+30 2명 콤보 성공!</strong>
+                      <br />
                       가드는 콤보에 참여 안하지만, 나머지끼리 콤보 가능!
                     </p>
 
                     <div className="mt-4 pt-4 border-t border-red-500/30">
-                      <p className="font-bold text-accent">상황 B: 가드가 중간에 끼는 경우 (❌ 콤보 실패)</p>
+                      <p className="font-bold text-accent">
+                        상황 B: 가드가 중간에 끼는 경우 (❌ 콤보 실패)
+                      </p>
                       <p className="text-text-secondary pl-4">
-                        우리팀 DEX: 50(공격), 40(가드), 30(공격)<br/>
-                        적 X(DEX 20)
+                        우리팀 DEX: 50(공격), 40(가드), 30(공격)
+                        <br />적 X(DEX 20)
                       </p>
 
                       <p className="font-bold text-accent mt-3">진행:</p>
                       <div className="pl-4 space-y-1 text-text-secondary">
                         <p>1. 50 DEX 공격 → 50% 성공 → 대기 (ComboId=2)</p>
-                        <p>2. 40 DEX 가드 → <strong className="text-red-400">com != ATTACK → 콤보 종료!</strong></p>
-                        <p>3. 30 DEX 공격 → <strong className="text-cyan-400">새로 50% 체크!</strong> → 실패 or 성공 (ComboId=3)</p>
+                        <p>
+                          2. 40 DEX 가드 →{' '}
+                          <strong className="text-red-400">com != ATTACK → 콤보 종료!</strong>
+                        </p>
+                        <p>
+                          3. 30 DEX 공격 → <strong className="text-cyan-400">새로 50% 체크!</strong>{' '}
+                          → 실패 or 성공 (ComboId=3)
+                        </p>
                       </div>
 
                       <p className="font-bold text-accent mt-3">결과:</p>
                       <p className="text-text-secondary pl-4">
-                        <strong className="text-orange-400">⚠️ 50 DEX는 일반 공격! (ComboId=2 불발)</strong><br/>
-                        40 DEX는 가드<br/>
-                        30 DEX는 50% 확률에 따라:<br/>
-                        • 성공 시: 혼자 일반 공격 (2명 이상이어야 콤보)<br/>
-                        • 실패 시: 일반 공격<br/>
-                        <strong className="text-yellow-400">💡 하지만 30 DEX 뒤에 더 있다면 새 콤보 가능!</strong>
+                        <strong className="text-orange-400">
+                          ⚠️ 50 DEX는 일반 공격! (ComboId=2 불발)
+                        </strong>
+                        <br />
+                        40 DEX는 가드
+                        <br />
+                        30 DEX는 50% 확률에 따라:
+                        <br />
+                        • 성공 시: 혼자 일반 공격 (2명 이상이어야 콤보)
+                        <br />
+                        • 실패 시: 일반 공격
+                        <br />
+                        <strong className="text-yellow-400">
+                          💡 하지만 30 DEX 뒤에 더 있다면 새 콤보 가능!
+                        </strong>
                       </p>
                     </div>
 
                     <p className="font-bold text-yellow-400 mt-3 text-xs">
-                      ⚠️ 핵심: 가드/스킬/주술을 쓸 사람은 DEX를 가장 높게(맨 앞) 또는 가장 낮게(맨 뒤) 배치!<br/>
+                      ⚠️ 핵심: 가드/스킬/주술을 쓸 사람은 DEX를 가장 높게(맨 앞) 또는 가장 낮게(맨
+                      뒤) 배치!
+                      <br />
                       💡 중간에 끼면 콤보가 끊겨서 큰 피해!
                     </p>
                   </div>
@@ -2865,7 +3157,9 @@ const BattlePage: React.FC = () => {
 
                 {/* 케이스 5: 확률 실패 */}
                 <div className="p-4 bg-yellow-500/10 border border-yellow-500/30 rounded">
-                  <h3 className="text-lg font-bold text-yellow-400 mb-3">🎲 케이스 5: 첫 번째 확률 실패</h3>
+                  <h3 className="text-lg font-bold text-yellow-400 mb-3">
+                    🎲 케이스 5: 첫 번째 확률 실패
+                  </h3>
                   <div className="space-y-2 text-sm">
                     <p className="font-bold text-accent">상황:</p>
                     <p className="text-text-secondary pl-4">
@@ -2874,15 +3168,19 @@ const BattlePage: React.FC = () => {
 
                     <p className="font-bold text-accent mt-3">진행:</p>
                     <div className="pl-4 space-y-1 text-text-secondary">
-                      <p>1. 첫 번째 캐릭터 공격 → 50% 체크 → <strong className="text-red-400">실패!</strong></p>
+                      <p>
+                        1. 첫 번째 캐릭터 공격 → 50% 체크 →{' '}
+                        <strong className="text-red-400">실패!</strong>
+                      </p>
                       <p>2. 일반 공격으로 처리</p>
                       <p>3. 두 번째 캐릭터 → 일반 공격 (콤보 시작 안됨)</p>
                     </div>
 
                     <p className="font-bold text-accent mt-3">판단:</p>
                     <p className="text-text-secondary pl-4">
-                      <strong className="text-yellow-400">⚠️ 운이 나쁘면 콤보 불발!</strong><br/>
-                      조건이 완벽해도 첫 번째 확률을 뚫어야 함<br/>
+                      <strong className="text-yellow-400">⚠️ 운이 나쁘면 콤보 불발!</strong>
+                      <br />
+                      조건이 완벽해도 첫 번째 확률을 뚫어야 함<br />
                       평균적으로 2턴에 1번 콤보 기회 (50% 확률)
                     </p>
 
@@ -2894,23 +3192,27 @@ const BattlePage: React.FC = () => {
 
                 {/* 케이스 6: 적 펫 포함 */}
                 <div className="p-4 bg-blue-500/10 border border-blue-500/30 rounded">
-                  <h3 className="text-lg font-bold text-blue-400 mb-3">🐾 케이스 6: 적도 펫이 있는 10 vs 10</h3>
+                  <h3 className="text-lg font-bold text-blue-400 mb-3">
+                    🐾 케이스 6: 적도 펫이 있는 10 vs 10
+                  </h3>
                   <div className="space-y-2 text-sm">
                     <p className="font-bold text-accent">상황:</p>
                     <p className="text-text-secondary pl-4">
-                      우리 캐릭A(DEX 200) + 우리 펫들(170, 160, 150, 140)<br/>
-                      적 캐릭X(DEX 190) + 적 펫Y(DEX 180)
+                      우리 캐릭A(DEX 200) + 우리 펫들(170, 160, 150, 140)
+                      <br />적 캐릭X(DEX 190) + 적 펫Y(DEX 180)
                     </p>
 
                     <p className="font-bold text-accent mt-3">전투 순서:</p>
                     <p className="text-text-secondary pl-4">
-                      <strong className="text-red-400">200(우리) → 190(적X) → 180(적Y펫) → 170(우리) → 160(우리)...</strong>
+                      <strong className="text-red-400">
+                        200(우리) → 190(적X) → 180(적Y펫) → 170(우리) → 160(우리)...
+                      </strong>
                     </p>
 
                     <p className="font-bold text-accent mt-3">판단:</p>
                     <p className="text-text-secondary pl-4">
-                      <strong className="text-red-400">❌ 콤보 불가!</strong><br/>
-                      적 캐릭과 적 펫이 우리 사이에 2명 끼면 콤보 끊김
+                      <strong className="text-red-400">❌ 콤보 불가!</strong>
+                      <br />적 캐릭과 적 펫이 우리 사이에 2명 끼면 콤보 끊김
                     </p>
 
                     <p className="font-bold text-yellow-400 mt-3 text-xs">
@@ -2921,27 +3223,39 @@ const BattlePage: React.FC = () => {
 
                 {/* 케이스 7: 부분 성공 */}
                 <div className="p-4 bg-green-500/10 border border-green-500/30 rounded">
-                  <h3 className="text-lg font-bold text-green-400 mb-3">✅ 케이스 7: 2~3명 콤보도 충분히 강력!</h3>
+                  <h3 className="text-lg font-bold text-green-400 mb-3">
+                    ✅ 케이스 7: 2~3명 콤보도 충분히 강력!
+                  </h3>
                   <div className="space-y-2 text-sm">
                     <p className="font-bold text-accent">상황:</p>
                     <p className="text-text-secondary pl-4">
-                      우리팀 DEX: 220, 210 (근접), 200(활 장착), 190, 180<br/>
-                      적 X(DEX 100)
+                      우리팀 DEX: 220, 210 (근접), 200(활 장착), 190, 180
+                      <br />적 X(DEX 100)
                     </p>
 
                     <p className="font-bold text-accent mt-3">진행:</p>
                     <div className="pl-4 space-y-1 text-text-secondary">
                       <p>1. 220 DEX → X 공격 → 50% 성공 → 대기</p>
-                      <p>2. 210 DEX → X 공격 → 조인 → <strong className="text-green-400">2명 콤보 성립!</strong></p>
+                      <p>
+                        2. 210 DEX → X 공격 → 조인 →{' '}
+                        <strong className="text-green-400">2명 콤보 성립!</strong>
+                      </p>
                       <p>3. 200 DEX(활) → X 공격 → 원거리 무기 → 콤보 종료</p>
                       <p>4. 190, 180은 일반 공격</p>
                     </div>
 
                     <p className="font-bold text-accent mt-3">판단:</p>
                     <p className="text-text-secondary pl-4">
-                      <strong className="text-green-400">✅ 2명 콤보 성공!</strong><br/>
-                      5명 콤보가 아니어도 <strong className="text-yellow-400">회피 불가 + 데미지 집중</strong>은 여전히 강력!<br/>
-                      220(400) + 210(380) = <strong className="text-green-400">780 데미지</strong> 반드시 명중!
+                      <strong className="text-green-400">✅ 2명 콤보 성공!</strong>
+                      <br />
+                      5명 콤보가 아니어도{' '}
+                      <strong className="text-yellow-400">회피 불가 + 데미지 집중</strong>은 여전히
+                      강력!
+                      <br />
+                      220(400) + 210(380) = <strong className="text-green-400">
+                        780 데미지
+                      </strong>{' '}
+                      반드시 명중!
                     </p>
 
                     <p className="font-bold text-yellow-400 mt-3 text-xs">
@@ -2952,32 +3266,45 @@ const BattlePage: React.FC = () => {
 
                 {/* 케이스 8: 최악의 상황에서 역전 */}
                 <div className="p-4 bg-purple-500/10 border border-purple-500/30 rounded">
-                  <h3 className="text-lg font-bold text-purple-400 mb-3">🎯 케이스 8: DEX가 불리해도 전략으로 극복</h3>
+                  <h3 className="text-lg font-bold text-purple-400 mb-3">
+                    🎯 케이스 8: DEX가 불리해도 전략으로 극복
+                  </h3>
                   <div className="space-y-2 text-sm">
                     <p className="font-bold text-accent">상황:</p>
                     <p className="text-text-secondary pl-4">
-                      우리팀 DEX: 모두 100~150 (약함)<br/>
-                      적들 DEX: 모두 160~200 (빠름!)<br/>
+                      우리팀 DEX: 모두 100~150 (약함)
+                      <br />
+                      적들 DEX: 모두 160~200 (빠름!)
+                      <br />
                       하지만 우리 전원 근접 무기, 적 X는 혼자!
                     </p>
 
                     <p className="font-bold text-accent mt-3">전투 순서:</p>
                     <p className="text-text-secondary pl-4">
-                      <strong className="text-yellow-400">적들 → 우리(150) → 우리(140) → 우리(130) → 우리(120) → 우리(100)</strong>
+                      <strong className="text-yellow-400">
+                        적들 → 우리(150) → 우리(140) → 우리(130) → 우리(120) → 우리(100)
+                      </strong>
                     </p>
 
                     <p className="font-bold text-accent mt-3">전략:</p>
                     <div className="pl-4 space-y-1 text-text-secondary">
                       <p>1. 적들의 공격을 모두 받음 (어쩔 수 없음)</p>
                       <p>2. 우리 150 DEX → 적X 공격 → 50% 성공 → 대기</p>
-                      <p>3. 우리 140, 130, 120, 100 → 모두 적X 공격 → <strong className="text-green-400">5명 콤보!</strong></p>
+                      <p>
+                        3. 우리 140, 130, 120, 100 → 모두 적X 공격 →{' '}
+                        <strong className="text-green-400">5명 콤보!</strong>
+                      </p>
                       <p>4. 누적 데미지로 적 X 제거!</p>
                     </div>
 
                     <p className="font-bold text-accent mt-3">판단:</p>
                     <p className="text-text-secondary pl-4">
-                      <strong className="text-green-400">✅ 콤보 가능!</strong><br/>
-                      적들이 먼저 공격하지만, <strong className="text-yellow-400">우리끼리 연속으로 행동</strong>하면 콤보 성립!<br/>
+                      <strong className="text-green-400">✅ 콤보 가능!</strong>
+                      <br />
+                      적들이 먼저 공격하지만,{' '}
+                      <strong className="text-yellow-400">우리끼리 연속으로 행동</strong>하면 콤보
+                      성립!
+                      <br />
                       DEX가 낮아도 전원 같은 범위에 있으면 오히려 유리!
                     </p>
 
@@ -2989,60 +3316,90 @@ const BattlePage: React.FC = () => {
 
                 {/* 케이스 9: 동일 DEX에서 여러 콤보 */}
                 <div className="p-4 bg-cyan-500/10 border border-cyan-500/30 rounded">
-                  <h3 className="text-lg font-bold text-cyan-400 mb-3">🔥 케이스 9: 한 턴에 여러 콤보 동시 발생!</h3>
+                  <h3 className="text-lg font-bold text-cyan-400 mb-3">
+                    🔥 케이스 9: 한 턴에 여러 콤보 동시 발생!
+                  </h3>
                   <div className="space-y-2 text-sm">
                     <p className="font-bold text-accent">상황:</p>
                     <p className="text-text-secondary pl-4">
-                      우리팀 5명 모두 DEX 50 (동일!)<br/>
-                      순서: 캐릭1 → 캐릭2 → 캐릭5(가드) → 캐릭3 → 캐릭4<br/>
+                      우리팀 5명 모두 DEX 50 (동일!)
+                      <br />
+                      순서: 캐릭1 → 캐릭2 → 캐릭5(가드) → 캐릭3 → 캐릭4
+                      <br />
                       (DEX 같으면 sequence 값으로 순서 결정)
                     </p>
 
                     <p className="font-bold text-accent mt-3">진행:</p>
                     <div className="pl-4 space-y-1 text-text-secondary">
                       <p>1. 캐릭1 공격 → 50% 성공 → 대기 (ComboId=2)</p>
-                      <p>2. 캐릭2 공격 → 조건 만족 → <strong className="text-green-400">첫 번째 콤보 성립!</strong> (ComboId=2)</p>
-                      <p>3. 캐릭5 가드 → com != ATTACK → <strong className="text-red-400">콤보 종료!</strong></p>
+                      <p>
+                        2. 캐릭2 공격 → 조건 만족 →{' '}
+                        <strong className="text-green-400">첫 번째 콤보 성립!</strong> (ComboId=2)
+                      </p>
+                      <p>
+                        3. 캐릭5 가드 → com != ATTACK →{' '}
+                        <strong className="text-red-400">콤보 종료!</strong>
+                      </p>
                       <p>4. 캐릭3 공격 → 새로 50% 체크 → 성공! → 대기 (ComboId=3)</p>
-                      <p>5. 캐릭4 공격 → 조건 만족 → <strong className="text-green-400">두 번째 콤보 성립!</strong> (ComboId=3)</p>
+                      <p>
+                        5. 캐릭4 공격 → 조건 만족 →{' '}
+                        <strong className="text-green-400">두 번째 콤보 성립!</strong> (ComboId=3)
+                      </p>
                     </div>
 
                     <p className="font-bold text-accent mt-3">결과:</p>
                     <p className="text-text-secondary pl-4">
-                      <strong className="text-cyan-400 text-lg">한 턴에 2개의 콤보가 동시 발생!</strong><br/>
-                      • <strong className="text-green-400">첫 번째 콤보:</strong> 캐릭1+캐릭2 (ComboId=2) → 데미지 600<br/>
-                      • <strong className="text-green-400">두 번째 콤보:</strong> 캐릭3+캐릭4 (ComboId=3) → 데미지 550<br/>
-                      • 캐릭5는 가드로 방어력 증가<br/>
-                      총 1150 데미지 + 1명 방어!
+                      <strong className="text-cyan-400 text-lg">
+                        한 턴에 2개의 콤보가 동시 발생!
+                      </strong>
+                      <br />• <strong className="text-green-400">첫 번째 콤보:</strong> 캐릭1+캐릭2
+                      (ComboId=2) → 데미지 600
+                      <br />• <strong className="text-green-400">두 번째 콤보:</strong> 캐릭3+캐릭4
+                      (ComboId=3) → 데미지 550
+                      <br />
+                      • 캐릭5는 가드로 방어력 증가
+                      <br />총 1150 데미지 + 1명 방어!
                     </p>
 
                     <p className="font-bold text-yellow-400 mt-3 text-xs">
-                      🔥 놀라운 발견: ComboId가 계속 증가하므로 한 턴에 여러 독립적인 콤보 가능!<br/>
-                      💡 활용: DEX가 같을 때 의도적으로 가드/스킬을 중간에 배치하여 콤보를 나눌 수 있음!
+                      🔥 놀라운 발견: ComboId가 계속 증가하므로 한 턴에 여러 독립적인 콤보 가능!
+                      <br />
+                      💡 활용: DEX가 같을 때 의도적으로 가드/스킬을 중간에 배치하여 콤보를 나눌 수
+                      있음!
                     </p>
                   </div>
                 </div>
 
                 {/* 케이스 10: 적이 끼는데 뒤에서 콤보 재시작 */}
                 <div className="p-4 bg-lime-500/10 border border-lime-500/30 rounded">
-                  <h3 className="text-lg font-bold text-lime-400 mb-3">🔄 케이스 10: 적이 끼어도 새 콤보 시작!</h3>
+                  <h3 className="text-lg font-bold text-lime-400 mb-3">
+                    🔄 케이스 10: 적이 끼어도 새 콤보 시작!
+                  </h3>
                   <div className="space-y-2 text-sm">
                     <p className="font-bold text-accent">상황:</p>
                     <p className="text-text-secondary pl-4">
-                      우리팀 DEX: 50, 40, 30, 20, 10<br/>
-                      적 X: DEX 45
+                      우리팀 DEX: 50, 40, 30, 20, 10
+                      <br />적 X: DEX 45
                     </p>
 
                     <p className="font-bold text-accent mt-3">전투 순서:</p>
                     <p className="text-text-secondary pl-4">
-                      <strong className="text-yellow-400">50(우리1) → 45(적X) → 40(우리2) → 30(우리3) → 20(우리4) → 10(우리5)</strong>
+                      <strong className="text-yellow-400">
+                        50(우리1) → 45(적X) → 40(우리2) → 30(우리3) → 20(우리4) → 10(우리5)
+                      </strong>
                     </p>
 
                     <p className="font-bold text-accent mt-3">진행:</p>
                     <div className="pl-4 space-y-1 text-text-secondary">
                       <p>1. 우리1(50) → 50% 성공 → 대기 (ComboId=2)</p>
-                      <p>2. <strong className="text-red-400">적X(45) 공격</strong> → side != oldside → <strong className="text-red-400">콤보 종료!</strong></p>
-                      <p>3. 우리2(40) → <strong className="text-cyan-400">새로 50% 체크!</strong> → 성공! → 대기 (ComboId=3)</p>
+                      <p>
+                        2. <strong className="text-red-400">적X(45) 공격</strong> → side != oldside
+                        → <strong className="text-red-400">콤보 종료!</strong>
+                      </p>
+                      <p>
+                        3. 우리2(40) → <strong className="text-cyan-400">새로 50% 체크!</strong> →
+                        성공! → 대기 (ComboId=3)
+                      </p>
                       <p>4. 우리3(30) → 조건 만족 → 콤보 합류!</p>
                       <p>5. 우리4(20) → 조건 만족 → 콤보 합류!</p>
                       <p>6. 우리5(10) → 조건 만족 → 콤보 합류!</p>
@@ -3050,15 +3407,22 @@ const BattlePage: React.FC = () => {
 
                     <p className="font-bold text-accent mt-3">결과:</p>
                     <p className="text-text-secondary pl-4">
-                      <strong className="text-lime-400 text-lg">2개의 독립적인 콤보 시도!</strong><br/>
-                      • 우리1(50): 일반 공격 (ComboId=2 불발)<br/>
-                      • 적X(45): 일반 공격<br/>
-                      • <strong className="text-green-400">우리2+3+4+5: 4명 콤보!</strong> (ComboId=3)<br/>
-                      총 데미지: 우리1(300) + 우리2~5 콤보(1100) = <strong className="text-green-400">1400!</strong>
+                      <strong className="text-lime-400 text-lg">2개의 독립적인 콤보 시도!</strong>
+                      <br />
+                      • 우리1(50): 일반 공격 (ComboId=2 불발)
+                      <br />
+                      • 적X(45): 일반 공격
+                      <br />• <strong className="text-green-400">
+                        우리2+3+4+5: 4명 콤보!
+                      </strong>{' '}
+                      (ComboId=3)
+                      <br />총 데미지: 우리1(300) + 우리2~5 콤보(1100) ={' '}
+                      <strong className="text-green-400">1400!</strong>
                     </p>
 
                     <p className="font-bold text-yellow-400 mt-3 text-xs">
-                      💡 핵심: 첫 번째가 실패해도 두 번째부터 다시 콤보 시작 가능!<br/>
+                      💡 핵심: 첫 번째가 실패해도 두 번째부터 다시 콤보 시작 가능!
+                      <br />
                       🎲 각 턴마다 독립적으로 50% 확률 체크하므로 여러 기회!
                     </p>
                   </div>
@@ -3066,41 +3430,59 @@ const BattlePage: React.FC = () => {
 
                 {/* 케이스 11: 가드가 중간에 끼어도 뒤에서 콤보 */}
                 <div className="p-4 bg-indigo-500/10 border border-indigo-500/30 rounded">
-                  <h3 className="text-lg font-bold text-indigo-400 mb-3">🛡️ 케이스 11: 가드 후 재결집!</h3>
+                  <h3 className="text-lg font-bold text-indigo-400 mb-3">
+                    🛡️ 케이스 11: 가드 후 재결집!
+                  </h3>
                   <div className="space-y-2 text-sm">
                     <p className="font-bold text-accent">상황:</p>
                     <p className="text-text-secondary pl-4">
-                      우리팀 DEX: 50(공격), 40(공격), 30(가드), 20(공격), 10(공격)<br/>
-                      적 X: DEX 5
+                      우리팀 DEX: 50(공격), 40(공격), 30(가드), 20(공격), 10(공격)
+                      <br />적 X: DEX 5
                     </p>
 
                     <p className="font-bold text-accent mt-3">전투 순서:</p>
                     <p className="text-text-secondary pl-4">
-                      <strong className="text-yellow-400">50(우리1) → 40(우리2) → 30(우리3 가드) → 20(우리4) → 10(우리5) → 5(적X)</strong>
+                      <strong className="text-yellow-400">
+                        50(우리1) → 40(우리2) → 30(우리3 가드) → 20(우리4) → 10(우리5) → 5(적X)
+                      </strong>
                     </p>
 
                     <p className="font-bold text-accent mt-3">진행:</p>
                     <div className="pl-4 space-y-1 text-text-secondary">
                       <p>1. 우리1(50) → 50% 성공 → 대기 (ComboId=2)</p>
-                      <p>2. 우리2(40) → 조건 만족 → <strong className="text-green-400">2명 콤보 성립!</strong></p>
-                      <p>3. 우리3(30) → <strong className="text-red-400">가드!</strong> → com != ATTACK → <strong className="text-red-400">콤보 종료!</strong></p>
-                      <p>4. 우리4(20) → <strong className="text-cyan-400">새로 50% 체크!</strong> → 성공! → 대기 (ComboId=3)</p>
+                      <p>
+                        2. 우리2(40) → 조건 만족 →{' '}
+                        <strong className="text-green-400">2명 콤보 성립!</strong>
+                      </p>
+                      <p>
+                        3. 우리3(30) → <strong className="text-red-400">가드!</strong> → com !=
+                        ATTACK → <strong className="text-red-400">콤보 종료!</strong>
+                      </p>
+                      <p>
+                        4. 우리4(20) → <strong className="text-cyan-400">새로 50% 체크!</strong> →
+                        성공! → 대기 (ComboId=3)
+                      </p>
                       <p>5. 우리5(10) → 조건 만족 → 콤보 합류!</p>
                       <p>6. 적X → 일반 공격</p>
                     </div>
 
                     <p className="font-bold text-accent mt-3">결과:</p>
                     <p className="text-text-secondary pl-4">
-                      <strong className="text-indigo-400 text-lg">3개의 독립적인 행동!</strong><br/>
-                      • <strong className="text-green-400">우리1+2: 2명 콤보!</strong> (ComboId=2) → 데미지 600<br/>
-                      • 우리3: 가드 → 방어력 증가<br/>
-                      • <strong className="text-green-400">우리4+5: 2명 콤보!</strong> (ComboId=3) → 데미지 350<br/>
-                      총 950 데미지 + 1명 방어 체제!
+                      <strong className="text-indigo-400 text-lg">3개의 독립적인 행동!</strong>
+                      <br />• <strong className="text-green-400">우리1+2: 2명 콤보!</strong>{' '}
+                      (ComboId=2) → 데미지 600
+                      <br />
+                      • 우리3: 가드 → 방어력 증가
+                      <br />• <strong className="text-green-400">우리4+5: 2명 콤보!</strong>{' '}
+                      (ComboId=3) → 데미지 350
+                      <br />총 950 데미지 + 1명 방어 체제!
                     </p>
 
                     <p className="font-bold text-yellow-400 mt-3 text-xs">
-                      💡 핵심: 가드가 콤보를 끊어도 그 뒤에서 새 콤보 시작 가능!<br/>
-                      🛡️ 전략: 가드를 중간에 배치해도 앞뒤로 콤보 형성 가능!<br/>
+                      💡 핵심: 가드가 콤보를 끊어도 그 뒤에서 새 콤보 시작 가능!
+                      <br />
+                      🛡️ 전략: 가드를 중간에 배치해도 앞뒤로 콤보 형성 가능!
+                      <br />
                       ⚠️ 주의: 각 콤보는 50% 확률을 독립적으로 통과해야 함!
                     </p>
                   </div>
@@ -3108,90 +3490,148 @@ const BattlePage: React.FC = () => {
 
                 {/* 케이스 12: 다중 타겟 그룹 콤보 */}
                 <div className="p-4 bg-emerald-500/10 border border-emerald-500/30 rounded">
-                  <h3 className="text-lg font-bold text-emerald-400 mb-3">✅ 케이스 12: 다중 타겟 - 그룹별 콤보 성공!</h3>
+                  <h3 className="text-lg font-bold text-emerald-400 mb-3">
+                    ✅ 케이스 12: 다중 타겟 - 그룹별 콤보 성공!
+                  </h3>
                   <div className="space-y-2 text-sm">
                     <p className="font-bold text-accent">상황:</p>
                     <p className="text-text-secondary pl-4">
-                      우리팀 DEX: 50, 40, 30, 20, 10<br/>
-                      적 A(HP 1000), 적 B(HP 1500)<br/>
+                      우리팀 DEX: 50, 40, 30, 20, 10
+                      <br />
+                      적 A(HP 1000), 적 B(HP 1500)
+                      <br />
                       타겟 선택: 50→A, 40→A, 30→B, 20→B, 10→B
                     </p>
 
                     <p className="font-bold text-accent mt-3">전투 순서:</p>
                     <p className="text-text-secondary pl-4">
-                      <strong className="text-yellow-400">50(→A) → 40(→A) → 30(→B) → 20(→B) → 10(→B)</strong>
+                      <strong className="text-yellow-400">
+                        50(→A) → 40(→A) → 30(→B) → 20(→B) → 10(→B)
+                      </strong>
                     </p>
 
                     <p className="font-bold text-accent mt-3">진행:</p>
                     <div className="pl-4 space-y-1 text-text-secondary">
                       <p>1. 우리1(50) → A 공격 → 50% 성공 → 대기 (ComboId=2)</p>
-                      <p>2. 우리2(40) → A 공격 → enemy(A) == oldenemy(A) → <strong className="text-green-400">콤보 합류!</strong></p>
-                      <p>3. 우리3(30) → B 공격 → enemy(B) != oldenemy(A) → <strong className="text-red-400">콤보 종료!</strong></p>
+                      <p>
+                        2. 우리2(40) → A 공격 → enemy(A) == oldenemy(A) →{' '}
+                        <strong className="text-green-400">콤보 합류!</strong>
+                      </p>
+                      <p>
+                        3. 우리3(30) → B 공격 → enemy(B) != oldenemy(A) →{' '}
+                        <strong className="text-red-400">콤보 종료!</strong>
+                      </p>
                       <p className="ml-4">→ 새로 50% 체크 → 성공! → 대기 (ComboId=3)</p>
-                      <p>4. 우리4(20) → B 공격 → enemy(B) == oldenemy(B) → <strong className="text-green-400">콤보 합류!</strong></p>
-                      <p>5. 우리5(10) → B 공격 → enemy(B) == oldenemy(B) → <strong className="text-green-400">콤보 합류!</strong></p>
+                      <p>
+                        4. 우리4(20) → B 공격 → enemy(B) == oldenemy(B) →{' '}
+                        <strong className="text-green-400">콤보 합류!</strong>
+                      </p>
+                      <p>
+                        5. 우리5(10) → B 공격 → enemy(B) == oldenemy(B) →{' '}
+                        <strong className="text-green-400">콤보 합류!</strong>
+                      </p>
                     </div>
 
                     <p className="font-bold text-accent mt-3">결과:</p>
                     <p className="text-text-secondary pl-4">
-                      <strong className="text-emerald-400 text-lg">한 턴에 2개의 콤보 성공!</strong><br/>
-                      • <strong className="text-green-400">그룹 1 (ComboId=2):</strong> 50+40 → A 타겟 = <strong className="text-green-400">580 데미지</strong><br/>
-                      • <strong className="text-green-400">그룹 2 (ComboId=3):</strong> 30+20+10 → B 타겟 = <strong className="text-green-400">720 데미지</strong><br/>
-                      총 <strong className="text-yellow-400">1300 데미지!</strong> (모두 회피 불가)<br/>
-                      적 A는 거의 죽음, 적 B도 절반 이하!
+                      <strong className="text-emerald-400 text-lg">한 턴에 2개의 콤보 성공!</strong>
+                      <br />• <strong className="text-green-400">그룹 1 (ComboId=2):</strong> 50+40
+                      → A 타겟 = <strong className="text-green-400">580 데미지</strong>
+                      <br />• <strong className="text-green-400">그룹 2 (ComboId=3):</strong>{' '}
+                      30+20+10 → B 타겟 = <strong className="text-green-400">720 데미지</strong>
+                      <br />총 <strong className="text-yellow-400">1300 데미지!</strong> (모두 회피
+                      불가)
+                      <br />적 A는 거의 죽음, 적 B도 절반 이하!
                     </p>
 
                     <p className="font-bold text-yellow-400 mt-3 text-xs">
-                      💡 핵심: DEX 순서대로 그룹을 나누면 여러 타겟에 동시 콤보 가능!<br/>
-                      🎯 전략: 약한 적을 먼저 제거하거나, 강한 적 2마리를 동시에 약화!<br/>
-                      ✨ 연속성이 핵심: 같은 타겟을 연속으로 공격해야 그룹 형성!
+                      💡 핵심: DEX 순서대로 그룹을 나누면 여러 타겟에 동시 콤보 가능!
+                      <br />
+                      🎯 전략: 약한 적을 먼저 제거하거나, 강한 적 2마리를 동시에 약화!
+                      <br />✨ 연속성이 핵심: 같은 타겟을 연속으로 공격해야 그룹 형성!
                     </p>
                   </div>
                 </div>
 
                 {/* 케이스 13: 교차 타겟 실패 */}
                 <div className="p-4 bg-red-500/10 border border-red-500/30 rounded">
-                  <h3 className="text-lg font-bold text-red-400 mb-3">❌ 케이스 13: 교차 타겟 - 콤보 완전 실패!</h3>
+                  <h3 className="text-lg font-bold text-red-400 mb-3">
+                    ❌ 케이스 13: 교차 타겟 - 콤보 완전 실패!
+                  </h3>
                   <div className="space-y-2 text-sm">
                     <p className="font-bold text-accent">상황:</p>
                     <p className="text-text-secondary pl-4">
-                      우리팀 DEX: 50, 40, 30, 20, 10<br/>
-                      적 A, 적 B<br/>
+                      우리팀 DEX: 50, 40, 30, 20, 10
+                      <br />
+                      적 A, 적 B<br />
                       타겟 선택: 50→A, 40→B, 30→A, 20→B, 10→A (교차!)
                     </p>
 
                     <p className="font-bold text-accent mt-3">전투 순서:</p>
                     <p className="text-text-secondary pl-4">
-                      <strong className="text-red-400">50(→A) → 40(→B) → 30(→A) → 20(→B) → 10(→A)</strong>
+                      <strong className="text-red-400">
+                        50(→A) → 40(→B) → 30(→A) → 20(→B) → 10(→A)
+                      </strong>
                     </p>
 
                     <p className="font-bold text-accent mt-3">진행:</p>
                     <div className="pl-4 space-y-1 text-text-secondary">
                       <p>1. 우리1(50) → A 공격 → 50% 성공 → 대기 (ComboId=2)</p>
-                      <p>2. 우리2(40) → B 공격 → <strong className="text-red-400">enemy(B) != oldenemy(A) → 콤보 종료!</strong></p>
+                      <p>
+                        2. 우리2(40) → B 공격 →{' '}
+                        <strong className="text-red-400">
+                          enemy(B) != oldenemy(A) → 콤보 종료!
+                        </strong>
+                      </p>
                       <p className="ml-4">→ 50% 성공 → 대기 (ComboId=3)</p>
-                      <p>3. 우리3(30) → A 공격 → <strong className="text-red-400">enemy(A) != oldenemy(B) → 콤보 종료!</strong></p>
+                      <p>
+                        3. 우리3(30) → A 공격 →{' '}
+                        <strong className="text-red-400">
+                          enemy(A) != oldenemy(B) → 콤보 종료!
+                        </strong>
+                      </p>
                       <p className="ml-4">→ 50% 성공 → 대기 (ComboId=4)</p>
-                      <p>4. 우리4(20) → B 공격 → <strong className="text-red-400">enemy(B) != oldenemy(A) → 콤보 종료!</strong></p>
+                      <p>
+                        4. 우리4(20) → B 공격 →{' '}
+                        <strong className="text-red-400">
+                          enemy(B) != oldenemy(A) → 콤보 종료!
+                        </strong>
+                      </p>
                       <p className="ml-4">→ 50% 성공 → 대기 (ComboId=5)</p>
-                      <p>5. 우리5(10) → A 공격 → <strong className="text-red-400">enemy(A) != oldenemy(B) → 콤보 종료!</strong></p>
+                      <p>
+                        5. 우리5(10) → A 공격 →{' '}
+                        <strong className="text-red-400">
+                          enemy(A) != oldenemy(B) → 콤보 종료!
+                        </strong>
+                      </p>
                       <p className="ml-4">→ 50% 성공해도 혼자 (2명 이상 필요!)</p>
                     </div>
 
                     <p className="font-bold text-accent mt-3">결과:</p>
                     <p className="text-text-secondary pl-4">
-                      <strong className="text-red-400 text-lg">5개의 ComboId 생성, 모두 불발!</strong><br/>
-                      • ComboId=2: 우리1만 → 1명 (콤보 불발)<br/>
-                      • ComboId=3: 우리2만 → 1명 (콤보 불발)<br/>
-                      • ComboId=4: 우리3만 → 1명 (콤보 불발)<br/>
-                      • ComboId=5: 우리4만 → 1명 (콤보 불발)<br/>
-                      • ComboId=6: 우리5만 → 1명 (콤보 불발)<br/>
-                      <strong className="text-red-400">모두 일반 공격!</strong> (회피 가능 + 데미지 분산 = 최악!)
+                      <strong className="text-red-400 text-lg">
+                        5개의 ComboId 생성, 모두 불발!
+                      </strong>
+                      <br />
+                      • ComboId=2: 우리1만 → 1명 (콤보 불발)
+                      <br />
+                      • ComboId=3: 우리2만 → 1명 (콤보 불발)
+                      <br />
+                      • ComboId=4: 우리3만 → 1명 (콤보 불발)
+                      <br />
+                      • ComboId=5: 우리4만 → 1명 (콤보 불발)
+                      <br />
+                      • ComboId=6: 우리5만 → 1명 (콤보 불발)
+                      <br />
+                      <strong className="text-red-400">모두 일반 공격!</strong> (회피 가능 + 데미지
+                      분산 = 최악!)
                     </p>
 
                     <p className="font-bold text-yellow-400 mt-3 text-xs">
-                      ⚠️ 치명적 실수: 타겟을 교차로 선택하면 절대 콤보 불가!<br/>
-                      💡 해결: 같은 타겟을 연속으로 선택하여 그룹 형성!<br/>
+                      ⚠️ 치명적 실수: 타겟을 교차로 선택하면 절대 콤보 불가!
+                      <br />
+                      💡 해결: 같은 타겟을 연속으로 선택하여 그룹 형성!
+                      <br />
                       🎯 올바른 예: A-A-B-B-B 또는 A-A-A-B-B (그룹별로!)
                     </p>
                   </div>
@@ -3199,40 +3639,61 @@ const BattlePage: React.FC = () => {
 
                 {/* 케이스 14: 전략적 타겟 분배 */}
                 <div className="p-4 bg-violet-500/10 border border-violet-500/30 rounded">
-                  <h3 className="text-lg font-bold text-violet-400 mb-3">🎯 케이스 14: 전략적 타겟 분배</h3>
+                  <h3 className="text-lg font-bold text-violet-400 mb-3">
+                    🎯 케이스 14: 전략적 타겟 분배
+                  </h3>
                   <div className="space-y-2 text-sm">
                     <p className="font-bold text-accent">상황:</p>
                     <p className="text-text-secondary pl-4">
-                      우리팀 DEX: 60, 50, 40, 30, 20<br/>
-                      적 A(약함, HP 800), 적 B(강함, HP 2500)<br/>
+                      우리팀 DEX: 60, 50, 40, 30, 20
+                      <br />
+                      적 A(약함, HP 800), 적 B(강함, HP 2500)
+                      <br />
                       전략: 약한 적 A를 우선 제거!
                     </p>
 
                     <p className="font-bold text-accent mt-3">타겟 선택 전략:</p>
                     <div className="pl-4 space-y-2 text-text-secondary">
-                      <p><strong className="text-green-400">전략 1:</strong> 60→A, 50→A, 40→A | 30→B, 20→B</p>
-                      <p className="ml-4">→ 3명 콤보(A) = 850 데미지 → <strong className="text-green-400">적 A 제거!</strong></p>
+                      <p>
+                        <strong className="text-green-400">전략 1:</strong> 60→A, 50→A, 40→A | 30→B,
+                        20→B
+                      </p>
+                      <p className="ml-4">
+                        → 3명 콤보(A) = 850 데미지 →{' '}
+                        <strong className="text-green-400">적 A 제거!</strong>
+                      </p>
                       <p className="ml-4">→ 2명 콤보(B) = 550 데미지 → 적 B 약화</p>
 
-                      <p className="mt-2"><strong className="text-yellow-400">전략 2:</strong> 60→A, 50→A | 40→B, 30→B, 20→B</p>
+                      <p className="mt-2">
+                        <strong className="text-yellow-400">전략 2:</strong> 60→A, 50→A | 40→B,
+                        30→B, 20→B
+                      </p>
                       <p className="ml-4">→ 2명 콤보(A) = 600 데미지 → 적 A 거의 죽음</p>
                       <p className="ml-4">→ 3명 콤보(B) = 750 데미지 → 적 B 크게 약화</p>
 
-                      <p className="mt-2"><strong className="text-red-400">나쁜 전략:</strong> 60→A, 50→B, 40→A, 30→B, 20→A (교차)</p>
+                      <p className="mt-2">
+                        <strong className="text-red-400">나쁜 전략:</strong> 60→A, 50→B, 40→A, 30→B,
+                        20→A (교차)
+                      </p>
                       <p className="ml-4">→ 모두 일반 공격 → 데미지 분산 + 회피 가능 = 최악!</p>
                     </div>
 
                     <p className="font-bold text-accent mt-3">최적 결과 (전략 1):</p>
                     <p className="text-text-secondary pl-4">
-                      <strong className="text-violet-400 text-lg">1턴만에 적 1마리 제거!</strong><br/>
-                      • 적 A: 제거됨 → 다음 턴부터 공격 1명 감소<br/>
-                      • 적 B: HP 1950 남음 → 2턴 안에 제거 가능<br/>
+                      <strong className="text-violet-400 text-lg">1턴만에 적 1마리 제거!</strong>
+                      <br />
+                      • 적 A: 제거됨 → 다음 턴부터 공격 1명 감소
+                      <br />
+                      • 적 B: HP 1950 남음 → 2턴 안에 제거 가능
+                      <br />
                       <strong className="text-green-400">피해 최소화 전략 성공!</strong>
                     </p>
 
                     <p className="font-bold text-yellow-400 mt-3 text-xs">
-                      💡 핵심: 약한 적부터 제거하여 다음 턴 피해 감소!<br/>
-                      🎯 그룹 구성: DEX 순서대로 타겟 그룹을 명확히 나누기!<br/>
+                      💡 핵심: 약한 적부터 제거하여 다음 턴 피해 감소!
+                      <br />
+                      🎯 그룹 구성: DEX 순서대로 타겟 그룹을 명확히 나누기!
+                      <br />
                       ⚠️ 절대 금지: 타겟 교차 선택은 콤보 완전 불발!
                     </p>
                   </div>
@@ -3910,8 +4371,12 @@ const BattlePage: React.FC = () => {
                           {/* 공격자 속성 */}
                           <div className="bg-bg-tertiary rounded-lg p-3 border border-border">
                             <div className="flex justify-between items-center mb-2">
-                              <span className="text-sm font-bold text-green-400">⚔️ 공격자 속성</span>
-                              <span className="text-xs text-text-secondary">총합: {atkTotal}/10</span>
+                              <span className="text-sm font-bold text-green-400">
+                                ⚔️ 공격자 속성
+                              </span>
+                              <span className="text-xs text-text-secondary">
+                                총합: {atkTotal}/10
+                              </span>
                             </div>
                             <div className="text-sm text-text-primary">
                               {getAttributeLabel(attacker)}
@@ -3921,8 +4386,12 @@ const BattlePage: React.FC = () => {
                           {/* 방어자 속성 */}
                           <div className="bg-bg-tertiary rounded-lg p-3 border border-border">
                             <div className="flex justify-between items-center mb-2">
-                              <span className="text-sm font-bold text-blue-400">🛡️ 방어자 속성</span>
-                              <span className="text-xs text-text-secondary">총합: {defTotal}/10</span>
+                              <span className="text-sm font-bold text-blue-400">
+                                🛡️ 방어자 속성
+                              </span>
+                              <span className="text-xs text-text-secondary">
+                                총합: {defTotal}/10
+                              </span>
                             </div>
                             <div className="text-sm text-text-primary">
                               {getAttributeLabel(defender)}
@@ -3933,7 +4402,9 @@ const BattlePage: React.FC = () => {
                           <div className="bg-gradient-to-r from-yellow-500/20 to-orange-500/20 rounded-lg p-4 border border-yellow-500/50">
                             <div className="flex justify-between items-center">
                               <div>
-                                <div className="text-sm font-bold text-yellow-300 mb-1">최종 속성 보정값</div>
+                                <div className="text-sm font-bold text-yellow-300 mb-1">
+                                  최종 속성 보정값
+                                </div>
                                 <div className="text-xs text-text-secondary">
                                   데미지에 곱해지는 배율
                                 </div>
@@ -3943,7 +4414,11 @@ const BattlePage: React.FC = () => {
                                   ×{attrBonus.toFixed(4)}
                                 </div>
                                 <div className="text-xs text-text-secondary mt-1">
-                                  {attrBonus > 1.0 ? '🔥 상성 유리!' : attrBonus < 1.0 ? '💧 상성 불리' : '⚖️ 보통'}
+                                  {attrBonus > 1.0
+                                    ? '🔥 상성 유리!'
+                                    : attrBonus < 1.0
+                                      ? '💧 상성 불리'
+                                      : '⚖️ 보통'}
                                 </div>
                               </div>
                             </div>
