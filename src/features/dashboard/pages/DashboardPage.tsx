@@ -38,8 +38,21 @@ const DashboardPage: React.FC = () => {
   const [password, setPassword] = useState('');
   const [showPasswordError, setShowPasswordError] = useState(false);
 
-  // Check authentication on mount
+  // Check authentication on mount and apply theme
   useEffect(() => {
+    // Apply saved theme
+    const savedTheme = localStorage.getItem('THEME_TOGGLE_STATE');
+    const root = document.documentElement;
+
+    if (savedTheme === 'light') {
+      root.classList.add('light');
+      root.classList.remove('dark');
+    } else {
+      root.classList.add('dark');
+      root.classList.remove('light');
+    }
+
+    // Check authentication
     const authKey = localStorage.getItem('DASHBOARD_AUTH');
     if (authKey === 'authenticated') {
       setIsAuthenticated(true);
@@ -929,6 +942,7 @@ const DashboardPage: React.FC = () => {
   if (!isAuthenticated) {
     return (
       <div className="w-full min-h-screen bg-bg-primary text-text-primary flex items-center justify-center">
+        <ThemeToggle />
         <div className="bg-bg-secondary rounded-lg p-8 border border-border shadow-lg max-w-md w-full mx-4">
           <h2 className="text-2xl font-bold text-center mb-6">🔐 비밀번호 입력</h2>
           <p className="text-text-secondary text-center mb-6">

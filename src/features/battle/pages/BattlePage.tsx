@@ -143,8 +143,21 @@ const BattlePage: React.FC = () => {
   // 탑승 가능한 페트 목록
   const rideablePets = petDataJson.pets.filter(pet => pet.rideable === '탑승가능');
 
-  // 인증 확인
+  // 인증 확인 및 테마 적용
   useEffect(() => {
+    // Apply saved theme
+    const savedTheme = localStorage.getItem('THEME_TOGGLE_STATE');
+    const root = document.documentElement;
+
+    if (savedTheme === 'light') {
+      root.classList.add('light');
+      root.classList.remove('dark');
+    } else {
+      root.classList.add('dark');
+      root.classList.remove('light');
+    }
+
+    // Check authentication
     const authKey = localStorage.getItem('BATTLE_AUTH');
     if (authKey === 'authenticated') {
       setIsAuthenticated(true);
@@ -530,6 +543,7 @@ const BattlePage: React.FC = () => {
   if (!isAuthenticated) {
     return (
       <div className="w-full min-h-screen bg-bg-primary text-text-primary flex items-center justify-center">
+        <ThemeToggle />
         <div className="bg-bg-secondary rounded-lg p-8 border border-border shadow-lg max-w-md w-full mx-4">
           <h2 className="text-2xl font-bold text-center mb-6">🔐 비밀번호 입력</h2>
           <div className="space-y-4">

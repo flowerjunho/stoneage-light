@@ -88,6 +88,20 @@ const AppContent: React.FC = () => {
 };
 
 function App() {
+  // 앱 초기화 시 테마 적용
+  useEffect(() => {
+    const savedTheme = localStorage.getItem('THEME_TOGGLE_STATE');
+    const root = document.documentElement;
+
+    if (savedTheme === 'light') {
+      root.classList.add('light');
+      root.classList.remove('dark');
+    } else {
+      root.classList.add('dark');
+      root.classList.remove('light');
+    }
+  }, []);
+
   return (
     <Router>
       <AppContent />
