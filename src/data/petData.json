@@ -4394,13 +4394,13 @@
         "vitality": 58
       },
       "growthStats": {
-        "attack": 2.101,
-        "defense": 2.115,
-        "agility": 0.921,
-        "vitality": 12.324
+        "attack": 2.135,
+        "defense": 2.135,
+        "agility": 1.064,
+        "vitality": 11.804
       },
       "rideable": "탑승불가",
-      "totalGrowth": "5.137",
+      "totalGrowth": "5.334",
       "grade": "일반페트"
     },
     {
