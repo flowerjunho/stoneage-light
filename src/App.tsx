@@ -1,21 +1,21 @@
 import React, { useEffect } from 'react';
 import { HashRouter as Router, Routes, Route, Navigate, useLocation } from 'react-router-dom';
-import Header from './components/Header';
-import ThemeToggle from './components/ThemeToggle';
-import ScrollToTopButton from './components/ScrollToTopButton';
-import PageShareButton from './components/PageShareButton';
-import TabNavigation from './components/TabNavigation';
-import PetsPage from './pages/PetsPage';
-import BoardingPage from './pages/BoardingPage';
-import ItemsPage from './pages/ItemsPage';
-import QuestsPage from './pages/QuestsPage';
-import QuestDetailPage from './pages/QuestDetailPage';
-import CalculatorPage from './pages/CalculatorPage';
-import BoardPage from './pages/BoardPage';
-import RadontaPage from './pages/RadontaPage';
-import BattlePage from './pages/BattlePage';
-import DashboardPage from './pages/DashboardPage';
-import { VisitTracker } from './utils/visitTracker';
+import Header from '@/shared/components/layout/Header';
+import ThemeToggle from '@/shared/components/layout/ThemeToggle';
+import ScrollToTopButton from '@/shared/components/ui/ScrollToTopButton';
+import PageShareButton from '@/shared/components/ui/PageShareButton';
+import TabNavigation from '@/shared/components/layout/TabNavigation';
+import PetsPage from '@/features/pets/pages/PetsPage';
+import BoardingPage from '@/features/boarding/pages/BoardingPage';
+import ItemsPage from '@/features/items/pages/ItemsPage';
+import QuestsPage from '@/features/quests/pages/QuestsPage';
+import QuestDetailPage from '@/features/quests/pages/QuestDetailPage';
+import CalculatorPage from '@/features/calculator/pages/CalculatorPage';
+import BoardPage from '@/features/board/pages/BoardPage';
+import RadontaPage from '@/features/radonta/pages/RadontaPage';
+import BattlePage from '@/features/battle/pages/BattlePage';
+import DashboardPage from '@/features/dashboard/pages/DashboardPage';
+import { VisitTracker } from '@/shared/utils/visitTracker';
 
 const AppContent: React.FC = () => {
   const location = useLocation();
