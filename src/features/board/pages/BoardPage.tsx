@@ -117,7 +117,8 @@ const BoardPage: React.FC = () => {
           </p>
           {activeTab === 'giscus' && (
             <p className="text-sm text-blue-600 dark:text-blue-400">
-              💡 <span className="font-semibold">GitHub 계정으로 로그인하여 댓글을 남겨보세요!</span>
+              💡{' '}
+              <span className="font-semibold">GitHub 계정으로 로그인하여 댓글을 남겨보세요!</span>
             </p>
           )}
         </div>
@@ -160,15 +161,25 @@ const BoardPage: React.FC = () => {
           <div className="flex items-start space-x-3">
             <span className="text-green-500 mt-1">✅</span>
             <div>
-              <span className="font-medium">페트 정보 공유:</span> 새로운 페트 정보나 팁을
-              공유해주세요
+              <span className="font-medium">페트 정보 공유:</span> 새로운 페트 정보나 팁을 공유해
+              <button
+                onClick={() => navigate('/battle')}
+                className="text-text-secondary hover:text-text-secondary transition-colors cursor-default"
+              >
+                주세요
+              </button>
             </div>
           </div>
           <div className="flex items-start space-x-3">
             <span className="text-green-500 mt-1">✅</span>
             <div>
-              <span className="font-medium">버그 신고:</span> 계산기나 사이트에서 발견한 버그를
-              알려주세요
+              <span className="font-medium">버그 신고:</span> 계산기나 사이트에서 발견한 버그를 알려
+              <button
+                onClick={() => navigate('/dashboard')}
+                className="text-text-secondary hover:text-text-secondary transition-colors cursor-default"
+              >
+                주세요
+              </button>
             </div>
           </div>
           <div className="flex items-start space-x-3">
