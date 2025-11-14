@@ -78,7 +78,7 @@ const DashboardPage: React.FC = () => {
   };
 
   // Cloudflare Tunnel을 통한 HTTPS 접근 (모든 환경에서 사용)
-  const serverUrl = 'https://configure-oral-slots-cliff.trycloudflare.com/';
+  const serverUrl = 'https://configure-oral-slots-cliff.trycloudflare.com';
   const [error, setError] = useState<string | null>(null);
   const [showMixedContentWarning, setShowMixedContentWarning] = useState(false); // Cloudflare 사용으로 경고 불필요
 
