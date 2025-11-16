@@ -273,33 +273,6 @@
       "grade": "일반"
     },
     {
-      "id": "739",
-      "name": "가스트(환)",
-      "source": "페트 환생",
-      "imageLink": "https://www.hwansoo.top/data/file/pets/1676c51ca26c60fab3ea89287195e4e8_9sWnfOUK_b60c47b967578db0701b07c8093910aae85fd36e.gif",
-      "elementStats": {
-        "water": 0,
-        "fire": 0,
-        "wind": 5,
-        "earth": 5
-      },
-      "baseStats": {
-        "attack": 12,
-        "defense": 6,
-        "agility": 8,
-        "vitality": 53
-      },
-      "growthStats": {
-        "attack": 2.36,
-        "defense": 1.21,
-        "agility": 1.68,
-        "vitality": 10.101
-      },
-      "rideable": "탑승불가",
-      "totalGrowth": "5.249",
-      "grade": "일반"
-    },
-    {
       "id": "738",
       "name": "게이블(환)",
       "source": "페트 환생",
