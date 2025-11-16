@@ -3,6 +3,411 @@
   "totalCount": 454,
   "pets": [
     {
+      "id": "749",
+      "name": "마아곤",
+      "source": "이벤트 보상",
+      "imageLink": "https://www.hwansoo.top/data/file/pets/b01436bccd2a57e6e3e9ab9d498def90_b8WwXcrG_e3df4be15ab3490b1ba02b7ecd1482bb35e49805.gif",
+      "elementStats": {
+        "water": 7,
+        "fire": 0,
+        "wind": 0,
+        "earth": 3
+      },
+      "baseStats": {
+        "attack": 11,
+        "defense": 5,
+        "agility": 10,
+        "vitality": 42
+      },
+      "growthStats": {
+        "attack": 2.17,
+        "defense": 1.106,
+        "agility": 1.963,
+        "vitality": 9.911
+      },
+      "rideable": "탑승가능",
+      "totalGrowth": "5.240",
+      "grade": "일반"
+    },
+    {
+      "id": "748",
+      "name": "그린바로스",
+      "source": "지옥문 보상",
+      "imageLink": "https://www.hwansoo.top/data/file/pets/1676c51ca26c60fab3ea89287195e4e8_NdkuG4jb_cf8e2d5029110d8d9098c3ae05216687227e6d04.gif",
+      "elementStats": {
+        "water": 2,
+        "fire": 0,
+        "wind": 0,
+        "earth": 8
+      },
+      "baseStats": {
+        "attack": 12,
+        "defense": 11,
+        "agility": 1,
+        "vitality": 60
+      },
+      "growthStats": {
+        "attack": 2.383,
+        "defense": 2.128,
+        "agility": 0.26,
+        "vitality": 11.473
+      },
+      "rideable": "탑승불가",
+      "totalGrowth": "4.771",
+      "grade": "일반"
+    },
+    {
+      "id": "747",
+      "name": "메가르곤",
+      "source": "충전보상",
+      "imageLink": "https://www.hwansoo.top/data/file/pets/74cb2dac05b94718e4baf6f4a5bebf2b_DhNGlg24_4315f225f061a021009bd451203ad758487c2d17.gif",
+      "elementStats": {
+        "water": 3,
+        "fire": 7,
+        "wind": 0,
+        "earth": 0
+      },
+      "baseStats": {
+        "attack": 12,
+        "defense": 6,
+        "agility": 8,
+        "vitality": 54
+      },
+      "growthStats": {
+        "attack": 2.319,
+        "defense": 1.212,
+        "agility": 1.632,
+        "vitality": 10.385
+      },
+      "rideable": "탑승불가",
+      "totalGrowth": "5.164",
+      "grade": "일반"
+    },
+    {
+      "id": "746",
+      "name": "메가흑곤",
+      "source": "충전보상",
+      "imageLink": "https://www.hwansoo.top/data/file/pets/74cb2dac05b94718e4baf6f4a5bebf2b_zGoj547l_6dcc3e8465c955b072fa6456fe7f4583d8ab9b3c.gif",
+      "elementStats": {
+        "water": 7,
+        "fire": 3,
+        "wind": 0,
+        "earth": 0
+      },
+      "baseStats": {
+        "attack": 12,
+        "defense": 5,
+        "agility": 9,
+        "vitality": 54
+      },
+      "growthStats": {
+        "attack": 2.315,
+        "defense": 1.122,
+        "agility": 1.727,
+        "vitality": 10.385
+      },
+      "rideable": "탑승불가",
+      "totalGrowth": "5.164",
+      "grade": "일반"
+    },
+    {
+      "id": "745",
+      "name": "메가리스키",
+      "source": "맘모스쿠폰 100회",
+      "imageLink": "https://www.hwansoo.top/data/file/pets/74cb2dac05b94718e4baf6f4a5bebf2b_yF2Cx8HK_709cf8c8f4269454734ab8519c23dd8b0edadf0f.gif",
+      "elementStats": {
+        "water": 3,
+        "fire": 7,
+        "wind": 0,
+        "earth": 0
+      },
+      "baseStats": {
+        "attack": 12,
+        "defense": 6,
+        "agility": 8,
+        "vitality": 54
+      },
+      "growthStats": {
+        "attack": 2.317,
+        "defense": 1.167,
+        "agility": 1.68,
+        "vitality": 10.385
+      },
+      "rideable": "탑승불가",
+      "totalGrowth": "5.164",
+      "grade": "일반"
+    },
+    {
+      "id": "744",
+      "name": "메가갈푸스(환)",
+      "source": "페트 환생",
+      "imageLink": "https://www.hwansoo.top/data/file/pets/1676c51ca26c60fab3ea89287195e4e8_3UuNQTWK_0d15fec89c6abc5a48b4220dd64dd74d0c114333.gif",
+      "elementStats": {
+        "water": 3,
+        "fire": 7,
+        "wind": 0,
+        "earth": 0
+      },
+      "baseStats": {
+        "attack": 13,
+        "defense": 6,
+        "agility": 9,
+        "vitality": 57
+      },
+      "growthStats": {
+        "attack": 2.369,
+        "defense": 1.219,
+        "agility": 1.68,
+        "vitality": 10.479
+      },
+      "rideable": "탑승불가",
+      "totalGrowth": "5.268",
+      "grade": "일반"
+    },
+    {
+      "id": "742",
+      "name": "디어룬(환)",
+      "source": "페트 환생",
+      "imageLink": "https://www.hwansoo.top/data/file/pets/1676c51ca26c60fab3ea89287195e4e8_DsgeGpIQ_b9420d8ccda586e55dd742a48cd47f4af8462c4b.gif",
+      "elementStats": {
+        "water": 0,
+        "fire": 0,
+        "wind": 1,
+        "earth": 9
+      },
+      "baseStats": {
+        "attack": 10,
+        "defense": 5,
+        "agility": 9,
+        "vitality": 55
+      },
+      "growthStats": {
+        "attack": 2.154,
+        "defense": 1.174,
+        "agility": 1.916,
+        "vitality": 11.0
+      },
+      "rideable": "탑승가능",
+      "totalGrowth": "5.244",
+      "grade": "일반"
+    },
+    {
+      "id": "741",
+      "name": "지주작(환)",
+      "source": "페트 환생",
+      "imageLink": "https://www.hwansoo.top/data/file/pets/1676c51ca26c60fab3ea89287195e4e8_7q8Nxp2n_42273106f2b8dfb61a7bd0ad74ac57b32afd7905.gif",
+      "elementStats": {
+        "water": 1,
+        "fire": 0,
+        "wind": 0,
+        "earth": 9
+      },
+      "baseStats": {
+        "attack": 13,
+        "defense": 6,
+        "agility": 9,
+        "vitality": 57
+      },
+      "growthStats": {
+        "attack": 2.416,
+        "defense": 1.224,
+        "agility": 1.68,
+        "vitality": 10.526
+      },
+      "rideable": "탑승불가",
+      "totalGrowth": "5.320",
+      "grade": "일반"
+    },
+    {
+      "id": "740",
+      "name": "지주작",
+      "source": "충전보상",
+      "imageLink": "https://www.hwansoo.top/data/file/pets/1676c51ca26c60fab3ea89287195e4e8_7q8Nxp2n_42273106f2b8dfb61a7bd0ad74ac57b32afd7905.gif",
+      "elementStats": {
+        "water": 1,
+        "fire": 0,
+        "wind": 0,
+        "earth": 9
+      },
+      "baseStats": {
+        "attack": 12,
+        "defense": 6,
+        "agility": 9,
+        "vitality": 54
+      },
+      "growthStats": {
+        "attack": 2.218,
+        "defense": 1.196,
+        "agility": 1.68,
+        "vitality": 9.959
+      },
+      "rideable": "탑승불가",
+      "totalGrowth": "5.093",
+      "grade": "일반"
+    },
+    {
+      "id": "739",
+      "name": "가스트(환)",
+      "source": "페트 환생",
+      "imageLink": "https://www.hwansoo.top/data/file/pets/1676c51ca26c60fab3ea89287195e4e8_0bKsNIea_6cca8798143eaa0eb64740304f59ba03212fb425.gif",
+      "elementStats": {
+        "water": 0,
+        "fire": 0,
+        "wind": 5,
+        "earth": 5
+      },
+      "baseStats": {
+        "attack": 12,
+        "defense": 6,
+        "agility": 8,
+        "vitality": 53
+      },
+      "growthStats": {
+        "attack": 2.36,
+        "defense": 1.21,
+        "agility": 1.68,
+        "vitality": 10.101
+      },
+      "rideable": "탑승불가",
+      "totalGrowth": "5.249",
+      "grade": "일반"
+    },
+    {
+      "id": "739",
+      "name": "가스트(환)",
+      "source": "페트 환생",
+      "imageLink": "https://www.hwansoo.top/data/file/pets/1676c51ca26c60fab3ea89287195e4e8_9sWnfOUK_b60c47b967578db0701b07c8093910aae85fd36e.gif",
+      "elementStats": {
+        "water": 0,
+        "fire": 0,
+        "wind": 5,
+        "earth": 5
+      },
+      "baseStats": {
+        "attack": 12,
+        "defense": 6,
+        "agility": 8,
+        "vitality": 53
+      },
+      "growthStats": {
+        "attack": 2.36,
+        "defense": 1.21,
+        "agility": 1.68,
+        "vitality": 10.101
+      },
+      "rideable": "탑승불가",
+      "totalGrowth": "5.249",
+      "grade": "일반"
+    },
+    {
+      "id": "738",
+      "name": "게이블(환)",
+      "source": "페트 환생",
+      "imageLink": "https://www.hwansoo.top/data/file/pets/1676c51ca26c60fab3ea89287195e4e8_9sWnfOUK_b60c47b967578db0701b07c8093910aae85fd36e.gif",
+      "elementStats": {
+        "water": 8,
+        "fire": 0,
+        "wind": 0,
+        "earth": 2
+      },
+      "baseStats": {
+        "attack": 11,
+        "defense": 8,
+        "agility": 7,
+        "vitality": 58
+      },
+      "growthStats": {
+        "attack": 2.222,
+        "defense": 1.584,
+        "agility": 1.49,
+        "vitality": 11.047
+      },
+      "rideable": "탑승불가",
+      "totalGrowth": "5.296",
+      "grade": "일반"
+    },
+    {
+      "id": "737",
+      "name": "테라탄(환)",
+      "source": "페트 환생",
+      "imageLink": "https://www.hwansoo.top/data/file/pets/1676c51ca26c60fab3ea89287195e4e8_BxER6QHn_00fba2a1a65b7b48e2fb9caa046bc5f7adfcbb1c.gif",
+      "elementStats": {
+        "water": 0,
+        "fire": 6,
+        "wind": 4,
+        "earth": 0
+      },
+      "baseStats": {
+        "attack": 12,
+        "defense": 6,
+        "agility": 8,
+        "vitality": 56
+      },
+      "growthStats": {
+        "attack": 2.289,
+        "defense": 1.309,
+        "agility": 1.68,
+        "vitality": 10.668
+      },
+      "rideable": "탑승불가",
+      "totalGrowth": "5.277",
+      "grade": "일반"
+    },
+    {
+      "id": "736",
+      "name": "페가수스(환)",
+      "source": "페트 환생",
+      "imageLink": "https://www.hwansoo.top/data/file/pets/1676c51ca26c60fab3ea89287195e4e8_hOmIGywp_db26a026e6a4397d17a89314fb5d091ed29367d3.gif",
+      "elementStats": {
+        "water": 0,
+        "fire": 8,
+        "wind": 2,
+        "earth": 0
+      },
+      "baseStats": {
+        "attack": 12,
+        "defense": 6,
+        "agility": 8,
+        "vitality": 55
+      },
+      "growthStats": {
+        "attack": 2.326,
+        "defense": 1.262,
+        "agility": 1.68,
+        "vitality": 10.479
+      },
+      "rideable": "탑승가능",
+      "totalGrowth": "5.268",
+      "grade": "일반"
+    },
+    {
+      "id": "735",
+      "name": "암흑골로스(환)",
+      "source": "페트 환생",
+      "imageLink": "https://www.hwansoo.top/data/file/pets/b01436bccd2a57e6e3e9ab9d498def90_oIdy1Yqs_1a4c8370f9a073da9d04d0ec0458e6d989267206.gif",
+      "elementStats": {
+        "water": 0,
+        "fire": 5,
+        "wind": 5,
+        "earth": 0
+      },
+      "baseStats": {
+        "attack": 12,
+        "defense": 7,
+        "agility": 8,
+        "vitality": 57
+      },
+      "growthStats": {
+        "attack": 2.336,
+        "defense": 1.442,
+        "agility": 1.49,
+        "vitality": 10.479
+      },
+      "rideable": "탑승불가",
+      "totalGrowth": "5.268",
+      "grade": "일반"
+    },
+    {
       "id": "734",
       "name": "현무(환)",
       "source": "페트 환생",
