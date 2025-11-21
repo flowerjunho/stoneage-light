@@ -135,7 +135,7 @@ const CalculatorPage: React.FC = () => {
 
   // 페트 판매가 계산 함수
   const calculatePetSalePrice = (level: number) => {
-    if (level < 1 || level > 140) {
+    if (level < 1 || level > 145) {
       return { normal: 0, grade1: 0, grade2: 0 };
     }
 
@@ -163,12 +163,12 @@ const CalculatorPage: React.FC = () => {
     const level = parseInt(numericValue);
 
     if (!isNaN(level)) {
-      // 141 이상이면 140으로 제한
-      if (level > 140) {
-        setPetSaleLevelInput('140');
-        setPetSaleLevel(140);
+      // 146 이상이면 145로 제한
+      if (level > 145) {
+        setPetSaleLevelInput('145');
+        setPetSaleLevel(145);
       } else if (level >= 1) {
-        // 1 이상 140 이하의 유효한 숫자
+        // 1 이상 145 이하의 유효한 숫자
         setPetSaleLevelInput(numericValue);
         setPetSaleLevel(level);
       } else {
@@ -903,13 +903,13 @@ const CalculatorPage: React.FC = () => {
                 <input
                   type="number"
                   min="1"
-                  max="140"
+                  max="145"
                   value={petLevel}
                   onChange={e =>
-                    setPetLevel(Math.max(1, Math.min(140, parseInt(e.target.value) || 1)))
+                    setPetLevel(Math.max(1, Math.min(145, parseInt(e.target.value) || 1)))
                   }
                   className="w-full px-3 py-2 bg-bg-tertiary border border-border rounded-lg text-text-primary focus:outline-none focus:ring-2 focus:ring-accent"
-                  placeholder="레벨을 입력하세요 (1-140)"
+                  placeholder="레벨을 입력하세요 (1-145)"
                 />
               </div>
             </div>
@@ -1281,7 +1281,7 @@ const CalculatorPage: React.FC = () => {
                   Lv
                 </div>
               </div>
-              <div className="text-center mt-2 text-text-secondary text-sm">레벨 범위: 1 ~ 140</div>
+              <div className="text-center mt-2 text-text-secondary text-sm">레벨 범위: 1 ~ 145</div>
             </div>
 
             {/* 계산 결과 */}
@@ -1322,7 +1322,7 @@ const CalculatorPage: React.FC = () => {
 
               {/* 모바일 뷰 */}
               <div className="block md:hidden space-y-3">
-                {[50, 100, 140].map(level => {
+                {[50, 100, 145].map(level => {
                   const results = calculatePetSalePrice(level);
                   return (
                     <div key={level} className="bg-bg-tertiary rounded-lg p-3 border border-border">
@@ -1372,7 +1372,7 @@ const CalculatorPage: React.FC = () => {
                     </tr>
                   </thead>
                   <tbody>
-                    {[50, 75, 100, 125, 140].map(level => {
+                    {[50, 75, 100, 125, 145].map(level => {
                       const results = calculatePetSalePrice(level);
                       return (
                         <tr key={level} className="border-t border-border">
@@ -1495,11 +1495,11 @@ const CalculatorPage: React.FC = () => {
                   <input
                     type="number"
                     min="1"
-                    max="140"
+                    max="145"
                     value={currentLevel}
                     onChange={(e) => {
                       const value = parseInt(e.target.value) || 1;
-                      setCurrentLevel(Math.min(Math.max(1, value), 140));
+                      setCurrentLevel(Math.min(Math.max(1, value), 145));
                     }}
                     className="w-full px-4 py-3 bg-white dark:bg-gray-800 border-2 border-accent rounded-xl text-text-primary text-center text-lg font-bold focus:outline-none focus:ring-4 focus:ring-accent/30 shadow-lg"
                     placeholder="1"
@@ -1514,14 +1514,14 @@ const CalculatorPage: React.FC = () => {
                   <input
                     type="number"
                     min="1"
-                    max="140"
+                    max="145"
                     value={targetLevel}
                     onChange={(e) => {
                       const value = parseInt(e.target.value) || 1;
-                      setTargetLevel(Math.min(Math.max(1, value), 140));
+                      setTargetLevel(Math.min(Math.max(1, value), 145));
                     }}
                     className="w-full px-4 py-3 bg-white dark:bg-gray-800 border-2 border-accent rounded-xl text-text-primary text-center text-lg font-bold focus:outline-none focus:ring-4 focus:ring-accent/30 shadow-lg"
-                    placeholder="140"
+                    placeholder="145"
                   />
                 </div>
               </div>
