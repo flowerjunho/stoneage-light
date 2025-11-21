@@ -1035,8 +1035,8 @@
       "imageLink": "https://www.hwansoo.top/data/file/pets/56a287d704ccbcc4587e944994b7795f_QgOyKqGZ_7e44904776dc4222cc82f5b342b52dc047910fc8.gif",
       "elementStats": {
         "water": 0,
-        "fire": 0,
-        "wind": 10,
+        "fire": 3,
+        "wind": 7,
         "earth": 0
       },
       "baseStats": {
