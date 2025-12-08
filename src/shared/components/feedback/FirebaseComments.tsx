@@ -26,6 +26,9 @@ const FirebaseComments: React.FC = () => {
   const [dailyVisitors, setDailyVisitors] = useState<number>(0);
   const [weeklyStats, setWeeklyStats] = useState<Array<{ date: string; count: number }>>([]);
   const [currentWeekOffset, setCurrentWeekOffset] = useState<number>(0); // 0: 이번주, -1: 지난주, 1: 다음주
+  const [showAdminModal, setShowAdminModal] = useState(false);
+  const [adminPassword, setAdminPassword] = useState('');
+  const [showAdminPasswordError, setShowAdminPasswordError] = useState(false);
 
   // 간단한 해시 함수 (실제 프로덕션에서는 더 강력한 해시 사용 권장)
   const simpleHash = async (text: string): Promise<string> => {
@@ -257,7 +260,14 @@ const FirebaseComments: React.FC = () => {
       {/* 댓글 작성 폼 */}
       <div className="bg-bg-tertiary rounded-lg p-4 border border-border">
         <div className="flex items-center justify-between mb-4">
-          <h3 className="text-lg font-semibold text-text-primary">💬 댓글 작성</h3>
+          <h3
+            className="text-lg font-semibold text-text-primary select-none"
+            onClick={() => {
+              setShowAdminModal(true);
+              setAdminPassword('');
+              setShowAdminPasswordError(false);
+            }}
+          >💬 댓글 작성</h3>
           {isAdmin && (
             <div className="flex items-center gap-3">
               <span className="text-xs bg-yellow-500 text-black px-2 py-1 rounded">
@@ -449,6 +459,55 @@ const FirebaseComments: React.FC = () => {
                 <span>주간 총계</span>
                 <span className="font-mono">{weeklyStats.reduce((total, stat) => total + stat.count, 0)}명</span>
               </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* 관리자 비밀번호 입력 모달 */}
+      {showAdminModal && (
+        <div
+          className="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center z-50 backdrop-blur-sm"
+          onClick={() => setShowAdminModal(false)}
+        >
+          <div
+            className="bg-bg-secondary rounded-lg p-8 border border-border shadow-lg max-w-md w-full mx-4"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <h2 className="text-2xl font-bold text-center mb-6">🔐 비밀번호 입력</h2>
+            <div className="space-y-4">
+              <input
+                type="password"
+                value={adminPassword}
+                onChange={e => setAdminPassword(e.target.value)}
+                onKeyDown={e => {
+                  if (e.key === 'Enter') {
+                    if (adminPassword === 'asdf11') {
+                      localStorage.setItem('ADMIN_ID_STONE', 'flowerjunho');
+                      window.location.reload();
+                    } else {
+                      setShowAdminPasswordError(true);
+                    }
+                  }
+                }}
+                placeholder="비밀번호를 입력하세요"
+                className="w-full px-4 py-2 bg-bg-tertiary border border-border rounded-lg focus:outline-none focus:border-accent"
+                autoFocus
+              />
+              {showAdminPasswordError && <p className="text-red-500 text-sm">잘못된 비밀번호입니다.</p>}
+              <button
+                onClick={() => {
+                  if (adminPassword === 'asdf11') {
+                    localStorage.setItem('ADMIN_ID_STONE', 'flowerjunho');
+                    window.location.reload();
+                  } else {
+                    setShowAdminPasswordError(true);
+                  }
+                }}
+                className="w-full px-4 py-2 bg-accent text-white rounded-lg hover:bg-accent/90 transition-colors"
+              >
+                확인
+              </button>
             </div>
           </div>
         </div>
