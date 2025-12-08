@@ -10,6 +10,8 @@ import BoardingPage from '@/features/boarding/pages/BoardingPage';
 import ItemsPage from '@/features/items/pages/ItemsPage';
 import QuestsPage from '@/features/quests/pages/QuestsPage';
 import QuestDetailPage from '@/features/quests/pages/QuestDetailPage';
+import MapsPage from '@/features/maps/pages/MapsPage';
+import MapDetailPage from '@/features/maps/pages/MapDetailPage';
 import CalculatorPage from '@/features/calculator/pages/CalculatorPage';
 import BoardPage from '@/features/board/pages/BoardPage';
 import RadontaPage from '@/features/radonta/pages/RadontaPage';
@@ -19,7 +21,9 @@ import { VisitTracker } from '@/shared/utils/visitTracker';
 
 const AppContent: React.FC = () => {
   const location = useLocation();
-  const hideTabNavigation = location.pathname.includes('/quests/') && location.pathname !== '/quests';
+  const hideTabNavigation =
+    (location.pathname.includes('/quests/') && location.pathname !== '/quests') ||
+    (location.pathname.includes('/maps/') && location.pathname !== '/maps');
   const isRadontaPage = location.pathname === '/radonta';
   const isBattlePage = location.pathname === '/battle';
   const isDashboardPage = location.pathname === '/dashboard';
@@ -77,6 +81,8 @@ const AppContent: React.FC = () => {
           <Route path="/items" element={<ItemsPage />} />
           <Route path="/quests" element={<QuestsPage />} />
           <Route path="/quests/:questId" element={<QuestDetailPage />} />
+          <Route path="/maps" element={<MapsPage />} />
+          <Route path="/maps/:mapId" element={<MapDetailPage />} />
           <Route path="/calculator" element={<CalculatorPage />} />
           <Route path="/board" element={<BoardPage />} />
         </Routes>
