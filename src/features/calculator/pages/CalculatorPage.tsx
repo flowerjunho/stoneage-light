@@ -44,20 +44,17 @@ const CalculatorPage: React.FC = () => {
   const [showPetDropdown, setShowPetDropdown] = useState(false);
   const [filteredPets, setFilteredPets] = useState(petData.pets);
 
-  // Excel에서 추출한 보너스 값들 (C26, E26, G26, I26, K26)
-  const BONUSES = [10, 20, 30, 40, 50];
-
   // Excel 분석에 따른 정확한 초기값 - 5환까지
   const [userInputs, setUserInputs] = useState({
     // 레벨 입력 (C6, E6, G6, I6, K6)
     levels: [140, 140, 140, 140, 140],
-    // 체,완,건만 사용자 입력 (C9,C10,C11 / E9,E10,E11 / G9,G10,G11 / I9,I10,I11 / K9,K10,K11)
+    // 체,완,건만 사용자 입력 - 순발은 자동 계산 (레벨 - 체 - 완 - 건)
     stats: [
-      { con: 437, wis: 0, dex: 0 }, // 1환 (C9,C10,C11)
-      { con: 482, wis: 0, dex: 0 }, // 2환 (E9,E10,E11)
-      { con: 514, wis: 0, dex: 0 }, // 3환 (G9,G10,G11)
-      { con: 546, wis: 0, dex: 0 }, // 4환 (I9,I10,I11)
-      { con: 577, wis: 0, dex: 0 }, // 5환 (K9,K10,K11)
+      { con: 0, wis: 0, dex: 0 }, // 1환
+      { con: 0, wis: 0, dex: 0 }, // 2환
+      { con: 0, wis: 0, dex: 0 }, // 3환
+      { con: 0, wis: 0, dex: 0 }, // 4환
+      { con: 0, wis: 0, dex: 0 }, // 5환
     ],
   });
 
@@ -68,6 +65,7 @@ const CalculatorPage: React.FC = () => {
   const [savedDataList, setSavedDataList] = useState<SavedData[]>([]);
   const [currentTitle, setCurrentTitle] = useState<string>(''); // 현재 불러온 데이터의 타이틀
   const [isExpTableModalOpen, setIsExpTableModalOpen] = useState(false);
+  const [selectedPreset, setSelectedPreset] = useState<string | null>(null); // 선택된 프리셋
 
   // 페트 모달 관련 상태
   const [selectedModalPet, setSelectedModalPet] = useState<(typeof petData.pets)[0] | null>(null);
@@ -194,60 +192,21 @@ const CalculatorPage: React.FC = () => {
 
     setUserInputs(prev => {
       const newStats = [...prev.stats];
-      const level = prev.levels[rebirthIndex];
 
-      // 사용 가능한 포인트 계산 (Excel 공식 기반)
-      let availablePoints: number;
-      if (rebirthIndex === 0) {
-        // 1환: 20 + 3 * (레벨 - 1)
-        availablePoints = 20 + 3 * (level - 1);
-      } else {
-        // 2환 이후: 이전 환의 실제환포 + 3 * (레벨 - 1)
-        // calculatedData가 있다면 실제 값 사용, 없다면 기본 계산
-        let previousRebirth = 0;
-        if (calculatedData.length > rebirthIndex - 1) {
-          previousRebirth = calculatedData[rebirthIndex - 1].finalRebirthValue;
-        } else {
-          // calculatedData가 없는 경우 대략적 계산
-          for (let i = 0; i < rebirthIndex; i++) {
-            previousRebirth += BONUSES[i] + 10; // 보너스 + 환포적용 추정치
-          }
-        }
-        availablePoints = previousRebirth + 3 * (level - 1);
-      }
-
-      if (stat === 'con') {
-        // 체력 직접 변경 - 최대값 제한
-        const otherStats = newStats[rebirthIndex].wis + newStats[rebirthIndex].dex;
-        const maxCon = availablePoints - otherStats;
-        newStats[rebirthIndex] = {
-          ...newStats[rebirthIndex],
-          [stat]: Math.min(Math.max(0, numValue), maxCon),
-        };
-      } else {
-        // 완/건 변경 시 체력 자동 조정
-        const currentStat = newStats[rebirthIndex];
-        const otherStatValue = stat === 'wis' ? currentStat.dex : currentStat.wis;
-
-        // 입력된 스탯이 너무 클 경우 제한
-        const maxThisStat = availablePoints - otherStatValue;
-        const adjustedValue = Math.min(Math.max(0, numValue), maxThisStat);
-
-        // 체력 자동 조정
-        const remainingForCon = availablePoints - adjustedValue - otherStatValue;
-
-        newStats[rebirthIndex] = {
-          ...currentStat,
-          [stat]: adjustedValue,
-          con: Math.max(0, remainingForCon),
-        };
-      }
+      // 체/완/건 직접 입력 - 순발은 useRebirthCalculation에서 자동 계산됨 (레벨 - 체 - 완 - 건)
+      // 스탯 값만 업데이트하고 다른 스탯은 건드리지 않음
+      newStats[rebirthIndex] = {
+        ...newStats[rebirthIndex],
+        [stat]: Math.max(0, numValue),
+      };
 
       return {
         ...prev,
         stats: newStats,
       };
     });
+    // 직접 수정 시 프리셋 선택 해제
+    setSelectedPreset(null);
   };
 
   const handleLevelChange = (rebirthIndex: number, value: string) => {
@@ -256,6 +215,8 @@ const CalculatorPage: React.FC = () => {
       ...prev,
       levels: prev.levels.map((level, i) => (i === rebirthIndex ? numValue : level)),
     }));
+    // 직접 수정 시 프리셋 선택 해제
+    setSelectedPreset(null);
   };
 
   // 저장/불러오기 관련 함수들
@@ -282,6 +243,7 @@ const CalculatorPage: React.FC = () => {
         stats: data.stats,
       });
       setCurrentTitle(data.title); // 현재 타이틀 설정
+      setSelectedPreset(null); // 프리셋 선택 해제
       setShowLoadModal(false);
       alert(`${data.title} 데이터를 불러왔습니다.`);
     } else {
@@ -482,6 +444,80 @@ const CalculatorPage: React.FC = () => {
           {/* 헤더 */}
           <div className="mb-8">
             <div className="mb-6">
+              {/* 추천 프리셋 버튼 */}
+              <div className="text-center text-sm text-text-secondary mb-2">추천 스탯</div>
+              <div className="flex flex-wrap justify-center gap-2 mb-4">
+                <button
+                  onClick={() => {
+                    setUserInputs({
+                      levels: [140, 140, 140, 137, 140],
+                      stats: [
+                        { con: 100, wis: 17, dex: 0 },
+                        { con: 102, wis: 60, dex: 0 },
+                        { con: 96, wis: 97, dex: 0 },
+                        { con: 89, wis: 385, dex: 2 },
+                        { con: 21, wis: 539, dex: 2 },
+                      ],
+                    });
+                    setSelectedPreset('transition');
+                    setCurrentTitle('');
+                  }}
+                  className={`px-4 py-2 rounded-lg font-semibold transition-colors text-sm ${
+                    selectedPreset === 'transition'
+                      ? 'bg-blue-500 text-white border border-blue-500'
+                      : 'bg-bg-tertiary text-text-primary hover:bg-bg-secondary border border-border'
+                  }`}
+                >
+                  순캐 → 완캐 전환(4환 부터)
+                </button>
+                <button
+                  onClick={() => {
+                    setUserInputs({
+                      levels: [140, 140, 140, 137, 140],
+                      stats: [
+                        { con: 76, wis: 340, dex: 0 },
+                        { con: 73, wis: 356, dex: 0 },
+                        { con: 61, wis: 399, dex: 0 },
+                        { con: 62, wis: 419, dex: 0 },
+                        { con: 64, wis: 462, dex: 2 },
+                      ],
+                    });
+                    setSelectedPreset('wis');
+                    setCurrentTitle('');
+                  }}
+                  className={`px-4 py-2 rounded-lg font-semibold transition-colors text-sm ${
+                    selectedPreset === 'wis'
+                      ? 'bg-blue-500 text-white border border-blue-500'
+                      : 'bg-bg-tertiary text-text-primary hover:bg-bg-secondary border border-border'
+                  }`}
+                >
+                  완캐
+                </button>
+                <button
+                  onClick={() => {
+                    setUserInputs({
+                      levels: [140, 140, 140, 137, 140],
+                      stats: [
+                        { con: 132, wis: 4, dex: 0 },
+                        { con: 173, wis: 4, dex: 0 },
+                        { con: 202, wis: 3, dex: 0 },
+                        { con: 220, wis: 12, dex: 0 },
+                        { con: 252, wis: 15, dex: 0 },
+                      ],
+                    });
+                    setSelectedPreset('agi');
+                    setCurrentTitle('');
+                  }}
+                  className={`px-4 py-2 rounded-lg font-semibold transition-colors text-sm ${
+                    selectedPreset === 'agi'
+                      ? 'bg-blue-500 text-white border border-blue-500'
+                      : 'bg-bg-tertiary text-text-primary hover:bg-bg-secondary border border-border'
+                  }`}
+                >
+                  순캐
+                </button>
+              </div>
+
               {/* 저장/불러오기 버튼 */}
               <div className="flex justify-center gap-3 mb-4">
                 <button
