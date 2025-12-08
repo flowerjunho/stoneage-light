@@ -8,7 +8,11 @@ import {
   formatTimestamp,
   type SavedData,
 } from '@/shared/utils/storage';
-import { useRebirthCalculation, type StatInput, type RebirthData } from '@/shared/hooks/useRebirthCalculation';
+import {
+  useRebirthCalculation,
+  type StatInput,
+  type RebirthData,
+} from '@/shared/hooks/useRebirthCalculation';
 import RebirthCard from '@/features/calculator/components/RebirthCard';
 import SaveModal from '@/features/calculator/components/SaveModal';
 import LoadModal from '@/shared/components/ui/LoadModal';
@@ -17,12 +21,37 @@ import ExpTableModal from '@/features/calculator/components/ExpTableModal';
 import petData from '@/data/petData.json';
 import levelExpData from '@/data/level_exp.json';
 
+// 속성 타입
+type AttributeType = 'fire' | 'water' | 'earth' | 'wind';
+
+// 속성 스탯 인터페이스
+interface AttributeStats {
+  fire: number;
+  water: number;
+  earth: number;
+  wind: number;
+}
+
 const CalculatorPage: React.FC = () => {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
 
   // 서브탭 상태 관리
   const [activeSubTab, setActiveSubTab] = useState('rebirth');
+
+  // 속성 계산기 상태
+  const [attackerAttr, setAttackerAttr] = useState<AttributeStats>({
+    fire: 0,
+    water: 0,
+    earth: 0,
+    wind: 0,
+  });
+  const [defenderAttr, setDefenderAttr] = useState<AttributeStats>({
+    fire: 0,
+    water: 0,
+    earth: 0,
+    wind: 0,
+  });
 
   // 페트 판매 계산기 상태
   const [petSaleLevel, setPetSaleLevel] = useState(60);
@@ -130,6 +159,101 @@ const CalculatorPage: React.FC = () => {
 
   // 계산 로직을 custom hook으로 분리
   const calculatedData = useRebirthCalculation(userInputs);
+
+  // 속성 총합 계산
+  const getAttributeTotal = (attr: AttributeStats) => {
+    return attr.fire + attr.water + attr.earth + attr.wind;
+  };
+
+  // 속성 업데이트 핸들러 (대립 속성 체크)
+  const handleAttributeChange = (
+    attr: AttributeStats,
+    setAttr: React.Dispatch<React.SetStateAction<AttributeStats>>,
+    type: AttributeType,
+    value: number
+  ) => {
+    const newValue = Math.max(0, Math.min(10, value));
+    const newAttr = { ...attr, [type]: newValue };
+
+    // 대립 속성 체크 (지↔화, 수↔풍)
+    if ((type === 'earth' && newAttr.fire > 0) || (type === 'fire' && newAttr.earth > 0)) {
+      if (type === 'earth') newAttr.fire = 0;
+      if (type === 'fire') newAttr.earth = 0;
+    }
+    if ((type === 'water' && newAttr.wind > 0) || (type === 'wind' && newAttr.water > 0)) {
+      if (type === 'water') newAttr.wind = 0;
+      if (type === 'wind') newAttr.water = 0;
+    }
+
+    // 총합 10 체크
+    const total = newAttr.fire + newAttr.water + newAttr.earth + newAttr.wind;
+    if (total > 10) {
+      return;
+    }
+
+    setAttr(newAttr);
+  };
+
+  // 속성 데미지 보정 계산
+  const calculateAttributeBonus = (atkAttr: AttributeStats, defAttr: AttributeStats): number => {
+    const atkFire = atkAttr.fire * 10;
+    const atkWater = atkAttr.water * 10;
+    const atkEarth = atkAttr.earth * 10;
+    const atkWind = atkAttr.wind * 10;
+    const atkNone = 100 - (atkFire + atkWater + atkEarth + atkWind);
+
+    const defFire = defAttr.fire * 10;
+    const defWater = defAttr.water * 10;
+    const defEarth = defAttr.earth * 10;
+    const defWind = defAttr.wind * 10;
+    const defNone = 100 - (defFire + defWater + defEarth + defWind);
+
+    // 화 속성 데미지
+    const fireDmg =
+      atkFire * defNone * 1.5 +
+      atkFire * defFire * 1.0 +
+      atkFire * defWater * 0.6 +
+      atkFire * defEarth * 1.0 +
+      atkFire * defWind * 1.5;
+
+    // 수 속성 데미지
+    const waterDmg =
+      atkWater * defNone * 1.5 +
+      atkWater * defFire * 1.5 +
+      atkWater * defWater * 1.0 +
+      atkWater * defEarth * 0.6 +
+      atkWater * defWind * 1.0;
+
+    // 지 속성 데미지
+    const earthDmg =
+      atkEarth * defNone * 1.5 +
+      atkEarth * defFire * 1.0 +
+      atkEarth * defWater * 1.5 +
+      atkEarth * defEarth * 1.0 +
+      atkEarth * defWind * 0.6;
+
+    // 풍 속성 데미지
+    const windDmg =
+      atkWind * defNone * 1.5 +
+      atkWind * defFire * 0.6 +
+      atkWind * defWater * 1.0 +
+      atkWind * defEarth * 1.5 +
+      atkWind * defWind * 1.0;
+
+    // 무속성 데미지
+    const noneDmg =
+      atkNone * defFire * 0.6 +
+      atkNone * defWater * 0.6 +
+      atkNone * defEarth * 0.6 +
+      atkNone * defWind * 0.6 +
+      atkNone * defNone * 1.0;
+
+    const total = fireDmg + waterDmg + earthDmg + windDmg + noneDmg;
+    return total * 0.0001;
+  };
+
+  // 속성 보정 계산 결과
+  const attrBonus = calculateAttributeBonus(attackerAttr, defenderAttr);
 
   // 페트 판매가 계산 함수
   const calculatePetSalePrice = (level: number) => {
@@ -382,7 +506,13 @@ const CalculatorPage: React.FC = () => {
   // URL 파라미터에서 서브탭 상태 관리
   useEffect(() => {
     const tabParam = searchParams.get('tab');
-    if (tabParam === 'petgrowth' || tabParam === 'rebirth' || tabParam === 'petsale' || tabParam === 'expcalc') {
+    if (
+      tabParam === 'petgrowth' ||
+      tabParam === 'rebirth' ||
+      tabParam === 'petsale' ||
+      tabParam === 'expcalc' ||
+      tabParam === 'element'
+    ) {
       setActiveSubTab(tabParam);
     } else {
       // 기본값 설정 및 URL 업데이트
@@ -407,6 +537,7 @@ const CalculatorPage: React.FC = () => {
   // 서브탭 메뉴
   const subTabs = [
     { id: 'rebirth', label: '환생포인트' },
+    { id: 'element', label: '속성' },
     { id: 'petgrowth', label: '페트성장' },
     { id: 'petsale', label: '페트판매' },
     { id: 'expcalc', label: '경험치' },
@@ -796,9 +927,7 @@ const CalculatorPage: React.FC = () => {
                       <td className="px-4 py-3 text-center text-green-600 font-bold border-r border-border">
                         +1
                       </td>
-                      <td className="px-4 py-3 text-center text-blue-600 font-bold">
-                        +1
-                      </td>
+                      <td className="px-4 py-3 text-center text-blue-600 font-bold">+1</td>
                     </tr>
                     <tr className="border-b border-border">
                       <td className="px-4 py-3 text-text-primary font-medium border-r border-border">
@@ -807,9 +936,7 @@ const CalculatorPage: React.FC = () => {
                       <td className="px-4 py-3 text-center text-green-600 font-bold border-r border-border">
                         +1
                       </td>
-                      <td className="px-4 py-3 text-center text-text-muted">
-                        -
-                      </td>
+                      <td className="px-4 py-3 text-center text-text-muted">-</td>
                     </tr>
                     <tr className="border-b border-border">
                       <td className="px-4 py-3 text-text-primary font-medium border-r border-border">
@@ -818,9 +945,7 @@ const CalculatorPage: React.FC = () => {
                       <td className="px-4 py-3 text-center text-text-muted border-r border-border">
                         -
                       </td>
-                      <td className="px-4 py-3 text-center text-blue-600 font-bold">
-                        +1
-                      </td>
+                      <td className="px-4 py-3 text-center text-blue-600 font-bold">+1</td>
                     </tr>
                     <tr>
                       <td className="px-4 py-3 text-text-primary font-medium border-r border-border">
@@ -829,12 +954,369 @@ const CalculatorPage: React.FC = () => {
                       <td className="px-4 py-3 text-center text-green-600 font-bold border-r border-border">
                         +1
                       </td>
-                      <td className="px-4 py-3 text-center text-blue-600 font-bold">
-                        +1
-                      </td>
+                      <td className="px-4 py-3 text-center text-blue-600 font-bold">+1</td>
                     </tr>
                   </tbody>
                 </table>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* 속성 계산기 서브탭 */}
+      {activeSubTab === 'element' && (
+        <div>
+          <div className="bg-bg-secondary rounded-xl p-6 mb-6 border border-border">
+            <h2 className="text-xl font-bold text-text-primary mb-6 text-center">속성 계산기</h2>
+            <p className="text-center text-text-secondary mb-6">
+              공격자와 방어자의 속성을 입력하면 데미지 보정 배율을 계산합니다
+            </p>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+              {/* 공격자 속성 */}
+              <div className="bg-bg-tertiary rounded-lg p-4 border border-red-500/30">
+                <h3 className="text-lg font-bold mb-4 text-red-500 flex items-center gap-2">
+                  공격자 속성 ({getAttributeTotal(attackerAttr)}/10)
+                </h3>
+                <div className="grid grid-cols-2 gap-3">
+                  <div>
+                    <label className="block text-xs font-bold mb-1 text-green-500">지 (地)</label>
+                    <input
+                      type="number"
+                      min="0"
+                      max="10"
+                      value={attackerAttr.earth}
+                      onChange={e =>
+                        handleAttributeChange(
+                          attackerAttr,
+                          setAttackerAttr,
+                          'earth',
+                          Number(e.target.value)
+                        )
+                      }
+                      disabled={attackerAttr.fire > 0}
+                      className="w-full px-3 py-2 bg-green-500 border border-green-500 rounded text-white font-bold disabled:opacity-50 text-center"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-xs font-bold mb-1 text-blue-500">수 (水)</label>
+                    <input
+                      type="number"
+                      min="0"
+                      max="10"
+                      value={attackerAttr.water}
+                      onChange={e =>
+                        handleAttributeChange(
+                          attackerAttr,
+                          setAttackerAttr,
+                          'water',
+                          Number(e.target.value)
+                        )
+                      }
+                      disabled={attackerAttr.wind > 0}
+                      className="w-full px-3 py-2 bg-blue-500 border border-blue-500 rounded text-white font-bold disabled:opacity-50 text-center"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-xs font-bold mb-1 text-red-500">화 (火)</label>
+                    <input
+                      type="number"
+                      min="0"
+                      max="10"
+                      value={attackerAttr.fire}
+                      onChange={e =>
+                        handleAttributeChange(
+                          attackerAttr,
+                          setAttackerAttr,
+                          'fire',
+                          Number(e.target.value)
+                        )
+                      }
+                      disabled={attackerAttr.earth > 0}
+                      className="w-full px-3 py-2 bg-red-500 border border-red-500 rounded text-white font-bold disabled:opacity-50 text-center"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-xs font-bold mb-1 text-yellow-500">풍 (風)</label>
+                    <input
+                      type="number"
+                      min="0"
+                      max="10"
+                      value={attackerAttr.wind}
+                      onChange={e =>
+                        handleAttributeChange(
+                          attackerAttr,
+                          setAttackerAttr,
+                          'wind',
+                          Number(e.target.value)
+                        )
+                      }
+                      disabled={attackerAttr.water > 0}
+                      className="w-full px-3 py-2 bg-yellow-500 border border-yellow-500 rounded text-white font-bold disabled:opacity-50 text-center"
+                    />
+                  </div>
+                </div>
+              </div>
+
+              {/* 방어자 속성 */}
+              <div className="bg-bg-tertiary rounded-lg p-4 border border-blue-500/30">
+                <h3 className="text-lg font-bold mb-4 text-blue-500 flex items-center gap-2">
+                  방어자 속성 ({getAttributeTotal(defenderAttr)}/10)
+                </h3>
+                <div className="grid grid-cols-2 gap-3">
+                  <div>
+                    <label className="block text-xs font-bold mb-1 text-green-500">지 (地)</label>
+                    <input
+                      type="number"
+                      min="0"
+                      max="10"
+                      value={defenderAttr.earth}
+                      onChange={e =>
+                        handleAttributeChange(
+                          defenderAttr,
+                          setDefenderAttr,
+                          'earth',
+                          Number(e.target.value)
+                        )
+                      }
+                      disabled={defenderAttr.fire > 0}
+                      className="w-full px-3 py-2 bg-green-500 border border-green-500 rounded text-white font-bold disabled:opacity-50 text-center"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-xs font-bold mb-1 text-blue-500">수 (水)</label>
+                    <input
+                      type="number"
+                      min="0"
+                      max="10"
+                      value={defenderAttr.water}
+                      onChange={e =>
+                        handleAttributeChange(
+                          defenderAttr,
+                          setDefenderAttr,
+                          'water',
+                          Number(e.target.value)
+                        )
+                      }
+                      disabled={defenderAttr.wind > 0}
+                      className="w-full px-3 py-2 bg-blue-500 border border-blue-500 rounded text-white font-bold disabled:opacity-50 text-center"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-xs font-bold mb-1 text-red-500">화 (火)</label>
+                    <input
+                      type="number"
+                      min="0"
+                      max="10"
+                      value={defenderAttr.fire}
+                      onChange={e =>
+                        handleAttributeChange(
+                          defenderAttr,
+                          setDefenderAttr,
+                          'fire',
+                          Number(e.target.value)
+                        )
+                      }
+                      disabled={defenderAttr.earth > 0}
+                      className="w-full px-3 py-2 bg-red-500 border border-red-500 rounded text-white font-bold disabled:opacity-50 text-center"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-xs font-bold mb-1 text-yellow-500">풍 (風)</label>
+                    <input
+                      type="number"
+                      min="0"
+                      max="10"
+                      value={defenderAttr.wind}
+                      onChange={e =>
+                        handleAttributeChange(
+                          defenderAttr,
+                          setDefenderAttr,
+                          'wind',
+                          Number(e.target.value)
+                        )
+                      }
+                      disabled={defenderAttr.water > 0}
+                      className="w-full px-3 py-2 bg-yellow-500 border border-yellow-500 rounded text-white font-bold disabled:opacity-50 text-center"
+                    />
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* 결과 표시 */}
+            <div className="bg-bg-primary rounded-xl p-6 border border-border">
+              <h3 className="text-lg font-bold text-text-primary mb-4 text-center">
+                📊 속성 보정 결과
+              </h3>
+              <div className="flex justify-center">
+                <div
+                  className={`text-center p-6 rounded-xl border-2 max-w-md w-full ${
+                    attrBonus >= 1.2
+                      ? 'bg-green-500/10 border-green-500/30'
+                      : attrBonus <= 0.8
+                        ? 'bg-red-500/10 border-red-500/30'
+                        : 'bg-gray-500/10 border-gray-500/30'
+                  }`}
+                >
+                  <div className="text-sm text-text-secondary mb-2">데미지 보정 배율</div>
+                  <div
+                    className={`text-4xl font-bold mb-2 ${
+                      attrBonus >= 1.2
+                        ? 'text-green-500'
+                        : attrBonus <= 0.8
+                          ? 'text-red-500'
+                          : 'text-text-primary'
+                    }`}
+                  >
+                    ×{(Math.ceil(attrBonus * 10000) / 10000).toFixed(3)}
+                  </div>
+                  <div className="text-sm text-text-secondary">
+                    {attrBonus >= 1.4 && '🔥 상성 매우 유리!'}
+                    {attrBonus >= 1.2 && attrBonus < 1.4 && '✨ 상성 유리'}
+                    {attrBonus > 0.8 && attrBonus < 1.2 && '➖ 상성 보통'}
+                    {attrBonus <= 0.8 && attrBonus > 0.6 && '⚠️ 상성 불리'}
+                    {attrBonus <= 0.6 && '💀 상성 매우 불리!'}
+                  </div>
+                  <div className="mt-3 text-xs text-text-secondary">
+                    예시: 데미지 1000 → 속성 적용 후: {Math.ceil(1000 * attrBonus)}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* 속성 상성표 */}
+          <div className="bg-bg-secondary rounded-xl p-6 mb-6 border border-border">
+            <h3 className="text-lg font-bold text-text-primary mb-4 text-center">📋 속성 상성표</h3>
+            <div className="overflow-x-auto">
+              <table className="w-full text-sm">
+                <thead>
+                  <tr className="bg-bg-tertiary">
+                    <th className="p-2 border border-border">공격↓ / 방어→</th>
+                    <th className="p-2 border border-border text-green-500">지</th>
+                    <th className="p-2 border border-border text-blue-500">수</th>
+                    <th className="p-2 border border-border text-red-500">화</th>
+                    <th className="p-2 border border-border text-yellow-500">풍</th>
+                    <th className="p-2 border border-border text-text-secondary">무속성</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td className="p-2 border border-border font-bold text-green-500">지</td>
+                    <td className="p-2 border border-border text-center">1.0</td>
+                    <td className="p-2 border border-border text-center text-green-500 font-bold">
+                      1.5
+                    </td>
+                    <td className="p-2 border border-border text-center">1.0</td>
+                    <td className="p-2 border border-border text-center text-red-500 font-bold">
+                      0.6
+                    </td>
+                    <td className="p-2 border border-border text-center text-green-500 font-bold">
+                      1.5
+                    </td>
+                  </tr>
+                  <tr>
+                    <td className="p-2 border border-border font-bold text-blue-500">수</td>
+                    <td className="p-2 border border-border text-center text-red-500 font-bold">
+                      0.6
+                    </td>
+                    <td className="p-2 border border-border text-center">1.0</td>
+                    <td className="p-2 border border-border text-center text-green-500 font-bold">
+                      1.5
+                    </td>
+                    <td className="p-2 border border-border text-center">1.0</td>
+                    <td className="p-2 border border-border text-center text-green-500 font-bold">
+                      1.5
+                    </td>
+                  </tr>
+                  <tr>
+                    <td className="p-2 border border-border font-bold text-red-500">화</td>
+                    <td className="p-2 border border-border text-center">1.0</td>
+                    <td className="p-2 border border-border text-center text-red-500 font-bold">
+                      0.6
+                    </td>
+                    <td className="p-2 border border-border text-center">1.0</td>
+                    <td className="p-2 border border-border text-center text-green-500 font-bold">
+                      1.5
+                    </td>
+                    <td className="p-2 border border-border text-center text-green-500 font-bold">
+                      1.5
+                    </td>
+                  </tr>
+                  <tr>
+                    <td className="p-2 border border-border font-bold text-yellow-500">풍</td>
+                    <td className="p-2 border border-border text-center text-green-500 font-bold">
+                      1.5
+                    </td>
+                    <td className="p-2 border border-border text-center">1.0</td>
+                    <td className="p-2 border border-border text-center text-red-500 font-bold">
+                      0.6
+                    </td>
+                    <td className="p-2 border border-border text-center">1.0</td>
+                    <td className="p-2 border border-border text-center text-green-500 font-bold">
+                      1.5
+                    </td>
+                  </tr>
+                  <tr>
+                    <td className="p-2 border border-border font-bold text-text-secondary">
+                      무속성
+                    </td>
+                    <td className="p-2 border border-border text-center text-red-500 font-bold">
+                      0.6
+                    </td>
+                    <td className="p-2 border border-border text-center text-red-500 font-bold">
+                      0.6
+                    </td>
+                    <td className="p-2 border border-border text-center text-red-500 font-bold">
+                      0.6
+                    </td>
+                    <td className="p-2 border border-border text-center text-red-500 font-bold">
+                      0.6
+                    </td>
+                    <td className="p-2 border border-border text-center">1.0</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          {/* 속성 설명 */}
+          <div className="bg-bg-secondary rounded-xl p-6 border border-border">
+            <h3 className="text-lg font-bold text-text-primary mb-4 text-center">
+              💡 속성 시스템 안내
+            </h3>
+            <div className="space-y-3 text-text-secondary text-sm">
+              <div className="flex items-start gap-3">
+                <span className="text-green-500 mt-0.5">✅</span>
+                <p>
+                  <strong>유리한 속성:</strong> ×1.5배 (50% 증가) - 지→수, 수→화, 화→풍, 풍→지
+                </p>
+              </div>
+              <div className="flex items-start gap-3">
+                <span className="text-red-500 mt-0.5">⚠️</span>
+                <p>
+                  <strong>불리한 속성:</strong> ×0.6배 (40% 감소) - 지→풍, 수→지, 화→수, 풍→화
+                </p>
+              </div>
+              <div className="flex items-start gap-3">
+                <span className="text-text-secondary mt-0.5">➖</span>
+                <p>
+                  <strong>동일 속성:</strong> ×1.0배 (변화 없음)
+                </p>
+              </div>
+              <div className="flex items-start gap-3">
+                <span className="text-red-500 mt-0.5">❌</span>
+                <p>
+                  <strong>대립 속성:</strong> 지↔화, 수↔풍은 동시 선택 불가
+                </p>
+              </div>
+              <div className="flex items-start gap-3">
+                <span className="text-blue-500 mt-0.5">ℹ️</span>
+                <p>
+                  <strong>속성 포인트:</strong> 최대 10포인트까지 분배 가능
+                </p>
               </div>
             </div>
           </div>
@@ -1533,7 +2015,7 @@ const CalculatorPage: React.FC = () => {
                     min="1"
                     max="145"
                     value={currentLevel}
-                    onChange={(e) => {
+                    onChange={e => {
                       const value = parseInt(e.target.value) || 1;
                       setCurrentLevel(Math.min(Math.max(1, value), 145));
                     }}
@@ -1552,7 +2034,7 @@ const CalculatorPage: React.FC = () => {
                     min="1"
                     max="145"
                     value={targetLevel}
-                    onChange={(e) => {
+                    onChange={e => {
                       const value = parseInt(e.target.value) || 1;
                       setTargetLevel(Math.min(Math.max(1, value), 145));
                     }}
@@ -1566,10 +2048,8 @@ const CalculatorPage: React.FC = () => {
             {/* 결과 섹션 */}
             <div className="max-w-3xl mx-auto">
               <div className="bg-bg-primary rounded-xl p-6 border border-border shadow-lg">
-                <h3 className="text-lg font-bold text-text-primary mb-4 text-center">
-                  계산 결과
-                </h3>
-                
+                <h3 className="text-lg font-bold text-text-primary mb-4 text-center">계산 결과</h3>
+
                 <div className="flex justify-center">
                   {/* 필요한 경험치만 크게 표시 */}
                   <div className="text-center p-6 bg-gradient-to-br from-purple-500/10 to-blue-500/10 rounded-xl border-2 border-purple-500/30 max-w-md w-full">
@@ -1581,9 +2061,7 @@ const CalculatorPage: React.FC = () => {
                       {expCalculationResult.requiredExp.toLocaleString()}
                     </div>
                     <div className="text-xs text-text-secondary">
-                      {currentLevel < targetLevel && (
-                        `${targetLevel - currentLevel}레벨 상승`
-                      )}
+                      {currentLevel < targetLevel && `${targetLevel - currentLevel}레벨 상승`}
                     </div>
                   </div>
                 </div>
