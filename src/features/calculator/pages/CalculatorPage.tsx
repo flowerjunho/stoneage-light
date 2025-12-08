@@ -8,7 +8,7 @@ import {
   formatTimestamp,
   type SavedData,
 } from '@/shared/utils/storage';
-import { useRebirthCalculation, type StatInput } from '@/shared/hooks/useRebirthCalculation';
+import { useRebirthCalculation, type StatInput, type RebirthData } from '@/shared/hooks/useRebirthCalculation';
 import RebirthCard from '@/features/calculator/components/RebirthCard';
 import SaveModal from '@/features/calculator/components/SaveModal';
 import LoadModal from '@/shared/components/ui/LoadModal';
@@ -593,7 +593,7 @@ const CalculatorPage: React.FC = () => {
                   <div key={key} className="bg-bg-tertiary rounded-lg p-3 border border-border">
                     <h4 className="font-medium text-text-primary mb-2 text-sm">{label}</h4>
                     <div className="grid grid-cols-5 gap-2 text-xs">
-                      {calculatedData.map((data: any, i: number) => (
+                      {calculatedData.map((data: RebirthData, i: number) => (
                         <div key={i} className="text-center">
                           <div className="text-text-secondary mb-1">{i + 1}환</div>
                           <div className="space-y-1">
@@ -616,7 +616,7 @@ const CalculatorPage: React.FC = () => {
                     환포 총합 + 보너스
                   </h4>
                   <div className="grid grid-cols-5 gap-2 text-xs">
-                    {calculatedData.map((data: any, i: number) => (
+                    {calculatedData.map((data: RebirthData, i: number) => (
                       <div key={i} className="text-center">
                         <div className="text-text-secondary mb-1">{i + 1}환</div>
                         <div className="space-y-1">
@@ -652,7 +652,7 @@ const CalculatorPage: React.FC = () => {
                     <th className="px-4 py-3 text-left font-semibold" rowSpan={2}>
                       스탯
                     </th>
-                    {calculatedData.map((_: any, i: number) => (
+                    {calculatedData.map((_: RebirthData, i: number) => (
                       <th
                         key={i}
                         className="px-2 py-2 text-center font-semibold border-l border-border"
@@ -663,7 +663,7 @@ const CalculatorPage: React.FC = () => {
                     ))}
                   </tr>
                   <tr className="bg-bg-tertiary border-t border-border">
-                    {calculatedData.map((_: any, i: number) => (
+                    {calculatedData.map((_: RebirthData, i: number) => (
                       <React.Fragment key={`header-${i}`}>
                         <th className="px-2 py-2 text-center font-semibold text-xs bg-bg-tertiary text-text-secondary">
                           적용
@@ -684,7 +684,7 @@ const CalculatorPage: React.FC = () => {
                   ].map(({ key, label }) => (
                     <tr key={key} className="border-t border-border">
                       <td className="px-4 py-3 font-medium">{label}</td>
-                      {calculatedData.map((data: any, i: number) => (
+                      {calculatedData.map((data: RebirthData, i: number) => (
                         <React.Fragment key={`${key}-${i}`}>
                           <td className="px-2 py-3 text-center">
                             <span className="inline-block px-2 py-1 rounded text-xs font-mono font-bold bg-green-500 text-white">
@@ -702,7 +702,7 @@ const CalculatorPage: React.FC = () => {
                   ))}
                   <tr className="border-t font-semibold border-border bg-bg-tertiary">
                     <td className="px-4 py-3">환포 총합 + 보너스</td>
-                    {calculatedData.map((data: any, i: number) => (
+                    {calculatedData.map((data: RebirthData, i: number) => (
                       <React.Fragment key={`total-${i}`}>
                         <td className="px-2 py-3 text-center">
                           <span className="inline-block px-3 py-2 rounded text-sm font-mono font-bold bg-blue-500 text-white shadow-lg">

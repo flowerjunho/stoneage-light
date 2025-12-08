@@ -11,68 +11,133 @@ interface QuestWithContent {
   content: string;
 }
 
+type QuestTab = 'hwansoo' | 'pooyas';
+
 const QuestsPage: React.FC = () => {
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
   const [quests, setQuests] = useState<QuestWithContent[]>([]);
+  const [pooyasQuests, setPooyasQuests] = useState<QuestWithContent[]>([]);
+  const [activeTab, setActiveTab] = useState<QuestTab>(() => {
+    return (searchParams.get('tab') as QuestTab) || 'hwansoo';
+  });
   const [searchTerm, setSearchTerm] = useState(() => {
     return searchParams.get('search') || '';
   });
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    // 데이터 로딩 시뮬레이션
     const loadQuests = async () => {
       await new Promise(resolve => setTimeout(resolve, 300));
       setQuests(questWithContentData);
+
+      // 뿌야 퀘스트 데이터 로드 시도
+      try {
+        const pooyasData = await import('@/data/pooyasQuests.json');
+        setPooyasQuests(pooyasData.default || []);
+      } catch {
+        setPooyasQuests([]);
+      }
+
       setIsLoading(false);
     };
 
     loadQuests();
   }, []);
 
+  // 현재 탭에 따른 퀘스트 목록
+  const currentQuests = activeTab === 'hwansoo' ? quests : pooyasQuests;
+
   // 검색 필터링
-  const filteredQuests = quests.filter(quest => {
+  const filteredQuests = currentQuests.filter(quest => {
     if (!searchTerm.trim()) {
       return true;
     }
     return matchesConsonantSearch(searchTerm, quest.title);
   });
 
+  const handleTabChange = (tab: QuestTab) => {
+    setActiveTab(tab);
+    setSearchParams(prev => {
+      const newParams = new URLSearchParams(prev);
+      newParams.set('tab', tab);
+      return newParams;
+    });
+  };
+
   const handleQuestClick = (questIdx: number) => {
     const currentSearch = searchParams.get('search');
-    const questUrl = currentSearch 
-      ? `/quests/${questIdx}?search=${encodeURIComponent(currentSearch)}`
-      : `/quests/${questIdx}`;
+    const tab = activeTab;
+    let questUrl = `/quests/${questIdx}?tab=${tab}`;
+    if (currentSearch) {
+      questUrl += `&search=${encodeURIComponent(currentSearch)}`;
+    }
     navigate(questUrl);
   };
+
+  const tabInfo = {
+    hwansoo: {
+      name: '환수강림',
+      description: '스톤에이지 환수강림 라이트 퀘스트 정보',
+      source: '환수강림 라이트 공식홈페이지'
+    },
+    pooyas: {
+      name: '뿌야',
+      description: '뿌야의 스톤에이지 퀘스트 정보',
+      source: '뿌야의 스톤에이지'
+    }
+  };
+
+  const currentTabInfo = tabInfo[activeTab];
 
   return (
     <div className="max-w-6xl mx-auto px-4 py-8 iphone16:px-3">
       {/* 헤더 */}
-      <div className="mb-8">
+      <div className="mb-6">
         <div className="text-center text-text-secondary space-y-4">
-          <p className="text-base md:text-lg">스톤에이지 환수강림 라이트 퀘스트 정보</p>
+          <p className="text-base md:text-lg">{currentTabInfo.description}</p>
 
           {/* 정보성 알림 박스 */}
           <div className="bg-bg-secondary border-l-4 border-accent rounded-r-lg p-4 space-y-2">
-            <div className="flex items-start gap-3">
+            <div className="flex items-center gap-3">
               <div className="text-accent text-lg flex-shrink-0">📋</div>
-              <div className="text-left">
-                <p className="text-sm font-medium text-text-primary">
-                  퀘스트 정보는 환수강림 라이트 공식홈페이지의 정보 입니다.
-                </p>
-              </div>
+              <p className="text-sm font-medium text-text-primary text-left">
+                퀘스트 정보는 {currentTabInfo.source}의 정보 입니다.
+              </p>
             </div>
-            <div className="flex items-start gap-3">
+            <div className="flex items-center gap-3">
               <div className="text-yellow-500 text-lg flex-shrink-0">💡</div>
-              <div className="text-left">
-                <p className="text-sm text-text-secondary">
-                  어두운 테마에서 퀘스트 내용이 잘 보이지 않는다면 밝은 테마로 변경해 주세요.
-                </p>
-              </div>
+              <p className="text-sm text-text-secondary text-left">
+                어두운 테마에서 퀘스트 내용이 잘 보이지 않는다면 밝은 테마로 변경해 주세요.
+              </p>
             </div>
           </div>
+        </div>
+      </div>
+
+      {/* 탭 선택 */}
+      <div className="mb-6">
+        <div className="flex space-x-1 bg-bg-secondary rounded-lg p-1">
+          <button
+            onClick={() => handleTabChange('hwansoo')}
+            className={`flex-1 py-2 px-4 rounded-md text-sm font-medium transition-colors duration-200 ${
+              activeTab === 'hwansoo'
+                ? 'bg-accent text-white'
+                : 'text-text-secondary hover:text-text-primary hover:bg-bg-tertiary'
+            }`}
+          >
+            환수강림
+          </button>
+          <button
+            onClick={() => handleTabChange('pooyas')}
+            className={`flex-1 py-2 px-4 rounded-md text-sm font-medium transition-colors duration-200 ${
+              activeTab === 'pooyas'
+                ? 'bg-accent text-white'
+                : 'text-text-secondary hover:text-text-primary hover:bg-bg-tertiary'
+            }`}
+          >
+            뿌야
+          </button>
         </div>
       </div>
 
@@ -99,7 +164,7 @@ const QuestsPage: React.FC = () => {
         <div className="bg-bg-secondary rounded-xl p-4 border border-border">
           <div className="flex items-center justify-between text-sm">
             <span className="text-text-secondary">
-              총 <span className="font-bold text-accent">{quests.length}</span>개의 퀘스트
+              총 <span className="font-bold text-accent">{currentQuests.length}</span>개의 퀘스트
             </span>
             {searchTerm && (
               <span className="text-text-secondary">
@@ -115,6 +180,12 @@ const QuestsPage: React.FC = () => {
         <div className="text-center py-12">
           <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-accent"></div>
           <p className="mt-4 text-text-secondary">퀘스트 목록을 불러오는 중...</p>
+        </div>
+      ) : currentQuests.length === 0 ? (
+        <div className="text-center py-12">
+          <div className="text-6xl mb-4">🚧</div>
+          <h3 className="text-xl font-bold text-text-primary mb-2">준비 중입니다</h3>
+          <p className="text-text-secondary">{currentTabInfo.name} 퀘스트 데이터를 준비하고 있습니다.</p>
         </div>
       ) : (
         <div className="space-y-3">

@@ -10,37 +10,55 @@ interface QuestWithContent {
   content: string;
 }
 
+type QuestTab = 'hwansoo' | 'pooyas';
+
 const QuestDetailPage: React.FC = () => {
   const { questId } = useParams<{ questId: string }>();
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const [quest, setQuest] = useState<QuestWithContent | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const activeTab = (searchParams.get('tab') as QuestTab) || 'hwansoo';
 
   useEffect(() => {
     const loadQuest = async () => {
       await new Promise(resolve => setTimeout(resolve, 300));
-      
+
       if (questId) {
         const questIdx = parseInt(questId, 10);
-        const foundQuest = questWithContentData.find(quest => quest.idx === questIdx);
-        
-        if (foundQuest) {
-          setQuest(foundQuest);
+
+        if (activeTab === 'pooyas') {
+          // 뿌야 퀘스트 데이터 로드
+          try {
+            const pooyasData = await import('@/data/pooyasQuests.json');
+            const foundQuest = (pooyasData.default || []).find((q: QuestWithContent) => q.idx === questIdx);
+            if (foundQuest) {
+              setQuest(foundQuest);
+            }
+          } catch {
+            setQuest(null);
+          }
+        } else {
+          // 환수강림 퀘스트 데이터
+          const foundQuest = questWithContentData.find(quest => quest.idx === questIdx);
+          if (foundQuest) {
+            setQuest(foundQuest);
+          }
         }
       }
-      
+
       setIsLoading(false);
     };
 
     loadQuest();
-  }, [questId]);
+  }, [questId, activeTab]);
 
   const handleGoBack = () => {
     const currentSearch = searchParams.get('search');
-    const questsUrl = currentSearch 
-      ? `/quests?search=${encodeURIComponent(currentSearch)}`
-      : '/quests';
+    let questsUrl = `/quests?tab=${activeTab}`;
+    if (currentSearch) {
+      questsUrl += `&search=${encodeURIComponent(currentSearch)}`;
+    }
     navigate(questsUrl);
   };
 
@@ -52,18 +70,33 @@ const QuestDetailPage: React.FC = () => {
 
   // HTML 콘텐츠를 그대로 렌더링하는 함수
   const renderHtmlContent = (htmlContent: string) => {
-    // 이미지 src에 도메인이 없을 경우 https://www.hwansoo.top 추가
-    const processedContent = htmlContent.replace(
-      /(<img[^>]+src=")(?!https?:\/\/)([^"]+)(")/gi,
-      '$1https://www.hwansoo.top$2$3'
-    );
-    
+    let processedContent = htmlContent;
+
+    if (activeTab === 'hwansoo') {
+      // 환수강림: 이미지 src에 도메인이 없을 경우 https://www.hwansoo.top 추가
+      processedContent = htmlContent.replace(
+        /(<img[^>]+src=")(?!https?:\/\/)([^"]+)(")/gi,
+        '$1https://www.hwansoo.top$2$3'
+      );
+    } else {
+      // 뿌야: 이미지 src에 도메인이 없을 경우 https://pooyas.com 추가
+      processedContent = htmlContent.replace(
+        /(<img[^>]+src=")(?!https?:\/\/)([^"]+)(")/gi,
+        '$1https://pooyas.com$2$3'
+      );
+    }
+
     return (
-      <div 
+      <div
         className="quest-content"
         dangerouslySetInnerHTML={{ __html: processedContent }}
       />
     );
+  };
+
+  const tabInfo = {
+    hwansoo: { name: '환수강림' },
+    pooyas: { name: '뿌야' }
   };
 
   if (isLoading) {
@@ -121,14 +154,14 @@ const QuestDetailPage: React.FC = () => {
                 d="M15 19l-7-7 7-7"
               />
             </svg>
-            <span className="font-medium">퀘스트 목록</span>
+            <span className="font-medium">{tabInfo[activeTab].name} 퀘스트 목록</span>
           </button>
         </div>
-        
+
         <h1 className="text-2xl md:text-3xl font-bold text-text-primary mb-4">
           {quest.title}
         </h1>
-        
+
         {/* 액션 버튼 */}
         <div className="flex gap-3">
           <button
