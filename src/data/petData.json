@@ -3,6 +3,249 @@
   "totalCount": 454,
   "pets": [
     {
+      "id": "760",
+      "name": "아스타로(환)",
+      "source": "페트 환생",
+      "imageLink": "https://www.hwansoo.top/data/file/pets/af124408d977f9fbd4f314f79b1c9e31_uEhYCrU5_10bef7b4097c386d145aa7978e656c1d618e6bde.gif",
+      "elementStats": {
+        "water": 8,
+        "fire": 2,
+        "wind": 0,
+        "earth": 0
+      },
+      "baseStats": {
+        "attack": 12,
+        "defense": 6,
+        "agility": 10,
+        "vitality": 59
+      },
+      "growthStats": {
+        "attack": 2.23,
+        "defense": 1.122,
+        "agility": 1.957,
+        "vitality": 10.525
+      },
+      "rideable": "탑승가능",
+      "totalGrowth": "5.309",
+      "grade": "일반"
+    },
+    {
+      "id": "759",
+      "name": "블랙테이노스(환)",
+      "source": "페트 환생",
+      "imageLink": "",
+      "elementStats": {
+        "water": 5,
+        "fire": 5,
+        "wind": 0,
+        "earth": 0
+      },
+      "baseStats": {
+        "attack": 12,
+        "defense": 6,
+        "agility": 9,
+        "vitality": 62
+      },
+      "growthStats": {
+        "attack": 2.338,
+        "defense": 1.23,
+        "agility": 1.676,
+        "vitality": 11.187
+      },
+      "rideable": "탑승불가",
+      "totalGrowth": "5.244",
+      "grade": "일반"
+    },
+    {
+      "id": "758",
+      "name": "샤크라이(환)",
+      "source": "페트 환생",
+      "imageLink": "https://www.hwansoo.top/data/file/pets/af124408d977f9fbd4f314f79b1c9e31_PbJa4sqQ_a74794abcc67d135921f652fd9080661f7d03d61.gif",
+      "elementStats": {
+        "water": 5,
+        "fire": 0,
+        "wind": 0,
+        "earth": 5
+      },
+      "baseStats": {
+        "attack": 11,
+        "defense": 7,
+        "agility": 8,
+        "vitality": 58
+      },
+      "growthStats": {
+        "attack": 2.245,
+        "defense": 1.353,
+        "agility": 1.676,
+        "vitality": 10.856
+      },
+      "rideable": "탑승불가",
+      "totalGrowth": "5.274",
+      "grade": "일반"
+    },
+    {
+      "id": "757",
+      "name": "샤크라(환)",
+      "source": "페트 환생",
+      "imageLink": "https://www.hwansoo.top/data/file/pets/af124408d977f9fbd4f314f79b1c9e31_vdOz5QMS_6472b1f3b3064cb5e76f3bbfef4601eac8413edf.gif",
+      "elementStats": {
+        "water": 0,
+        "fire": 5,
+        "wind": 5,
+        "earth": 0
+      },
+      "baseStats": {
+        "attack": 12,
+        "defense": 5,
+        "agility": 9,
+        "vitality": 57
+      },
+      "growthStats": {
+        "attack": 2.367,
+        "defense": 1.129,
+        "agility": 1.727,
+        "vitality": 10.619
+      },
+      "rideable": "탑승불가",
+      "totalGrowth": "5.223",
+      "grade": "일반"
+    },
+    {
+      "id": "756",
+      "name": "청룡(환)",
+      "source": "페트 환생",
+      "imageLink": "",
+      "elementStats": {
+        "water": 9,
+        "fire": 1,
+        "wind": 0,
+        "earth": 0
+      },
+      "baseStats": {
+        "attack": 13,
+        "defense": 8,
+        "agility": 7,
+        "vitality": 62
+      },
+      "growthStats": {
+        "attack": 2.446,
+        "defense": 1.511,
+        "agility": 1.345,
+        "vitality": 11.23
+      },
+      "rideable": "탑승불가",
+      "totalGrowth": "5.302",
+      "grade": "일반"
+    },
+    {
+      "id": "755",
+      "name": "베가(환)",
+      "source": "페트 환생",
+      "imageLink": "https://www.hwansoo.top/data/file/pets/af124408d977f9fbd4f314f79b1c9e31_qcuoU87M_6a52ecfc5206c09d7cabd5620926115294251fb1.gif",
+      "elementStats": {
+        "water": 10,
+        "fire": 0,
+        "wind": 0,
+        "earth": 0
+      },
+      "baseStats": {
+        "attack": 13,
+        "defense": 7,
+        "agility": 9,
+        "vitality": 65
+      },
+      "growthStats": {
+        "attack": 2.295,
+        "defense": 1.273,
+        "agility": 1.676,
+        "vitality": 11.187
+      },
+      "rideable": "탑승불가",
+      "totalGrowth": "5.244",
+      "grade": "일반"
+    },
+    {
+      "id": "754",
+      "name": "프로돈(환)",
+      "source": "페트 환생",
+      "imageLink": "https://www.hwansoo.top/data/file/pets/af124408d977f9fbd4f314f79b1c9e31_EMFb7NVm_31050e80121627765c1b7e7d49929886cc5fcd49.gif",
+      "elementStats": {
+        "water": 10,
+        "fire": 0,
+        "wind": 0,
+        "earth": 0
+      },
+      "baseStats": {
+        "attack": 12,
+        "defense": 8,
+        "agility": 7,
+        "vitality": 64
+      },
+      "growthStats": {
+        "attack": 2.317,
+        "defense": 1.504,
+        "agility": 1.396,
+        "vitality": 11.518
+      },
+      "rideable": "탑승불가",
+      "totalGrowth": "5.217",
+      "grade": "일반"
+    },
+    {
+      "id": "753",
+      "name": "메가카키(환)",
+      "source": "페트 환생",
+      "imageLink": "https://www.hwansoo.top/data/file/pets/af124408d977f9fbd4f314f79b1c9e31_F74O2Dgl_4d140d5945c58dcb71aaed37b28f8a1d2f8f20ab.gif",
+      "elementStats": {
+        "water": 0,
+        "fire": 5,
+        "wind": 5,
+        "earth": 0
+      },
+      "baseStats": {
+        "attack": 12,
+        "defense": 5,
+        "agility": 12,
+        "vitality": 58
+      },
+      "growthStats": {
+        "attack": 2.122,
+        "defense": 1.014,
+        "agility": 2.151,
+        "vitality": 9.957
+      },
+      "rideable": "탑승불가",
+      "totalGrowth": "5.287",
+      "grade": "일반"
+    },
+    {
+      "id": "752",
+      "name": "메가카키",
+      "source": "레이드 보상",
+      "imageLink": "https://www.hwansoo.top/data/file/pets/af124408d977f9fbd4f314f79b1c9e31_F74O2Dgl_4d140d5945c58dcb71aaed37b28f8a1d2f8f20ab.gif",
+      "elementStats": {
+        "water": 0,
+        "fire": 5,
+        "wind": 5,
+        "earth": 0
+      },
+      "baseStats": {
+        "attack": 11,
+        "defense": 5,
+        "agility": 11,
+        "vitality": 56
+      },
+      "growthStats": {
+        "attack": 2.014,
+        "defense": 1.0,
+        "agility": 2.101,
+        "vitality": 9.626
+      },
+      "rideable": "탑승불가",
+      "totalGrowth": "5.115",
+      "grade": "일반"
+    },
+    {
       "id": "751",
       "name": "메가흑곤(환)",
       "source": "페트 환생",
