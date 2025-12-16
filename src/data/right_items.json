@@ -1,5 +1,68 @@
 [
   {
+    "id": "91",
+    "name": "불꽃파편 목걸이",
+    "description": "공 +5, 방 +7, 순 -20, 체 +10",
+    "imageUrl": "https://www.hwansoo.top/data/editor/2512/ddb5f11521dcbafe8131a35d625ca1f0_1765352698_9642.png",
+    "materials": "낚시이벤트"
+  },
+  {
+    "id": "90",
+    "name": "불꽃파편 투구",
+    "description": "공 +15, 방어 +35, 순 -20, 체 +10",
+    "imageUrl": "https://www.hwansoo.top/data/editor/2512/ddb5f11521dcbafe8131a35d625ca1f0_1765352674_5313.png",
+    "materials": "낚시이벤트"
+  },
+  {
+    "id": "89",
+    "name": "불꽃파편 도끼",
+    "description": "공 +68, 방 -20, 순 -20, 크리 +5",
+    "imageUrl": "https://www.hwansoo.top/data/editor/2512/ddb5f11521dcbafe8131a35d625ca1f0_1765352659_9447.png",
+    "materials": "낚시이벤트"
+  },
+  {
+    "id": "88",
+    "name": "신목의 목걸이",
+    "description": "방 +10, 순 -20, 체 +10",
+    "imageUrl": "https://www.hwansoo.top/data/editor/2512/ddb5f11521dcbafe8131a35d625ca1f0_1765352488_2088.png",
+    "materials": "낚시이벤트"
+  },
+  {
+    "id": "87",
+    "name": "신목의 갑옷",
+    "description": "방 +60, 순 -30, 체 +10",
+    "imageUrl": "https://www.hwansoo.top/data/editor/2512/ddb5f11521dcbafe8131a35d625ca1f0_1765352479_7825.png",
+    "materials": "낚시이벤트"
+  },
+  {
+    "id": "86",
+    "name": "신목의 창",
+    "description": "공 +20, 방 +30, 순 -30, 체 +10, 크리 +5",
+    "imageUrl": "https://www.hwansoo.top/data/editor/2512/ddb5f11521dcbafe8131a35d625ca1f0_1765352466_3997.png",
+    "materials": "낚시이벤트"
+  },
+  {
+    "id": "85",
+    "name": "태풍의 목걸이",
+    "description": "공 -10, 방 +15, 순 +10",
+    "imageUrl": "https://www.hwansoo.top/data/editor/2512/ddb5f11521dcbafe8131a35d625ca1f0_1765352274_4409.png",
+    "materials": "낚시 이벤ㅡ"
+  },
+  {
+    "id": "84",
+    "name": "태풍의 갑옷",
+    "description": "공 -10, 방 +20, 순 +30, 체 +5",
+    "imageUrl": "https://www.hwansoo.top/data/editor/2512/ddb5f11521dcbafe8131a35d625ca1f0_1765352257_6045.png",
+    "materials": "낚시 이벤트"
+  },
+  {
+    "id": "83",
+    "name": "태풍의 창",
+    "description": "공 +15, 방 -10, 순 +30, 체 -15, 크리 +5",
+    "imageUrl": "https://www.hwansoo.top/data/editor/2512/ddb5f11521dcbafe8131a35d625ca1f0_1765352242_0449.png",
+    "materials": "낚시 이벤트"
+  },
+  {
     "id": "82",
     "name": "정령왕의 활[7~8회]",
     "description": "공 +30~+35, 방 -10",
