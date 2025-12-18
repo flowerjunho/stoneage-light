@@ -847,7 +847,9 @@ const DashboardPage: React.FC = () => {
 
   // 이미지 URL 복사
   const copyImageUrl = (imageUrl: string) => {
-    navigator.clipboard.writeText(imageUrl);
+    // 한글 등 특수문자가 포함된 URL을 안전하게 인코딩
+    const encodedUrl = encodeURI(decodeURI(imageUrl));
+    navigator.clipboard.writeText(encodedUrl);
     alert('URL이 클립보드에 복사되었습니다!');
     setMenuOpenId(null);
   };
