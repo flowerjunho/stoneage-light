@@ -3,6 +3,87 @@
   "totalCount": 454,
   "pets": [
     {
+      "id": "763",
+      "name": "흑주작(환)",
+      "source": "페트 환생",
+      "imageLink": "https://www.hwansoo.top/data/file/pets/b01436bccd2a57e6e3e9ab9d498def90_NMyd0tuA_2c826c0f0bd05695f2409011c547a7ebfd6bf9a0.gif",
+      "elementStats": {
+        "water": 0,
+        "fire": 8,
+        "wind": 2,
+        "earth": 0
+      },
+      "baseStats": {
+        "attack": 12,
+        "defense": 5,
+        "agility": 8,
+        "vitality": 53
+      },
+      "growthStats": {
+        "attack": 2.445,
+        "defense": 1.125,
+        "agility": 1.68,
+        "vitality": 10.101
+      },
+      "rideable": "탑승가능",
+      "totalGrowth": "5.249",
+      "grade": "일반"
+    },
+    {
+      "id": "762",
+      "name": "골드 테이노스(환)",
+      "source": "페트 환생",
+      "imageLink": "https://www.hwansoo.top/data/file/pets/b01436bccd2a57e6e3e9ab9d498def90_mziJLW7c_b83412f5f30706e1eadb0f5ac755df1ba4c1fa57.gif",
+      "elementStats": {
+        "water": 0,
+        "fire": 7,
+        "wind": 3,
+        "earth": 0
+      },
+      "baseStats": {
+        "attack": 12,
+        "defense": 7,
+        "agility": 9,
+        "vitality": 61
+      },
+      "growthStats": {
+        "attack": 2.362,
+        "defense": 1.34,
+        "agility": 1.727,
+        "vitality": 11.709
+      },
+      "rideable": "탑승불가",
+      "totalGrowth": "5.429",
+      "grade": "일반"
+    },
+    {
+      "id": "761",
+      "name": "골드 테이노스",
+      "source": "천하제일 무술대회 1등 보상",
+      "imageLink": "https://www.hwansoo.top/data/file/pets/b01436bccd2a57e6e3e9ab9d498def90_mziJLW7c_b83412f5f30706e1eadb0f5ac755df1ba4c1fa57.gif",
+      "elementStats": {
+        "water": 0,
+        "fire": 7,
+        "wind": 3,
+        "earth": 0
+      },
+      "baseStats": {
+        "attack": 11,
+        "defense": 6,
+        "agility": 8,
+        "vitality": 58
+      },
+      "growthStats": {
+        "attack": 2.159,
+        "defense": 1.307,
+        "agility": 1.632,
+        "vitality": 11.047
+      },
+      "rideable": "탑승불가",
+      "totalGrowth": "5.098",
+      "grade": "일반"
+    },
+    {
       "id": "760",
       "name": "아스타로(환)",
       "source": "페트 환생",
