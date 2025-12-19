@@ -17,6 +17,7 @@ import BoardPage from '@/features/board/pages/BoardPage';
 import RadontaPage from '@/features/radonta/pages/RadontaPage';
 import BattlePage from '@/features/battle/pages/BattlePage';
 import DashboardPage from '@/features/dashboard/pages/DashboardPage';
+import Dashboard2Page from '@/features/dashboard/pages/Dashboard2Page';
 import { VisitTracker } from '@/shared/utils/visitTracker';
 
 const AppContent: React.FC = () => {
@@ -27,6 +28,7 @@ const AppContent: React.FC = () => {
   const isRadontaPage = location.pathname === '/radonta';
   const isBattlePage = location.pathname === '/battle';
   const isDashboardPage = location.pathname === '/dashboard';
+  const isDashboard2Page = location.pathname === '/dashboard2';
 
   // 앱 시작 시 방문자 추적
   useEffect(() => {
@@ -64,6 +66,15 @@ const AppContent: React.FC = () => {
     return (
       <Routes>
         <Route path="/dashboard" element={<DashboardPage />} />
+      </Routes>
+    );
+  }
+
+  // 대시보드2 페이지는 레이아웃 없이 렌더링
+  if (isDashboard2Page) {
+    return (
+      <Routes>
+        <Route path="/dashboard2" element={<Dashboard2Page />} />
       </Routes>
     );
   }
