@@ -37,8 +37,26 @@ const Dashboard2Page: React.FC = () => {
   const [draggedIndex, setDraggedIndex] = useState<number | null>(null);
   const [dragOverIndex, setDragOverIndex] = useState<number | null>(null);
 
+  // 모바일 터치 드래그 상태
+  const [isMobile, setIsMobile] = useState(false);
+  const [dragMode, setDragMode] = useState(false);
+  const [touchStartIndex, setTouchStartIndex] = useState<number | null>(null);
+
   // 파일 입력 ref
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  // 모바일 디바이스 감지
+  useEffect(() => {
+    const checkMobile = () => {
+      const isTouchDevice = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
+      const isSmallScreen = window.innerWidth < 768;
+      setIsMobile(isTouchDevice && isSmallScreen);
+    };
+
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
 
   // 인증 및 테마 확인
   useEffect(() => {
@@ -249,6 +267,30 @@ const Dashboard2Page: React.FC = () => {
     setDragOverIndex(null);
   };
 
+  // 모바일 터치 드래그 핸들러
+  const handleTouchSelect = (index: number) => {
+    if (!dragMode) return;
+
+    // 첫 번째 선택
+    if (touchStartIndex === null) {
+      setTouchStartIndex(index);
+      return;
+    }
+
+    // 같은 이미지 선택 시 취소
+    if (touchStartIndex === index) {
+      setTouchStartIndex(null);
+      return;
+    }
+
+    // 두 번째 선택 - 순서 변경
+    const newImages = [...images];
+    const [draggedImage] = newImages.splice(touchStartIndex, 1);
+    newImages.splice(index, 0, draggedImage);
+    setImages(newImages);
+    setTouchStartIndex(null);
+  };
+
   // 비밀번호 검증
   const handlePasswordSubmit = () => {
     if (password === '2580') {
@@ -342,11 +384,41 @@ const Dashboard2Page: React.FC = () => {
             </button>
             <h1 className="text-xl font-bold">이미지 갤러리</h1>
           </div>
-          <button
-            onClick={toggleTheme}
-            className="p-2 bg-bg-tertiary hover:bg-bg-primary border border-border rounded-lg transition-colors"
-            aria-label={`Switch to ${theme === 'dark' ? 'light' : 'dark'} theme`}
-          >
+          <div className="flex items-center gap-2">
+            {/* 모바일 드래그 모드 토글 버튼 */}
+            {isMobile && selectedFolder && images.length > 1 && (
+              <button
+                onClick={() => {
+                  setDragMode(!dragMode);
+                  setTouchStartIndex(null);
+                }}
+                className={`px-3 py-2 rounded-lg text-sm font-medium transition-all flex items-center gap-1.5 ${
+                  dragMode
+                    ? 'bg-accent text-white shadow-lg'
+                    : 'bg-bg-tertiary hover:bg-bg-primary border border-border'
+                }`}
+              >
+                <svg
+                  className="w-4 h-4"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M7 16V4m0 0L3 8m4-4l4 4m6 0v12m0 0l4-4m-4 4l-4-4"
+                  />
+                </svg>
+                {dragMode ? '정렬 중' : '순서변경'}
+              </button>
+            )}
+            <button
+              onClick={toggleTheme}
+              className="p-2 bg-bg-tertiary hover:bg-bg-primary border border-border rounded-lg transition-colors"
+              aria-label={`Switch to ${theme === 'dark' ? 'light' : 'dark'} theme`}
+            >
             {theme === 'dark' ? (
               <svg
                 className="w-5 h-5 text-yellow-500"
@@ -368,7 +440,8 @@ const Dashboard2Page: React.FC = () => {
                 <path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z" />
               </svg>
             )}
-          </button>
+            </button>
+          </div>
         </div>
       </header>
 
@@ -497,31 +570,63 @@ const Dashboard2Page: React.FC = () => {
             </div>
           ) : (
             <>
-              <p className="text-xs text-text-secondary mb-3 text-center">
-                💡 이미지를 드래그하여 순서를 변경할 수 있습니다
-              </p>
+              {/* 드래그 모드 안내 메시지 */}
+              {isMobile ? (
+                dragMode ? (
+                  <div className="mb-3 p-3 bg-accent/10 border border-accent/30 rounded-lg">
+                    <p className="text-sm text-accent text-center font-medium">
+                      📱 순서 변경 모드 - 이동할 이미지를 터치 후, 이동할 위치의 이미지를 터치하세요
+                    </p>
+                    {touchStartIndex !== null && (
+                      <p className="text-xs text-accent/80 text-center mt-1">
+                        {touchStartIndex + 1}번 이미지 선택됨 - 이동할 위치를 선택하세요
+                      </p>
+                    )}
+                  </div>
+                ) : (
+                  <p className="text-xs text-text-secondary mb-3 text-center">
+                    💡 상단 &apos;순서변경&apos; 버튼으로 이미지 순서를 변경할 수 있습니다
+                  </p>
+                )
+              ) : (
+                <p className="text-xs text-text-secondary mb-3 text-center">
+                  💡 이미지를 드래그하여 순서를 변경할 수 있습니다
+                </p>
+              )}
               <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
                 {images.map((image, index) => (
                   <div
                     key={image.id}
-                    draggable
-                    onDragStart={e => handleDragStart(e, index)}
-                    onDragEnd={handleDragEnd}
-                    onDragOver={e => handleDragOver(e, index)}
-                    onDragLeave={handleDragLeave}
-                    onDrop={e => handleDrop(e, index)}
+                    draggable={!isMobile}
+                    onDragStart={e => !isMobile && handleDragStart(e, index)}
+                    onDragEnd={!isMobile ? handleDragEnd : undefined}
+                    onDragOver={e => !isMobile && handleDragOver(e, index)}
+                    onDragLeave={!isMobile ? handleDragLeave : undefined}
+                    onDrop={e => !isMobile && handleDrop(e, index)}
                     onClick={() => {
+                      // 모바일 드래그 모드일 때
+                      if (isMobile && dragMode) {
+                        handleTouchSelect(index);
+                        return;
+                      }
+                      // 일반 클릭 (모달 열기)
                       if (draggedIndex === null) {
                         setSelectedImage(image);
                         setShowModal(true);
                       }
                     }}
                     className={`group relative aspect-square bg-bg-secondary rounded-xl overflow-hidden border-2 cursor-pointer transition-all hover:shadow-lg ${
-                      dragOverIndex === index
-                        ? 'border-accent border-dashed scale-105 bg-accent/10'
-                        : draggedIndex === index
-                          ? 'border-accent/50 opacity-50'
-                          : 'border-border hover:border-accent hover:scale-[1.02]'
+                      // 모바일 드래그 모드 선택 스타일
+                      isMobile && dragMode && touchStartIndex === index
+                        ? 'border-accent ring-2 ring-accent ring-offset-2 scale-95'
+                        : // PC 드래그 스타일
+                          dragOverIndex === index
+                          ? 'border-accent border-dashed scale-105 bg-accent/10'
+                          : draggedIndex === index
+                            ? 'border-accent/50 opacity-50'
+                            : isMobile && dragMode
+                              ? 'border-border hover:border-accent/50'
+                              : 'border-border hover:border-accent hover:scale-[1.02]'
                     }`}
                   >
                     <img
@@ -531,24 +636,48 @@ const Dashboard2Page: React.FC = () => {
                       loading="lazy"
                       draggable={false}
                     />
-                    {/* 드래그 핸들 표시 */}
-                    <div className="absolute top-2 left-2 p-1.5 bg-black/50 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity">
-                      <svg
-                        className="w-4 h-4 text-white"
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth={2}
-                          d="M4 8h16M4 16h16"
-                        />
-                      </svg>
-                    </div>
+                    {/* 드래그 핸들 표시 (PC만) */}
+                    {!isMobile && (
+                      <div className="absolute top-2 left-2 p-1.5 bg-black/50 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity">
+                        <svg
+                          className="w-4 h-4 text-white"
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M4 8h16M4 16h16"
+                          />
+                        </svg>
+                      </div>
+                    )}
+                    {/* 모바일 드래그 모드 선택 표시 */}
+                    {isMobile && dragMode && touchStartIndex === index && (
+                      <div className="absolute top-2 left-2 p-1.5 bg-accent rounded-lg">
+                        <svg
+                          className="w-4 h-4 text-white"
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M5 13l4 4L19 7"
+                          />
+                        </svg>
+                      </div>
+                    )}
                     {/* 순서 번호 */}
-                    <div className="absolute top-2 right-2 w-6 h-6 bg-black/60 rounded-full flex items-center justify-center">
+                    <div className={`absolute top-2 right-2 w-6 h-6 rounded-full flex items-center justify-center ${
+                      isMobile && dragMode && touchStartIndex === index
+                        ? 'bg-accent'
+                        : 'bg-black/60'
+                    }`}>
                       <span className="text-white text-xs font-bold">{index + 1}</span>
                     </div>
                     {/* 호버 오버레이 */}
