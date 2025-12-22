@@ -6,7 +6,7 @@ const TabNavigation: React.FC = () => {
 
   const tabs = [
     { path: '/pets', label: '페트', name: 'pets' },
-    { path: '/boarding', label: '캐릭터/탑승', mobileLabel: '캐릭터/\n탑승', name: 'boarding' },
+    { path: '/boarding', label: '캐릭/탑승', mobileLabel: '캐릭터/\n탑승', name: 'boarding' },
     { path: '/tip', label: '팁', name: 'tip' },
     { path: '/items', label: '아이템', name: 'items' },
     { path: '/quests', label: '퀘스트', name: 'quests' },
@@ -21,8 +21,7 @@ const TabNavigation: React.FC = () => {
         <nav className="grid grid-cols-8 gap-0">
           {tabs.map(tab => {
             const isActive =
-              location.pathname === tab.path ||
-              (location.pathname === '/' && tab.path === '/pets');
+              location.pathname === tab.path || (location.pathname === '/' && tab.path === '/pets');
 
             return (
               <Link
@@ -35,7 +34,9 @@ const TabNavigation: React.FC = () => {
                 }`}
               >
                 <span className="hidden md:inline">{tab.label}</span>
-                <span className="md:hidden whitespace-pre-line">{tab.mobileLabel || tab.label}</span>
+                <span className="md:hidden whitespace-pre-line">
+                  {tab.mobileLabel || tab.label}
+                </span>
               </Link>
             );
           })}
