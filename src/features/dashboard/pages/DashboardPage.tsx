@@ -1008,7 +1008,7 @@ const DashboardPage: React.FC = () => {
                   />
                 </svg>
               </button>
-              <h1 className="text-3xl font-bold">명가 듀얼 이미지 대시보드</h1>
+              <h1 className="text-3xl font-bold">형명가 듀얼 이미지 대시보드</h1>
             </div>
 
             {/* 이미지 업로드 & 텍스트 추가 & 붙여넣기 버튼 (오른쪽 정렬) */}
