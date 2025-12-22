@@ -1,5 +1,12 @@
 [
   {
+    "id": "92",
+    "name": "봉인된 열쇠",
+    "description": "정령왕에게 가는 열쇠 (사용시 정령왕의 방 이동)",
+    "imageUrl": "images/items/bong_key.png",
+    "materials": "얼음성 주간레이드 헤티아(분노의 방)"
+  },
+  {
     "id": "91",
     "name": "불꽃파편 목걸이",
     "description": "공 +5, 방 +7, 순 -20, 체 +10",

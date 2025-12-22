@@ -15,6 +15,16 @@ interface Item {
   link?: string;
 }
 
+// 로컬 이미지 경로 처리 (로컬/프로덕션 환경 모두 지원)
+const getImageUrl = (url: string): string => {
+  // 외부 URL (http/https)은 그대로 반환
+  if (url.startsWith('http://') || url.startsWith('https://')) {
+    return url;
+  }
+  // 로컬 이미지는 BASE_URL 적용
+  return `${import.meta.env.BASE_URL}${url}`;
+};
+
 const ItemsPage: React.FC = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const [allItems, setAllItems] = useState<Item[]>([]);
@@ -277,7 +287,7 @@ const ItemsPage: React.FC = () => {
                       <div className="w-16 h-16 flex items-center justify-center bg-bg-tertiary rounded-lg overflow-hidden">
                         {item.imageUrl ? (
                           <img
-                            src={item.imageUrl}
+                            src={getImageUrl(item.imageUrl)}
                             alt={item.name}
                             className="w-full h-full object-contain"
                             onError={e => {
