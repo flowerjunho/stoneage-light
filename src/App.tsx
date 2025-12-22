@@ -14,6 +14,7 @@ import MapsPage from '@/features/maps/pages/MapsPage';
 import MapDetailPage from '@/features/maps/pages/MapDetailPage';
 import CalculatorPage from '@/features/calculator/pages/CalculatorPage';
 import BoardPage from '@/features/board/pages/BoardPage';
+import TipPage from '@/features/tip/pages/TipPage';
 import RadontaPage from '@/features/radonta/pages/RadontaPage';
 import BattlePage from '@/features/battle/pages/BattlePage';
 import DashboardPage from '@/features/dashboard/pages/DashboardPage';
@@ -89,6 +90,7 @@ const AppContent: React.FC = () => {
           <Route path="/" element={<Navigate to="/pets" replace />} />
           <Route path="/pets" element={<PetsPage />} />
           <Route path="/boarding" element={<BoardingPage />} />
+          <Route path="/tip" element={<TipPage />} />
           <Route path="/items" element={<ItemsPage />} />
           <Route path="/quests" element={<QuestsPage />} />
           <Route path="/quests/:questId" element={<QuestDetailPage />} />
