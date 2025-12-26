@@ -12,17 +12,14 @@ const PetCard: React.FC<PetCardProps> = ({ pet }) => {
   const [isAnimating, setIsAnimating] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [showToast, setShowToast] = useState(false);
+  const [isHovered, setIsHovered] = useState(false);
+  const [mousePosition, setMousePosition] = useState({ x: 50, y: 50 });
 
-  // 즐겨찾기 상태 변화 감지
   useEffect(() => {
     const updateFavoriteState = () => {
       setIsFav(isFavorite(pet));
     };
-
-    // 즐겨찾기 변경 이벤트 리스너 등록
     const removeListener = addFavoriteChangeListener(updateFavoriteState);
-
-    // 컴포넌트 언마운트 시 리스너 제거
     return removeListener;
   }, [pet]);
 
@@ -30,258 +27,302 @@ const PetCard: React.FC<PetCardProps> = ({ pet }) => {
     setIsAnimating(true);
     const newState = toggleFavorite(pet);
     setIsFav(newState);
-
-    // 애니메이션 완료 후 상태 리셋
     setTimeout(() => setIsAnimating(false), 300);
   }, [pet]);
 
-  // 펫 클릭 핸들러
   const handlePetClick = useCallback(() => {
     setIsModalOpen(true);
   }, []);
 
-  // 모달 닫기 핸들러
   const handleModalClose = useCallback(() => {
     setIsModalOpen(false);
   }, []);
 
-  // 공유 버튼 핸들러 - 항상 클립보드 복사
-  const handleShareClick = useCallback(async (e: React.MouseEvent) => {
-    e.stopPropagation();
-    
-    const shareUrl = `${window.location.origin}/stoneage-light/#/pets?pet=${pet.id}&share=true`;
-    
-    try {
-      // 모든 환경에서 클립보드에 복사
-      await navigator.clipboard.writeText(shareUrl);
-      setShowToast(true);
-      setTimeout(() => setShowToast(false), 2000);
-    } catch {
-      // 폴백: URL을 선택 가능한 input으로 표시
-      const input = document.createElement('input');
-      input.value = shareUrl;
-      document.body.appendChild(input);
-      input.select();
-      document.execCommand('copy');
-      document.body.removeChild(input);
-      
-      setShowToast(true);
-      setTimeout(() => setShowToast(false), 2000);
-    }
-  }, [pet.id]);
+  const handleMouseMove = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
+    const rect = e.currentTarget.getBoundingClientRect();
+    setMousePosition({
+      x: ((e.clientX - rect.left) / rect.width) * 100,
+      y: ((e.clientY - rect.top) / rect.height) * 100,
+    });
+  }, []);
 
-  // 속성 비율에 따른 그라데이션 보더 생성 - 메모이제이션
-  const getElementalBorder = useMemo(() => {
-    const elements = [
-      { name: 'earth', value: pet.elementStats.earth, color: 'rgb(34, 197, 94)' }, // green-500
-      { name: 'water', value: pet.elementStats.water, color: 'rgb(59, 130, 246)' }, // blue-500
-      { name: 'fire', value: pet.elementStats.fire, color: 'rgb(239, 68, 68)' }, // red-500
-      { name: 'wind', value: pet.elementStats.wind, color: 'rgb(245, 158, 11)' }, // amber-500
-    ];
-
-    // 0이 아닌 속성들만 필터링
-    const activeElements = elements.filter(el => el.value > 0);
-
-    if (activeElements.length === 0) {
-      return 'border-border';
-    }
-
-    // 단일 속성인 경우
-    if (activeElements.length === 1) {
-      const element = activeElements[0];
-      switch (element.name) {
-        case 'earth':
-          return 'border-green-500';
-        case 'water':
-          return 'border-blue-500';
-        case 'fire':
-          return 'border-red-500';
-        case 'wind':
-          return 'border-amber-500';
-        default:
-          return 'border-border';
+  const handleShareClick = useCallback(
+    async (e: React.MouseEvent) => {
+      e.stopPropagation();
+      const shareUrl = `${window.location.origin}/stoneage-light/#/pets?pet=${pet.id}&share=true`;
+      try {
+        await navigator.clipboard.writeText(shareUrl);
+        setShowToast(true);
+        setTimeout(() => setShowToast(false), 2000);
+      } catch {
+        const input = document.createElement('input');
+        input.value = shareUrl;
+        document.body.appendChild(input);
+        input.select();
+        document.execCommand('copy');
+        document.body.removeChild(input);
+        setShowToast(true);
+        setTimeout(() => setShowToast(false), 2000);
       }
-    }
+    },
+    [pet.id]
+  );
 
-    // 여러 속성인 경우 그라데이션 생성
+  // Element styling with enhanced colors
+  const elementConfig = useMemo(
+    () => ({
+      earth: {
+        value: pet.elementStats.earth,
+        label: '地',
+        color: '#22c55e',
+        glow: 'rgba(34, 197, 94, 0.5)',
+        bgClass: 'bg-green-500/15',
+        textClass: 'text-green-400',
+        borderClass: 'border-green-500',
+      },
+      water: {
+        value: pet.elementStats.water,
+        label: '水',
+        color: '#3b82f6',
+        glow: 'rgba(59, 130, 246, 0.5)',
+        bgClass: 'bg-blue-500/15',
+        textClass: 'text-blue-400',
+        borderClass: 'border-blue-500',
+      },
+      fire: {
+        value: pet.elementStats.fire,
+        label: '火',
+        color: '#ef4444',
+        glow: 'rgba(239, 68, 68, 0.5)',
+        bgClass: 'bg-red-500/15',
+        textClass: 'text-red-400',
+        borderClass: 'border-red-500',
+      },
+      wind: {
+        value: pet.elementStats.wind,
+        label: '風',
+        color: '#eab308',
+        glow: 'rgba(234, 179, 8, 0.5)',
+        bgClass: 'bg-amber-500/15',
+        textClass: 'text-amber-400',
+        borderClass: 'border-amber-500',
+      },
+    }),
+    [pet.elementStats]
+  );
 
-    return `border-transparent`;
-  }, [
-    pet.elementStats.earth,
-    pet.elementStats.water,
-    pet.elementStats.fire,
-    pet.elementStats.wind,
-  ]);
+  const activeElements = useMemo(
+    () => Object.entries(elementConfig).filter(([, config]) => config.value > 0),
+    [elementConfig]
+  );
 
-  // CSS 변수를 사용한 최적화된 스타일 계산
-  const elementalStyle = useMemo((): React.CSSProperties => {
-    const elements = [
-      { name: 'earth', value: pet.elementStats.earth, color: '34, 197, 94' },
-      { name: 'water', value: pet.elementStats.water, color: '59, 130, 246' },
-      { name: 'fire', value: pet.elementStats.fire, color: '239, 68, 68' },
-      { name: 'wind', value: pet.elementStats.wind, color: '245, 158, 11' },
-    ];
+  // Gradient border for multi-element pets
+  const gradientBorderStyle = useMemo(() => {
+    if (activeElements.length <= 1) return {};
 
-    const activeElements = elements.filter(el => el.value > 0);
-
-    if (activeElements.length <= 1) {
-      return {};
-    }
-
-    const total = activeElements.reduce((sum, el) => sum + el.value, 0);
-
-    // CSS 변수로 색상 값 설정
-    const cssVars: Record<string, string> = {};
+    const total = activeElements.reduce((sum, [, config]) => sum + config.value, 0);
     let currentPercent = 0;
 
-    activeElements.forEach((element, index) => {
-      const percent = (element.value / total) * 100;
-      const start = currentPercent;
-      const end = currentPercent + percent;
-      currentPercent = end;
-
-      cssVars[`--color-${index}`] = `rgb(${element.color})`;
-      cssVars[`--start-${index}`] = `${start}%`;
-      cssVars[`--end-${index}`] = `${end}%`;
-    });
-
-    // 동적 그라데이션 생성
     const gradientStops = activeElements
-      .map(
-        (_, index) =>
-          `var(--color-${index}) var(--start-${index}), var(--color-${index}) var(--end-${index})`
-      )
+      .map(([, config]) => {
+        const percent = (config.value / total) * 100;
+        const start = currentPercent;
+        const end = currentPercent + percent;
+        currentPercent = end;
+        return `${config.color} ${start}%, ${config.color} ${end}%`;
+      })
       .join(', ');
 
     return {
-      ...cssVars,
-      background: `linear-gradient(90deg, ${gradientStops})`,
+      background: `linear-gradient(135deg, ${gradientStops})`,
       padding: '2px',
-      borderRadius: '0.75rem',
+      borderRadius: '24px',
     };
-  }, [
-    pet.elementStats.earth,
-    pet.elementStats.water,
-    pet.elementStats.fire,
-    pet.elementStats.wind,
-  ]);
+  }, [activeElements]);
 
-  const gradeClasses = useMemo(() => {
-    const baseClasses = 'bg-bg-secondary rounded-lg p-4 h-full iphone16:p-3 flex flex-col';
+  // Get primary element color for glow effects
+  const primaryElementColor = useMemo(() => {
+    if (activeElements.length === 0) return '#fbbf24';
+    const [, config] = activeElements.reduce((a, b) => (a[1].value > b[1].value ? a : b));
+    return config.color;
+  }, [activeElements]);
 
-    // 등급별 클래스 매핑 (성능 최적화)
-    const gradeClassMap = {
-      일반등급: baseClasses,
-      일반페트: baseClasses,
-      일반: baseClasses,
-      희귀: `${baseClasses} shadow-lg shadow-purple-500/20`,
-      영웅: `${baseClasses} shadow-lg shadow-yellow-400/30`,
-    } as const;
+  const primaryElementGlow = useMemo(() => {
+    if (activeElements.length === 0) return 'rgba(251, 191, 36, 0.5)';
+    const [, config] = activeElements.reduce((a, b) => (a[1].value > b[1].value ? a : b));
+    return config.glow;
+  }, [activeElements]);
 
-    return gradeClassMap[pet.grade as keyof typeof gradeClassMap] || baseClasses;
+  // Grade styling with enhanced effects
+  const gradeConfig = useMemo(() => {
+    const configs: Record<string, { cardClass: string; badgeClass: string; glowColor: string }> = {
+      영웅: {
+        cardClass: 'shadow-[0_0_30px_rgba(251,191,36,0.3)]',
+        badgeClass:
+          'bg-gradient-to-r from-yellow-400 via-amber-300 to-yellow-400 text-stone-900 font-black animate-pulse-glow',
+        glowColor: 'rgba(251, 191, 36, 0.6)',
+      },
+      희귀: {
+        cardClass: 'shadow-[0_0_25px_rgba(168,85,247,0.3)]',
+        badgeClass: 'bg-gradient-to-r from-purple-500 via-violet-400 to-purple-500 text-white font-bold',
+        glowColor: 'rgba(168, 85, 247, 0.5)',
+      },
+      default: {
+        cardClass: '',
+        badgeClass: 'bg-bg-tertiary text-text-muted',
+        glowColor: 'transparent',
+      },
+    };
+    return configs[pet.grade] || configs.default;
   }, [pet.grade]);
 
-  const gradeBadgeClasses = useMemo(() => {
-    const baseClasses = 'text-xs font-semibold px-3 py-1 rounded-xl uppercase tracking-wide';
-
-    // 등급별 배지 클래스 매핑 (성능 최적화)
-    const badgeClassMap = {
-      일반등급: `${baseClasses} bg-bg-tertiary text-text-secondary`,
-      일반페트: `${baseClasses} bg-bg-tertiary text-text-secondary`,
-      일반: `${baseClasses} bg-bg-tertiary text-text-secondary`,
-      '1등급': `${baseClasses} bg-gradient-to-r from-purple-500 to-purple-400 text-white`,
-      '2등급': `${baseClasses} bg-gradient-to-r from-blue-500 to-blue-400 text-white`,
-      희귀: `${baseClasses} bg-gradient-to-r from-green-500 to-green-400 text-white`,
-      영웅: `${baseClasses} bg-gradient-to-r from-yellow-400 to-yellow-300 text-black`,
-    } as const;
-
-    return badgeClassMap[pet.grade as keyof typeof badgeClassMap] || badgeClassMap['일반등급'];
-  }, [pet.grade]);
-
-  const getElementIcon = (element: string, value: number) => {
-    if (value === 0) return null;
-
-    const icons = {
-      earth: '地',
-      water: '水',
-      fire: '火',
-      wind: '風',
+  const singleElementBorder = useMemo(() => {
+    if (activeElements.length !== 1) return '';
+    const [elementName] = activeElements[0];
+    const borderMap: Record<string, string> = {
+      earth: 'border-green-500/50',
+      water: 'border-blue-500/50',
+      fire: 'border-red-500/50',
+      wind: 'border-amber-500/50',
     };
-
-    const elementClasses = {
-      earth: 'bg-green-500/10 border-green-500/30 text-green-400',
-      water: 'bg-blue-500/10 border-blue-500/30 text-blue-400',
-      fire: 'bg-red-500/10 border-red-500/30 text-red-400',
-      wind: 'bg-amber-500/10 border-amber-500/30 text-amber-400',
-    };
-
-    return (
-      <span
-        className={`text-sm px-2 py-1 rounded border ${elementClasses[element as keyof typeof elementClasses]}`}
-      >
-        {icons[element as keyof typeof icons]} {value}
-      </span>
-    );
-  };
-
-  const elementalBorderStyle = elementalStyle;
-  const borderClass = getElementalBorder;
+    return borderMap[elementName] || 'border-border';
+  }, [activeElements]);
 
   return (
     <>
-      <div 
-        style={elementalBorderStyle}
+      <div
+        style={activeElements.length > 1 ? gradientBorderStyle : {}}
         onClick={handlePetClick}
-        className="cursor-pointer transform transition-transform duration-200 hover:scale-[1.02] active:scale-[0.98]"
+        onMouseEnter={() => setIsHovered(true)}
+        onMouseLeave={() => setIsHovered(false)}
+        onMouseMove={handleMouseMove}
+        className="cursor-pointer transform transition-all duration-500 hover:scale-[1.03] hover:-translate-y-2 active:scale-[0.98]"
       >
-        <div className={`${gradeClasses} border-2 ${borderClass}`}>
-        {/* Top Section - Image and Info */}
-        <div className="flex gap-4 mb-4 pb-3 border-b border-border">
-          {/* Pet Image */}
-          <div className="flex-shrink-0">
-            {pet.imageLink ? (
-              <div className="w-36 h-36 bg-bg-tertiary rounded-lg overflow-hidden border border-border">
-                <img
-                  src={pet.imageLink}
-                  alt={pet.name}
-                  className="w-full h-full object-contain"
-                  loading="lazy"
-                  onError={e => {
-                    // 이미지 로드 실패 시 빈 영역으로 처리
-                    e.currentTarget.style.display = 'none';
+        <div
+          className={`
+            relative overflow-hidden
+            bg-gradient-to-br from-bg-secondary via-bg-secondary to-bg-tertiary
+            rounded-[22px] p-4 md:p-5 h-full
+            border-2 ${activeElements.length === 1 ? singleElementBorder : activeElements.length > 1 ? 'border-transparent' : 'border-border/50'}
+            ${gradeConfig.cardClass}
+            transition-all duration-500
+          `}
+          style={{
+            boxShadow: isHovered
+              ? `0 20px 40px -10px ${primaryElementGlow}, 0 0 60px -20px ${primaryElementGlow}`
+              : undefined,
+          }}
+        >
+          {/* Spotlight effect on hover */}
+          {isHovered && (
+            <div
+              className="absolute inset-0 pointer-events-none transition-opacity duration-300"
+              style={{
+                background: `radial-gradient(circle at ${mousePosition.x}% ${mousePosition.y}%, ${primaryElementGlow} 0%, transparent 50%)`,
+                opacity: 0.3,
+              }}
+            />
+          )}
+
+          {/* Shimmer effect on hover */}
+          <div
+            className={`
+              absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent
+              transform -skew-x-12 transition-transform duration-700
+              ${isHovered ? 'translate-x-full' : '-translate-x-full'}
+            `}
+          />
+
+          {/* Header: Image & Info */}
+          <div className="relative flex gap-4 md:gap-5 mb-4">
+            {/* Pet Image Container */}
+            <div className="flex-shrink-0 relative group/image">
+              {/* Animated ring on hover */}
+              <div
+                className={`
+                  absolute -inset-1 rounded-2xl opacity-0 group-hover/image:opacity-100
+                  transition-opacity duration-500 blur-sm
+                `}
+                style={{
+                  background: `linear-gradient(135deg, ${primaryElementColor}, transparent, ${primaryElementColor})`,
+                }}
+              />
+
+              <div
+                className="relative w-28 h-28 md:w-36 md:h-36 rounded-2xl overflow-hidden
+                           bg-gradient-to-br from-bg-tertiary to-bg-primary
+                           border border-border/50
+                           transition-transform duration-500 group-hover/image:scale-105"
+              >
+                {pet.imageLink ? (
+                  <img
+                    src={pet.imageLink}
+                    alt={pet.name}
+                    className="w-full h-full object-contain p-3 transition-transform duration-500 group-hover/image:scale-110"
+                    loading="lazy"
+                    onError={e => {
+                      e.currentTarget.style.display = 'none';
+                    }}
+                  />
+                ) : (
+                  <div className="w-full h-full flex items-center justify-center text-text-muted text-xs">
+                    이미지 없음
+                  </div>
+                )}
+
+                {/* Inner glow */}
+                <div
+                  className="absolute inset-0 pointer-events-none"
+                  style={{
+                    background: `radial-gradient(circle at 30% 30%, ${primaryElementGlow} 0%, transparent 60%)`,
+                    opacity: 0.2,
                   }}
                 />
               </div>
-            ) : (
-              <div className="w-36 h-36 bg-bg-tertiary rounded-lg border border-border flex items-center justify-center">
-                <span className="text-text-secondary text-xs">이미지 없음</span>
-              </div>
-            )}
-          </div>
 
-          {/* Pet Info */}
-          <div className="flex-1 flex flex-col justify-between text-right">
-            {/* 상단 그룹: 이름과 속성 */}
-            <div>
-              {/* Name, Favorite and Share */}
-              <div className="flex items-start justify-end gap-2">
-                <div className="flex-1 min-w-0">
-                  <h3 className="text-xl font-bold text-text-primary iphone16:text-lg leading-tight text-right break-words">{pet.name}</h3>
-                </div>
-                <div className="flex gap-1 flex-shrink-0">
+              {/* Grade badge with glow */}
+              <div className="absolute -bottom-2 -right-2 z-10">
+                <span
+                  className={`
+                    inline-block px-3 py-1.5 rounded-xl text-[10px] md:text-xs font-bold
+                    uppercase tracking-wider shadow-xl
+                    ${gradeConfig.badgeClass}
+                  `}
+                  style={{
+                    boxShadow: `0 4px 20px ${gradeConfig.glowColor}`,
+                  }}
+                >
+                  {pet.grade}
+                </span>
+              </div>
+            </div>
+
+            {/* Pet Info */}
+            <div className="flex-1 flex flex-col min-w-0 pt-1">
+              {/* Name & Actions */}
+              <div className="flex items-start justify-between gap-2 mb-3">
+                <h3
+                  className="text-lg md:text-xl font-bold text-text-primary leading-tight break-words"
+                  style={{
+                    textShadow: isHovered ? `0 0 20px ${primaryElementGlow}` : 'none',
+                  }}
+                >
+                  {pet.name}
+                </h3>
+                <div className="flex gap-2 flex-shrink-0">
+                  {/* Share Button */}
                   <div className="relative">
                     <button
                       onClick={handleShareClick}
-                      className="w-6 h-6 p-1 rounded-full border-2 border-blue-500 hover:bg-blue-500/10 text-blue-500 transition-colors duration-200 flex items-center justify-center"
+                      className="group/btn w-8 h-8 rounded-xl
+                               bg-blue-500/10 border border-blue-500/30
+                               flex items-center justify-center
+                               text-blue-400 hover:bg-blue-500/20 hover:border-blue-500/50
+                               hover:shadow-[0_0_20px_rgba(59,130,246,0.3)]
+                               transition-all duration-300 active:scale-90"
                       title="공유하기"
                     >
-                      <svg
-                        className="w-3 h-3"
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
-                        xmlns="http://www.w3.org/2000/svg"
-                      >
+                      <svg className="w-4 h-4 transition-transform group-hover/btn:scale-110" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path
                           strokeLinecap="round"
                           strokeLinejoin="round"
@@ -290,218 +331,214 @@ const PetCard: React.FC<PetCardProps> = ({ pet }) => {
                         />
                       </svg>
                     </button>
-                    
-                    {/* 토스트 메시지 */}
+                    {/* Toast */}
                     {showToast && (
-                      <div className="absolute -top-12 left-1/2 transform -translate-x-1/2 z-50">
-                        <div className="bg-gray-900 dark:bg-gray-100 text-white dark:text-gray-900 text-xs px-3 py-2 rounded-lg shadow-lg whitespace-nowrap">
-                          링크가 복사되었습니다!
-                          <div className="absolute top-full left-1/2 transform -translate-x-1/2 w-0 h-0 border-l-4 border-r-4 border-t-4 border-transparent border-t-gray-900 dark:border-t-gray-100"></div>
+                      <div className="absolute -top-12 left-1/2 -translate-x-1/2 z-50 animate-scale-in">
+                        <div className="px-4 py-2 rounded-xl bg-bg-primary/95 backdrop-blur-lg text-text-primary text-xs font-medium whitespace-nowrap shadow-xl border border-accent/30">
+                          ✓ 링크 복사됨!
                         </div>
                       </div>
                     )}
                   </div>
+
+                  {/* Favorite Button */}
                   <button
-                    onClick={(e) => {
+                    onClick={e => {
                       e.stopPropagation();
                       handleFavoriteToggle();
                     }}
-                    className="group p-0.5 rounded-md hover:bg-bg-tertiary transition-all duration-200 active:scale-95 flex-shrink-0"
+                    className={`
+                      group/btn w-8 h-8 rounded-xl
+                      flex items-center justify-center
+                      transition-all duration-300 active:scale-90
+                      ${
+                        isFav
+                          ? 'bg-yellow-400/20 border border-yellow-400/50 shadow-[0_0_20px_rgba(251,191,36,0.3)]'
+                          : 'bg-bg-tertiary/50 border border-border hover:border-yellow-400/30 hover:bg-yellow-400/10'
+                      }
+                    `}
                     aria-label={isFav ? '즐겨찾기에서 제거' : '즐겨찾기에 추가'}
                   >
                     <svg
-                      width="18"
-                      height="18"
+                      className={`w-4 h-4 transition-all duration-300 ${
+                        isAnimating ? 'scale-150' : 'group-hover/btn:scale-110'
+                      } ${isFav ? 'fill-yellow-400 text-yellow-400' : 'fill-none text-text-muted group-hover/btn:text-yellow-400'}`}
                       viewBox="0 0 24 24"
-                      className={`transition-all duration-300 transform hover:scale-110 ${
-                        isAnimating ? 'rotate-180' : ''
-                      } ${
-                        isFav
-                          ? 'fill-yellow-400 text-yellow-400'
-                          : 'fill-none text-text-secondary group-hover:text-yellow-400 group-hover:rotate-12'
-                      }`}
+                      stroke="currentColor"
+                      strokeWidth="2"
                     >
                       <path
-                        d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z"
-                        stroke="currentColor"
-                        strokeWidth="2"
                         strokeLinejoin="round"
+                        d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z"
                       />
                     </svg>
                   </button>
                 </div>
               </div>
 
-              {/* Elements - 펫 이름 바로 밑에 위치 */}
-              <div className="mt-2">
-                <div className="flex gap-1.5 flex-wrap justify-end">
-                  {getElementIcon('earth', pet.elementStats.earth)}
-                  {getElementIcon('water', pet.elementStats.water)}
-                  {getElementIcon('fire', pet.elementStats.fire)}
-                  {getElementIcon('wind', pet.elementStats.wind)}
-                </div>
+              {/* Element Badges */}
+              <div className="flex flex-wrap gap-1.5 mb-3">
+                {activeElements.map(([key, config]) => (
+                  <span
+                    key={key}
+                    className={`
+                      inline-flex items-center gap-1.5 px-2.5 py-1
+                      rounded-lg text-xs font-bold
+                      ${config.bgClass} ${config.textClass}
+                      border ${config.borderClass}/40
+                      transition-all duration-300
+                    `}
+                    style={{
+                      boxShadow: isHovered ? `0 0 15px ${config.glow}` : 'none',
+                    }}
+                  >
+                    <span className="opacity-80">{config.label}</span>
+                    <span className="font-black">{config.value}</span>
+                  </span>
+                ))}
+              </div>
 
-                {/* Element Progress Bars */}
-                <div className="mt-2 space-y-1">
-                  {pet.elementStats.earth > 0 && (
-                    <div className="flex items-center gap-2 justify-end">
-                      <div className="flex gap-0.5">
-                        {Array.from({ length: 10 }, (_, i) => (
-                          <div
-                            key={`earth-${i}`}
-                            className={`h-1.5 w-2 rounded-sm ${
-                              i < pet.elementStats.earth ? 'bg-green-500' : 'bg-gray-600'
-                            }`}
-                          />
-                        ))}
-                      </div>
-                      <span className="text-xs text-green-400 w-4">地</span>
+              {/* Element Bars - Visual Progress */}
+              <div className="space-y-1.5 mt-auto">
+                {activeElements.map(([key, config]) => (
+                  <div key={key} className="flex items-center gap-2">
+                    <div className="flex gap-0.5 flex-1">
+                      {Array.from({ length: 10 }, (_, i) => (
+                        <div
+                          key={i}
+                          className="h-2 flex-1 rounded-sm transition-all duration-300"
+                          style={{
+                            backgroundColor: i < config.value ? config.color : 'var(--bg-tertiary)',
+                            boxShadow: i < config.value && isHovered ? `0 0 8px ${config.glow}` : 'none',
+                            transform: i < config.value && isHovered ? 'scaleY(1.2)' : 'scaleY(1)',
+                          }}
+                        />
+                      ))}
                     </div>
-                  )}
-                  {pet.elementStats.water > 0 && (
-                    <div className="flex items-center gap-2 justify-end">
-                      <div className="flex gap-0.5">
-                        {Array.from({ length: 10 }, (_, i) => (
-                          <div
-                            key={`water-${i}`}
-                            className={`h-1.5 w-2 rounded-sm ${
-                              i < pet.elementStats.water ? 'bg-blue-500' : 'bg-gray-600'
-                            }`}
-                          />
-                        ))}
-                      </div>
-                      <span className="text-xs text-blue-400 w-4">水</span>
-                    </div>
-                  )}
-                  {pet.elementStats.fire > 0 && (
-                    <div className="flex items-center gap-2 justify-end">
-                      <div className="flex gap-0.5">
-                        {Array.from({ length: 10 }, (_, i) => (
-                          <div
-                            key={`fire-${i}`}
-                            className={`h-1.5 w-2 rounded-sm ${
-                              i < pet.elementStats.fire ? 'bg-red-500' : 'bg-gray-600'
-                            }`}
-                          />
-                        ))}
-                      </div>
-                      <span className="text-xs text-red-400 w-4">火</span>
-                    </div>
-                  )}
-                  {pet.elementStats.wind > 0 && (
-                    <div className="flex items-center gap-2 justify-end">
-                      <div className="flex gap-0.5">
-                        {Array.from({ length: 10 }, (_, i) => (
-                          <div
-                            key={`wind-${i}`}
-                            className={`h-1.5 w-2 rounded-sm ${
-                              i < pet.elementStats.wind ? 'bg-amber-500' : 'bg-gray-600'
-                            }`}
-                          />
-                        ))}
-                      </div>
-                      <span className="text-xs text-amber-400 w-4">風</span>
-                    </div>
-                  )}
-                </div>
-              </div>
-            </div>
-
-            {/* 하단: Grade */}
-            <div className="flex justify-end mt-3">
-              <span className={gradeBadgeClasses}>{pet.grade}</span>
-            </div>
-          </div>
-        </div>
-
-        {/* Basic Stats - 세로 정렬 디자인 */}
-        <div className="mb-2">
-          <h4 className="text-sm font-medium text-text-secondary mb-1.5">초기치</h4>
-          <div className="bg-bg-tertiary rounded-md p-2 border border-border">
-            <div className="grid grid-cols-4 gap-1 text-center text-sm">
-              <div>
-                <div className="text-text-secondary text-xs mb-1">공격력</div>
-                <div className="font-bold text-text-primary font-mono">{pet.baseStats.attack}</div>
-              </div>
-              <div>
-                <div className="text-text-secondary text-xs mb-1">방어력</div>
-                <div className="font-bold text-text-primary font-mono">{pet.baseStats.defense}</div>
-              </div>
-              <div>
-                <div className="text-text-secondary text-xs mb-1">순발력</div>
-                <div className="font-bold text-text-primary font-mono">{pet.baseStats.agility}</div>
-              </div>
-              <div>
-                <div className="text-text-secondary text-xs mb-1">내구력</div>
-                <div className="font-bold text-text-primary font-mono">{pet.baseStats.vitality}</div>
+                    <span
+                      className={`text-[10px] w-4 font-bold ${config.textClass}`}
+                      style={{ textShadow: isHovered ? `0 0 10px ${config.glow}` : 'none' }}
+                    >
+                      {config.label}
+                    </span>
+                  </div>
+                ))}
               </div>
             </div>
           </div>
-        </div>
 
-        {/* Growth Stats - 세로 정렬 디자인 */}
-        <div className="mb-2">
-          <h4 className="text-sm font-medium text-text-secondary mb-1.5">성장률</h4>
-          <div className="bg-bg-primary rounded-md p-2 border border-border space-y-2">
-            <div className="grid grid-cols-4 gap-1 text-center text-sm">
-              <div>
-                <div className="text-text-secondary text-xs mb-1">공격력</div>
-                <div className="font-bold text-accent font-mono">{pet.growthStats.attack}</div>
+          {/* Stats Section */}
+          <div className="relative space-y-4">
+            {/* Base Stats */}
+            <div>
+              <div className="flex items-center gap-3 mb-2">
+                <span className="text-[10px] font-bold text-text-muted uppercase tracking-widest">초기치</span>
+                <div className="flex-1 h-px bg-gradient-to-r from-border via-border/50 to-transparent" />
               </div>
-              <div>
-                <div className="text-text-secondary text-xs mb-1">방어력</div>
-                <div className="font-bold text-accent font-mono">{pet.growthStats.defense}</div>
-              </div>
-              <div>
-                <div className="text-text-secondary text-xs mb-1">순발력</div>
-                <div className="font-bold text-accent font-mono">{pet.growthStats.agility}</div>
-              </div>
-              <div>
-                <div className="text-text-secondary text-xs mb-1">내구력</div>
-                <div className="font-bold text-accent font-mono">{pet.growthStats.vitality}</div>
+              <div className="grid grid-cols-4 gap-2">
+                {[
+                  { label: '공격', value: pet.baseStats.attack },
+                  { label: '방어', value: pet.baseStats.defense },
+                  { label: '순발', value: pet.baseStats.agility },
+                  { label: '내구', value: pet.baseStats.vitality },
+                ].map(stat => (
+                  <div
+                    key={stat.label}
+                    className="relative text-center py-2.5 px-1 bg-bg-tertiary/50 rounded-xl border border-border/30
+                               hover:border-border hover:bg-bg-tertiary transition-all duration-300"
+                  >
+                    <div className="text-[10px] text-text-muted mb-1">{stat.label}</div>
+                    <div className="text-sm font-black text-text-primary tabular-nums">{stat.value}</div>
+                  </div>
+                ))}
               </div>
             </div>
-            <div className="text-center pt-1 border-t border-border bg-accent/5 rounded">
-              <div className="flex justify-between items-center px-2">
-                <span className="text-sm text-text-secondary font-medium">총성장률</span>
-                <span className="text-base font-bold text-accent font-mono">{pet.totalGrowth}</span>
-              </div>
-            </div>
-          </div>
-        </div>
 
-        {/* Info Section - 컴팩트 디자인 */}
-        <div className="pt-1.5 border-t border-border mt-auto">
-          <div className="bg-bg-tertiary rounded-md p-1.5 space-y-0.5">
-            <div className="flex justify-between items-center text-sm">
-              <span className="text-text-secondary">탑승:</span>
-              <span
-                className={`font-medium text-sm px-1.5 py-0.5 rounded ${
-                  pet.rideable === '탑승가능'
-                    ? 'bg-green-500/20 text-green-400'
-                    : 'bg-red-500/20 text-red-400'
-                }`}
+            {/* Growth Stats */}
+            <div>
+              <div className="flex items-center gap-3 mb-2">
+                <span className="text-[10px] font-bold text-accent uppercase tracking-widest">성장률</span>
+                <div className="flex-1 h-px bg-gradient-to-r from-accent/30 via-accent/10 to-transparent" />
+              </div>
+              <div className="grid grid-cols-4 gap-2">
+                {[
+                  { label: '공격', value: pet.growthStats.attack },
+                  { label: '방어', value: pet.growthStats.defense },
+                  { label: '순발', value: pet.growthStats.agility },
+                  { label: '내구', value: pet.growthStats.vitality },
+                ].map(stat => (
+                  <div
+                    key={stat.label}
+                    className="text-center py-2.5 px-1 rounded-xl
+                               bg-accent/5 border border-accent/20
+                               hover:bg-accent/10 hover:border-accent/40
+                               transition-all duration-300"
+                  >
+                    <div className="text-[10px] text-text-muted mb-1">{stat.label}</div>
+                    <div
+                      className="text-sm font-black text-accent tabular-nums"
+                      style={{ textShadow: '0 0 10px var(--accent-glow)' }}
+                    >
+                      {stat.value}
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              {/* Total Growth - Hero Section */}
+              <div
+                className="mt-3 flex items-center justify-between px-4 py-3
+                           bg-gradient-to-r from-accent/10 via-accent/15 to-accent/10
+                           rounded-xl border border-accent/30
+                           hover:border-accent/50 transition-all duration-300"
+                style={{
+                  boxShadow: isHovered ? '0 0 30px var(--accent-soft)' : 'none',
+                }}
               >
-                {pet.rideable === '탑승가능' ? '가능' : '불가'}
-              </span>
-            </div>
-            <div className="flex justify-between items-start text-sm">
-              <span className="text-text-secondary shrink-0">획득처:</span>
-              <span className="text-text-primary text-right leading-tight ml-2 text-sm">
-                {pet.source}
-              </span>
+                <span className="text-xs font-bold text-text-secondary uppercase tracking-wide">총성장률</span>
+                <span
+                  className="text-2xl font-black text-accent tabular-nums"
+                  style={{ textShadow: '0 0 20px var(--accent-glow)' }}
+                >
+                  {pet.totalGrowth}
+                </span>
+              </div>
             </div>
           </div>
-        </div>
+
+          {/* Footer Info */}
+          <div className="relative mt-4 pt-4 border-t border-border/30 space-y-2">
+            <div className="flex items-center justify-between text-sm">
+              <span className="text-text-muted font-medium">탑승</span>
+              <span
+                className={`
+                  px-3 py-1 rounded-lg text-xs font-bold
+                  ${
+                    pet.rideable === '탑승가능'
+                      ? 'bg-green-500/15 text-green-400 border border-green-500/30'
+                      : 'bg-red-500/15 text-red-400 border border-red-500/30'
+                  }
+                `}
+                style={{
+                  boxShadow:
+                    pet.rideable === '탑승가능'
+                      ? '0 0 15px rgba(34, 197, 94, 0.2)'
+                      : '0 0 15px rgba(239, 68, 68, 0.2)',
+                }}
+              >
+                {pet.rideable === '탑승가능' ? '✓ 가능' : '✗ 불가'}
+              </span>
+            </div>
+            <div className="flex items-start justify-between text-sm">
+              <span className="text-text-muted font-medium flex-shrink-0">획득처</span>
+              <span className="text-text-primary text-right ml-3 leading-tight font-medium">{pet.source}</span>
+            </div>
+          </div>
         </div>
       </div>
 
       {/* Pet Boarding Modal */}
-      <PetBoardingModal
-        isOpen={isModalOpen}
-        onClose={handleModalClose}
-        pet={pet}
-      />
+      <PetBoardingModal isOpen={isModalOpen} onClose={handleModalClose} pet={pet} />
     </>
   );
 };

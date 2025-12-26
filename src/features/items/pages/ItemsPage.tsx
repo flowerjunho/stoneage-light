@@ -165,39 +165,50 @@ const ItemsPage: React.FC = () => {
   };
 
   return (
-    <div className="max-w-6xl mx-auto px-4 py-8 iphone16:px-3">
+    <div className="max-w-6xl mx-auto px-4 py-6 iphone16:px-3">
       {/* 헤더 */}
-      <div className="mb-8">
-        <div className="text-center text-text-secondary space-y-4">
-          <p className="text-base md:text-lg">스톤에이지 아이템 도감</p>
+      <div className="mb-6">
+        <div className="text-center space-y-4">
+          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-accent/10 border border-accent/20">
+            <svg className="w-5 h-5 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
+            </svg>
+            <span className="text-sm font-medium text-accent">스톤에이지 아이템 도감</span>
+          </div>
 
           {/* 정보성 알림 박스 */}
-          <div className="bg-bg-secondary border-l-4 border-accent rounded-r-lg p-4 space-y-2">
-            <div className="flex items-center gap-3">
-              <div className="text-accent text-lg flex-shrink-0">📦</div>
-              <div className="text-left">
-                <p className="text-sm font-medium text-text-primary">
-                  아이템 정보는 각 사이트의 공식 데이터입니다.
-                </p>
+          <div className="bg-bg-secondary rounded-2xl p-4 border border-border space-y-3">
+            <div className="flex items-center gap-3 p-3 bg-bg-tertiary rounded-xl">
+              <div className="w-8 h-8 rounded-lg bg-accent/10 flex items-center justify-center shrink-0">
+                <svg className="w-4 h-4 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
               </div>
+              <p className="text-sm text-text-secondary text-left">
+                아이템 정보는 각 사이트의 공식 데이터입니다.
+              </p>
             </div>
             {activeTab === 'pooyas' ? (
-              <div className="flex items-center gap-3">
-                <div className="text-yellow-500 text-lg flex-shrink-0">💡</div>
-                <div className="text-left">
-                  <p className="text-sm text-text-secondary">
-                    아이템을 클릭하면 원본 페이지로 이동합니다.
-                  </p>
+              <div className="flex items-center gap-3 p-3 bg-amber-500/5 rounded-xl border border-amber-500/20">
+                <div className="w-8 h-8 rounded-lg bg-amber-500/10 flex items-center justify-center shrink-0">
+                  <svg className="w-4 h-4 text-amber-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 15l-2 5L9 9l11 4-5 2zm0 0l5 5M7.188 2.239l.777 2.897M5.136 7.965l-2.898-.777M13.95 4.05l-2.122 2.122m-5.657 5.656l-2.12 2.122" />
+                  </svg>
                 </div>
+                <p className="text-sm text-amber-600 dark:text-amber-400 text-left">
+                  아이템을 클릭하면 원본 페이지로 이동합니다.
+                </p>
               </div>
             ) : (
-              <div className="flex items-center gap-3">
-                <div className="text-blue-500 text-lg flex-shrink-0">🔄</div>
-                <div className="text-left">
-                  <p className="text-sm text-text-secondary">
-                    아이템은 지속적으로 추가될 예정입니다.
-                  </p>
+              <div className="flex items-center gap-3 p-3 bg-blue-500/5 rounded-xl border border-blue-500/20">
+                <div className="w-8 h-8 rounded-lg bg-blue-500/10 flex items-center justify-center shrink-0">
+                  <svg className="w-4 h-4 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                  </svg>
                 </div>
+                <p className="text-sm text-blue-600 dark:text-blue-400 text-left">
+                  아이템은 지속적으로 추가될 예정입니다.
+                </p>
               </div>
             )}
           </div>
@@ -205,26 +216,39 @@ const ItemsPage: React.FC = () => {
       </div>
 
       {/* 서브 탭 네비게이션 */}
-      <div className="mb-6">
-        <div className="flex space-x-1 bg-bg-secondary rounded-lg p-1">
+      <div className="mb-6 px-4 md:px-0">
+        <div className="relative flex bg-bg-secondary rounded-2xl p-1.5 border border-border">
+          {/* 슬라이딩 배경 인디케이터 */}
+          <div
+            className="absolute top-1.5 h-[calc(100%-12px)] rounded-xl bg-accent shadow-glow
+                       transition-all duration-300 ease-out-expo pointer-events-none"
+            style={{
+              left: activeTab === 'hwansoo' ? '6px' : 'calc(50% + 2px)',
+              width: 'calc(50% - 8px)',
+            }}
+          />
           <button
             onClick={() => handleTabChange('hwansoo')}
-            className={`flex-1 py-2 px-4 rounded-md text-sm font-medium transition-colors duration-200 ${
-              activeTab === 'hwansoo'
-                ? 'bg-accent text-white'
-                : 'text-text-secondary hover:text-text-primary hover:bg-bg-tertiary'
-            }`}
+            className={`relative z-10 flex-1 flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl
+                       text-sm font-medium transition-colors duration-300 ${
+                         activeTab === 'hwansoo' ? 'text-text-inverse' : 'text-text-secondary hover:text-text-primary'
+                       }`}
           >
+            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z" />
+            </svg>
             환수강림
           </button>
           <button
             onClick={() => handleTabChange('pooyas')}
-            className={`flex-1 py-2 px-4 rounded-md text-sm font-medium transition-colors duration-200 ${
-              activeTab === 'pooyas'
-                ? 'bg-accent text-white'
-                : 'text-text-secondary hover:text-text-primary hover:bg-bg-tertiary'
-            }`}
+            className={`relative z-10 flex-1 flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl
+                       text-sm font-medium transition-colors duration-300 ${
+                         activeTab === 'pooyas' ? 'text-text-inverse' : 'text-text-secondary hover:text-text-primary'
+                       }`}
           >
+            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
+            </svg>
             뿌야
           </button>
         </div>
@@ -239,25 +263,45 @@ const ItemsPage: React.FC = () => {
 
       {/* 통계 정보 */}
       <div className="mb-6">
-        <div className="bg-bg-secondary rounded-xl p-4 border border-border">
-          <div className="flex items-center justify-between text-sm">
-            <span className="text-text-secondary">
-              {activeTab === 'hwansoo' ? '환수강림' : '뿌야'} - 총{' '}
-              <span className="font-bold text-accent">
-                {activeTab === 'pooyas' ? allItems.length : rightItemsData.length}
-              </span>
-              개의 아이템
-            </span>
+        <div className="bg-bg-secondary rounded-2xl p-4 border border-border">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-xl bg-accent/10 flex items-center justify-center">
+                <span className="text-lg">📦</span>
+              </div>
+              <div>
+                <p className="text-sm text-text-secondary">
+                  {activeTab === 'hwansoo' ? '환수강림' : '뿌야'}
+                </p>
+                <p className="text-lg font-bold text-text-primary tabular-nums">
+                  {activeTab === 'pooyas' ? allItems.length.toLocaleString() : rightItemsData.length.toLocaleString()}
+                  <span className="text-sm font-normal text-text-muted ml-1">아이템</span>
+                </p>
+              </div>
+            </div>
             {searchTerm && (
-              <span className="text-text-secondary">
-                검색 결과: <span className="font-bold text-accent">{filteredItems.length}</span>개
-              </span>
+              <div className="text-right">
+                <p className="text-xs text-text-muted">검색 결과</p>
+                <p className="text-lg font-bold text-accent tabular-nums">{filteredItems.length}</p>
+              </div>
             )}
           </div>
           {displayedItems.length > 0 && (
-            <div className="mt-2 text-xs text-text-muted">
-              현재 표시: <span className="font-bold text-accent">{displayedItems.length}</span>개 /
-              전체 {filteredItems.length}개
+            <div className="mt-3 pt-3 border-t border-border">
+              <div className="flex items-center justify-between text-xs">
+                <span className="text-text-muted">로드됨</span>
+                <div className="flex items-center gap-2">
+                  <div className="w-24 h-1.5 bg-bg-tertiary rounded-full overflow-hidden">
+                    <div
+                      className="h-full bg-accent rounded-full transition-all duration-300"
+                      style={{ width: `${(displayedItems.length / filteredItems.length) * 100}%` }}
+                    />
+                  </div>
+                  <span className="text-text-secondary tabular-nums">
+                    {displayedItems.length}/{filteredItems.length}
+                  </span>
+                </div>
+              </div>
             </div>
           )}
         </div>
@@ -265,9 +309,12 @@ const ItemsPage: React.FC = () => {
 
       {/* 아이템 목록 */}
       {isLoading ? (
-        <div className="text-center py-12">
-          <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-accent"></div>
-          <p className="mt-4 text-text-secondary">아이템 목록을 불러오는 중...</p>
+        <div className="text-center py-16">
+          <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-bg-secondary border border-border
+                        flex items-center justify-center">
+            <div className="w-8 h-8 border-2 border-accent border-t-transparent rounded-full animate-spin" />
+          </div>
+          <p className="text-text-secondary">아이템 목록을 불러오는 중...</p>
         </div>
       ) : (
         <div className="space-y-3">
@@ -277,19 +324,22 @@ const ItemsPage: React.FC = () => {
                 <div
                   key={item.id ? `item-${item.id}` : `index-${index}`}
                   onClick={activeTab === 'pooyas' ? () => handleItemClick(item) : undefined}
-                  className={`group bg-bg-secondary hover:bg-bg-tertiary border border-border hover:border-accent rounded-xl p-4 transition-all duration-200 hover:shadow-lg hover:scale-[1.01] active:scale-[0.99] ${
-                    activeTab === 'pooyas' ? 'cursor-pointer' : ''
-                  }`}
+                  className={`group bg-bg-secondary hover:bg-bg-tertiary border border-border
+                            hover:border-accent/50 rounded-2xl p-4 transition-all duration-300
+                            hover:shadow-card hover:-translate-y-0.5 active:scale-[0.99] ${
+                              activeTab === 'pooyas' ? 'cursor-pointer' : ''
+                            }`}
                 >
                   <div className="flex items-center gap-4">
                     {/* 아이템 이미지 */}
                     <div className="flex-shrink-0">
-                      <div className="w-16 h-16 flex items-center justify-center bg-bg-tertiary rounded-lg overflow-hidden">
+                      <div className="w-16 h-16 flex items-center justify-center bg-bg-tertiary rounded-xl overflow-hidden
+                                    border border-border group-hover:border-accent/30 transition-colors">
                         {item.imageUrl ? (
                           <img
                             src={getImageUrl(item.imageUrl)}
                             alt={item.name}
-                            className="w-full h-full object-contain"
+                            className="w-full h-full object-contain p-1"
                             onError={e => {
                               const target = e.target as HTMLImageElement;
                               target.style.display = 'none';
@@ -304,30 +354,25 @@ const ItemsPage: React.FC = () => {
                     {/* 아이템 정보 */}
                     <div className="flex-1 min-w-0">
                       {/* 아이템 이름 */}
-                      <h3 className="text-text-primary font-medium group-hover:text-accent transition-colors duration-200 mb-2 text-base">
+                      <h3 className="text-text-primary font-semibold group-hover:text-accent transition-colors duration-200 mb-1.5">
                         {item.name || '아이템'}
                       </h3>
 
                       {/* 옵션 정보 (재료/획득) - 뿌야 탭 */}
                       {activeTab === 'pooyas' && item.options && (
-                        <div className="mb-1">
-                          <p className="text-sm text-text-secondary line-clamp-2">{item.options}</p>
-                        </div>
+                        <p className="text-sm text-text-secondary line-clamp-2 mb-1">{item.options}</p>
                       )}
 
                       {/* 설명 정보 - 환수강림 탭 */}
                       {activeTab === 'hwansoo' && item.description && (
-                        <div className="mb-1">
-                          <p className="text-sm text-text-secondary line-clamp-2">
-                            {item.description}
-                          </p>
-                        </div>
+                        <p className="text-sm text-text-secondary line-clamp-2 mb-1">{item.description}</p>
                       )}
 
                       {/* 획득 정보 - 환수강림 탭만 */}
                       {activeTab === 'hwansoo' && item.materials && (
-                        <div className="mb-1">
-                          <p className="text-xs text-text-muted">획득: {item.materials}</p>
+                        <div className="flex items-center gap-1.5">
+                          <span className="text-[10px] uppercase tracking-wide text-text-muted">획득:</span>
+                          <span className="text-xs text-text-secondary">{item.materials}</span>
                         </div>
                       )}
 
@@ -335,20 +380,19 @@ const ItemsPage: React.FC = () => {
                       {activeTab === 'pooyas' &&
                         item.materials &&
                         item.materials !== item.options && (
-                          <div className="mb-1">
-                            <p className="text-xs text-text-muted whitespace-pre-wrap break-words">
-                              {item.materials}
-                            </p>
-                          </div>
+                          <p className="text-xs text-text-muted whitespace-pre-wrap break-words line-clamp-2">
+                            {item.materials}
+                          </p>
                         )}
                     </div>
 
                     {/* 링크 아이콘 - 뿌야 탭만 */}
                     {activeTab === 'pooyas' && (
                       <div className="flex-shrink-0">
-                        <div className="w-8 h-8 bg-accent/10 group-hover:bg-accent/20 rounded-full flex items-center justify-center transition-colors duration-200">
+                        <div className="w-10 h-10 bg-accent/10 group-hover:bg-accent group-hover:shadow-glow
+                                      rounded-xl flex items-center justify-center transition-all duration-300">
                           <svg
-                            className="h-4 w-4 text-accent"
+                            className="h-4 w-4 text-accent group-hover:text-text-inverse transition-colors"
                             fill="none"
                             stroke="currentColor"
                             viewBox="0 0 24 24"
@@ -368,8 +412,13 @@ const ItemsPage: React.FC = () => {
               );
             })
           ) : filteredItems.length === 0 ? (
-            <div className="col-span-full text-center py-12">
-              <div className="text-6xl mb-4">🔍</div>
+            <div className="text-center py-16 animate-fade-in">
+              <div className="w-20 h-20 mx-auto mb-4 rounded-full bg-bg-secondary border border-border
+                            flex items-center justify-center">
+                <svg className="w-10 h-10 text-text-muted" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                </svg>
+              </div>
               <h3 className="text-xl font-bold text-text-primary mb-2">검색 결과가 없습니다</h3>
               <p className="text-text-secondary">다른 키워드로 검색해보세요</p>
             </div>
@@ -377,22 +426,35 @@ const ItemsPage: React.FC = () => {
 
           {/* 로딩 상태 */}
           {hasMore && displayedItems.length > 0 && (
-            <div className="text-center py-6">
+            <div className="text-center py-8">
               {isLoadingMore ? (
                 <div className="flex flex-col items-center gap-3">
-                  <div className="inline-block animate-spin rounded-full h-6 w-6 border-b-2 border-accent"></div>
+                  <div className="w-10 h-10 rounded-full bg-bg-secondary border border-border
+                                flex items-center justify-center">
+                    <div className="w-5 h-5 border-2 border-accent border-t-transparent rounded-full animate-spin" />
+                  </div>
                   <p className="text-sm text-text-secondary">더 많은 아이템을 불러오는 중...</p>
                 </div>
               ) : (
-                <p className="text-sm text-text-muted">스크롤하여 더 많은 아이템 보기</p>
+                <div className="flex items-center justify-center gap-2 text-sm text-text-muted">
+                  <svg className="w-4 h-4 animate-bounce" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 14l-7 7m0 0l-7-7m7 7V3" />
+                  </svg>
+                  스크롤하여 더 보기
+                </div>
               )}
             </div>
           )}
 
           {/* 모든 아이템 로드 완료 */}
           {!hasMore && displayedItems.length > 0 && (
-            <div className="text-center py-6">
-              <p className="text-sm text-text-muted">모든 아이템을 불러왔습니다</p>
+            <div className="text-center py-8">
+              <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-bg-secondary border border-border">
+                <svg className="w-4 h-4 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                </svg>
+                <span className="text-sm text-text-muted">모든 아이템을 불러왔습니다</span>
+              </div>
             </div>
           )}
         </div>

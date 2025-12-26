@@ -266,10 +266,18 @@ const PetsPage: React.FC = () => {
     () => (
       <div className="space-y-6">
         {/* 학습 지역 설명 */}
-        <div className="bg-bg-secondary rounded-lg p-4 border border-border">
-          <h3 className="text-sm font-medium text-text-primary mb-2">📍 특수 학습 지역 안내</h3>
-          <div className="space-y-1 text-xs text-text-secondary">
-            <div>
+        <div className="bg-bg-secondary rounded-2xl p-5 border border-border hover:shadow-card transition-shadow duration-300">
+          <div className="flex items-center gap-2 mb-3">
+            <div className="w-8 h-8 rounded-lg bg-accent/10 flex items-center justify-center">
+              <svg className="w-4 h-4 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+              </svg>
+            </div>
+            <h3 className="text-sm font-semibold text-text-primary">특수 학습 지역 안내</h3>
+          </div>
+          <div className="space-y-2 text-sm">
+            <div className="flex items-center gap-3 p-3 bg-bg-tertiary rounded-xl">
               <button
                 onClick={() =>
                   handleMapClick(
@@ -277,13 +285,14 @@ const PetsPage: React.FC = () => {
                     'http://pooyas.com/stoneage_info/map/cave/sainus/sbc.gif'
                   )
                 }
-                className="font-medium text-accent hover:text-accent/80 transition-colors cursor-pointer underline"
+                className="shrink-0 px-3 py-1.5 rounded-lg bg-accent text-text-inverse text-xs font-medium
+                         hover:bg-accent-hover transition-colors duration-200"
               >
-                SBC(지도보기):
+                SBC 지도보기
               </button>
-              <span className="ml-1">쿠링의 대광산 꼭대기층 SBC본부</span>
+              <span className="text-text-secondary">쿠링의 대광산 꼭대기층 SBC본부</span>
             </div>
-            <div>
+            <div className="flex items-center gap-3 p-3 bg-bg-tertiary rounded-xl">
               <button
                 onClick={() =>
                   handleMapClick(
@@ -291,11 +300,12 @@ const PetsPage: React.FC = () => {
                     'http://pooyas.com/stoneage_info/map/cave/zaru/ratotojba.gif'
                   )
                 }
-                className="font-medium text-accent hover:text-accent/80 transition-colors cursor-pointer underline"
+                className="shrink-0 px-3 py-1.5 rounded-lg bg-accent text-text-inverse text-xs font-medium
+                         hover:bg-accent-hover transition-colors duration-200"
               >
-                JBA(지도보기):
+                JBA 지도보기
               </button>
-              <span className="ml-1">라토토의 대동굴 꼭대기층 JBA본부</span>
+              <span className="text-text-secondary">라토토의 대동굴 꼭대기층 JBA본부</span>
             </div>
           </div>
         </div>
@@ -308,36 +318,40 @@ const PetsPage: React.FC = () => {
         />
 
         {/* 기술 카테고리 탭 (서브-서브탭) */}
-        <div className="border-b border-border">
-          <nav className="flex">
-            {Object.entries((skillsData as SkillsData).petSkills).map(([categoryKey, category]) => {
-              const filteredSkills = skillSearchTerm
-                ? category.skills.filter((skill: Skill) =>
-                    searchMultipleFields(skillSearchTerm, [skill.name])
-                  )
-                : category.skills;
-              const count = filteredSkills.length;
+        <div className="flex gap-2 p-1 bg-bg-secondary rounded-xl border border-border">
+          {Object.entries((skillsData as SkillsData).petSkills).map(([categoryKey, category]) => {
+            const filteredSkills = skillSearchTerm
+              ? category.skills.filter((skill: Skill) =>
+                  searchMultipleFields(skillSearchTerm, [skill.name])
+                )
+              : category.skills;
+            const count = filteredSkills.length;
+            const isActive = activeSkillCategory === categoryKey;
 
-              return (
-                <button
-                  key={categoryKey}
-                  onClick={() => setActiveSkillCategory(categoryKey)}
-                  className={`px-4 py-3 text-sm font-medium border-b-2 transition-colors duration-200 ${
-                    activeSkillCategory === categoryKey
-                      ? 'border-accent text-accent'
-                      : 'border-transparent text-text-secondary hover:text-text-primary hover:border-border'
-                  }`}
-                >
-                  {category.categoryName}
-                  {skillSearchTerm && (
-                    <span className="ml-2 px-2 py-1 text-xs bg-accent/10 text-accent rounded-full">
-                      {count}
-                    </span>
-                  )}
-                </button>
-              );
-            })}
-          </nav>
+            return (
+              <button
+                key={categoryKey}
+                onClick={() => setActiveSkillCategory(categoryKey)}
+                className={`flex-1 flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg
+                           text-sm font-medium transition-all duration-200 ${
+                             isActive
+                               ? 'bg-accent text-text-inverse shadow-glow'
+                               : 'text-text-secondary hover:text-text-primary hover:bg-bg-tertiary'
+                           }`}
+              >
+                {category.categoryName}
+                {skillSearchTerm && (
+                  <span
+                    className={`px-2 py-0.5 text-xs rounded-full ${
+                      isActive ? 'bg-white/20 text-white' : 'bg-accent/10 text-accent'
+                    }`}
+                  >
+                    {count}
+                  </span>
+                )}
+              </button>
+            );
+          })}
         </div>
 
         {/* 선택된 카테고리의 기술 표시 */}
@@ -355,8 +369,13 @@ const PetsPage: React.FC = () => {
 
           if (filteredSkills.length === 0) {
             return skillSearchTerm ? (
-              <div className="text-center py-12">
-                <div className="text-6xl mb-4">🔍</div>
+              <div className="text-center py-16 animate-fade-in">
+                <div className="w-20 h-20 mx-auto mb-4 rounded-full bg-bg-secondary border border-border
+                              flex items-center justify-center">
+                  <svg className="w-10 h-10 text-text-muted" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                  </svg>
+                </div>
                 <h3 className="text-xl font-bold text-text-primary mb-2">검색 결과가 없습니다</h3>
                 <p className="text-text-secondary">다른 검색어를 시도해보세요</p>
               </div>
@@ -368,39 +387,40 @@ const PetsPage: React.FC = () => {
               {filteredSkills.map((skill: Skill, index: number) => (
                 <div
                   key={`${activeSkillCategory}-${index}`}
-                  className="bg-bg-secondary rounded-lg p-4 border border-border"
+                  className="group bg-bg-secondary rounded-2xl p-5 border border-border
+                           hover:border-accent/30 hover:shadow-card
+                           transition-all duration-300"
                 >
-                  <h3 className="font-semibold text-text-primary mb-2">{skill.name}</h3>
-                  <p className="text-text-secondary text-sm mb-3">{skill.description}</p>
-
-                  <div className="space-y-2">
+                  <div className="flex items-start justify-between gap-2 mb-3">
+                    <h3 className="font-bold text-text-primary group-hover:text-accent transition-colors">
+                      {skill.name}
+                    </h3>
                     {skill.price && skill.currency && (
-                      <div className="flex items-center gap-2">
-                        <span className="text-xs font-medium text-text-secondary">가격:</span>
-                        <span className="text-sm font-semibold text-accent">
-                          {skill.price} {skill.currency}
-                        </span>
-                      </div>
-                    )}
-
-                    <div>
-                      <span className="text-xs font-medium text-text-secondary block mb-1">
-                        학습 가능 지역:
+                      <span className="shrink-0 px-2.5 py-1 rounded-lg bg-accent/10 text-accent text-xs font-semibold">
+                        {skill.price} {skill.currency}
                       </span>
-                      <div className="flex flex-wrap gap-1">
-                        {skill.locations && skill.locations.length > 0 ? (
-                          skill.locations.map((location: string, locIndex: number) => (
-                            <span
-                              key={locIndex}
-                              className="inline-block px-2 py-1 bg-bg-tertiary text-text-primary text-xs rounded border border-border"
-                            >
-                              {location}
-                            </span>
-                          ))
-                        ) : (
-                          <span className="text-xs text-text-secondary">정보 없음</span>
-                        )}
-                      </div>
+                    )}
+                  </div>
+                  <p className="text-text-secondary text-sm mb-4 leading-relaxed">{skill.description}</p>
+
+                  <div className="pt-3 border-t border-border">
+                    <span className="text-[10px] font-medium text-text-muted uppercase tracking-wide block mb-2">
+                      학습 가능 지역
+                    </span>
+                    <div className="flex flex-wrap gap-1.5">
+                      {skill.locations && skill.locations.length > 0 ? (
+                        skill.locations.map((location: string, locIndex: number) => (
+                          <span
+                            key={locIndex}
+                            className="inline-block px-2.5 py-1 bg-bg-tertiary text-text-primary
+                                     text-xs rounded-lg border border-border"
+                          >
+                            {location}
+                          </span>
+                        ))
+                      ) : (
+                        <span className="text-xs text-text-muted italic">정보 없음</span>
+                      )}
                     </div>
                   </div>
                 </div>
@@ -416,63 +436,89 @@ const PetsPage: React.FC = () => {
   return (
     <div className="max-w-6xl mx-auto px-4 iphone16:px-3">
       {/* 환수강림 라이트 사이트 링크 */}
-      <div className="text-right px-4 py-1 space-y-1">
-        <div>
-          <a
-            href="https://www.hwansoo.top/"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-flex items-center gap-2 px-3 py-1.5 text-accent hover:text-accent/80
-                     font-medium transition-all duration-200 hover:underline text-sm"
+      <div className="flex flex-wrap justify-end gap-2 px-4 py-3">
+        <a
+          href="https://www.hwansoo.top/"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="group inline-flex items-center gap-2 px-4 py-2 rounded-xl
+                   bg-bg-secondary border border-border
+                   hover:border-accent/50 hover:bg-accent/5
+                   transition-all duration-300 text-sm"
+        >
+          <svg
+            className="w-4 h-4 text-accent transition-transform duration-300 group-hover:scale-110"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
           >
-            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"
-              />
-            </svg>
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"
+            />
+          </svg>
+          <span className="text-text-secondary group-hover:text-text-primary transition-colors">
             환수강림 라이트 사이트
-          </a>
-        </div>
-        <div>
-          <a
-            href="https://discord.gg/WYdT8JqUZm"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-flex items-center gap-2 px-3 py-1.5 text-accent hover:text-accent/80
-                     font-medium transition-all duration-200 hover:underline text-sm"
+          </span>
+        </a>
+        <a
+          href="https://discord.gg/WYdT8JqUZm"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="group inline-flex items-center gap-2 px-4 py-2 rounded-xl
+                   bg-bg-secondary border border-border
+                   hover:border-[#5865F2]/50 hover:bg-[#5865F2]/5
+                   transition-all duration-300 text-sm"
+        >
+          <svg
+            className="w-4 h-4 text-[#5865F2] transition-transform duration-300 group-hover:scale-110"
+            fill="currentColor"
+            viewBox="0 0 24 24"
           >
-            <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
-              <path d="M20.317 4.37a19.791 19.791 0 0 0-4.885-1.515.074.074 0 0 0-.079.037c-.211.375-.445.865-.608 1.25a18.27 18.27 0 0 0-5.487 0 12.64 12.64 0 0 0-.617-1.25.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057a.082.082 0 0 0 .031.057 19.9 19.9 0 0 0 5.993 3.03.078.078 0 0 0 .084-.028 14.09 14.09 0 0 0 1.226-1.994.076.076 0 0 0-.041-.106 13.107 13.107 0 0 1-1.872-.892.077.077 0 0 1-.008-.128 10.2 10.2 0 0 0 .372-.292.074.074 0 0 1 .077-.010c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 0 1 .078.01c.12.098.246.198.373.292a.077.077 0 0 1-.006.127 12.299 12.299 0 0 1-1.873.892.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028 19.839 19.839 0 0 0 6.002-3.03.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.03zM8.02 15.33c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.956-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.956 2.418-2.157 2.418zm7.975 0c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.955-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.946 2.418-2.157 2.418z" />
-            </svg>
-            환수강림 라이트 디스코드
-          </a>
-        </div>
+            <path d="M20.317 4.37a19.791 19.791 0 0 0-4.885-1.515.074.074 0 0 0-.079.037c-.211.375-.445.865-.608 1.25a18.27 18.27 0 0 0-5.487 0 12.64 12.64 0 0 0-.617-1.25.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057a.082.082 0 0 0 .031.057 19.9 19.9 0 0 0 5.993 3.03.078.078 0 0 0 .084-.028 14.09 14.09 0 0 0 1.226-1.994.076.076 0 0 0-.041-.106 13.107 13.107 0 0 1-1.872-.892.077.077 0 0 1-.008-.128 10.2 10.2 0 0 0 .372-.292.074.074 0 0 1 .077-.010c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 0 1 .078.01c.12.098.246.198.373.292a.077.077 0 0 1-.006.127 12.299 12.299 0 0 1-1.873.892.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028 19.839 19.839 0 0 0 6.002-3.03.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.03zM8.02 15.33c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.956-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.956 2.418-2.157 2.418zm7.975 0c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.955-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.946 2.418-2.157 2.418z" />
+          </svg>
+          <span className="text-text-secondary group-hover:text-text-primary transition-colors">
+            디스코드
+          </span>
+        </a>
       </div>
 
       {/* 서브탭 네비게이션 */}
-      <div className="mb-6">
-        <div className="flex space-x-1 bg-bg-secondary rounded-lg p-1">
+      <div className="mb-6 px-4 md:px-0">
+        <div className="relative flex bg-bg-secondary rounded-2xl p-1.5 border border-border">
+          {/* 슬라이딩 배경 인디케이터 */}
+          <div
+            className={`absolute top-1.5 h-[calc(100%-12px)] rounded-xl bg-accent shadow-glow
+                       transition-all duration-300 ease-out-expo pointer-events-none`}
+            style={{
+              left: activeTab === 'info' ? '6px' : 'calc(50% + 2px)',
+              width: 'calc(50% - 8px)',
+            }}
+          />
           <button
             onClick={() => handleTabChange('info')}
-            className={`flex-1 py-2 px-4 rounded-md text-sm font-medium transition-colors duration-200 ${
-              activeTab === 'info'
-                ? 'bg-accent text-white shadow-sm'
-                : 'text-text-secondary hover:text-text-primary hover:bg-bg-tertiary'
-            }`}
+            className={`relative z-10 flex-1 flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl
+                       text-sm font-medium transition-colors duration-300 ${
+                         activeTab === 'info' ? 'text-text-inverse' : 'text-text-secondary hover:text-text-primary'
+                       }`}
           >
+            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
             정보
           </button>
           <button
             onClick={() => handleTabChange('skills')}
-            className={`flex-1 py-2 px-4 rounded-md text-sm font-medium transition-colors duration-200 ${
-              activeTab === 'skills'
-                ? 'bg-accent text-white shadow-sm'
-                : 'text-text-secondary hover:text-text-primary hover:bg-bg-tertiary'
-            }`}
+            className={`relative z-10 flex-1 flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl
+                       text-sm font-medium transition-colors duration-300 ${
+                         activeTab === 'skills' ? 'text-text-inverse' : 'text-text-secondary hover:text-text-primary'
+                       }`}
           >
+            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
+            </svg>
             기술
           </button>
         </div>
@@ -499,15 +545,15 @@ const PetsPage: React.FC = () => {
       {/* 공유 모달 */}
       {isShareModalOpen && sharedPet && (
         <div
-          className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4"
+          className="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-50 p-4 animate-fade-in"
           onClick={handleShareModalClose}
         >
           <div
-            className="max-w-md w-full max-h-[90vh] overflow-y-auto"
+            className="max-w-md w-full max-h-[90vh] overflow-y-auto animate-scale-in"
             onClick={e => e.stopPropagation()}
           >
             {/* 카드와 동일한 디자인 */}
-            <div className="bg-bg-secondary rounded-lg p-4 h-full border border-border-primary flex flex-col">
+            <div className="bg-bg-secondary rounded-2xl p-5 h-full border border-border shadow-glow-lg flex flex-col">
               {/* Top Section - Image and Info */}
               <div className="flex gap-4 mb-4 pb-3 border-b border-border">
                 {/* Pet Image */}
@@ -775,21 +821,31 @@ const PetsPage: React.FC = () => {
       {/* 지도 모달 */}
       {mapModalOpen && selectedMap && (
         <div
-          className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4"
+          className="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-50 p-4 animate-fade-in"
           onClick={handleMapModalClose}
         >
           <div
-            className="bg-bg-secondary rounded-lg border border-border max-w-4xl max-h-[90vh] overflow-hidden"
+            className="bg-bg-secondary rounded-2xl border border-border max-w-4xl max-h-[90vh] overflow-hidden
+                      shadow-glow-lg animate-scale-in"
             onClick={e => e.stopPropagation()}
           >
             {/* 모달 헤더 */}
-            <div className="flex items-center justify-between p-4 border-b border-border">
-              <h3 className="text-lg font-bold text-text-primary">{selectedMap.title}</h3>
+            <div className="flex items-center justify-between p-5 border-b border-border">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-xl bg-accent/10 flex items-center justify-center">
+                  <svg className="w-5 h-5 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7" />
+                  </svg>
+                </div>
+                <h3 className="text-lg font-bold text-text-primary">{selectedMap.title}</h3>
+              </div>
               <button
                 onClick={handleMapModalClose}
-                className="text-text-secondary hover:text-text-primary transition-colors"
+                className="w-10 h-10 rounded-xl bg-bg-tertiary hover:bg-red-500/10
+                         flex items-center justify-center
+                         text-text-secondary hover:text-red-500 transition-all duration-200"
               >
-                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path
                     strokeLinecap="round"
                     strokeLinejoin="round"
@@ -801,11 +857,11 @@ const PetsPage: React.FC = () => {
             </div>
 
             {/* 지도 이미지 */}
-            <div className="p-4">
+            <div className="p-5">
               <img
                 src={selectedMap.imageUrl}
                 alt={selectedMap.title}
-                className="w-full h-auto max-h-[70vh] object-contain rounded"
+                className="w-full h-auto max-h-[70vh] object-contain rounded-xl"
                 loading="lazy"
               />
             </div>
