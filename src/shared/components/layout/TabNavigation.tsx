@@ -153,7 +153,7 @@ const TabNavigation: React.FC = () => {
   const activeColor = tabs[activeIndex]?.color || '#fbbf24';
 
   return (
-    <div className="sticky top-[72px] md:top-[88px] z-30 w-full">
+    <div className="sticky top-0 z-30 w-full">
       <div className="max-w-6xl mx-auto px-3 md:px-6">
         {/* Main Container with glassmorphism */}
         <div

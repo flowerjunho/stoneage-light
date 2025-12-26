@@ -1,7 +1,6 @@
 import React, { useEffect } from 'react';
 import { HashRouter as Router, Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import Header from '@/shared/components/layout/Header';
-import ThemeToggle from '@/shared/components/layout/ThemeToggle';
 import ScrollToTopButton from '@/shared/components/ui/ScrollToTopButton';
 import PageShareButton from '@/shared/components/ui/PageShareButton';
 import TabNavigation from '@/shared/components/layout/TabNavigation';
@@ -82,7 +81,6 @@ const AppContent: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-bg-primary text-text-primary">
-      <ThemeToggle />
       <Header />
       <main className="pb-8">
         {!hideTabNavigation && <TabNavigation />}

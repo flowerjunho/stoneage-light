@@ -5,17 +5,7 @@ import ThemeToggle from '@/shared/components/layout/ThemeToggle';
 const Header: React.FC = () => {
   const [showTooltip, setShowTooltip] = useState(false);
   const [tooltipTimeoutId, setTooltipTimeoutId] = useState<NodeJS.Timeout | null>(null);
-  const [isScrolled, setIsScrolled] = useState(false);
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
-
-  // 스크롤 감지
-  useEffect(() => {
-    const handleScroll = () => {
-      setIsScrolled(window.scrollY > 10);
-    };
-    window.addEventListener('scroll', handleScroll, { passive: true });
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
 
   // 마우스 추적 (히어로 섹션 효과)
   const handleMouseMove = (e: React.MouseEvent<HTMLElement>) => {
@@ -47,36 +37,10 @@ const Header: React.FC = () => {
 
   return (
     <>
-      {/* Floating Navigation Bar */}
-      <nav
-        className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
-          isScrolled ? 'py-2' : 'py-3'
-        }`}
-      >
+      {/* Navigation Bar - 스크롤 시 고정되지 않음 */}
+      <nav className="py-3">
         <div className="max-w-6xl mx-auto px-4 md:px-6">
-          <div
-            className={`
-              relative overflow-hidden rounded-2xl transition-all duration-500
-              ${
-                isScrolled
-                  ? 'bg-bg-primary/80 backdrop-blur-xl shadow-2xl border border-border'
-                  : 'bg-transparent'
-              }
-            `}
-          >
-            {/* Animated gradient border on scroll */}
-            {isScrolled && (
-              <div
-                className="absolute inset-0 rounded-2xl opacity-50"
-                style={{
-                  background:
-                    'linear-gradient(90deg, transparent, var(--accent-glow), transparent)',
-                  backgroundSize: '200% 100%',
-                  animation: 'shimmer 3s ease infinite',
-                }}
-              />
-            )}
-
+          <div className="relative overflow-hidden rounded-2xl bg-bg-secondary/50 backdrop-blur-sm border border-border">
             <div className="relative flex items-center justify-between px-4 py-3 md:px-6 md:py-4">
               {/* Logo */}
               <Link
@@ -156,7 +120,7 @@ const Header: React.FC = () => {
 
       {/* Hero Section - Immersive */}
       <header
-        className="relative w-full pt-20 md:pt-24 overflow-hidden"
+        className="relative w-full overflow-hidden"
         onMouseMove={handleMouseMove}
       >
         {/* Animated Background */}
