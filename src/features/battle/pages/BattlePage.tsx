@@ -6,6 +6,40 @@ import petDataJson from '@/data/petData.json';
 type TabType = 'info' | 'combo' | 'calculator';
 type CalculatorSubTab = 'damage' | 'reverse';
 type AttributeType = 'fire' | 'water' | 'earth' | 'wind';
+type UnitType = 'PLAYER' | 'PET' | 'ENEMY';
+type StatusEffect = 'none' | 'poison' | 'paralysis' | 'sleep' | 'stone' | 'drunk' | 'confusion' | 'weaken';
+type FieldAttribute = 'none' | 'fire' | 'water' | 'earth' | 'wind';
+
+// 서버 원본 상수들
+const BATTLE_CONSTANTS = {
+  // 데미지 관련
+  DEFENSE_RATE: 0.7,          // 방어력 계수 (_BATTLE_NEWPOWER)
+  DAMAGE_RATE: 2.0,           // 데미지 증폭 계수
+  D_16: 1 / 16,               // 1/16
+  D_8: 1 / 8,                 // 1/8
+
+  // 확률 관련
+  gCriticalPara: 0.09,        // 크리티컬 기본 계수
+  gCounterPara: 0.08,         // 카운터 기본 계수
+  gKawashiPara: 0.02,         // 회피 기본 계수
+  KAWASHI_MAX_RATE: 75,       // 최대 회피율 75%
+
+  // 운(LUCK) 관련 - 플레이어 전용 숨겨진 스탯
+  // 장비의 ITEM_MODIFYLUCK 옵션으로만 획득 가능
+  // 크리티컬/회피/카운터/포획/도주 확률에 영향
+  LUCK_MIN: 0,                // 운 최소값
+  LUCK_MAX: 5,                // 운 최대값 (초과 시 서버 에러)
+
+  // 속성 관련
+  AJ_UP: 1.5,                 // 유리 속성
+  AJ_DOWN: 0.6,               // 불리 속성
+  AJ_SAME: 1.0,               // 동일/무관
+  ATTR_MAX: 100,              // 속성 최대값
+
+  // 필드 속성 보정
+  FIELD_AJ_BOTTOM: 0.5,       // 필드 기본 보정
+  FIELD_AJ_PLUS: 0.5,         // 필드 추가 보정
+};
 
 interface CharacterStats {
   lv: number;
@@ -13,6 +47,7 @@ interface CharacterStats {
   str: number;
   tgh: number;
   dex: number;
+  luck: number;              // 운 스탯 추가
   fire: number;
   water: number;
   earth: number;
@@ -31,23 +66,50 @@ const STORAGE_KEY_DEFENDER = 'stoneage_battle_defender';
 const STORAGE_KEY_ATTACKER_PET = 'stoneage_battle_attacker_pet';
 const STORAGE_KEY_DEFENDER_PET = 'stoneage_battle_defender_pet';
 
+interface BattleOptions {
+  attackerType: UnitType;
+  defenderType: UnitType;
+  attackerStatus: StatusEffect;
+  defenderStatus: StatusEffect;
+  fieldAttribute: FieldAttribute;
+  fieldPower: number;  // 필드 속성 강도 (0-100)
+  weaponCritBonus: number;  // 무기 크리티컬 보너스
+}
+
 const getDefaultStats = (): CharacterStats => ({
   lv: 140,
   hp: 0,
   str: 0,
   tgh: 0,
   dex: 0,
+  luck: 0,
   fire: 0,
   water: 0,
   earth: 0,
   wind: 0,
 });
 
+const getDefaultBattleOptions = (): BattleOptions => ({
+  attackerType: 'PLAYER',
+  defenderType: 'PLAYER', // PLAYER vs PLAYER 기본값 (DEX 보정 없음)
+  attackerStatus: 'none',
+  defenderStatus: 'none',
+  fieldAttribute: 'none',
+  fieldPower: 50,
+  weaponCritBonus: 0,
+});
+
 const loadStatsFromStorage = (key: string): CharacterStats => {
   try {
     const stored = localStorage.getItem(key);
     if (stored) {
-      return JSON.parse(stored);
+      const parsed = JSON.parse(stored);
+      // 기존 데이터에 luck이 없을 경우 기본값 추가
+      return {
+        ...getDefaultStats(),
+        ...parsed,
+        luck: parsed.luck ?? 0,
+      };
     }
   } catch (error) {
     console.error('Failed to load stats from storage:', error);
@@ -142,6 +204,9 @@ const BattlePage: React.FC = () => {
 
   // 탑승 가능한 페트 목록
   const rideablePets = petDataJson.pets.filter(pet => pet.rideable === '탑승가능');
+
+  // 배틀 옵션 (새로 추가)
+  const [battleOptions, setBattleOptions] = useState<BattleOptions>(getDefaultBattleOptions);
 
   // 인증 확인 및 테마 적용
   useEffect(() => {
@@ -251,7 +316,7 @@ const BattlePage: React.FC = () => {
   };
 
   // 탑승 시 최종 스탯 계산 (캐릭터 70% + 페트 30%)
-  const calculateRidingStats = (char: CharacterStats, petStats: PetStats | null) => {
+  const calculateRidingStats = (char: CharacterStats, petStats: PetStats | null): CharacterStats => {
     if (!petStats) return char;
 
     return {
@@ -260,6 +325,7 @@ const BattlePage: React.FC = () => {
       str: Math.floor(char.str * 0.7 + petStats.str * 0.3),
       tgh: Math.floor(char.tgh * 0.7 + petStats.tgh * 0.3),
       dex: Math.floor(char.dex * 0.7 + petStats.dex * 0.3),
+      luck: char.luck, // 운은 캐릭터 스탯 유지
       // 속성은 캐릭터의 속성을 따라감
       fire: char.fire,
       water: char.water,
@@ -459,82 +525,298 @@ const BattlePage: React.FC = () => {
     return Math.round(normalDamage + additionalDamage);
   };
 
-  // 회피율 계산
-  const calculateDodgeRate = (atkDex: number, defDex: number, defLuck: number = 0): number => {
-    // K값 (기본 0.02, 주술 커맨드시 0.027 - 여기서는 기본값 사용)
-    const K = 0.02;
+  /**
+   * 회피율 계산 (서버 원본: battle_event.c BATTLE_DuckCheck 667-792)
+   *
+   * ## 서버 로직 설명
+   *
+   * ### 1. 타입별 DEX 보정
+   * - 적 vs 펫: 공격자 DEX × 0.8
+   * - 비적 vs 펫: 방어자 DEX × 0.8
+   * - 비플레이어 vs 플레이어: 공격자 DEX × 0.6
+   * - 플레이어 vs 비플레이어: 방어자 DEX × 0.6
+   *
+   * ### 2. Big/Small/Wari 계산
+   * - 방어자 DEX >= 공격자 DEX: Big=방어자, Small=공격자, wari=1.0
+   * - 공격자 DEX > 방어자 DEX: Big=공격자, Small=방어자, wari=방어자/공격자
+   *
+   * ### 3. 회피율 공식
+   * per = sqrt((Big - Small) / K) × wari + 운
+   * - K = 0.02 (기본) 또는 0.027 (주술 커맨드)
+   * - per × 100 후 최대 7500 (75%) 제한
+   * - RAND(1, 10000) <= per 이면 회피 성공
+   *
+   * ### 예시 (공격자 279, 방어자 300, PLAYER vs PLAYER)
+   * - 방어자 >= 공격자이므로: Big=300, Small=279, wari=1.0
+   * - Work = (300-279)/0.02 = 1050
+   * - per = sqrt(1050) × 1.0 = 32.4
+   * - 최종 회피율 = 32.4%
+   */
+  const calculateDodgeRate = (
+    atkDex: number,
+    defDex: number,
+    defLuck: number = 0,
+    atkType: UnitType = 'PLAYER',
+    defType: UnitType = 'ENEMY',
+    isJujutsu: boolean = false
+  ): number => {
+    const K = isJujutsu ? 0.027 : BATTLE_CONSTANTS.gKawashiPara;
 
-    const atkDexModified = atkDex;
-    const defDexModified = defDex;
+    let modAtkDex = atkDex;
+    let modDefDex = defDex;
 
-    // DEX 보정 규칙은 일단 기본 값 사용 (캐릭터 vs 캐릭터)
-    // 실제로는 타입에 따라 0.8, 0.6 보정이 들어가지만 계산기에서는 기본값
-
-    const bigDex = Math.max(atkDexModified, defDexModified);
-    const smallDex = Math.min(atkDexModified, defDexModified);
-
-    let ratio: number;
-    if (defDexModified >= atkDexModified) {
-      ratio = 1.0;
-    } else {
-      ratio = bigDex <= 0 ? 0 : smallDex / bigDex;
+    // 타입별 DEX 보정
+    if (atkType === 'ENEMY' && defType === 'PET') {
+      modAtkDex *= 0.8;
+    } else if (atkType !== 'ENEMY' && defType === 'PET') {
+      modDefDex *= 0.8;
+    } else if (atkType !== 'PLAYER' && defType === 'PLAYER') {
+      modAtkDex *= 0.6;
+    } else if (atkType === 'PLAYER' && defType !== 'PLAYER') {
+      modDefDex *= 0.6;
     }
 
-    const work = (bigDex - smallDex) / K;
-    if (work <= 0) return 0;
+    // Big/Small/Wari 계산
+    let big: number, small: number, wari: number;
+    if (modDefDex >= modAtkDex) {
+      big = modDefDex;
+      small = modAtkDex;
+      wari = 1.0;
+    } else {
+      big = modAtkDex;
+      small = modDefDex;
+      wari = big <= 0 ? 0.0 : small / big;
+    }
 
-    let per = Math.sqrt(work);
-    per *= ratio;
-    per += defLuck; // 방어자 운 추가
+    // 회피율 계산
+    const work = (big - small) / K;
+    let per = work <= 0 ? 0 : Math.sqrt(work);
+    per *= wari;
+    per += defLuck;
 
-    per *= 100; // 퍼센트로 변환
-
-    // 최대 75% 제한
-    if (per > 75 * 100) per = 75 * 100;
+    // 10000 기준 변환 및 제한
+    per *= 100;
+    if (per > BATTLE_CONSTANTS.KAWASHI_MAX_RATE * 100) {
+      per = BATTLE_CONSTANTS.KAWASHI_MAX_RATE * 100;
+    }
     if (per <= 0) per = 1;
 
-    return per / 100; // 실제 퍼센트 값으로 반환
+    return per / 100;
   };
 
-  // 전체 데미지 계산
+  // 카운터 확률 계산 (서버 원본 기반 - gCounterPara = 0.08)
+  // 카운터는 방어자가 공격자를 반격하는 것 - 방어자 순발력이 높을수록 카운터율 증가
+  const calculateCounterRate = (
+    atkDex: number,
+    defDex: number,
+    atkType: UnitType = 'PLAYER',
+    defType: UnitType = 'ENEMY'
+  ): number => {
+    let modAtkDex = atkDex;
+    let modDefDex = defDex;
+
+    // 타입별 DEX 보정 (서버 원본 로직 - battle_event.c 706-722)
+    if (atkType === 'ENEMY' && defType === 'PET') {
+      // 적 vs 펫: 공격자 DEX 감소 (펫이 카운터하기 쉬움)
+      modAtkDex *= 0.8;
+    } else if (atkType !== 'ENEMY' && defType === 'PET') {
+      // 플레이어/펫 vs 펫: 방어자 DEX 감소 (펫이 카운터하기 어려움)
+      modDefDex *= 0.8;
+    } else if (atkType !== 'PLAYER' && defType === 'PLAYER') {
+      // 적/펫 vs 플레이어: 공격자 DEX 감소 (플레이어가 카운터하기 쉬움)
+      modAtkDex *= 0.6;
+    } else if (atkType === 'PLAYER' && defType !== 'PLAYER') {
+      // 플레이어 vs 적/펫: 방어자 DEX 감소 (적/펫이 카운터하기 어려움)
+      modDefDex *= 0.6;
+    }
+
+    // Big/Small 판정 (회피율과 동일한 로직)
+    let big: number;
+    let small: number;
+    let wari: number;
+
+    if (modDefDex >= modAtkDex) {
+      big = modDefDex;
+      small = modAtkDex;
+      wari = 1.0;
+    } else {
+      big = modAtkDex;
+      small = modDefDex;
+      wari = big <= 0 ? 0.0 : small / big;
+    }
+
+    // 카운터율 계산: sqrt((Big - Small) / K) * wari
+    const work = (big - small) / BATTLE_CONSTANTS.gCounterPara;
+    if (work <= 0) {
+      return 1;
+    }
+
+    let per = Math.sqrt(work);
+    per *= wari;
+    per *= 100;
+
+    if (per < 0) per = 1;
+    if (per > 10000) per = 10000;
+
+    return Math.floor(per);
+  };
+
+  // 필드 속성 보정 계산 (서버 원본 기반)
+  const calculateFieldAttributeBonus = (
+    charAttr: CharacterStats,
+    fieldAttr: FieldAttribute,
+    fieldPower: number // 0-100
+  ): number => {
+    if (fieldAttr === 'none') return 1.0;
+
+    const attrValue = {
+      fire: charAttr.fire * 10,
+      water: charAttr.water * 10,
+      earth: charAttr.earth * 10,
+      wind: charAttr.wind * 10,
+    };
+
+    const matchingAttr = attrValue[fieldAttr] || 0;
+    const power =
+      BATTLE_CONSTANTS.FIELD_AJ_BOTTOM +
+      matchingAttr * (fieldPower / 100) * 0.01 * BATTLE_CONSTANTS.FIELD_AJ_PLUS;
+
+    return power;
+  };
+
+  // 상태이상에 따른 방어력 보정
+  const getDefenseModifierByStatus = (status: StatusEffect): number => {
+    switch (status) {
+      case 'stone': // 석화: 방어력 2배
+        return 2.0;
+      case 'weaken': // 허약: 방어력 감소
+        return 0.7;
+      default:
+        return 1.0;
+    }
+  };
+
+  // 상태이상에 따른 공격력 보정
+  const getAttackModifierByStatus = (status: StatusEffect): number => {
+    switch (status) {
+      case 'drunk': // 취기: 공격력 변동
+        return 0.9 + Math.random() * 0.2;
+      case 'confusion': // 혼란: 공격력 감소
+        return 0.8;
+      case 'weaken': // 허약: 공격력 감소
+        return 0.7;
+      default:
+        return 1.0;
+    }
+  };
+
+  // 상태이상에 따른 행동 불가 확률
+  const getActionDisabledChance = (status: StatusEffect): number => {
+    switch (status) {
+      case 'paralysis': // 마비
+        return 0.5; // 50%
+      case 'sleep': // 수면
+        return 1.0; // 100%
+      case 'stone': // 석화
+        return 1.0; // 100%
+      default:
+        return 0;
+    }
+  };
+
+  // 전체 데미지 계산 (확장된 버전)
   const calculateDamage = (weaponType: 'melee' | 'ranged') => {
     // 페트 탑승 시 스탯 적용
     const finalAttacker = calculateRidingStats(attacker, attackerPet);
     const finalDefender = calculateRidingStats(defender, defenderPet);
 
-    const atk = finalAttacker.str;
-    const def = finalDefender.tgh;
+    // 상태이상 보정 적용
+    const atkStatusMod = getAttackModifierByStatus(battleOptions.attackerStatus);
+    const defStatusMod = getDefenseModifierByStatus(battleOptions.defenderStatus);
+
+    // 최종 공격력/방어력 (상태이상 보정 적용)
+    const atk = Math.floor(finalAttacker.str * atkStatusMod);
+    const def = Math.floor(finalDefender.tgh * defStatusMod);
+
+    // 기본 데미지 계산
     const baseDamage = calculateBaseDamage(atk, def);
+
+    // 속성 보정 계산
     const attrBonus = calculateAttributeBonus(finalAttacker, finalDefender);
+
+    // 필드 속성 보정 계산
+    const atkFieldBonus = calculateFieldAttributeBonus(
+      finalAttacker,
+      battleOptions.fieldAttribute,
+      battleOptions.fieldPower
+    );
+    const defFieldBonus = calculateFieldAttributeBonus(
+      finalDefender,
+      battleOptions.fieldAttribute,
+      battleOptions.fieldPower
+    );
+    const fieldBonus = atkFieldBonus / defFieldBonus;
+
+    // 크리티컬 확률 계산
     const critRate = calculateCriticalRate(
       finalAttacker.dex,
       finalDefender.dex,
-      0, // 운(LUCK) - 추후 입력 가능하도록 확장 가능
-      0, // 무기 크리보너스 - 추후 입력 가능하도록 확장 가능
-      'PLAYER', // 공격자 타입 (기본: 플레이어)
-      'ENEMY' // 방어자 타입 (기본: 적)
+      finalAttacker.luck,
+      battleOptions.weaponCritBonus,
+      battleOptions.attackerType,
+      battleOptions.defenderType
     );
-    // 회피율: 근접은 기본, 원거리는 +20% 보너스 (최대치 제한 없음)
-    const baseDodgeRate = calculateDodgeRate(finalAttacker.dex, finalDefender.dex, 0);
-    const dodgeRate = weaponType === 'ranged' ? baseDodgeRate + 20 : baseDodgeRate;
 
-    const finalMin = Math.round(baseDamage.min * attrBonus);
-    const finalMax = Math.round(baseDamage.max * attrBonus);
-    const finalAvg = Math.round(baseDamage.avg * attrBonus);
+    // 회피율 계산 (타입별 보정 적용)
+    const baseDodgeRate = calculateDodgeRate(
+      finalAttacker.dex,
+      finalDefender.dex,
+      finalDefender.luck,
+      battleOptions.attackerType,
+      battleOptions.defenderType
+    );
+    // 서버 코드에서 BOW는 +20이 두 번 적용됨 (752줄, 759줄)
+    const dodgeRate = weaponType === 'ranged' ? baseDodgeRate + 40 : baseDodgeRate;
 
-    // 방어력 계산 (TGH × 0.7)
-    const defenderDefense = finalDefender.tgh * 0.7;
+    // 카운터 확률 계산 (새로 추가)
+    const counterRate = calculateCounterRate(
+      finalAttacker.dex,
+      finalDefender.dex,
+      battleOptions.attackerType,
+      battleOptions.defenderType
+    );
+
+    // 행동 불가 확률 (상태이상)
+    const actionDisabledChance = getActionDisabledChance(battleOptions.attackerStatus);
+
+    // 최종 데미지 (속성 보정 + 필드 보정)
+    const totalBonus = attrBonus * fieldBonus;
+    const finalMin = Math.round(baseDamage.min * totalBonus);
+    const finalMax = Math.round(baseDamage.max * totalBonus);
+    const finalAvg = Math.round(baseDamage.avg * totalBonus);
+
+    // 방어력 계산 (TGH × 0.7 × 상태이상 보정)
+    const defenderDefense = finalDefender.tgh * BATTLE_CONSTANTS.DEFENSE_RATE * defStatusMod;
 
     return {
       baseDamage,
       attrBonus,
+      fieldBonus,
       critRate,
       dodgeRate,
+      counterRate,
+      actionDisabledChance,
       normal: { min: finalMin, max: finalMax, avg: finalAvg },
       critical: {
         min: calculateCriticalDamage(finalMin, defenderDefense),
         max: calculateCriticalDamage(finalMax, defenderDefense),
         avg: calculateCriticalDamage(finalAvg, defenderDefense),
+      },
+      statusEffects: {
+        attackerStatus: battleOptions.attackerStatus,
+        defenderStatus: battleOptions.defenderStatus,
+        atkMod: atkStatusMod,
+        defMod: defStatusMod,
       },
     };
   };
@@ -3754,7 +4036,7 @@ const BattlePage: React.FC = () => {
                   </h2>
 
                   {/* 기본 스탯 */}
-                  <div className="grid grid-cols-2 md:grid-cols-5 gap-3 mb-4">
+                  <div className="grid grid-cols-2 md:grid-cols-6 gap-3 mb-4">
                     <div>
                       <label className="block text-sm font-bold mb-1 text-text-secondary">
                         레벨 (LV)
@@ -3808,6 +4090,23 @@ const BattlePage: React.FC = () => {
                         value={attacker.dex}
                         onChange={e => setAttacker({ ...attacker, dex: Number(e.target.value) })}
                         className="w-full px-3 py-2 bg-bg-tertiary border border-border rounded text-text-primary"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-bold mb-1 text-yellow-500">
+                        운 (0~5)
+                      </label>
+                      <input
+                        type="number"
+                        min={BATTLE_CONSTANTS.LUCK_MIN}
+                        max={BATTLE_CONSTANTS.LUCK_MAX}
+                        value={attacker.luck}
+                        onChange={e => {
+                          const val = Math.max(BATTLE_CONSTANTS.LUCK_MIN, Math.min(BATTLE_CONSTANTS.LUCK_MAX, Number(e.target.value)));
+                          setAttacker({ ...attacker, luck: val });
+                        }}
+                        className="w-full px-3 py-2 bg-bg-tertiary border border-yellow-500/50 rounded text-text-primary"
+                        placeholder="0"
                       />
                     </div>
                   </div>
@@ -4015,7 +4314,7 @@ const BattlePage: React.FC = () => {
                   </h2>
 
                   {/* 기본 스탯 */}
-                  <div className="grid grid-cols-2 md:grid-cols-5 gap-3 mb-4">
+                  <div className="grid grid-cols-2 md:grid-cols-6 gap-3 mb-4">
                     <div>
                       <label className="block text-sm font-bold mb-1 text-text-secondary">
                         레벨 (LV)
@@ -4069,6 +4368,23 @@ const BattlePage: React.FC = () => {
                         value={defender.dex}
                         onChange={e => setDefender({ ...defender, dex: Number(e.target.value) })}
                         className="w-full px-3 py-2 bg-bg-tertiary border border-border rounded text-text-primary"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-bold mb-1 text-yellow-500">
+                        운 (0~5)
+                      </label>
+                      <input
+                        type="number"
+                        min={BATTLE_CONSTANTS.LUCK_MIN}
+                        max={BATTLE_CONSTANTS.LUCK_MAX}
+                        value={defender.luck}
+                        onChange={e => {
+                          const val = Math.max(BATTLE_CONSTANTS.LUCK_MIN, Math.min(BATTLE_CONSTANTS.LUCK_MAX, Number(e.target.value)));
+                          setDefender({ ...defender, luck: val });
+                        }}
+                        className="w-full px-3 py-2 bg-bg-tertiary border border-yellow-500/50 rounded text-text-primary"
+                        placeholder="0"
                       />
                     </div>
                   </div>
@@ -4246,6 +4562,187 @@ const BattlePage: React.FC = () => {
                   </div>
                 </div>
 
+                {/* 배틀 옵션 패널 (새로 추가) */}
+                <div className="bg-bg-secondary rounded-lg p-4 md:p-5 border border-border shadow-lg">
+                  <h2 className="text-xl font-bold mb-4 text-purple-500 flex items-center gap-2">
+                    <span>⚙️</span> 배틀 옵션
+                  </h2>
+
+                  <div className="grid md:grid-cols-2 gap-4">
+                    {/* 유닛 타입 */}
+                    <div className="space-y-3">
+                      <div>
+                        <label className="block text-sm font-bold mb-1 text-text-secondary">
+                          공격자 타입
+                        </label>
+                        <select
+                          value={battleOptions.attackerType}
+                          onChange={e =>
+                            setBattleOptions({
+                              ...battleOptions,
+                              attackerType: e.target.value as UnitType,
+                            })
+                          }
+                          className="w-full px-3 py-2 bg-bg-tertiary border border-border rounded text-text-primary"
+                        >
+                          <option value="PLAYER">플레이어</option>
+                          <option value="PET">펫</option>
+                          <option value="ENEMY">적</option>
+                        </select>
+                      </div>
+                      <div>
+                        <label className="block text-sm font-bold mb-1 text-text-secondary">
+                          방어자 타입
+                        </label>
+                        <select
+                          value={battleOptions.defenderType}
+                          onChange={e =>
+                            setBattleOptions({
+                              ...battleOptions,
+                              defenderType: e.target.value as UnitType,
+                            })
+                          }
+                          className="w-full px-3 py-2 bg-bg-tertiary border border-border rounded text-text-primary"
+                        >
+                          <option value="PLAYER">플레이어</option>
+                          <option value="PET">펫</option>
+                          <option value="ENEMY">적</option>
+                        </select>
+                      </div>
+                    </div>
+
+                    {/* 상태이상 */}
+                    <div className="space-y-3">
+                      <div>
+                        <label className="block text-sm font-bold mb-1 text-red-400">
+                          공격자 상태이상
+                        </label>
+                        <select
+                          value={battleOptions.attackerStatus}
+                          onChange={e =>
+                            setBattleOptions({
+                              ...battleOptions,
+                              attackerStatus: e.target.value as StatusEffect,
+                            })
+                          }
+                          className="w-full px-3 py-2 bg-bg-tertiary border border-border rounded text-text-primary"
+                        >
+                          <option value="none">없음</option>
+                          <option value="poison">독 🟢</option>
+                          <option value="paralysis">마비 ⚡ (50% 행동불가)</option>
+                          <option value="sleep">수면 💤 (100% 행동불가)</option>
+                          <option value="stone">석화 🪨 (100% 행동불가)</option>
+                          <option value="drunk">취기 🍺 (공격력 변동)</option>
+                          <option value="confusion">혼란 😵 (공격력 -20%)</option>
+                          <option value="weaken">허약 💔 (공격력 -30%)</option>
+                        </select>
+                      </div>
+                      <div>
+                        <label className="block text-sm font-bold mb-1 text-blue-400">
+                          방어자 상태이상
+                        </label>
+                        <select
+                          value={battleOptions.defenderStatus}
+                          onChange={e =>
+                            setBattleOptions({
+                              ...battleOptions,
+                              defenderStatus: e.target.value as StatusEffect,
+                            })
+                          }
+                          className="w-full px-3 py-2 bg-bg-tertiary border border-border rounded text-text-primary"
+                        >
+                          <option value="none">없음</option>
+                          <option value="poison">독 🟢</option>
+                          <option value="paralysis">마비 ⚡</option>
+                          <option value="sleep">수면 💤</option>
+                          <option value="stone">석화 🪨 (방어력 2배)</option>
+                          <option value="drunk">취기 🍺</option>
+                          <option value="confusion">혼란 😵</option>
+                          <option value="weaken">허약 💔 (방어력 -30%)</option>
+                        </select>
+                      </div>
+                    </div>
+
+                    {/* 필드 속성 */}
+                    <div className="space-y-3">
+                      <div>
+                        <label className="block text-sm font-bold mb-1 text-text-secondary">
+                          필드 속성
+                        </label>
+                        <select
+                          value={battleOptions.fieldAttribute}
+                          onChange={e =>
+                            setBattleOptions({
+                              ...battleOptions,
+                              fieldAttribute: e.target.value as FieldAttribute,
+                            })
+                          }
+                          className="w-full px-3 py-2 bg-bg-tertiary border border-border rounded text-text-primary"
+                        >
+                          <option value="none">없음</option>
+                          <option value="fire">🔥 불 필드</option>
+                          <option value="water">💧 물 필드</option>
+                          <option value="earth">🌿 지 필드</option>
+                          <option value="wind">🌪️ 풍 필드</option>
+                        </select>
+                      </div>
+                      {battleOptions.fieldAttribute !== 'none' && (
+                        <div>
+                          <label className="block text-sm font-bold mb-1 text-text-secondary">
+                            필드 강도: {battleOptions.fieldPower}%
+                          </label>
+                          <input
+                            type="range"
+                            min="0"
+                            max="100"
+                            value={battleOptions.fieldPower}
+                            onChange={e =>
+                              setBattleOptions({
+                                ...battleOptions,
+                                fieldPower: Number(e.target.value),
+                              })
+                            }
+                            className="w-full"
+                          />
+                        </div>
+                      )}
+                    </div>
+
+                    {/* 무기 크리보너스 */}
+                    <div>
+                      <label className="block text-sm font-bold mb-1 text-text-secondary">
+                        무기 크리티컬 보너스
+                      </label>
+                      <input
+                        type="number"
+                        min="0"
+                        max="100"
+                        value={battleOptions.weaponCritBonus}
+                        onChange={e =>
+                          setBattleOptions({
+                            ...battleOptions,
+                            weaponCritBonus: Number(e.target.value),
+                          })
+                        }
+                        className="w-full px-3 py-2 bg-bg-tertiary border border-border rounded text-text-primary"
+                      />
+                      <p className="text-xs text-text-muted mt-1">
+                        무기에 붙은 크리티컬 증가 수치
+                      </p>
+                    </div>
+                  </div>
+
+                  {/* 옵션 초기화 버튼 */}
+                  <div className="mt-4 flex justify-end">
+                    <button
+                      onClick={() => setBattleOptions(getDefaultBattleOptions())}
+                      className="px-4 py-2 bg-bg-tertiary hover:bg-bg-primary border border-border rounded text-text-secondary text-sm transition-colors"
+                    >
+                      옵션 초기화
+                    </button>
+                  </div>
+                </div>
+
                 {/* 결과 표시 */}
                 <div className="bg-bg-secondary rounded-lg p-4 md:p-5 border border-border shadow-lg">
                   <h2 className="text-xl font-bold mb-4 text-accent flex items-center gap-2">
@@ -4266,6 +4763,14 @@ const BattlePage: React.FC = () => {
                                 ×{result.attrBonus.toFixed(2)}
                               </span>
                             </div>
+                            {result.fieldBonus !== 1 && (
+                              <div className="flex justify-between">
+                                <span className="text-text-secondary">필드 보정:</span>
+                                <span className="font-bold text-purple-400">
+                                  ×{result.fieldBonus.toFixed(2)}
+                                </span>
+                              </div>
+                            )}
                             <div className="flex justify-between">
                               <span className="text-text-secondary">크리티컬 확률:</span>
                               <span className="font-bold text-yellow-500">
@@ -4278,6 +4783,36 @@ const BattlePage: React.FC = () => {
                                 {result.dodgeRate.toFixed(2)}%
                               </span>
                             </div>
+                            <div className="flex justify-between">
+                              <span className="text-text-secondary">카운터 확률:</span>
+                              <span className="font-bold text-orange-500">
+                                {(result.counterRate / 100).toFixed(2)}%
+                              </span>
+                            </div>
+                            {result.actionDisabledChance > 0 && (
+                              <div className="flex justify-between bg-red-500/20 p-1 rounded">
+                                <span className="text-red-400">행동 불가 확률:</span>
+                                <span className="font-bold text-red-500">
+                                  {(result.actionDisabledChance * 100).toFixed(0)}%
+                                </span>
+                              </div>
+                            )}
+                            {result.statusEffects.atkMod !== 1 && (
+                              <div className="flex justify-between text-xs">
+                                <span className="text-text-muted">공격자 상태이상 보정:</span>
+                                <span className="text-red-400">
+                                  ×{result.statusEffects.atkMod.toFixed(2)}
+                                </span>
+                              </div>
+                            )}
+                            {result.statusEffects.defMod !== 1 && (
+                              <div className="flex justify-between text-xs">
+                                <span className="text-text-muted">방어자 상태이상 보정:</span>
+                                <span className="text-blue-400">
+                                  ×{result.statusEffects.defMod.toFixed(2)}
+                                </span>
+                              </div>
+                            )}
                             <hr className="border-border" />
                             <div>
                               <div className="text-text-secondary mb-1">일반 데미지:</div>
@@ -4315,6 +4850,14 @@ const BattlePage: React.FC = () => {
                                 ×{result.attrBonus.toFixed(2)}
                               </span>
                             </div>
+                            {result.fieldBonus !== 1 && (
+                              <div className="flex justify-between">
+                                <span className="text-text-secondary">필드 보정:</span>
+                                <span className="font-bold text-purple-400">
+                                  ×{result.fieldBonus.toFixed(2)}
+                                </span>
+                              </div>
+                            )}
                             <div className="flex justify-between">
                               <span className="text-text-secondary">크리티컬 확률:</span>
                               <span className="font-bold text-yellow-500">
@@ -4328,6 +4871,36 @@ const BattlePage: React.FC = () => {
                                 <span className="text-xs text-purple-400 ml-1">(+20% 보너스)</span>
                               </span>
                             </div>
+                            <div className="flex justify-between">
+                              <span className="text-text-secondary">카운터 확률:</span>
+                              <span className="font-bold text-orange-500">
+                                {(result.counterRate / 100).toFixed(2)}%
+                              </span>
+                            </div>
+                            {result.actionDisabledChance > 0 && (
+                              <div className="flex justify-between bg-red-500/20 p-1 rounded">
+                                <span className="text-red-400">행동 불가 확률:</span>
+                                <span className="font-bold text-red-500">
+                                  {(result.actionDisabledChance * 100).toFixed(0)}%
+                                </span>
+                              </div>
+                            )}
+                            {result.statusEffects.atkMod !== 1 && (
+                              <div className="flex justify-between text-xs">
+                                <span className="text-text-muted">공격자 상태이상 보정:</span>
+                                <span className="text-red-400">
+                                  ×{result.statusEffects.atkMod.toFixed(2)}
+                                </span>
+                              </div>
+                            )}
+                            {result.statusEffects.defMod !== 1 && (
+                              <div className="flex justify-between text-xs">
+                                <span className="text-text-muted">방어자 상태이상 보정:</span>
+                                <span className="text-blue-400">
+                                  ×{result.statusEffects.defMod.toFixed(2)}
+                                </span>
+                              </div>
+                            )}
                             <hr className="border-border" />
                             <div>
                               <div className="text-text-secondary mb-1">일반 데미지:</div>
