@@ -9,6 +9,8 @@ import BoardingPage from '@/features/boarding/pages/BoardingPage';
 import ItemsPage from '@/features/items/pages/ItemsPage';
 import QuestsPage from '@/features/quests/pages/QuestsPage';
 import QuestDetailPage from '@/features/quests/pages/QuestDetailPage';
+import NoticePage from '@/features/notice/pages/NoticePage';
+import PatchNoteDetailPage from '@/features/notice/pages/PatchNoteDetailPage';
 import MapsPage from '@/features/maps/pages/MapsPage';
 import MapDetailPage from '@/features/maps/pages/MapDetailPage';
 import CalculatorPage from '@/features/calculator/pages/CalculatorPage';
@@ -24,7 +26,8 @@ const AppContent: React.FC = () => {
   const location = useLocation();
   const hideTabNavigation =
     (location.pathname.includes('/quests/') && location.pathname !== '/quests') ||
-    (location.pathname.includes('/maps/') && location.pathname !== '/maps');
+    (location.pathname.includes('/maps/') && location.pathname !== '/maps') ||
+    (location.pathname.includes('/notice/') && location.pathname !== '/notice');
   const isRadontaPage = location.pathname === '/radonta';
   const isBattlePage = location.pathname === '/battle';
   const isDashboardPage = location.pathname === '/dashboard';
@@ -86,6 +89,8 @@ const AppContent: React.FC = () => {
         {!hideTabNavigation && <TabNavigation />}
         <Routes>
           <Route path="/" element={<Navigate to="/pets" replace />} />
+          <Route path="/notice" element={<NoticePage />} />
+          <Route path="/notice/:type/:noteId" element={<PatchNoteDetailPage />} />
           <Route path="/pets" element={<PetsPage />} />
           <Route path="/boarding" element={<BoardingPage />} />
           <Route path="/tip" element={<TipPage />} />
