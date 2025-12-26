@@ -1,0 +1,16 @@
+http://127.0.224.61:10086
+https://hwansoo.net/bbs/register.php
+https://r2.onninegame.com
+https://r2.onninegame.com/bug1.php
+https://r2.onninegame.com/pay/query.php
+https://r2.onninegame.com/pay/querya8.php
+https://r2.onninegame.com/pay/queryoppo.php
+https://r2.onninegame.com/pay/queryu8.php
+https://r2.onninegame.com/pay/queryvivo.php
+https://r2.onninegame.com/update/list4.php
+https://stone.moahmall.com
+https://stone.moahmall.com/update/list4.php
+https://stone.mooncg.com
+https://stone.mooncg.com/update/list4.php
+https://www.tungame.com/25server/reg/otherlogin.php
+https://www.tungame.com/25server/reg/showlogin.php

@@ -533,11 +533,24 @@ const PetCard: React.FC<PetCardProps> = ({ pet }) => {
         );
       });
 
-      // iOS Safari 체크
-      const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
+      // 모바일/데스크탑 상관없이 클립보드 복사 먼저 시도
+      let clipboardSuccess = false;
 
-      if (isIOS || !navigator.clipboard?.write) {
-        // iOS나 클립보드 API 미지원: 이미지 다운로드
+      if (navigator.clipboard?.write) {
+        try {
+          await navigator.clipboard.write([
+            new ClipboardItem({ 'image/png': blob })
+          ]);
+          clipboardSuccess = true;
+          showToastMessage('이미지가 클립보드에 복사되었습니다');
+        } catch {
+          // 클립보드 복사 실패 - 폴백으로 진행
+          clipboardSuccess = false;
+        }
+      }
+
+      // 클립보드 복사 실패 시 다운로드로 폴백
+      if (!clipboardSuccess) {
         const url = URL.createObjectURL(blob);
         const link = document.createElement('a');
         link.href = url;
@@ -547,12 +560,6 @@ const PetCard: React.FC<PetCardProps> = ({ pet }) => {
         document.body.removeChild(link);
         URL.revokeObjectURL(url);
         showToastMessage('이미지가 다운로드되었습니다');
-      } else {
-        // 클립보드에 이미지 복사
-        await navigator.clipboard.write([
-          new ClipboardItem({ 'image/png': blob })
-        ]);
-        showToastMessage('이미지가 클립보드에 복사되었습니다');
       }
     } catch (error) {
       console.error('Image capture failed:', error);
@@ -971,9 +978,7 @@ const PetCard: React.FC<PetCardProps> = ({ pet }) => {
                       {isCapturing ? '캡처 중...' : '이미지 공유'}
                     </p>
                     <p className="text-xs text-text-muted">
-                      {/iPad|iPhone|iPod/.test(navigator.userAgent)
-                        ? '펫 카드를 이미지로 다운로드합니다'
-                        : '펫 카드를 이미지로 클립보드에 복사합니다'}
+                      펫 카드를 이미지로 클립보드에 복사합니다
                     </p>
                   </div>
                   <svg className="w-5 h-5 text-text-muted group-hover:text-purple-400 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">

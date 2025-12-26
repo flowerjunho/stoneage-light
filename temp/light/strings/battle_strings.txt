@@ -1,0 +1,589 @@
+%*s  admissionAuthority:
+%*s  admissionAuthorityId: 
+%*sadmissionAuthority:
+%s/map/battlemap.lua
+'id' or 'name' missing
+: BattleSend
+ADMISSIONS
+ADMISSIONS_free
+ADMISSIONS_get0_admissionAuthority
+ADMISSIONS_get0_namingAuthority
+ADMISSIONS_get0_professionInfos
+ADMISSIONS_it
+ADMISSIONS_new
+ADMISSIONS_set0_admissionAuthority
+ADMISSIONS_set0_namingAuthority
+ADMISSIONS_set0_professionInfos
+ADMISSION_SYNTAX
+ADMISSION_SYNTAX_free
+ADMISSION_SYNTAX_get0_admissionAuthority
+ADMISSION_SYNTAX_get0_contentsOfAdmissions
+ADMISSION_SYNTAX_it
+ADMISSION_SYNTAX_new
+ADMISSION_SYNTAX_set0_admissionAuthority
+ADMISSION_SYNTAX_set0_contentsOfAdmissions
+AdvanceSkill
+AssitSkill
+AttNextMagicNum
+AttPreMagicNum
+BATTLE_CNT_DOWN_TIME
+Battle
+Battle1P2PFlag
+BattleAnimFlag
+BattleBpFlag
+BattleCliTurnNo
+BattleCmd
+BattleCmdBak
+BattleCmdNo
+BattleCmdReadPointer
+BattleCmdWritePointer
+BattleCntDown
+BattleCntDownFlag
+BattleEscFlag
+BattleIntervalCnt
+BattleItemNo
+BattleJujutuNo
+BattleMapFile
+BattleMapNo
+BattleMyMp
+BattleMyNo
+BattlePetReceiveFlag
+BattlePetReceivePetNo
+BattlePetStMenCnt
+BattleResultWndFlag
+BattleSkill
+BattleStatus
+BattleStatusBak
+BattleStatusReadPointer
+BattleStatusWritePointer
+BattleSvTurnNo
+BattleTurnReceiveFlag
+BattleWazaNo
+Critical
+EVP_PKEY_missing_parameters
+Extra non-whitespace after JSON value.
+FireSkillEnd
+FreeGetBattleMap
+FreeGetBattleMap 
+HitDispNo
+HitFontNo
+Illegal or missing hexadecimal sequence
+MakeHitBox
+Miss
+Missing ',' or ']' in array declaration
+Missing ',' or '}' in object declaration
+Missing ':' after object member name
+Missing '}' or object member name
+NSt6__ndk110__function6__funcIZ13BattleMsgProcvE3$_1NS_9allocatorIS2_EEFvPviEEE
+NSt6__ndk110__function6__funcIZ13BattleMsgProcvE3$_2NS_9allocatorIS2_EEFvPviEEE
+NSt6__ndk110__function6__funcIZ15BattleButtonPetvE3$_5NS_9allocatorIS2_EEFvPviEEE
+NSt6__ndk110__function6__funcIZ15BattleButtonPetvE3$_6NS_9allocatorIS2_EEFvPviEEE
+NSt6__ndk110__function6__funcIZ15BattleButtonPetvE3$_7NS_9allocatorIS2_EEFvPviEEE
+NSt6__ndk110__function6__funcIZ15BattleButtonPetvE3$_8NS_9allocatorIS2_EEFvPviEEE
+NSt6__ndk110__function6__funcIZ15BattleButtonPetvE3$_9NS_9allocatorIS2_EEFvPviEEE
+NSt6__ndk110__function6__funcIZ16BattleButtonItemvE3$_3NS_9allocatorIS2_EEFvPviEEE
+NSt6__ndk110__function6__funcIZ16BattleButtonItemvE3$_4NS_9allocatorIS2_EEFvPviEEE
+NSt6__ndk110__function6__funcIZ16skillShopWindow1vE4$_32NS_9allocatorIS2_EEFvPviEEE
+NSt6__ndk110__function6__funcIZ16skillShopWindow1vE4$_33NS_9allocatorIS2_EEFvPviEEE
+NSt6__ndk110__function6__funcIZ16skillShopWindow1vE4$_34NS_9allocatorIS2_EEFvPviEEE
+NSt6__ndk110__function6__funcIZ16skillShopWindow2vE4$_35NS_9allocatorIS2_EEFvPviEEE
+NSt6__ndk110__function6__funcIZ16skillShopWindow3vE4$_36NS_9allocatorIS2_EEFvPviEEE
+NSt6__ndk110__function6__funcIZ20BattleButtonPPLSKILLvE4$_10NS_9allocatorIS2_EEFvPviEEE
+NSt6__ndk110__function6__funcIZ20BattleButtonPPLSKILLvE4$_11NS_9allocatorIS2_EEFvPviEEE
+NSt6__ndk110__function6__funcIZ22BattlerRliveSelectProcvE3$_0NS_9allocatorIS2_EEFvPviEEE
+NSt6__ndk110__function6__funcIZ22BattlerRliveSelectProcvE3$_1NS_9allocatorIS2_EEFvPviEEE
+NSt6__ndk110__function6__funcIZ22BattlerRliveSelectProcvE3$_2NS_9allocatorIS2_EEFvPviEEE
+NoMiss
+Non Critical
+Number of redirects hit maximum amount
+OCSP_BASICRESP_get_ext_by_critical
+OCSP_ONEREQ_get_ext_by_critical
+OCSP_REQUEST_get_ext_by_critical
+OCSP_SINGLERESP_get_ext_by_critical
+PetskillShpwWindowProcNo
+Professional Information or basis for Admission
+RandBattleBg
+SelectWazaNo
+SkillWnd2
+URL using bad/illegal format or missing URL
+X509_CRL_get_ext_by_critical
+X509_EXTENSION_get_critical
+X509_EXTENSION_set_critical
+X509_REVOKED_get_ext_by_critical
+X509_get_ext_by_critical
+X509v3_get_ext_by_critical
+Z13BattleMsgProcvE3$_1
+Z13BattleMsgProcvE3$_2
+Z15BattleButtonPetvE3$_5
+Z15BattleButtonPetvE3$_6
+Z15BattleButtonPetvE3$_7
+Z15BattleButtonPetvE3$_8
+Z15BattleButtonPetvE3$_9
+Z16BattleButtonItemvE3$_3
+Z16BattleButtonItemvE3$_4
+Z16skillShopWindow1vE4$_32
+Z16skillShopWindow1vE4$_33
+Z16skillShopWindow1vE4$_34
+Z16skillShopWindow2vE4$_35
+Z16skillShopWindow3vE4$_36
+Z20BattleButtonPPLSKILLvE4$_10
+Z20BattleButtonPPLSKILLvE4$_11
+Z22BattlerRliveSelectProcvE3$_0
+Z22BattlerRliveSelectProcvE3$_1
+Z22BattlerRliveSelectProcvE3$_2
+_Z10BattleProcv
+_Z10MakeHitBoxiiiii
+_Z10battleSendPc
+_Z10readHitMapiiiiPtS_S_S_
+_Z11checkHitMapii
+_Z11noBattlePetv
+_Z11play_damageii
+_Z12battle_quakev
+_Z12damage_dispxv
+_Z12initBattleAiv
+_Z12magic_effectP6action
+_Z12set_hit_markP6actionS0_
+_Z13BattleMsgProcv
+_Z13CheckPetSkilli
+_Z13DrawBattleMapv
+_Z13ReadBattleMapi
+_Z13battleMenuFixv
+_Z13delCharBattleP6action
+_Z13delPcUseMagicv
+_Z13initBattleMsgv
+_Z13setBattleInfoPc
+_Z13setBattleInfoiPc
+_Z13setCharBattleP6actioniss
+_Z14BattleMenuProcv
+_Z14BattleNameDispv
+_Z14HitMouseCursorv
+_Z14InitBattleMenuv
+_Z14ddrawBattleMapv
+_Z14finishFightNPCb
+_Z14realGetHitFlagjPs
+_Z14set_damage_numP6actionii
+_Z14showDamage_numP6action
+_Z14waitToFightNPCii
+_Z14walkToFightNPCv
+_Z15BattleButtonOffv
+_Z15BattleButtonPetv
+_Z15CheckBattle1P2Pv
+_Z15delCharUseMagicP6action
+_Z15setCharUseMagicP6action
+_Z16BattleButtonHelpv
+_Z16BattleButtonItemv
+_Z16BattleButtonWazav
+_Z16FreeGetBattleMapi
+_Z16LogToBattleErrorPci
+_Z16ScriptFunc_FightiP14ScriptArgument
+_Z16checkGuildBoxHitv
+_Z16realGetHitPointsjPsS_
+_Z16skillShopWindow1v
+_Z16skillShopWindow2v
+_Z16skillShopWindow3v
+_Z16skillShopWindow4v
+_Z17BattleButtonGuardv
+_Z17BattleCntDownDispv
+_Z17CheckBattleTargetv
+_Z17ClearBattleButtonv
+_Z17IsWaitingFightNPCv
+_Z17PetSkillShowType1v
+_Z17hit_mark_criticalP6action
+_Z18BattleButtonAttackv
+_Z18BattleButtonEscapev
+_Z18BattleTargetSelectv
+_Z18InitBattleAnimFlagv
+_Z18RunTimeMagicToCallv
+_Z18releaseGuildBoxHitv
+_Z18set_single_jujutsuiP6action
+_Z19BattleButtonCapturev
+_Z19BattleButtonJujutsuv
+_Z19BattleSetWazaHitBoxii
+_Z19CheckBattleAnimFlagv
+_Z19DisplayAttackEffectP6action
+_Z19getBattleButtonFlagi
+_Z20BattleButtonPPLSKILLv
+_Z20ScrollPanelHitCursorP11ScrollPanel
+_Z20initSkillShopWindow1v
+_Z20initSkillShopWindow2v
+_Z20initSkillShopWindow3v
+_Z20initSkillShopWindow4v
+_Z20set_jujutsu_hit_markP6action
+_Z20stockFontNumToDamageiic14fontBattleTypePcb
+_Z21GetMapObjectHitPointsiPsS_S_S_S_
+_Z21ScriptFunc_AutoBattleiP14ScriptArgument
+_Z21showPromptBmpToBattleiiPc
+_Z22BattlerRliveSelectProcv
+_Z22ScriptFunc_EnemyBattleiP14ScriptArgument
+_Z22SetDisplayAttackEffectP6actioni
+_Z22getProfessionSkillTypei
+_Z23SetDisplayAttackEffect1P6actioni
+_Z23getFontNumWidthToDamagePc14fontBattleType
+_Z23initPetSkillWindowType1Pc
+_Z24ScriptFunc_petSkillStateiP14ScriptArgument
+_Z25getBattleTargetSelectFlagv
+_Z25lssproto_BATTLESKILL_recviPc
+_Z25lssproto_BATTLESKILL_sendii
+_Z29lssproto_reConnectBattle_sendi
+_Z33ScriptFunc_ShowGuideBoxFromBattleiP14ScriptArgument
+_Z7missileP6action
+_Z8hit_markP6action
+_Z9SortSkillv
+_ZN11ScrollPanel10MakeHitBoxEiiiibNSt6__ndk18functionIFvPviEEES2_
+_ZN11ScrollPanel10MakeHitBoxEiiiibPvPci
+_ZNKSt6__ndk18time_getIcNS_19istreambuf_iteratorIcNS_11char_traitsIcEEEEE17__get_white_spaceERS4_S4_RjRKNS_5ctypeIcEE
+_ZNKSt6__ndk18time_getIwNS_19istreambuf_iteratorIwNS_11char_traitsIwEEEEE17__get_white_spaceERS4_S4_RjRKNS_5ctypeIwEE
+admissionAuthority
+autoBattleCount
+bad magic number
+battleButtonBak
+battleIconTbl
+battleMenuFlag
+battleMenuFlag2
+battleMsgType
+battlePetButtonFlag
+battlePetNoBak
+battlePetNoBak2
+battlePlayerEscFlag
+battleResultMsg
+battleSend
+battleWazaTargetBak
+battlebufftype
+battleinfo
+catchPetBattleEscape
+contentsOfAdmissions
+critical
+critical,
+d2i_ADMISSIONS
+d2i_ADMISSION_SYNTAX
+data/battlemap/battle00.sabex
+data/battlemap/battle01.sabex
+data/battlemap/battle02.sabex
+data/battlemap/battle03.sabex
+data/battlemap/battle04.sabex
+data/battlemap/battle05.sabex
+data/battlemap/battle06.sabex
+data/battlemap/battle07.sabex
+data/battlemap/battle08.sabex
+data/battlemap/battle09.sabex
+data/battlemap/battle10.sabex
+data/battlemap/battle100.sabex
+data/battlemap/battle101.sabex
+data/battlemap/battle102.sabex
+data/battlemap/battle103.sabex
+data/battlemap/battle104.sabex
+data/battlemap/battle105.sabex
+data/battlemap/battle106.sabex
+data/battlemap/battle107.sabex
+data/battlemap/battle108.sabex
+data/battlemap/battle109.sabex
+data/battlemap/battle11.sabex
+data/battlemap/battle110.sabex
+data/battlemap/battle111.sabex
+data/battlemap/battle112.sabex
+data/battlemap/battle113.sabex
+data/battlemap/battle114.sabex
+data/battlemap/battle115.sabex
+data/battlemap/battle116.sabex
+data/battlemap/battle117.sabex
+data/battlemap/battle118.sabex
+data/battlemap/battle119.sabex
+data/battlemap/battle12.sabex
+data/battlemap/battle120.sabex
+data/battlemap/battle121.sabex
+data/battlemap/battle122.sabex
+data/battlemap/battle123.sabex
+data/battlemap/battle124.sabex
+data/battlemap/battle125.sabex
+data/battlemap/battle126.sabex
+data/battlemap/battle127.sabex
+data/battlemap/battle128.sabex
+data/battlemap/battle129.sabex
+data/battlemap/battle13.sabex
+data/battlemap/battle130.sabex
+data/battlemap/battle131.sabex
+data/battlemap/battle132.sabex
+data/battlemap/battle133.sabex
+data/battlemap/battle134.sabex
+data/battlemap/battle135.sabex
+data/battlemap/battle136.sabex
+data/battlemap/battle137.sabex
+data/battlemap/battle138.sabex
+data/battlemap/battle139.sabex
+data/battlemap/battle14.sabex
+data/battlemap/battle140.sabex
+data/battlemap/battle141.sabex
+data/battlemap/battle142.sabex
+data/battlemap/battle143.sabex
+data/battlemap/battle144.sabex
+data/battlemap/battle145.sabex
+data/battlemap/battle146.sabex
+data/battlemap/battle147.sabex
+data/battlemap/battle148.sabex
+data/battlemap/battle149.sabex
+data/battlemap/battle15.sabex
+data/battlemap/battle150.sabex
+data/battlemap/battle151.sabex
+data/battlemap/battle152.sabex
+data/battlemap/battle153.sabex
+data/battlemap/battle154.sabex
+data/battlemap/battle155.sabex
+data/battlemap/battle156.sabex
+data/battlemap/battle157.sabex
+data/battlemap/battle158.sabex
+data/battlemap/battle159.sabex
+data/battlemap/battle16.sabex
+data/battlemap/battle160.sabex
+data/battlemap/battle161.sabex
+data/battlemap/battle162.sabex
+data/battlemap/battle163.sabex
+data/battlemap/battle164.sabex
+data/battlemap/battle165.sabex
+data/battlemap/battle166.sabex
+data/battlemap/battle167.sabex
+data/battlemap/battle168.sabex
+data/battlemap/battle169.sabex
+data/battlemap/battle17.sabex
+data/battlemap/battle170.sabex
+data/battlemap/battle171.sabex
+data/battlemap/battle172.sabex
+data/battlemap/battle173.sabex
+data/battlemap/battle174.sabex
+data/battlemap/battle175.sabex
+data/battlemap/battle176.sabex
+data/battlemap/battle177.sabex
+data/battlemap/battle178.sabex
+data/battlemap/battle179.sabex
+data/battlemap/battle18.sabex
+data/battlemap/battle180.sabex
+data/battlemap/battle181.sabex
+data/battlemap/battle182.sabex
+data/battlemap/battle183.sabex
+data/battlemap/battle184.sabex
+data/battlemap/battle185.sabex
+data/battlemap/battle186.sabex
+data/battlemap/battle187.sabex
+data/battlemap/battle188.sabex
+data/battlemap/battle189.sabex
+data/battlemap/battle19.sabex
+data/battlemap/battle190.sabex
+data/battlemap/battle191.sabex
+data/battlemap/battle192.sabex
+data/battlemap/battle193.sabex
+data/battlemap/battle194.sabex
+data/battlemap/battle195.sabex
+data/battlemap/battle196.sabex
+data/battlemap/battle197.sabex
+data/battlemap/battle198.sabex
+data/battlemap/battle199.sabex
+data/battlemap/battle20.sabex
+data/battlemap/battle200.sabex
+data/battlemap/battle201.sabex
+data/battlemap/battle202.sabex
+data/battlemap/battle203.sabex
+data/battlemap/battle204.sabex
+data/battlemap/battle205.sabex
+data/battlemap/battle206.sabex
+data/battlemap/battle207.sabex
+data/battlemap/battle208.sabex
+data/battlemap/battle209.sabex
+data/battlemap/battle21.sabex
+data/battlemap/battle210.sabex
+data/battlemap/battle211.sabex
+data/battlemap/battle212.sabex
+data/battlemap/battle213.sabex
+data/battlemap/battle214.sabex
+data/battlemap/battle215.sabex
+data/battlemap/battle216.sabex
+data/battlemap/battle217.sabex
+data/battlemap/battle218.sabex
+data/battlemap/battle219.sabex
+data/battlemap/battle22.sabex
+data/battlemap/battle23.sabex
+data/battlemap/battle24.sabex
+data/battlemap/battle25.sabex
+data/battlemap/battle26.sabex
+data/battlemap/battle27.sabex
+data/battlemap/battle28.sabex
+data/battlemap/battle29.sabex
+data/battlemap/battle30.sabex
+data/battlemap/battle31.sabex
+data/battlemap/battle32.sabex
+data/battlemap/battle33.sabex
+data/battlemap/battle34.sabex
+data/battlemap/battle35.sabex
+data/battlemap/battle36.sabex
+data/battlemap/battle37.sabex
+data/battlemap/battle38.sabex
+data/battlemap/battle39.sabex
+data/battlemap/battle40.sabex
+data/battlemap/battle41.sabex
+data/battlemap/battle42.sabex
+data/battlemap/battle43.sabex
+data/battlemap/battle44.sabex
+data/battlemap/battle45.sabex
+data/battlemap/battle46.sabex
+data/battlemap/battle47.sabex
+data/battlemap/battle48.sabex
+data/battlemap/battle49.sabex
+data/battlemap/battle50.sabex
+data/battlemap/battle51.sabex
+data/battlemap/battle52.sabex
+data/battlemap/battle53.sabex
+data/battlemap/battle54.sabex
+data/battlemap/battle55.sabex
+data/battlemap/battle56.sabex
+data/battlemap/battle57.sabex
+data/battlemap/battle58.sabex
+data/battlemap/battle59.sabex
+data/battlemap/battle60.sabex
+data/battlemap/battle61.sabex
+data/battlemap/battle62.sabex
+data/battlemap/battle63.sabex
+data/battlemap/battle64.sabex
+data/battlemap/battle65.sabex
+data/battlemap/battle66.sabex
+data/battlemap/battle67.sabex
+data/battlemap/battle68.sabex
+data/battlemap/battle69.sabex
+data/battlemap/battle70.sabex
+data/battlemap/battle71.sabex
+data/battlemap/battle72.sabex
+data/battlemap/battle73.sabex
+data/battlemap/battle74.sabex
+data/battlemap/battle75.sabex
+data/battlemap/battle76.sabex
+data/battlemap/battle77.sabex
+data/battlemap/battle78.sabex
+data/battlemap/battle79.sabex
+data/battlemap/battle80.sabex
+data/battlemap/battle81.sabex
+data/battlemap/battle82.sabex
+data/battlemap/battle83.sabex
+data/battlemap/battle84.sabex
+data/battlemap/battle85.sabex
+data/battlemap/battle86.sabex
+data/battlemap/battle87.sabex
+data/battlemap/battle88.sabex
+data/battlemap/battle89.sabex
+data/battlemap/battle90.sabex
+data/battlemap/battle91.sabex
+data/battlemap/battle92.sabex
+data/battlemap/battle93.sabex
+data/battlemap/battle94.sabex
+data/battlemap/battle95.sabex
+data/battlemap/battle96.sabex
+data/battlemap/battle97.sabex
+data/battlemap/battle98.sabex
+data/battlemap/battle99.sabex
+familyBattleInfo
+field '%s' missing in date table
+field missing
+fieldBtnHitId
+gameMagicBlood
+getHitDispNo
+getHitFontNo
+getMagic
+getPetSkill
+getProfessionSkill
+getProfessionSkillType
+hitMap
+i2d_ADMISSIONS
+i2d_ADMISSION_SYNTAX
+log conf missing description
+log conf missing key
+lookup word is missing
+lpBattleSurface
+magic
+magicBlood
+magicRelive
+malformed pattern (missing ']')
+malformed pattern (missing arguments to '%%b')
+map/battlemap.lua
+mapProfessionSkillData
+mapmagicData
+mappetskillData
+missing '[' after '%%f' in pattern
+missing '{'
+missing '}'
+missing OID
+missing asn1 eos
+missing close square bracket
+missing dek iv
+missing dsa signing cert
+missing ecdsa signing cert
+missing eoc
+missing equal sign
+missing fatal
+missing init function
+missing iteration count
+missing key
+missing message digest
+missing ocspsigning usage
+missing parameter
+missing parameters
+missing pass
+missing private key
+missing psk kex modes extension
+missing pubkey
+missing rsa certificate
+missing rsa encrypting cert
+missing rsa signing cert
+missing salt
+missing second number
+missing secret
+missing seed
+missing sigalgs extension
+missing signing cert
+missing size for format option 'c'
+missing supported groups extension
+missing tmp dh key
+missing tmp ecdh key
+missing value
+noBattlePet
+null before block missing
+p_cbGameMagicBloodIndex
+p_cbMagicBloodIndex
+p_cbMagicBloodTarget
+p_cbUsuallyMagicIndex
+p_vtGameMagicBloodLimit
+p_vtMagicBloodLimit
+p_vtUsuallyMagicLimit
+petSkill
+profession_skill
+prouseskill
+rc2_magic_to_meth
+reBattleTime
+region missing in parameters or hostname
+releaseGuildBoxHit
+required cipher missing
+required compression algorithm missing
+rightClickAttackFlag
+sealSkill
+selShopSkillNo
+selShopSkillPetNo
+selShopSkillSlotNo
+selectGraHitArea
+service missing in parameters or hostname
+setBattleInfo
+setMagic
+setPetSkill
+setProfessionSkill
+shapeHitNo
+shapeHitPanelCnt
+showPromptBmpToBattle
+skillShopIndex
+skillShopWindow1ProcNo
+skillShopWindow2ProcNo
+skillShopWindow3ProcNo
+skillShopWindow4ProcNo
+skillShopWindowProcNo
+sslv3 rollback attack
+stockFontNumToDamage
+tlsv13 alert missing extension
+unhandled critical CRL extension
+unhandled critical extension
+v3_ext_admission
+value missing
+white.sap
+x509ExtAdmission
