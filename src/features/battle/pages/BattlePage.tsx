@@ -4116,7 +4116,7 @@ const BattlePage: React.FC = () => {
                     : 'bg-bg-tertiary text-text-secondary hover:bg-bg-secondary border border-border'
                 }`}
               >
-                📊 데미지 계산
+                ⚔️ 전투 시뮬레이션
               </button>
               <button
                 onClick={() => setCalculatorSubTab('reverse')}
@@ -4130,7 +4130,7 @@ const BattlePage: React.FC = () => {
               </button>
             </div>
 
-            {/* 데미지 계산 서브탭 */}
+            {/* 전투 시뮬레이션 서브탭 */}
             {calculatorSubTab === 'damage' && (
               <>
                 {/* 전투 타입 선택 */}
@@ -4826,8 +4826,10 @@ const BattlePage: React.FC = () => {
                             </div>
                             <button
                               onClick={() => {
+                                setSimulationResult(null);
+                                setSimProgress(0);
+                                setSimulationWeaponType('melee');
                                 setShowSimulation(true);
-                                runSimulation('melee', simulationCount);
                               }}
                               className="w-full mt-3 px-3 py-2 bg-green-600 hover:bg-green-700 text-white rounded font-bold text-sm transition-colors"
                             >
@@ -4923,8 +4925,10 @@ const BattlePage: React.FC = () => {
                             </div>
                             <button
                               onClick={() => {
+                                setSimulationResult(null);
+                                setSimProgress(0);
+                                setSimulationWeaponType('ranged');
                                 setShowSimulation(true);
-                                runSimulation('ranged', simulationCount);
                               }}
                               className="w-full mt-3 px-3 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded font-bold text-sm transition-colors"
                             >
@@ -5657,14 +5661,14 @@ const BattlePage: React.FC = () => {
 
                         const earthDmg =
                           myEarth * enNone * 1.5 +
-                          myEarth * enFirePercent * 0.6 +
+                          myEarth * enFirePercent * 1.0 +
                           myEarth * enWaterPercent * 1.5 +
                           myEarth * enEarthPercent * 1.0 +
-                          myEarth * enWindPercent * 1.0;
+                          myEarth * enWindPercent * 0.6;
 
                         const windDmg =
                           myWind * enNone * 1.5 +
-                          myWind * enFirePercent * 1.0 +
+                          myWind * enFirePercent * 0.6 +
                           myWind * enWaterPercent * 1.0 +
                           myWind * enEarthPercent * 1.5 +
                           myWind * enWindPercent * 1.0;
@@ -5680,241 +5684,336 @@ const BattlePage: React.FC = () => {
                         return total * 0.0001;
                       };
 
-                      // 2가지 케이스: 상성 유리 vs 상성 불리
-                      const results = [];
+                      // 새로운 접근: 모든 속성 조합을 탐색하여 일치하는 것 찾기
+                      // 데미지 공식: dmg = (atk - def*0.7) * 2.0 * attrBonus
+                      // 역산: def*0.7 = atk - dmg / (2.0 * attrBonus)
+                      // def = (atk - dmg / (2.0 * attrBonus)) / 0.7
 
-                      // 케이스 1: 내가 상대를 잡아먹는 경우 (속성 보정 최대)
-                      // 지 → 수 잡음, 수 → 화 잡음, 화 → 풍 잡음, 풍 → 지 잡음
-                      let advantageAttr = '';
-                      let advantageValues = { earth: 0, water: 0, fire: 0, wind: 0 };
+                      // 가능한 모든 속성 조합 생성 (최대 2개 속성, 합계 10)
+                      const generateAttrCombinations = () => {
+                        const combos: Array<{
+                          earth: number;
+                          water: number;
+                          fire: number;
+                          wind: number;
+                          label: string;
+                        }> = [];
 
-                      if (
-                        myEarth >= myWater &&
-                        myEarth >= myFire &&
-                        myEarth >= myWind &&
-                        myEarth > 0
-                      ) {
-                        // 지가 제일 많으면 → 수 속성을 잡아먹음
-                        advantageAttr = '수10';
-                        advantageValues = { earth: 0, water: 10, fire: 0, wind: 0 };
-                      } else if (
-                        myWater >= myEarth &&
-                        myWater >= myFire &&
-                        myWater >= myWind &&
-                        myWater > 0
-                      ) {
-                        // 수가 제일 많으면 → 화 속성을 잡아먹음
-                        advantageAttr = '화10';
-                        advantageValues = { earth: 0, water: 0, fire: 10, wind: 0 };
-                      } else if (
-                        myFire >= myEarth &&
-                        myFire >= myWater &&
-                        myFire >= myWind &&
-                        myFire > 0
-                      ) {
-                        // 화가 제일 많으면 → 풍 속성을 잡아먹음
-                        advantageAttr = '풍10';
-                        advantageValues = { earth: 0, water: 0, fire: 0, wind: 10 };
-                      } else if (
-                        myWind >= myEarth &&
-                        myWind >= myWater &&
-                        myWind >= myFire &&
-                        myWind > 0
-                      ) {
-                        // 풍이 제일 많으면 → 지 속성을 잡아먹음
-                        advantageAttr = '지10';
-                        advantageValues = { earth: 10, water: 0, fire: 0, wind: 0 };
-                      } else {
-                        // 무속성이면 → 아무 속성
-                        advantageAttr = '화10';
-                        advantageValues = { earth: 0, water: 0, fire: 10, wind: 0 };
-                      }
+                        // 무속성
+                        combos.push({ earth: 0, water: 0, fire: 0, wind: 0, label: '무속성' });
 
-                      const advantageBonus = calcAttrBonus(
-                        advantageValues.earth,
-                        advantageValues.water,
-                        advantageValues.fire,
-                        advantageValues.wind
-                      );
-                      const advantageDef = atk - dmg / (2.0 * advantageBonus);
+                        // 단일 속성 (지10, 수10, 화10, 풍10)
+                        combos.push({ earth: 10, water: 0, fire: 0, wind: 0, label: '지10' });
+                        combos.push({ earth: 0, water: 10, fire: 0, wind: 0, label: '수10' });
+                        combos.push({ earth: 0, water: 0, fire: 10, wind: 0, label: '화10' });
+                        combos.push({ earth: 0, water: 0, fire: 0, wind: 10, label: '풍10' });
 
-                      if (advantageDef >= 0) {
-                        // advantageDef는 최종 방어력 (탑승 적용된 값)
-                        // 페트가 있으면: finalTgh = charTgh * 0.7 + petTgh * 0.3
-                        // 역으로 계산: charTgh = (finalTgh - petTgh * 0.3) / 0.7
-                        let charDefense;
-                        if (opponentPetTgh > 0) {
-                          // 페트 탑승 시: 캐릭터 실제 방어력 계산
-                          charDefense = Math.round(
-                            (advantageDef / 0.7 - opponentPetTgh * 0.3) / 0.7
-                          );
-                        } else {
-                          // 페트 없으면 기존 방식
-                          charDefense = Math.round(advantageDef / 0.7);
+                        // 2개 속성 조합 (주속성 + 부속성, 합계 10)
+                        const attrs = ['earth', 'water', 'fire', 'wind'] as const;
+                        const attrNames = { earth: '지', water: '수', fire: '화', wind: '풍' };
+
+                        for (let i = 0; i < attrs.length; i++) {
+                          for (let j = i + 1; j < attrs.length; j++) {
+                            // 주속성 5~9, 부속성 1~5 (주 >= 부)
+                            for (let main = 5; main <= 9; main++) {
+                              const sub = 10 - main;
+                              // 첫 번째가 주속성
+                              const combo1: { earth: number; water: number; fire: number; wind: number } = {
+                                earth: 0,
+                                water: 0,
+                                fire: 0,
+                                wind: 0,
+                              };
+                              combo1[attrs[i]] = main;
+                              combo1[attrs[j]] = sub;
+                              combos.push({
+                                ...combo1,
+                                label: `${attrNames[attrs[i]]}${main}${attrNames[attrs[j]]}${sub}`,
+                              });
+
+                              // 두 번째가 주속성
+                              const combo2: { earth: number; water: number; fire: number; wind: number } = {
+                                earth: 0,
+                                water: 0,
+                                fire: 0,
+                                wind: 0,
+                              };
+                              combo2[attrs[j]] = main;
+                              combo2[attrs[i]] = sub;
+                              combos.push({
+                                ...combo2,
+                                label: `${attrNames[attrs[j]]}${main}${attrNames[attrs[i]]}${sub}`,
+                              });
+                            }
+                          }
                         }
 
-                        results.push({
-                          case: '상성 유리 (내가 상대 속성을 잡는 경우)',
-                          defense: charDefense,
-                          enemyAttr: advantageAttr,
-                          attrBonus: advantageBonus,
-                        });
-                      }
-
-                      // 케이스 2: 상대가 나를 잡아먹는 경우 (속성 보정 최소)
-                      // 지 ← 풍에 약함, 수 ← 지에 약함, 화 ← 수에 약함, 풍 ← 화에 약함
-                      let disadvantageAttr = '';
-                      let disadvantageValues = { earth: 0, water: 0, fire: 0, wind: 0 };
-
-                      if (
-                        myEarth >= myWater &&
-                        myEarth >= myFire &&
-                        myEarth >= myWind &&
-                        myEarth > 0
-                      ) {
-                        // 지가 제일 많으면 → 풍 속성에 약함
-                        disadvantageAttr = '풍10';
-                        disadvantageValues = { earth: 0, water: 0, fire: 0, wind: 10 };
-                      } else if (
-                        myWater >= myEarth &&
-                        myWater >= myFire &&
-                        myWater >= myWind &&
-                        myWater > 0
-                      ) {
-                        // 수가 제일 많으면 → 지 속성에 약함
-                        disadvantageAttr = '지10';
-                        disadvantageValues = { earth: 10, water: 0, fire: 0, wind: 0 };
-                      } else if (
-                        myFire >= myEarth &&
-                        myFire >= myWater &&
-                        myFire >= myWind &&
-                        myFire > 0
-                      ) {
-                        // 화가 제일 많으면 → 수 속성에 약함
-                        disadvantageAttr = '수10';
-                        disadvantageValues = { earth: 0, water: 10, fire: 0, wind: 0 };
-                      } else if (
-                        myWind >= myEarth &&
-                        myWind >= myWater &&
-                        myWind >= myFire &&
-                        myWind > 0
-                      ) {
-                        // 풍이 제일 많으면 → 화 속성에 약함
-                        disadvantageAttr = '화10';
-                        disadvantageValues = { earth: 0, water: 0, fire: 10, wind: 0 };
-                      } else {
-                        // 무속성이면 → 아무 속성
-                        disadvantageAttr = '화10';
-                        disadvantageValues = { earth: 0, water: 0, fire: 10, wind: 0 };
-                      }
-
-                      const disadvantageBonus = calcAttrBonus(
-                        disadvantageValues.earth,
-                        disadvantageValues.water,
-                        disadvantageValues.fire,
-                        disadvantageValues.wind
-                      );
-                      const disadvantageDef = atk - dmg / (2.0 * disadvantageBonus);
-
-                      if (disadvantageDef >= 0) {
-                        let charDefense;
-                        if (opponentPetTgh > 0) {
-                          charDefense = Math.round(
-                            (disadvantageDef / 0.7 - opponentPetTgh * 0.3) / 0.7
-                          );
-                        } else {
-                          charDefense = Math.round(disadvantageDef / 0.7);
-                        }
-
-                        results.push({
-                          case: '상성 불리 (상대가 내 속성을 잡는 경우)',
-                          defense: charDefense,
-                          enemyAttr: disadvantageAttr,
-                          attrBonus: disadvantageBonus,
-                        });
-                      }
-
-                      // 케이스 3: 속성이 같은 경우 (속성 보정 1.0배)
-                      // 내 속성과 완전히 동일한 상대
-                      const neutralValues = {
-                        earth: reverseCalc.myEarth,
-                        water: reverseCalc.myWater,
-                        fire: reverseCalc.myFire,
-                        wind: reverseCalc.myWind,
+                        return combos;
                       };
 
-                      const neutralAttrs = [];
-                      if (neutralValues.earth > 0) neutralAttrs.push(`지${neutralValues.earth}`);
-                      if (neutralValues.water > 0) neutralAttrs.push(`수${neutralValues.water}`);
-                      if (neutralValues.fire > 0) neutralAttrs.push(`화${neutralValues.fire}`);
-                      if (neutralValues.wind > 0) neutralAttrs.push(`풍${neutralValues.wind}`);
-                      const neutralAttr =
-                        neutralAttrs.length > 0 ? neutralAttrs.join('') : '무속성';
+                      const allCombos = generateAttrCombinations();
 
-                      const neutralBonus = calcAttrBonus(
-                        neutralValues.earth,
-                        neutralValues.water,
-                        neutralValues.fire,
-                        neutralValues.wind
-                      );
-                      const neutralDef = atk - dmg / (2.0 * neutralBonus);
+                      // 각 조합에 대해 역계산 수행
+                      type ResultItem = {
+                        defense: number;
+                        attrBonus: number;
+                        enemyAttr: string;
+                        category: 'advantage' | 'disadvantage' | 'neutral';
+                      };
+                      const matchingResults: ResultItem[] = [];
 
-                      if (neutralDef >= 0) {
-                        let charDefense;
-                        if (opponentPetTgh > 0) {
-                          charDefense = Math.round((neutralDef / 0.7 - opponentPetTgh * 0.3) / 0.7);
-                        } else {
-                          charDefense = Math.round(neutralDef / 0.7);
+                      // 내 주속성 결정 (가장 높은 속성)
+                      const myAttrs = [
+                        { type: 'earth', val: myEarth / 10, beats: 'water', beatenBy: 'wind' },
+                        { type: 'water', val: myWater / 10, beats: 'fire', beatenBy: 'earth' },
+                        { type: 'fire', val: myFire / 10, beats: 'wind', beatenBy: 'water' },
+                        { type: 'wind', val: myWind / 10, beats: 'earth', beatenBy: 'fire' },
+                      ];
+                      const mainAttr = myAttrs.reduce((a, b) => (a.val >= b.val ? a : b));
+
+                      allCombos.forEach(combo => {
+                        const bonus = calcAttrBonus(combo.earth, combo.water, combo.fire, combo.wind);
+                        const defenseTimesPoint7 = atk - dmg / (2.0 * bonus);
+
+                        if (defenseTimesPoint7 >= 0) {
+                          let charDefense;
+                          if (opponentPetTgh > 0) {
+                            charDefense = Math.round(
+                              (defenseTimesPoint7 / 0.7 - opponentPetTgh * 0.3) / 0.7
+                            );
+                          } else {
+                            charDefense = Math.round(defenseTimesPoint7 / 0.7);
+                          }
+
+                          // 현실적인 방어력 범위만 (0~3000)
+                          if (charDefense >= 0 && charDefense <= 3000) {
+                            // 카테고리 결정: 상대 주속성 확인
+                            const enemyAttrs = [
+                              { type: 'earth', val: combo.earth },
+                              { type: 'water', val: combo.water },
+                              { type: 'fire', val: combo.fire },
+                              { type: 'wind', val: combo.wind },
+                            ];
+                            const enemyMainAttr = enemyAttrs.reduce((a, b) =>
+                              a.val >= b.val ? a : b
+                            );
+
+                            let category: 'advantage' | 'disadvantage' | 'neutral' = 'neutral';
+                            if (mainAttr.val > 0 && enemyMainAttr.val > 0) {
+                              if (mainAttr.beats === enemyMainAttr.type) {
+                                category = 'advantage';
+                              } else if (mainAttr.beatenBy === enemyMainAttr.type) {
+                                category = 'disadvantage';
+                              }
+                            }
+
+                            matchingResults.push({
+                              defense: charDefense,
+                              attrBonus: bonus,
+                              enemyAttr: combo.label,
+                              category,
+                            });
+                          }
                         }
+                      });
 
-                        results.push({
-                          case: '상성 없음 (속성이 같은 경우)',
-                          defense: charDefense,
-                          enemyAttr: neutralAttr,
-                          attrBonus: neutralBonus,
+                      // 방어력 기준으로 그룹핑 (±50 범위)
+                      const groupByDefense = (
+                        results: ResultItem[]
+                      ): Array<{ defense: number; items: ResultItem[] }> => {
+                        const groups: Array<{ defense: number; items: ResultItem[] }> = [];
+                        const sorted = [...results].sort((a, b) => a.defense - b.defense);
+
+                        sorted.forEach(item => {
+                          const existing = groups.find(
+                            g => Math.abs(g.defense - item.defense) <= 50
+                          );
+                          if (existing) {
+                            existing.items.push(item);
+                          } else {
+                            groups.push({ defense: item.defense, items: [item] });
+                          }
                         });
-                      }
+
+                        // 각 그룹의 대표 방어력을 평균으로 재계산
+                        groups.forEach(g => {
+                          g.defense = Math.round(
+                            g.items.reduce((sum, i) => sum + i.defense, 0) / g.items.length
+                          );
+                        });
+
+                        return groups;
+                      };
+
+                      const groupedResults = groupByDefense(matchingResults);
+
+                      // 카테고리별로 필터링된 대표 결과
+                      const getCategoryResults = (cat: 'advantage' | 'disadvantage' | 'neutral') => {
+                        const filtered = matchingResults.filter(r => r.category === cat);
+                        if (filtered.length === 0) return null;
+
+                        // 같은 카테고리 내에서 방어력 범위와 속성 조합 모음
+                        const minDef = Math.min(...filtered.map(r => r.defense));
+                        const maxDef = Math.max(...filtered.map(r => r.defense));
+
+                        // 대표 속성 조합들 (중복 제거, 최대 5개)
+                        const uniqueAttrs = [...new Set(filtered.map(r => r.enemyAttr))].slice(0, 5);
+
+                        return {
+                          minDef,
+                          maxDef,
+                          attrs: uniqueAttrs,
+                          bonusRange: {
+                            min: Math.min(...filtered.map(r => r.attrBonus)),
+                            max: Math.max(...filtered.map(r => r.attrBonus)),
+                          },
+                        };
+                      };
+
+                      const advantageResult = getCategoryResults('advantage');
+                      const disadvantageResult = getCategoryResults('disadvantage');
+                      const neutralResult = getCategoryResults('neutral');
 
                       return (
                         <div className="space-y-4">
-                          {results.length > 0 ? (
-                            results.map((result, idx) => (
-                              <div
-                                key={idx}
-                                className={`p-4 rounded-lg border ${
-                                  idx === 0
-                                    ? 'bg-green-500/10 border-green-500/30'
-                                    : idx === 1
-                                      ? 'bg-red-500/10 border-red-500/30'
-                                      : 'bg-blue-500/10 border-blue-500/30'
-                                }`}
-                              >
-                                <div className="mb-2">
-                                  <h4 className="font-bold text-accent text-lg">{result.case}</h4>
-                                </div>
-                                <div className="text-sm space-y-2">
-                                  <p>
-                                    <span className="text-text-secondary">추정 방어력(TGH): </span>
-                                    <span className="font-bold text-blue-500 text-lg">
-                                      약 {result.defense}
-                                    </span>
-                                  </p>
-                                  <p>
-                                    <span className="text-text-secondary">상대 추정 속성: </span>
-                                    <span className="font-bold text-yellow-500 text-lg">
-                                      {result.enemyAttr}
-                                    </span>
-                                  </p>
-                                  <p>
-                                    <span className="text-text-secondary">속성 보정: </span>
-                                    <span className="font-bold text-purple-500 text-lg">
-                                      ×{result.attrBonus.toFixed(2)}
-                                    </span>
-                                  </p>
-                                </div>
+                          {/* 상성 유리 */}
+                          {advantageResult && (
+                            <div className="p-4 rounded-lg border bg-green-500/10 border-green-500/30">
+                              <h4 className="font-bold text-green-400 text-lg mb-2">
+                                ✅ 상성 유리 (내가 상대 속성을 잡는 경우)
+                              </h4>
+                              <div className="text-sm space-y-2">
+                                <p>
+                                  <span className="text-text-secondary">추정 방어력(TGH): </span>
+                                  <span className="font-bold text-blue-400 text-lg">
+                                    {advantageResult.minDef === advantageResult.maxDef
+                                      ? `약 ${advantageResult.minDef}`
+                                      : `${advantageResult.minDef} ~ ${advantageResult.maxDef}`}
+                                  </span>
+                                </p>
+                                <p>
+                                  <span className="text-text-secondary">상대 추정 속성: </span>
+                                  <span className="font-bold text-yellow-400">
+                                    {advantageResult.attrs.join(', ')}
+                                    {advantageResult.attrs.length >= 5 && ' ...'}
+                                  </span>
+                                </p>
+                                <p>
+                                  <span className="text-text-secondary">속성 보정: </span>
+                                  <span className="font-bold text-purple-400">
+                                    ×{advantageResult.bonusRange.min.toFixed(2)}
+                                    {advantageResult.bonusRange.min !== advantageResult.bonusRange.max &&
+                                      ` ~ ×${advantageResult.bonusRange.max.toFixed(2)}`}
+                                  </span>
+                                </p>
                               </div>
-                            ))
-                          ) : (
+                            </div>
+                          )}
+
+                          {/* 상성 불리 */}
+                          {disadvantageResult && (
+                            <div className="p-4 rounded-lg border bg-red-500/10 border-red-500/30">
+                              <h4 className="font-bold text-red-400 text-lg mb-2">
+                                ❌ 상성 불리 (상대가 내 속성을 잡는 경우)
+                              </h4>
+                              <div className="text-sm space-y-2">
+                                <p>
+                                  <span className="text-text-secondary">추정 방어력(TGH): </span>
+                                  <span className="font-bold text-blue-400 text-lg">
+                                    {disadvantageResult.minDef === disadvantageResult.maxDef
+                                      ? `약 ${disadvantageResult.minDef}`
+                                      : `${disadvantageResult.minDef} ~ ${disadvantageResult.maxDef}`}
+                                  </span>
+                                </p>
+                                <p>
+                                  <span className="text-text-secondary">상대 추정 속성: </span>
+                                  <span className="font-bold text-yellow-400">
+                                    {disadvantageResult.attrs.join(', ')}
+                                    {disadvantageResult.attrs.length >= 5 && ' ...'}
+                                  </span>
+                                </p>
+                                <p>
+                                  <span className="text-text-secondary">속성 보정: </span>
+                                  <span className="font-bold text-purple-400">
+                                    ×{disadvantageResult.bonusRange.min.toFixed(2)}
+                                    {disadvantageResult.bonusRange.min !==
+                                      disadvantageResult.bonusRange.max &&
+                                      ` ~ ×${disadvantageResult.bonusRange.max.toFixed(2)}`}
+                                  </span>
+                                </p>
+                              </div>
+                            </div>
+                          )}
+
+                          {/* 상성 중립 */}
+                          {neutralResult && (
+                            <div className="p-4 rounded-lg border bg-blue-500/10 border-blue-500/30">
+                              <h4 className="font-bold text-blue-400 text-lg mb-2">
+                                ⚖️ 상성 중립 (상성 관계 없음)
+                              </h4>
+                              <div className="text-sm space-y-2">
+                                <p>
+                                  <span className="text-text-secondary">추정 방어력(TGH): </span>
+                                  <span className="font-bold text-blue-400 text-lg">
+                                    {neutralResult.minDef === neutralResult.maxDef
+                                      ? `약 ${neutralResult.minDef}`
+                                      : `${neutralResult.minDef} ~ ${neutralResult.maxDef}`}
+                                  </span>
+                                </p>
+                                <p>
+                                  <span className="text-text-secondary">상대 추정 속성: </span>
+                                  <span className="font-bold text-yellow-400">
+                                    {neutralResult.attrs.join(', ')}
+                                    {neutralResult.attrs.length >= 5 && ' ...'}
+                                  </span>
+                                </p>
+                                <p>
+                                  <span className="text-text-secondary">속성 보정: </span>
+                                  <span className="font-bold text-purple-400">
+                                    ×{neutralResult.bonusRange.min.toFixed(2)}
+                                    {neutralResult.bonusRange.min !== neutralResult.bonusRange.max &&
+                                      ` ~ ×${neutralResult.bonusRange.max.toFixed(2)}`}
+                                  </span>
+                                </p>
+                              </div>
+                            </div>
+                          )}
+
+                          {/* 상세 결과 (접이식) */}
+                          {groupedResults.length > 0 && (
+                            <details className="mt-4">
+                              <summary className="cursor-pointer text-text-secondary hover:text-text-primary text-sm">
+                                📋 상세 조합 보기 ({matchingResults.length}개 조합)
+                              </summary>
+                              <div className="mt-2 max-h-60 overflow-y-auto space-y-2">
+                                {groupedResults.slice(0, 10).map((group, idx) => (
+                                  <div
+                                    key={idx}
+                                    className="p-2 bg-bg-tertiary rounded border border-border text-xs"
+                                  >
+                                    <div className="font-bold text-text-primary mb-1">
+                                      방어력 약 {group.defense}
+                                    </div>
+                                    <div className="text-text-secondary">
+                                      가능한 속성:{' '}
+                                      {group.items
+                                        .slice(0, 5)
+                                        .map(i => i.enemyAttr)
+                                        .join(', ')}
+                                      {group.items.length > 5 && ` 외 ${group.items.length - 5}개`}
+                                    </div>
+                                  </div>
+                                ))}
+                                {groupedResults.length > 10 && (
+                                  <div className="text-center text-text-muted text-xs">
+                                    ... 외 {groupedResults.length - 10}개 그룹
+                                  </div>
+                                )}
+                              </div>
+                            </details>
+                          )}
+
+                          {!advantageResult && !disadvantageResult && !neutralResult && (
                             <div className="text-center py-8 text-text-secondary">
                               <p>입력값으로 추정할 수 있는 경우가 없습니다.</p>
                               <p className="text-xs mt-2">
