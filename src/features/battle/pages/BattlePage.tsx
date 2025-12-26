@@ -6,7 +6,7 @@ import petDataJson from '@/data/petData.json';
 type TabType = 'info' | 'combo' | 'calculator';
 type CalculatorSubTab = 'damage' | 'reverse';
 type AttributeType = 'fire' | 'water' | 'earth' | 'wind';
-type UnitType = 'PLAYER' | 'PET' | 'ENEMY';
+type UnitType = 'PLAYER' | 'PET';
 type StatusEffect = 'none' | 'poison' | 'paralysis' | 'sleep' | 'stone' | 'drunk' | 'confusion' | 'weaken';
 type FieldAttribute = 'none' | 'fire' | 'water' | 'earth' | 'wind';
 
@@ -207,6 +207,21 @@ const BattlePage: React.FC = () => {
 
   // 배틀 옵션 (새로 추가)
   const [battleOptions, setBattleOptions] = useState<BattleOptions>(getDefaultBattleOptions);
+
+  // 시뮬레이션 관련 state
+  const [showSimulation, setShowSimulation] = useState(false);
+  const [simulationCount, setSimulationCount] = useState(100);
+  const [simulationResult, setSimulationResult] = useState<{
+    total: number;
+    dodged: number;
+    hit: number;
+    countered: number;
+    critical: number;
+    dodgeRate: number;
+    counterRate: number;
+    critRate: number;
+  } | null>(null);
+  const [isSimulating, setIsSimulating] = useState(false);
 
   // 인증 확인 및 테마 적용
   useEffect(() => {
@@ -424,32 +439,26 @@ const BattlePage: React.FC = () => {
   };
 
   // 크리티컬 확률 계산 (10000 단위, 실제 % = 결과 / 100)
+  // 서버 원본: battle_event.c BATTLE_CriticalCheckPlayer (1136-1203)
   const calculateCriticalRate = (
     atkDex: number,
     defDex: number,
     atkLuck: number = 0,
     weaponCritBonus: number = 0,
-    atkType: 'PLAYER' | 'PET' | 'ENEMY' = 'PLAYER',
-    defType: 'PLAYER' | 'PET' | 'ENEMY' = 'ENEMY'
+    atkType: UnitType = 'PLAYER',
+    defType: UnitType = 'PLAYER'
   ): number => {
     const gCriticalPara = 0.09;
     let divpara = gCriticalPara;
     let root = 1; // 제곱근 사용 여부
     let modDefDex = defDex;
 
-    // 타입별 보정
-    if (atkType === 'PLAYER' && defType !== 'PLAYER') {
-      // 플레이어 vs 적/펫
-      modDefDex *= 0.6;
-    } else if (atkType !== 'PLAYER' && defType === 'PLAYER') {
-      // 적/펫 vs 플레이어
-      divpara = 10.0;
-      root = 0;
-    } else if (atkType === 'PET' && defType === 'ENEMY') {
-      // 펫 vs 적
+    // 타입별 보정 (PVP 전용 - 서버 로직 기반)
+    // PLAYER → PET: 방어자 펫 DEX × 0.8 (플레이어가 펫 공격 시 크리율 높음)
+    // PET → PLAYER: divpara = 10.0, root = 0 (펫이 플레이어 공격 시 크리율 낮음)
+    if (atkType === 'PLAYER' && defType === 'PET') {
       modDefDex *= 0.8;
-    } else if (atkType === 'ENEMY' && defType === 'PET') {
-      // 적 vs 펫
+    } else if (atkType === 'PET' && defType === 'PLAYER') {
       divpara = 10.0;
       root = 0;
     }
@@ -557,23 +566,22 @@ const BattlePage: React.FC = () => {
     defDex: number,
     defLuck: number = 0,
     atkType: UnitType = 'PLAYER',
-    defType: UnitType = 'ENEMY',
-    isJujutsu: boolean = false
+    defType: UnitType = 'PLAYER',
+    isJujutsu: boolean = false,
+    isRanged: boolean = false
   ): number => {
     const K = isJujutsu ? 0.027 : BATTLE_CONSTANTS.gKawashiPara;
 
     let modAtkDex = atkDex;
     let modDefDex = defDex;
 
-    // 타입별 DEX 보정
-    if (atkType === 'ENEMY' && defType === 'PET') {
-      modAtkDex *= 0.8;
-    } else if (atkType !== 'ENEMY' && defType === 'PET') {
+    // 타입별 DEX 보정 (PVP 전용)
+    // PLAYER → PET: 방어자 펫 DEX × 0.8
+    // PET → PLAYER: 공격자 펫 DEX × 0.6
+    if (atkType === 'PLAYER' && defType === 'PET') {
       modDefDex *= 0.8;
-    } else if (atkType !== 'PLAYER' && defType === 'PLAYER') {
+    } else if (atkType === 'PET' && defType === 'PLAYER') {
       modAtkDex *= 0.6;
-    } else if (atkType === 'PLAYER' && defType !== 'PLAYER') {
-      modDefDex *= 0.6;
     }
 
     // Big/Small/Wari 계산
@@ -594,6 +602,12 @@ const BattlePage: React.FC = () => {
     per *= wari;
     per += defLuck;
 
+    // 원거리 무기 보너스 (서버 코드에서 +20이 두 번 적용됨 - 752줄, 759줄)
+    // per *= 100 이전에 적용되어야 함
+    if (isRanged) {
+      per += 40;
+    }
+
     // 10000 기준 변환 및 제한
     per *= 100;
     if (per > BATTLE_CONSTANTS.KAWASHI_MAX_RATE * 100) {
@@ -610,24 +624,18 @@ const BattlePage: React.FC = () => {
     atkDex: number,
     defDex: number,
     atkType: UnitType = 'PLAYER',
-    defType: UnitType = 'ENEMY'
+    defType: UnitType = 'PLAYER'
   ): number => {
     let modAtkDex = atkDex;
     let modDefDex = defDex;
 
-    // 타입별 DEX 보정 (서버 원본 로직 - battle_event.c 706-722)
-    if (atkType === 'ENEMY' && defType === 'PET') {
-      // 적 vs 펫: 공격자 DEX 감소 (펫이 카운터하기 쉬움)
-      modAtkDex *= 0.8;
-    } else if (atkType !== 'ENEMY' && defType === 'PET') {
-      // 플레이어/펫 vs 펫: 방어자 DEX 감소 (펫이 카운터하기 어려움)
+    // 타입별 DEX 보정 (PVP 전용)
+    // PLAYER → PET: 방어자 펫 DEX × 0.8 (펫이 카운터하기 어려움)
+    // PET → PLAYER: 공격자 펫 DEX × 0.6 (플레이어가 카운터하기 쉬움)
+    if (atkType === 'PLAYER' && defType === 'PET') {
       modDefDex *= 0.8;
-    } else if (atkType !== 'PLAYER' && defType === 'PLAYER') {
-      // 적/펫 vs 플레이어: 공격자 DEX 감소 (플레이어가 카운터하기 쉬움)
+    } else if (atkType === 'PET' && defType === 'PLAYER') {
       modAtkDex *= 0.6;
-    } else if (atkType === 'PLAYER' && defType !== 'PLAYER') {
-      // 플레이어 vs 적/펫: 방어자 DEX 감소 (적/펫이 카운터하기 어려움)
-      modDefDex *= 0.6;
     }
 
     // Big/Small 판정 (회피율과 동일한 로직)
@@ -724,6 +732,55 @@ const BattlePage: React.FC = () => {
     }
   };
 
+  // 시뮬레이션 실행 함수
+  const runSimulation = (weaponType: 'melee' | 'ranged', count: number) => {
+    setIsSimulating(true);
+
+    // 현재 계산된 확률값 가져오기
+    const result = calculateDamage(weaponType);
+
+    let dodged = 0;
+    let hit = 0;
+    let countered = 0;
+    let critical = 0;
+
+    for (let i = 0; i < count; i++) {
+      const rand = Math.random() * 100;
+
+      // 회피 판정 (회피율은 이미 퍼센트 값)
+      if (rand < result.dodgeRate) {
+        dodged++;
+      } else {
+        hit++;
+
+        // 크리티컬 판정 (맞았을 때만)
+        const critRand = Math.random() * 100;
+        if (critRand < (result.critRate / 100)) {
+          critical++;
+        }
+
+        // 카운터 판정 (맞았을 때만)
+        const counterRand = Math.random() * 100;
+        if (counterRand < (result.counterRate / 100)) {
+          countered++;
+        }
+      }
+    }
+
+    setSimulationResult({
+      total: count,
+      dodged,
+      hit,
+      countered,
+      critical,
+      dodgeRate: result.dodgeRate,
+      counterRate: result.counterRate / 100,
+      critRate: result.critRate / 100,
+    });
+
+    setIsSimulating(false);
+  };
+
   // 전체 데미지 계산 (확장된 버전)
   const calculateDamage = (weaponType: 'melee' | 'ranged') => {
     // 페트 탑승 시 스탯 적용
@@ -767,16 +824,16 @@ const BattlePage: React.FC = () => {
       battleOptions.defenderType
     );
 
-    // 회피율 계산 (타입별 보정 적용)
-    const baseDodgeRate = calculateDodgeRate(
+    // 회피율 계산 (타입별 보정 + 원거리 무기 보너스 적용)
+    const dodgeRate = calculateDodgeRate(
       finalAttacker.dex,
       finalDefender.dex,
       finalDefender.luck,
       battleOptions.attackerType,
-      battleOptions.defenderType
+      battleOptions.defenderType,
+      false, // isJujutsu
+      weaponType === 'ranged' // isRanged - 서버 코드에서 BOW는 +20이 두 번 적용됨
     );
-    // 서버 코드에서 BOW는 +20이 두 번 적용됨 (752줄, 759줄)
-    const dodgeRate = weaponType === 'ranged' ? baseDodgeRate + 40 : baseDodgeRate;
 
     // 카운터 확률 계산 (새로 추가)
     const counterRate = calculateCounterRate(
@@ -4029,6 +4086,41 @@ const BattlePage: React.FC = () => {
             {/* 데미지 계산 서브탭 */}
             {calculatorSubTab === 'damage' && (
               <>
+                {/* 전투 타입 선택 */}
+                <div className="bg-bg-secondary rounded-lg p-4 md:p-5 border border-border shadow-lg mb-4">
+                  <h2 className="text-xl font-bold mb-3 text-purple-500 flex items-center gap-2">
+                    <span>⚔️</span> 전투 타입
+                  </h2>
+                  <div className="flex flex-wrap gap-2">
+                    {[
+                      { atk: 'PLAYER', def: 'PLAYER', label: '유저 → 유저', mod: '' },
+                      { atk: 'PLAYER', def: 'PET', label: '유저 → 방어자 펫', mod: '방어 DEX ×0.8' },
+                      { atk: 'PET', def: 'PLAYER', label: '공격자 펫 → 유저', mod: '공격 DEX ×0.6' },
+                      { atk: 'PET', def: 'PET', label: '펫 → 펫', mod: '' },
+                    ].map(type => (
+                      <button
+                        key={`${type.atk}-${type.def}`}
+                        onClick={() =>
+                          setBattleOptions({
+                            ...battleOptions,
+                            attackerType: type.atk as UnitType,
+                            defenderType: type.def as UnitType,
+                          })
+                        }
+                        className={`px-3 py-2 rounded-lg text-sm font-medium transition-all ${
+                          battleOptions.attackerType === type.atk &&
+                          battleOptions.defenderType === type.def
+                            ? 'bg-purple-600 text-white shadow-lg'
+                            : 'bg-bg-tertiary text-text-secondary hover:bg-bg-primary border border-border'
+                        }`}
+                      >
+                        {type.label}
+                        {type.mod && <span className="ml-1 text-xs text-yellow-300">({type.mod})</span>}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
                 {/* 공격자 입력 */}
                 <div className="bg-bg-secondary rounded-lg p-4 md:p-5 border border-border shadow-lg">
                   <h2 className="text-xl font-bold mb-4 text-red-500 flex items-center gap-2">
@@ -4562,192 +4654,45 @@ const BattlePage: React.FC = () => {
                   </div>
                 </div>
 
-                {/* 배틀 옵션 패널 (새로 추가) */}
-                <div className="bg-bg-secondary rounded-lg p-4 md:p-5 border border-border shadow-lg">
-                  <h2 className="text-xl font-bold mb-4 text-purple-500 flex items-center gap-2">
-                    <span>⚙️</span> 배틀 옵션
-                  </h2>
-
-                  <div className="grid md:grid-cols-2 gap-4">
-                    {/* 유닛 타입 */}
-                    <div className="space-y-3">
-                      <div>
-                        <label className="block text-sm font-bold mb-1 text-text-secondary">
-                          공격자 타입
-                        </label>
-                        <select
-                          value={battleOptions.attackerType}
-                          onChange={e =>
-                            setBattleOptions({
-                              ...battleOptions,
-                              attackerType: e.target.value as UnitType,
-                            })
-                          }
-                          className="w-full px-3 py-2 bg-bg-tertiary border border-border rounded text-text-primary"
-                        >
-                          <option value="PLAYER">플레이어</option>
-                          <option value="PET">펫</option>
-                          <option value="ENEMY">적</option>
-                        </select>
-                      </div>
-                      <div>
-                        <label className="block text-sm font-bold mb-1 text-text-secondary">
-                          방어자 타입
-                        </label>
-                        <select
-                          value={battleOptions.defenderType}
-                          onChange={e =>
-                            setBattleOptions({
-                              ...battleOptions,
-                              defenderType: e.target.value as UnitType,
-                            })
-                          }
-                          className="w-full px-3 py-2 bg-bg-tertiary border border-border rounded text-text-primary"
-                        >
-                          <option value="PLAYER">플레이어</option>
-                          <option value="PET">펫</option>
-                          <option value="ENEMY">적</option>
-                        </select>
-                      </div>
-                    </div>
-
-                    {/* 상태이상 */}
-                    <div className="space-y-3">
-                      <div>
-                        <label className="block text-sm font-bold mb-1 text-red-400">
-                          공격자 상태이상
-                        </label>
-                        <select
-                          value={battleOptions.attackerStatus}
-                          onChange={e =>
-                            setBattleOptions({
-                              ...battleOptions,
-                              attackerStatus: e.target.value as StatusEffect,
-                            })
-                          }
-                          className="w-full px-3 py-2 bg-bg-tertiary border border-border rounded text-text-primary"
-                        >
-                          <option value="none">없음</option>
-                          <option value="poison">독 🟢</option>
-                          <option value="paralysis">마비 ⚡ (50% 행동불가)</option>
-                          <option value="sleep">수면 💤 (100% 행동불가)</option>
-                          <option value="stone">석화 🪨 (100% 행동불가)</option>
-                          <option value="drunk">취기 🍺 (공격력 변동)</option>
-                          <option value="confusion">혼란 😵 (공격력 -20%)</option>
-                          <option value="weaken">허약 💔 (공격력 -30%)</option>
-                        </select>
-                      </div>
-                      <div>
-                        <label className="block text-sm font-bold mb-1 text-blue-400">
-                          방어자 상태이상
-                        </label>
-                        <select
-                          value={battleOptions.defenderStatus}
-                          onChange={e =>
-                            setBattleOptions({
-                              ...battleOptions,
-                              defenderStatus: e.target.value as StatusEffect,
-                            })
-                          }
-                          className="w-full px-3 py-2 bg-bg-tertiary border border-border rounded text-text-primary"
-                        >
-                          <option value="none">없음</option>
-                          <option value="poison">독 🟢</option>
-                          <option value="paralysis">마비 ⚡</option>
-                          <option value="sleep">수면 💤</option>
-                          <option value="stone">석화 🪨 (방어력 2배)</option>
-                          <option value="drunk">취기 🍺</option>
-                          <option value="confusion">혼란 😵</option>
-                          <option value="weaken">허약 💔 (방어력 -30%)</option>
-                        </select>
-                      </div>
-                    </div>
-
-                    {/* 필드 속성 */}
-                    <div className="space-y-3">
-                      <div>
-                        <label className="block text-sm font-bold mb-1 text-text-secondary">
-                          필드 속성
-                        </label>
-                        <select
-                          value={battleOptions.fieldAttribute}
-                          onChange={e =>
-                            setBattleOptions({
-                              ...battleOptions,
-                              fieldAttribute: e.target.value as FieldAttribute,
-                            })
-                          }
-                          className="w-full px-3 py-2 bg-bg-tertiary border border-border rounded text-text-primary"
-                        >
-                          <option value="none">없음</option>
-                          <option value="fire">🔥 불 필드</option>
-                          <option value="water">💧 물 필드</option>
-                          <option value="earth">🌿 지 필드</option>
-                          <option value="wind">🌪️ 풍 필드</option>
-                        </select>
-                      </div>
-                      {battleOptions.fieldAttribute !== 'none' && (
-                        <div>
-                          <label className="block text-sm font-bold mb-1 text-text-secondary">
-                            필드 강도: {battleOptions.fieldPower}%
-                          </label>
-                          <input
-                            type="range"
-                            min="0"
-                            max="100"
-                            value={battleOptions.fieldPower}
-                            onChange={e =>
-                              setBattleOptions({
-                                ...battleOptions,
-                                fieldPower: Number(e.target.value),
-                              })
-                            }
-                            className="w-full"
-                          />
-                        </div>
-                      )}
-                    </div>
-
-                    {/* 무기 크리보너스 */}
-                    <div>
-                      <label className="block text-sm font-bold mb-1 text-text-secondary">
-                        무기 크리티컬 보너스
-                      </label>
-                      <input
-                        type="number"
-                        min="0"
-                        max="100"
-                        value={battleOptions.weaponCritBonus}
-                        onChange={e =>
-                          setBattleOptions({
-                            ...battleOptions,
-                            weaponCritBonus: Number(e.target.value),
-                          })
-                        }
-                        className="w-full px-3 py-2 bg-bg-tertiary border border-border rounded text-text-primary"
-                      />
-                      <p className="text-xs text-text-muted mt-1">
-                        무기에 붙은 크리티컬 증가 수치
-                      </p>
-                    </div>
-                  </div>
-
-                  {/* 옵션 초기화 버튼 */}
-                  <div className="mt-4 flex justify-end">
-                    <button
-                      onClick={() => setBattleOptions(getDefaultBattleOptions())}
-                      className="px-4 py-2 bg-bg-tertiary hover:bg-bg-primary border border-border rounded text-text-secondary text-sm transition-colors"
-                    >
-                      옵션 초기화
-                    </button>
-                  </div>
-                </div>
 
                 {/* 결과 표시 */}
                 <div className="bg-bg-secondary rounded-lg p-4 md:p-5 border border-border shadow-lg">
                   <h2 className="text-xl font-bold mb-4 text-accent flex items-center gap-2">
                     <span>📊</span> 예상 데미지
                   </h2>
+
+                  {/* 현재 선택된 전투 타입 표시 */}
+                  {(() => {
+                    const { attackerType, defenderType } = battleOptions;
+
+                    const getLabel = (type: UnitType) => {
+                      if (type === 'PLAYER') return '유저';
+                      return '펫';
+                    };
+
+                    let dexMod = '';
+                    if (attackerType === 'PLAYER' && defenderType === 'PET') {
+                      dexMod = '방어 DEX ×0.8';
+                    } else if (attackerType === 'PET' && defenderType === 'PLAYER') {
+                      dexMod = '공격 DEX ×0.6';
+                    }
+
+                    return (
+                      <div className="mb-4 p-3 bg-purple-500/10 border-purple-500/30 border rounded-lg">
+                        <div className="flex items-center justify-between">
+                          <span className="text-sm text-text-secondary">⚔️ 전투 타입:</span>
+                          <span className="font-bold text-purple-400">
+                            {getLabel(attackerType)} → {getLabel(defenderType)}
+                          </span>
+                        </div>
+                        {dexMod ? (
+                          <div className="text-xs text-yellow-400 mt-1">⚡ DEX 보정: {dexMod}</div>
+                        ) : (
+                          <div className="text-xs text-green-400 mt-1">✓ DEX 보정 없음</div>
+                        )}
+                      </div>
+                    );
+                  })()}
 
                   <div className="grid md:grid-cols-2 gap-4">
                     {/* 근접 무기 */}
@@ -4832,6 +4777,15 @@ const BattlePage: React.FC = () => {
                                 평균: {result.critical.avg}
                               </div>
                             </div>
+                            <button
+                              onClick={() => {
+                                setShowSimulation(true);
+                                runSimulation('melee', simulationCount);
+                              }}
+                              className="w-full mt-3 px-3 py-2 bg-green-600 hover:bg-green-700 text-white rounded font-bold text-sm transition-colors"
+                            >
+                              🎲 시뮬레이션
+                            </button>
                           </div>
                         </div>
                       );
@@ -4920,12 +4874,224 @@ const BattlePage: React.FC = () => {
                                 평균: {result.critical.avg}
                               </div>
                             </div>
+                            <button
+                              onClick={() => {
+                                setShowSimulation(true);
+                                runSimulation('ranged', simulationCount);
+                              }}
+                              className="w-full mt-3 px-3 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded font-bold text-sm transition-colors"
+                            >
+                              🎲 시뮬레이션
+                            </button>
                           </div>
                         </div>
                       );
                     })()}
                   </div>
                 </div>
+
+                {/* 시뮬레이션 모달 */}
+                {showSimulation && (
+                  <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-4">
+                    <div className="bg-bg-secondary border border-border rounded-lg p-6 max-w-md w-full shadow-2xl">
+                      <div className="flex justify-between items-center mb-4">
+                        <h3 className="text-xl font-bold text-accent">🎲 전투 시뮬레이션</h3>
+                        <button
+                          onClick={() => setShowSimulation(false)}
+                          className="text-text-secondary hover:text-text-primary text-2xl"
+                        >
+                          ×
+                        </button>
+                      </div>
+
+                      {/* 시뮬레이션 횟수 설정 */}
+                      <div className="mb-4">
+                        <label className="block text-sm font-bold mb-2 text-text-secondary">
+                          시뮬레이션 횟수 (최대 500)
+                        </label>
+                        <div className="flex gap-2">
+                          <input
+                            type="number"
+                            min="1"
+                            max="500"
+                            value={simulationCount}
+                            onChange={e => setSimulationCount(Math.min(500, Math.max(1, Number(e.target.value))))}
+                            className="flex-1 px-3 py-2 bg-bg-tertiary border border-border rounded text-text-primary"
+                          />
+                          <button
+                            onClick={() => runSimulation('melee', simulationCount)}
+                            disabled={isSimulating}
+                            className="px-4 py-2 bg-green-600 hover:bg-green-700 disabled:bg-gray-600 text-white rounded font-bold text-sm transition-colors"
+                          >
+                            🗡️ 근접
+                          </button>
+                          <button
+                            onClick={() => runSimulation('ranged', simulationCount)}
+                            disabled={isSimulating}
+                            className="px-4 py-2 bg-blue-600 hover:bg-blue-700 disabled:bg-gray-600 text-white rounded font-bold text-sm transition-colors"
+                          >
+                            🏹 원거리
+                          </button>
+                        </div>
+                        <div className="flex gap-2 mt-2">
+                          {[10, 50, 100, 200, 500].map(num => (
+                            <button
+                              key={num}
+                              onClick={() => setSimulationCount(num)}
+                              className={`px-2 py-1 rounded text-xs transition-colors ${
+                                simulationCount === num
+                                  ? 'bg-accent text-white'
+                                  : 'bg-bg-tertiary text-text-secondary hover:bg-bg-primary'
+                              }`}
+                            >
+                              {num}회
+                            </button>
+                          ))}
+                        </div>
+                      </div>
+
+                      {/* 시뮬레이션 결과 */}
+                      {simulationResult && (
+                        <div className="space-y-4">
+                          {/* 전투 정보 */}
+                          <div className="p-3 bg-purple-500/10 border border-purple-500/30 rounded-lg">
+                            <div className="text-sm text-text-secondary mb-1">⚔️ 전투 정보</div>
+                            <div className="flex items-center justify-center gap-2 text-lg font-bold">
+                              <span className="text-red-400">
+                                {battleOptions.attackerType === 'PLAYER' ? '공격자(유저)' : '공격자(펫)'}
+                              </span>
+                              <span className="text-text-muted">→</span>
+                              <span className="text-blue-400">
+                                {battleOptions.defenderType === 'PLAYER' ? '방어자(유저)' : '방어자(펫)'}
+                              </span>
+                            </div>
+                            <div className="text-center text-sm text-text-secondary mt-1">
+                              총 {simulationResult.total}회 공격
+                            </div>
+                          </div>
+
+                          {/* 결과 바 차트 */}
+                          <div className="space-y-3">
+                            {/* 회피 (방어자 기준) */}
+                            <div>
+                              <div className="flex justify-between text-sm mb-1">
+                                <span className="text-cyan-400">🛡️ 방어자 회피</span>
+                                <span className="text-text-primary font-bold">
+                                  {simulationResult.dodged}회 ({((simulationResult.dodged / simulationResult.total) * 100).toFixed(1)}%)
+                                </span>
+                              </div>
+                              <div className="h-4 bg-bg-tertiary rounded overflow-hidden">
+                                <div
+                                  className="h-full bg-cyan-500 transition-all duration-300"
+                                  style={{ width: `${(simulationResult.dodged / simulationResult.total) * 100}%` }}
+                                />
+                              </div>
+                              <div className="text-xs text-text-muted mt-1">
+                                이론값: {simulationResult.dodgeRate.toFixed(2)}%
+                              </div>
+                            </div>
+
+                            {/* 명중 (공격자 기준) */}
+                            <div>
+                              <div className="flex justify-between text-sm mb-1">
+                                <span className="text-red-400">⚔️ 공격자 명중</span>
+                                <span className="text-text-primary font-bold">
+                                  {simulationResult.hit}회 ({((simulationResult.hit / simulationResult.total) * 100).toFixed(1)}%)
+                                </span>
+                              </div>
+                              <div className="h-4 bg-bg-tertiary rounded overflow-hidden">
+                                <div
+                                  className="h-full bg-red-500 transition-all duration-300"
+                                  style={{ width: `${(simulationResult.hit / simulationResult.total) * 100}%` }}
+                                />
+                              </div>
+                            </div>
+
+                            {/* 크리티컬 (공격자가 방어자 공격 시) */}
+                            {simulationResult.hit > 0 && (
+                              <div className="p-2 bg-yellow-500/10 border border-yellow-500/30 rounded">
+                                <div className="flex justify-between text-sm mb-1">
+                                  <span className="text-yellow-400">💥 공격자 크리티컬</span>
+                                  <span className="text-text-primary font-bold">
+                                    {simulationResult.critical}회 ({((simulationResult.critical / simulationResult.hit) * 100).toFixed(1)}%)
+                                  </span>
+                                </div>
+                                <div className="h-4 bg-bg-tertiary rounded overflow-hidden">
+                                  <div
+                                    className="h-full bg-yellow-500 transition-all duration-300"
+                                    style={{ width: `${(simulationResult.critical / simulationResult.hit) * 100}%` }}
+                                  />
+                                </div>
+                                <div className="text-xs text-text-muted mt-1">
+                                  이론값: {simulationResult.critRate.toFixed(2)}%
+                                </div>
+                              </div>
+                            )}
+
+                            {/* 카운터 (방어자가 공격자에게 반격) */}
+                            {simulationResult.hit > 0 && (
+                              <div className="p-2 bg-orange-500/10 border border-orange-500/30 rounded">
+                                <div className="flex justify-between text-sm mb-1">
+                                  <span className="text-orange-400">🔄 방어자 카운터</span>
+                                  <span className="text-text-primary font-bold">
+                                    {simulationResult.countered}회 ({((simulationResult.countered / simulationResult.hit) * 100).toFixed(1)}%)
+                                  </span>
+                                </div>
+                                <div className="h-4 bg-bg-tertiary rounded overflow-hidden">
+                                  <div
+                                    className="h-full bg-orange-500 transition-all duration-300"
+                                    style={{ width: `${(simulationResult.countered / simulationResult.hit) * 100}%` }}
+                                  />
+                                </div>
+                                <div className="text-xs text-text-muted mt-1">
+                                  이론값: {simulationResult.counterRate.toFixed(2)}%
+                                </div>
+                              </div>
+                            )}
+                          </div>
+
+                          {/* 요약 */}
+                          <div className="mt-4 p-3 bg-bg-tertiary rounded text-sm">
+                            <div className="text-text-secondary mb-2">📊 요약</div>
+                            <div className="grid grid-cols-2 gap-2 text-xs">
+                              <div>
+                                <span className="text-text-muted">회피 편차:</span>
+                                <span className={`ml-1 font-bold ${
+                                  Math.abs((simulationResult.dodged / simulationResult.total * 100) - simulationResult.dodgeRate) < 5
+                                    ? 'text-green-400' : 'text-yellow-400'
+                                }`}>
+                                  {((simulationResult.dodged / simulationResult.total * 100) - simulationResult.dodgeRate) >= 0 ? '+' : ''}
+                                  {((simulationResult.dodged / simulationResult.total * 100) - simulationResult.dodgeRate).toFixed(1)}%
+                                </span>
+                              </div>
+                              {simulationResult.hit > 0 && (
+                                <>
+                                  <div>
+                                    <span className="text-text-muted">크리 편차:</span>
+                                    <span className={`ml-1 font-bold ${
+                                      Math.abs((simulationResult.critical / simulationResult.hit * 100) - simulationResult.critRate) < 5
+                                        ? 'text-green-400' : 'text-yellow-400'
+                                    }`}>
+                                      {((simulationResult.critical / simulationResult.hit * 100) - simulationResult.critRate) >= 0 ? '+' : ''}
+                                      {((simulationResult.critical / simulationResult.hit * 100) - simulationResult.critRate).toFixed(1)}%
+                                    </span>
+                                  </div>
+                                </>
+                              )}
+                            </div>
+                          </div>
+                        </div>
+                      )}
+
+                      {isSimulating && (
+                        <div className="text-center py-8">
+                          <div className="text-2xl animate-spin">🎲</div>
+                          <div className="text-text-secondary mt-2">시뮬레이션 중...</div>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                )}
 
                 {/* 속성 상성 정보 */}
                 {(() => {
