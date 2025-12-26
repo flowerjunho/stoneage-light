@@ -46,14 +46,14 @@ const PageShareButton = () => {
     <>
       <button
         onClick={handlePageShare}
-        className={`fixed z-50 w-12 h-12 bg-blue-500 hover:bg-blue-600
+        className={`fixed z-[60] w-12 h-12 bg-blue-500 hover:bg-blue-600
                    text-white rounded-full shadow-lg hover:shadow-xl
                    flex items-center justify-center transition-all duration-300
                    hover:scale-110 active:scale-95
                    right-6 lg:right-[calc(50%-32rem-60px)] xl:right-[calc(50%-30rem-60px)]
                    iphone16:right-4 iphone16:w-10 iphone16:h-10 ${
-                     isScrollToTopVisible 
-                       ? 'bottom-20 iphone16:bottom-16' 
+                     isScrollToTopVisible
+                       ? 'bottom-20 iphone16:bottom-16'
                        : 'bottom-6 iphone16:bottom-4'
                    }`}
         aria-label="페이지 링크 복사"
@@ -76,7 +76,7 @@ const PageShareButton = () => {
 
       {/* 토스트 메시지 */}
       {showToast && (
-        <div className="fixed bottom-24 right-6 lg:right-[calc(50%-32rem-60px)] xl:right-[calc(50%-30rem-60px)] iphone16:bottom-20 iphone16:right-4 z-50">
+        <div className="fixed bottom-24 right-6 lg:right-[calc(50%-32rem-60px)] xl:right-[calc(50%-30rem-60px)] iphone16:bottom-20 iphone16:right-4 z-[60]">
           <div className="bg-green-500 text-white px-4 py-2 rounded-lg shadow-lg text-sm font-medium animate-fade-in-up">
             페이지 링크가 복사되었습니다!
           </div>

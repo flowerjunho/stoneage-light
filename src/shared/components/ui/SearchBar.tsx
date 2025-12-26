@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 
 interface SearchBarProps {
   searchTerm: string;
@@ -13,6 +13,28 @@ const SearchBar: React.FC<SearchBarProps> = ({
 }) => {
   const [isFocused, setIsFocused] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
+
+  // "/" 키 눌렀을 때 검색창 포커스
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      // 이미 입력 필드에 포커스가 있으면 무시
+      const activeElement = document.activeElement;
+      const isInputFocused = activeElement instanceof HTMLInputElement ||
+                            activeElement instanceof HTMLTextAreaElement ||
+                            activeElement?.getAttribute('contenteditable') === 'true';
+
+      if (isInputFocused) return;
+
+      // "/" 키 누르면 검색창 포커스
+      if (e.key === '/') {
+        e.preventDefault();
+        inputRef.current?.focus();
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, []);
 
   const handleClear = () => {
     onSearchChange('');
