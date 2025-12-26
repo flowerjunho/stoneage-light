@@ -211,6 +211,7 @@ const BattlePage: React.FC = () => {
   // 시뮬레이션 관련 state
   const [showSimulation, setShowSimulation] = useState(false);
   const [simulationCount, setSimulationCount] = useState(100);
+  const [simulationWeaponType, setSimulationWeaponType] = useState<'melee' | 'ranged'>('melee');
   const [simulationResult, setSimulationResult] = useState<{
     total: number;
     dodged: number;
@@ -222,6 +223,8 @@ const BattlePage: React.FC = () => {
     critRate: number;
   } | null>(null);
   const [isSimulating, setIsSimulating] = useState(false);
+  const [simStatsExpanded, setSimStatsExpanded] = useState(false);
+  const [simProgress, setSimProgress] = useState(0);
 
   // 인증 확인 및 테마 적용
   useEffect(() => {
@@ -732,53 +735,97 @@ const BattlePage: React.FC = () => {
     }
   };
 
-  // 시뮬레이션 실행 함수
+  // 시뮬레이션 실행 함수 (페이지의 공격자/방어자 스탯과 전투 타입 사용, 애니메이션 포함)
   const runSimulation = (weaponType: 'melee' | 'ranged', count: number) => {
     setIsSimulating(true);
+    setSimProgress(0);
+    setSimulationResult(null);
 
-    // 현재 계산된 확률값 가져오기
-    const result = calculateDamage(weaponType);
+    // 현재 페이지의 스탯 사용 (탑승 펫 반영)
+    const finalAttacker = calculateRidingStats(attacker, attackerPet);
+    const finalDefender = calculateRidingStats(defender, defenderPet);
 
+    // 회피율 계산 (페이지 스탯 사용)
+    const dodgeRateCalc = calculateDodgeRate(
+      finalAttacker.dex,
+      finalDefender.dex,
+      finalDefender.luck,
+      battleOptions.attackerType,
+      battleOptions.defenderType,
+      false, // isJujutsu
+      weaponType === 'ranged' // isRanged
+    );
+
+    // 크리티컬 확률 계산 (페이지 스탯 사용)
+    const critRateCalc = calculateCriticalRate(
+      finalAttacker.dex,
+      finalDefender.dex,
+      finalAttacker.luck,
+      battleOptions.weaponCritBonus,
+      battleOptions.attackerType,
+      battleOptions.defenderType
+    );
+
+    // 카운터 확률 계산 (페이지 스탯 사용)
+    const counterRateCalc = calculateCounterRate(
+      finalAttacker.dex,
+      finalDefender.dex,
+      battleOptions.attackerType,
+      battleOptions.defenderType
+    );
+
+    // 애니메이션을 위한 단계별 시뮬레이션
+    const batchSize = Math.max(1, Math.floor(count / 20)); // 20단계로 나눔
+    let currentIndex = 0;
     let dodged = 0;
     let hit = 0;
     let countered = 0;
     let critical = 0;
 
-    for (let i = 0; i < count; i++) {
-      const rand = Math.random() * 100;
+    const simulateBatch = () => {
+      const endIndex = Math.min(currentIndex + batchSize, count);
 
-      // 회피 판정 (회피율은 이미 퍼센트 값)
-      if (rand < result.dodgeRate) {
-        dodged++;
-      } else {
-        hit++;
+      for (let i = currentIndex; i < endIndex; i++) {
+        const rand = Math.random() * 100;
 
-        // 크리티컬 판정 (맞았을 때만)
-        const critRand = Math.random() * 100;
-        if (critRand < (result.critRate / 100)) {
-          critical++;
-        }
+        if (rand < dodgeRateCalc) {
+          dodged++;
+        } else {
+          hit++;
 
-        // 카운터 판정 (맞았을 때만)
-        const counterRand = Math.random() * 100;
-        if (counterRand < (result.counterRate / 100)) {
-          countered++;
+          const critRand = Math.random() * 100;
+          if (critRand < (critRateCalc / 100)) {
+            critical++;
+          }
+
+          const counterRand = Math.random() * 100;
+          if (counterRand < (counterRateCalc / 100)) {
+            countered++;
+          }
         }
       }
-    }
 
-    setSimulationResult({
-      total: count,
-      dodged,
-      hit,
-      countered,
-      critical,
-      dodgeRate: result.dodgeRate,
-      counterRate: result.counterRate / 100,
-      critRate: result.critRate / 100,
-    });
+      currentIndex = endIndex;
+      setSimProgress(Math.floor((currentIndex / count) * 100));
 
-    setIsSimulating(false);
+      if (currentIndex < count) {
+        requestAnimationFrame(simulateBatch);
+      } else {
+        setSimulationResult({
+          total: count,
+          dodged,
+          hit,
+          countered,
+          critical,
+          dodgeRate: dodgeRateCalc,
+          counterRate: counterRateCalc / 100,
+          critRate: critRateCalc / 100,
+        });
+        setIsSimulating(false);
+      }
+    };
+
+    requestAnimationFrame(simulateBatch);
   };
 
   // 전체 데미지 계산 (확장된 버전)
@@ -4892,63 +4939,171 @@ const BattlePage: React.FC = () => {
 
                 {/* 시뮬레이션 모달 */}
                 {showSimulation && (
-                  <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-4">
-                    <div className="bg-bg-secondary border border-border rounded-lg p-6 max-w-md w-full shadow-2xl">
-                      <div className="flex justify-between items-center mb-4">
-                        <h3 className="text-xl font-bold text-accent">🎲 전투 시뮬레이션</h3>
+                  <div
+                    className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-2"
+                    onClick={() => setShowSimulation(false)}
+                  >
+                    <div
+                      className="bg-bg-secondary border border-border rounded-lg p-4 max-w-md w-full shadow-2xl max-h-[90vh] overflow-y-auto"
+                      onClick={e => e.stopPropagation()}
+                    >
+                      <div className="flex justify-between items-center mb-3">
+                        <h3 className="text-lg font-bold text-accent">🎲 전투 시뮬레이션</h3>
                         <button
                           onClick={() => setShowSimulation(false)}
-                          className="text-text-secondary hover:text-text-primary text-2xl"
+                          className="text-text-secondary hover:text-text-primary text-xl leading-none"
                         >
                           ×
                         </button>
                       </div>
 
-                      {/* 시뮬레이션 횟수 설정 */}
-                      <div className="mb-4">
-                        <label className="block text-sm font-bold mb-2 text-text-secondary">
-                          시뮬레이션 횟수 (최대 500)
-                        </label>
-                        <div className="flex gap-2">
+                      {/* 전투 타입 + 무기 타입 (한 줄) */}
+                      <div className="mb-3 p-2 bg-bg-tertiary rounded border border-border">
+                        <div className="grid grid-cols-4 gap-1 mb-2">
+                          {[
+                            { atk: 'PLAYER' as UnitType, def: 'PLAYER' as UnitType, label: '유저→유저' },
+                            { atk: 'PLAYER' as UnitType, def: 'PET' as UnitType, label: '유저→펫' },
+                            { atk: 'PET' as UnitType, def: 'PLAYER' as UnitType, label: '펫→유저' },
+                            { atk: 'PET' as UnitType, def: 'PET' as UnitType, label: '펫→펫' },
+                          ].map(({ atk, def, label }) => (
+                            <button
+                              key={`${atk}-${def}`}
+                              onClick={() => setBattleOptions(prev => ({ ...prev, attackerType: atk, defenderType: def }))}
+                              className={`px-1 py-1.5 rounded text-xs font-bold transition-all ${
+                                battleOptions.attackerType === atk && battleOptions.defenderType === def
+                                  ? 'bg-accent text-white'
+                                  : 'bg-bg-secondary text-text-muted hover:bg-bg-primary border border-border'
+                              }`}
+                            >
+                              {label}
+                            </button>
+                          ))}
+                        </div>
+                        <div className="flex gap-2 justify-center">
+                          <label className={`flex items-center gap-1 px-3 py-1 rounded cursor-pointer text-xs font-bold transition-all ${
+                            simulationWeaponType === 'melee'
+                              ? 'bg-green-600/30 border border-green-500 text-green-400'
+                              : 'bg-bg-secondary border border-border text-text-muted hover:bg-bg-primary'
+                          }`}>
+                            <input type="radio" name="weaponType" value="melee" checked={simulationWeaponType === 'melee'} onChange={() => setSimulationWeaponType('melee')} className="sr-only" />
+                            🗡️ 근접
+                          </label>
+                          <label className={`flex items-center gap-1 px-3 py-1 rounded cursor-pointer text-xs font-bold transition-all ${
+                            simulationWeaponType === 'ranged'
+                              ? 'bg-blue-600/30 border border-blue-500 text-blue-400'
+                              : 'bg-bg-secondary border border-border text-text-muted hover:bg-bg-primary'
+                          }`}>
+                            <input type="radio" name="weaponType" value="ranged" checked={simulationWeaponType === 'ranged'} onChange={() => setSimulationWeaponType('ranged')} className="sr-only" />
+                            🏹 원거리
+                          </label>
+                        </div>
+                      </div>
+
+                      {/* 스탯 설정 (접이식) */}
+                      <div className="mb-3">
+                        <button
+                          onClick={() => setSimStatsExpanded(!simStatsExpanded)}
+                          className="w-full flex items-center justify-between px-2 py-1.5 bg-bg-tertiary rounded border border-border hover:bg-bg-primary transition-colors text-xs"
+                        >
+                          <span className="font-bold text-text-secondary">📊 스탯 설정</span>
+                          <span className="text-text-muted text-xs">{simStatsExpanded ? '▲' : '▼'}</span>
+                        </button>
+                        {simStatsExpanded && (
+                          <div className="mt-1 p-2 bg-bg-tertiary/50 rounded border border-border space-y-2">
+                            <div>
+                              <div className="text-xs font-bold text-red-400 mb-1">🗡️ 공격자</div>
+                              <div className="grid grid-cols-6 gap-1">
+                                {(['lv', 'hp', 'str', 'tgh', 'dex', 'luck'] as const).map(stat => (
+                                  <div key={`atk-${stat}`}>
+                                    <label className="block text-[10px] text-text-muted text-center">
+                                      {stat === 'lv' ? 'Lv' : stat === 'hp' ? '체' : stat === 'str' ? '공' : stat === 'tgh' ? '방' : stat === 'dex' ? '순' : '행'}
+                                    </label>
+                                    <input
+                                      type="number"
+                                      min="0"
+                                      value={attacker[stat]}
+                                      onChange={e => setAttacker(prev => ({ ...prev, [stat]: Number(e.target.value) }))}
+                                      className="w-full px-1 py-0.5 bg-bg-secondary border border-border rounded text-text-primary text-xs text-center"
+                                    />
+                                  </div>
+                                ))}
+                              </div>
+                            </div>
+                            <div>
+                              <div className="text-xs font-bold text-blue-400 mb-1">🛡️ 방어자</div>
+                              <div className="grid grid-cols-6 gap-1">
+                                {(['lv', 'hp', 'str', 'tgh', 'dex', 'luck'] as const).map(stat => (
+                                  <div key={`def-${stat}`}>
+                                    <label className="block text-[10px] text-text-muted text-center">
+                                      {stat === 'lv' ? 'Lv' : stat === 'hp' ? '체' : stat === 'str' ? '공' : stat === 'tgh' ? '방' : stat === 'dex' ? '순' : '행'}
+                                    </label>
+                                    <input
+                                      type="number"
+                                      min="0"
+                                      value={defender[stat]}
+                                      onChange={e => setDefender(prev => ({ ...prev, [stat]: Number(e.target.value) }))}
+                                      className="w-full px-1 py-0.5 bg-bg-secondary border border-border rounded text-text-primary text-xs text-center"
+                                    />
+                                  </div>
+                                ))}
+                              </div>
+                            </div>
+                          </div>
+                        )}
+                      </div>
+
+                      {/* 횟수 + 시작 버튼 (한 줄) */}
+                      <div className="flex gap-2 mb-3">
+                        <div className="flex items-center gap-1 flex-1">
                           <input
                             type="number"
                             min="1"
                             max="500"
                             value={simulationCount}
                             onChange={e => setSimulationCount(Math.min(500, Math.max(1, Number(e.target.value))))}
-                            className="flex-1 px-3 py-2 bg-bg-tertiary border border-border rounded text-text-primary"
+                            className="w-16 px-2 py-1.5 bg-bg-tertiary border border-border rounded text-text-primary text-center text-sm font-bold"
                           />
-                          <button
-                            onClick={() => runSimulation('melee', simulationCount)}
-                            disabled={isSimulating}
-                            className="px-4 py-2 bg-green-600 hover:bg-green-700 disabled:bg-gray-600 text-white rounded font-bold text-sm transition-colors"
-                          >
-                            🗡️ 근접
-                          </button>
-                          <button
-                            onClick={() => runSimulation('ranged', simulationCount)}
-                            disabled={isSimulating}
-                            className="px-4 py-2 bg-blue-600 hover:bg-blue-700 disabled:bg-gray-600 text-white rounded font-bold text-sm transition-colors"
-                          >
-                            🏹 원거리
-                          </button>
+                          <span className="text-text-muted text-xs">회</span>
+                          <div className="flex gap-1 ml-1">
+                            {[50, 100, 200, 500].map(num => (
+                              <button
+                                key={num}
+                                onClick={() => setSimulationCount(num)}
+                                className={`px-1.5 py-0.5 rounded text-xs transition-all ${
+                                  simulationCount === num
+                                    ? 'bg-accent text-white'
+                                    : 'bg-bg-tertiary text-text-muted hover:bg-bg-primary'
+                                }`}
+                              >
+                                {num}
+                              </button>
+                            ))}
+                          </div>
                         </div>
-                        <div className="flex gap-2 mt-2">
-                          {[10, 50, 100, 200, 500].map(num => (
-                            <button
-                              key={num}
-                              onClick={() => setSimulationCount(num)}
-                              className={`px-2 py-1 rounded text-xs transition-colors ${
-                                simulationCount === num
-                                  ? 'bg-accent text-white'
-                                  : 'bg-bg-tertiary text-text-secondary hover:bg-bg-primary'
-                              }`}
-                            >
-                              {num}회
-                            </button>
-                          ))}
-                        </div>
+                        <button
+                          onClick={() => runSimulation(simulationWeaponType, simulationCount)}
+                          disabled={isSimulating}
+                          className={`px-4 py-1.5 rounded font-bold text-sm transition-all ${
+                            isSimulating
+                              ? 'bg-gray-600 text-gray-300 cursor-not-allowed'
+                              : 'bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white'
+                          }`}
+                        >
+                          {isSimulating ? `${simProgress}%` : '시작'}
+                        </button>
                       </div>
+
+                      {/* 진행률 바 */}
+                      {isSimulating && (
+                        <div className="mb-3">
+                          <div className="h-1.5 bg-bg-tertiary rounded-full overflow-hidden">
+                            <div
+                              className="h-full bg-gradient-to-r from-purple-500 to-pink-500 transition-all duration-100"
+                              style={{ width: `${simProgress}%` }}
+                            />
+                          </div>
+                        </div>
+                      )}
 
                       {/* 시뮬레이션 결과 */}
                       {simulationResult && (
