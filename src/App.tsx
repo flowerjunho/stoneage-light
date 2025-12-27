@@ -3,6 +3,7 @@ import { HashRouter as Router, Routes, Route, Navigate, useLocation } from 'reac
 import Header from '@/shared/components/layout/Header';
 import ScrollToTopButton from '@/shared/components/ui/ScrollToTopButton';
 import PageShareButton from '@/shared/components/ui/PageShareButton';
+import PWAUpdatePrompt from '@/shared/components/ui/PWAUpdatePrompt';
 import TabNavigation from '@/shared/components/layout/TabNavigation';
 import PetsPage from '@/features/pets/pages/PetsPage';
 import BoardingPage from '@/features/boarding/pages/BoardingPage';
@@ -127,6 +128,7 @@ function App() {
   return (
     <Router>
       <AppContent />
+      <PWAUpdatePrompt />
     </Router>
   );
 }
