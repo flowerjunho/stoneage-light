@@ -995,7 +995,7 @@ const BattlePage: React.FC = () => {
         </div>
 
         {/* 탭 네비게이션 */}
-        <div className="flex mb-6 border-b border-border">
+        <div className="flex mb-6 border-b border-border overflow-x-auto overflow-y-hidden" style={{ touchAction: 'pan-x' }}>
           <button
             onClick={() => setActiveTab('info')}
             className={`flex-1 px-4 py-2 font-bold transition-colors ${
@@ -1132,7 +1132,7 @@ const BattlePage: React.FC = () => {
               {/* 기본 능력치 */}
               <div className="mb-6">
                 <h3 className="text-lg font-bold mb-3 text-accent">1.1 기본 능력치</h3>
-                <div className="overflow-x-auto">
+                <div className="overflow-x-auto overflow-y-hidden" style={{ touchAction: 'pan-x' }}>
                   <table className="w-full text-sm">
                     <thead>
                       <tr className="bg-bg-tertiary">
@@ -1240,7 +1240,7 @@ const BattlePage: React.FC = () => {
               {/* 속성 상성표 */}
               <div className="mb-6">
                 <h3 className="text-lg font-bold mb-3 text-accent">2.2 속성 상성표</h3>
-                <div className="overflow-x-auto">
+                <div className="overflow-x-auto overflow-y-hidden" style={{ touchAction: 'pan-x' }}>
                   <table className="w-full text-xs md:text-sm">
                     <thead>
                       <tr className="bg-bg-tertiary">
@@ -1344,7 +1344,7 @@ const BattlePage: React.FC = () => {
                   여러 속성을 조합했을 때 실제 데미지 보정이 어떻게 계산되는지 확인해보세요.
                 </p>
 
-                <div className="overflow-x-auto">
+                <div className="overflow-x-auto overflow-y-hidden" style={{ touchAction: 'pan-x' }}>
                   <table className="w-full text-xs md:text-sm">
                     <thead>
                       <tr className="bg-bg-tertiary">
@@ -1790,7 +1790,7 @@ const BattlePage: React.FC = () => {
               {/* 능력치 합산표 */}
               <div className="mb-6">
                 <h3 className="text-lg font-bold mb-3 text-accent">4.1 라이딩 능력치 합산</h3>
-                <div className="overflow-x-auto">
+                <div className="overflow-x-auto overflow-y-hidden" style={{ touchAction: 'pan-x' }}>
                   <table className="w-full text-xs md:text-sm">
                     <thead>
                       <tr className="bg-bg-tertiary">
@@ -1893,7 +1893,7 @@ const BattlePage: React.FC = () => {
                   1200 (DEF 840), 풍 속성 10pt
                 </p>
 
-                <div className="overflow-x-auto">
+                <div className="overflow-x-auto overflow-y-hidden" style={{ touchAction: 'pan-x' }}>
                   <table className="w-full text-xs md:text-sm">
                     <thead>
                       <tr className="bg-bg-tertiary">
@@ -2211,7 +2211,7 @@ const BattlePage: React.FC = () => {
                 {/* DEX 보정 */}
                 <div className="mb-4">
                   <h4 className="font-bold text-blue-500 mb-2">DEX 보정 규칙</h4>
-                  <div className="overflow-x-auto">
+                  <div className="overflow-x-auto overflow-y-hidden" style={{ touchAction: 'pan-x' }}>
                     <table className="w-full text-xs md:text-sm">
                       <thead>
                         <tr className="bg-bg-tertiary">
@@ -2403,7 +2403,7 @@ const BattlePage: React.FC = () => {
                   </p>
                 </div>
 
-                <div className="overflow-x-auto">
+                <div className="overflow-x-auto overflow-y-hidden" style={{ touchAction: 'pan-x' }}>
                   <table className="w-full text-xs md:text-sm">
                     <thead>
                       <tr className="bg-bg-tertiary">
@@ -2970,7 +2970,7 @@ const BattlePage: React.FC = () => {
             >
               <h2 className="text-xl font-bold mb-4 text-accent">⚔️ 콤보 vs 일반 공격 비교</h2>
 
-              <div className="overflow-x-auto">
+              <div className="overflow-x-auto overflow-y-hidden" style={{ touchAction: 'pan-x' }}>
                 <table className="w-full border-collapse text-sm">
                   <thead>
                     <tr className="bg-bg-tertiary">
@@ -4107,7 +4107,7 @@ const BattlePage: React.FC = () => {
         {activeTab === 'calculator' && (
           <div className="space-y-4">
             {/* 서브탭 네비게이션 */}
-            <div className="flex gap-2 justify-center mb-4">
+            <div className="flex gap-2 justify-center mb-4 overflow-x-auto overflow-y-hidden" style={{ touchAction: 'pan-x' }}>
               <button
                 onClick={() => setCalculatorSubTab('damage')}
                 className={`px-4 py-1.5 text-sm rounded-full transition-all ${
