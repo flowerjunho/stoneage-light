@@ -62,9 +62,9 @@
       "source": "XMAS 페트보따리",
       "imageLink": "",
       "elementStats": {
-        "water": 0,
+        "water": 7,
         "fire": 3,
-        "wind": 7,
+        "wind": 0,
         "earth": 0
       },
       "baseStats": {
@@ -411,7 +411,7 @@
       "id": "756",
       "name": "청룡(환)",
       "source": "페트 환생",
-      "imageLink": "",
+      "imageLink": "https://pooyas.com/files/extravar_upload/109631/216/179/fed39258dfdb1e6987bf7a7fe934850c.gif",
       "elementStats": {
         "water": 9,
         "fire": 1,
@@ -2654,8 +2654,8 @@
       "source": "전투포인트상점",
       "imageLink": "https://pooyas.com/files/extravar_upload/109631/216/179/fed39258dfdb1e6987bf7a7fe934850c.gif",
       "elementStats": {
-        "water": 0,
-        "fire": 0,
+        "water": 9,
+        "fire": 1,
         "wind": 0,
         "earth": 0
       },
@@ -2663,7 +2663,7 @@
         "attack": 13,
         "defense": 7,
         "agility": 6,
-        "vitality": 55
+        "vitality": 58
       },
       "growthStats": {
         "attack": 2.386,
