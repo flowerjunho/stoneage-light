@@ -10,6 +10,7 @@ import {
   createTipPost,
   deleteTipPost,
   forceDeleteTipPost,
+  toggleLike,
 } from '../services/tipBoardService';
 
 type ViewMode = 'list' | 'detail' | 'create';
@@ -122,6 +123,22 @@ const MyTipBoard: React.FC = () => {
     },
     onError: () => {
       setError(isAdminMode ? '삭제에 실패했습니다.' : '비밀번호가 일치하지 않거나 삭제에 실패했습니다.');
+    },
+  });
+
+  // 좋아요 토글 Mutation
+  const likeMutation = useMutation({
+    mutationFn: (postId: number) => toggleLike(postId),
+    onSuccess: (data, postId) => {
+      // 상세 캐시 업데이트 (optimistic update)
+      queryClient.setQueryData(['tipPost', postId], (oldData: TipPost | null | undefined) => {
+        if (!oldData) return oldData;
+        return {
+          ...oldData,
+          liked: data.liked,
+          likes: data.likes,
+        };
+      });
     },
   });
 
@@ -460,16 +477,46 @@ const MyTipBoard: React.FC = () => {
                 </span>
                 <span>{formatDate(selectedPost.createdAt)}</span>
               </div>
-              <button
-                onClick={() => handleOpenDeleteModal(selectedPost.id)}
-                className="px-3 py-1.5 text-sm text-red-500 border border-red-500/30 rounded-lg
-                           hover:bg-red-500/10 transition-colors flex items-center gap-1"
-              >
-                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                </svg>
-                삭제
-              </button>
+              <div className="flex items-center gap-2">
+                {/* 좋아요 버튼 */}
+                <button
+                  onClick={() => likeMutation.mutate(selectedPost.id)}
+                  disabled={likeMutation.isPending}
+                  className={`px-3 py-1.5 text-sm rounded-lg border transition-colors flex items-center gap-1.5
+                    ${selectedPost.liked
+                      ? 'text-red-500 border-red-500/30 bg-red-500/10 hover:bg-red-500/20'
+                      : 'text-text-secondary border-border hover:border-red-500/30 hover:text-red-500'
+                    }
+                    disabled:opacity-50 disabled:cursor-not-allowed`}
+                >
+                  <svg
+                    className="w-4 h-4"
+                    fill={selectedPost.liked ? 'currentColor' : 'none'}
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"
+                    />
+                  </svg>
+                  {selectedPost.likes > 0 ? selectedPost.likes : '좋아요'}
+                </button>
+
+                {/* 삭제 버튼 */}
+                <button
+                  onClick={() => handleOpenDeleteModal(selectedPost.id)}
+                  className="px-3 py-1.5 text-sm text-red-500 border border-red-500/30 rounded-lg
+                             hover:bg-red-500/10 transition-colors flex items-center gap-1"
+                >
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                  </svg>
+                  삭제
+                </button>
+              </div>
             </div>
           </div>
 

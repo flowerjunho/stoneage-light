@@ -6,8 +6,27 @@ export interface TipPost {
   content: string; // HTML content from Tiptap
   images: string[];
   views: number;
+  likes: number;
+  liked: boolean; // 현재 사용자가 좋아요 했는지
   createdAt: string;
   updatedAt: string;
+}
+
+// clientId 생성 및 관리 (1일 1회 조회수 제한용)
+const CLIENT_ID_KEY = 'STONE_CLIENT_ID';
+
+export function getClientId(): string {
+  let clientId = localStorage.getItem(CLIENT_ID_KEY);
+  if (!clientId) {
+    // UUID v4 형식으로 생성
+    clientId = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (c) => {
+      const r = (Math.random() * 16) | 0;
+      const v = c === 'x' ? r : (r & 0x3) | 0x8;
+      return v.toString(16);
+    });
+    localStorage.setItem(CLIENT_ID_KEY, clientId);
+  }
+  return clientId;
 }
 
 // 페이지네이션 정보
@@ -63,10 +82,11 @@ export async function getTipPosts(
   }
 }
 
-// 게시글 상세 조회
+// 게시글 상세 조회 (clientId로 조회수 1일 1회 제한 + 좋아요 상태 확인)
 export async function getTipPost(postId: number): Promise<TipPost | null> {
   try {
-    const response = await fetch(`${API_URL}/board/posts/${postId}`);
+    const clientId = getClientId();
+    const response = await fetch(`${API_URL}/board/posts/${postId}?clientId=${clientId}`);
 
     if (!response.ok) {
       if (response.status === 404) return null;
@@ -228,6 +248,41 @@ export async function forceDeleteTipPost(postId: number): Promise<boolean> {
     return true;
   } catch (error) {
     console.error('게시글 강제 삭제 실패:', error);
+    throw error;
+  }
+}
+
+// 좋아요 토글 응답 타입
+export interface LikeResponse {
+  liked: boolean;
+  likes: number;
+}
+
+// 좋아요 토글 (clientId 기반)
+export async function toggleLike(postId: number): Promise<LikeResponse> {
+  try {
+    const clientId = getClientId();
+    const response = await fetch(`${API_URL}/board/posts/${postId}/like`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ clientId }),
+    });
+
+    if (!response.ok) {
+      throw new Error('좋아요 처리 실패');
+    }
+
+    const data = await response.json();
+
+    if (!data.success) {
+      throw new Error(data.error || '좋아요 처리 실패');
+    }
+
+    return data.data;
+  } catch (error) {
+    console.error('좋아요 처리 실패:', error);
     throw error;
   }
 }
