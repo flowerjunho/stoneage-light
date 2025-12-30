@@ -252,6 +252,49 @@ export async function forceDeleteTipPost(postId: number): Promise<boolean> {
   }
 }
 
+// 게시글 수정
+export async function updateTipPost(
+  postId: number,
+  password: string,
+  data: {
+    author?: string;
+    title?: string;
+    content?: string;
+    images?: string[];
+  }
+): Promise<TipPost> {
+  try {
+    const response = await fetch(`${API_URL}/board/posts/${postId}/update`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        password,
+        ...data,
+      }),
+    });
+
+    if (!response.ok) {
+      if (response.status === 403) {
+        throw new Error('비밀번호가 일치하지 않습니다.');
+      }
+      throw new Error('게시글 수정 실패');
+    }
+
+    const result = await response.json();
+
+    if (!result.success) {
+      throw new Error(result.error || '게시글 수정 실패');
+    }
+
+    return result.data;
+  } catch (error) {
+    console.error('게시글 수정 실패:', error);
+    throw error;
+  }
+}
+
 // 좋아요 토글 응답 타입
 export interface LikeResponse {
   liked: boolean;

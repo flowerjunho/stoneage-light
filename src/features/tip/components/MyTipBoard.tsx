@@ -11,9 +11,11 @@ import {
   deleteTipPost,
   forceDeleteTipPost,
   toggleLike,
+  updateTipPost,
+  verifyPassword,
 } from '../services/tipBoardService';
 
-type ViewMode = 'list' | 'detail' | 'create';
+type ViewMode = 'list' | 'detail' | 'create' | 'edit';
 
 const MyTipBoard: React.FC = () => {
   const [searchParams] = useSearchParams();
@@ -41,6 +43,17 @@ const MyTipBoard: React.FC = () => {
   // 검색
   const [searchQuery, setSearchQuery] = useState('');
   const [activeSearch, setActiveSearch] = useState('');
+
+  // 수정 비밀번호 확인 모달
+  const [showEditPasswordModal, setShowEditPasswordModal] = useState(false);
+  const [editPassword, setEditPassword] = useState('');
+  const [editTargetPost, setEditTargetPost] = useState<TipPost | null>(null);
+  const [isVerifyingPassword, setIsVerifyingPassword] = useState(false);
+
+  // 수정 폼 데이터 (viewMode='edit'에서 사용)
+  const [editFormTitle, setEditFormTitle] = useState('');
+  const [editFormContent, setEditFormContent] = useState('');
+  const [editPostPassword, setEditPostPassword] = useState(''); // 검증된 비밀번호 저장
 
   // 관리자 모드 (localStorage의 ADMIN_ID_STONE 키 확인)
   const isAdminMode = localStorage.getItem('ADMIN_ID_STONE') !== null;
@@ -139,6 +152,34 @@ const MyTipBoard: React.FC = () => {
           likes: data.likes,
         };
       });
+    },
+  });
+
+  // 게시글 수정 Mutation
+  const updateMutation = useMutation({
+    mutationFn: async ({
+      postId,
+      password,
+      data,
+    }: {
+      postId: number;
+      password: string;
+      data: { title: string; content: string };
+    }) => updateTipPost(postId, password, data),
+    onSuccess: (updatedPost) => {
+      // 수정 완료 후 상세 보기로 이동
+      setSelectedPostId(updatedPost.id);
+      setViewMode('detail');
+      setEditFormTitle('');
+      setEditFormContent('');
+      setEditPostPassword('');
+      setEditTargetPost(null);
+      // 목록 및 상세 캐시 무효화
+      queryClient.invalidateQueries({ queryKey: ['tipPosts'] });
+      queryClient.invalidateQueries({ queryKey: ['tipPost'] });
+    },
+    onError: (err: Error) => {
+      setError(err.message || '게시글 수정에 실패했습니다.');
     },
   });
 
@@ -256,6 +297,73 @@ const MyTipBoard: React.FC = () => {
     setDeletePostId(postId);
     setDeletePassword('');
     setShowDeleteModal(true);
+  };
+
+  // 수정 비밀번호 모달 열기
+  const handleOpenEditPasswordModal = (post: TipPost) => {
+    setEditTargetPost(post);
+    setEditPassword('');
+    setShowEditPasswordModal(true);
+    setError(null);
+  };
+
+  // 비밀번호 확인 후 수정 모드 진입
+  const handleVerifyAndEnterEditMode = async () => {
+    if (!editTargetPost) return;
+    if (!editPassword.trim()) {
+      setError('비밀번호를 입력해주세요.');
+      return;
+    }
+
+    setError(null);
+    setIsVerifyingPassword(true);
+
+    try {
+      const isValid = await verifyPassword(editTargetPost.id, editPassword);
+      if (isValid) {
+        // 비밀번호 확인 성공 → 수정 모드로 진입
+        setEditFormTitle(editTargetPost.title);
+        setEditFormContent(editTargetPost.content);
+        setEditPostPassword(editPassword); // 검증된 비밀번호 저장
+        setShowEditPasswordModal(false);
+        setEditPassword('');
+        setViewMode('edit');
+      } else {
+        setError('비밀번호가 일치하지 않습니다.');
+      }
+    } catch {
+      setError('비밀번호 확인 중 오류가 발생했습니다.');
+    } finally {
+      setIsVerifyingPassword(false);
+    }
+  };
+
+  // 게시글 수정 제출 (수정 모드에서)
+  const handleEditSubmit = () => {
+    if (!editTargetPost) return;
+    if (!editFormTitle.trim() || !editFormContent.trim()) {
+      setError('제목과 내용을 모두 입력해주세요.');
+      return;
+    }
+
+    setError(null);
+    updateMutation.mutate({
+      postId: editTargetPost.id,
+      password: editPostPassword,
+      data: {
+        title: editFormTitle,
+        content: editFormContent,
+      },
+    });
+  };
+
+  // 수정 모드 취소
+  const handleCancelEdit = () => {
+    setViewMode('detail');
+    setEditFormTitle('');
+    setEditFormContent('');
+    setEditPostPassword('');
+    // editTargetPost는 유지 (상세 보기에서 사용)
   };
 
   // 게시글 삭제
@@ -505,6 +613,18 @@ const MyTipBoard: React.FC = () => {
                   {selectedPost.likes > 0 ? selectedPost.likes : '좋아요'}
                 </button>
 
+                {/* 수정 버튼 */}
+                <button
+                  onClick={() => handleOpenEditPasswordModal(selectedPost)}
+                  className="px-3 py-1.5 text-sm text-accent border border-accent/30 rounded-lg
+                             hover:bg-accent/10 transition-colors flex items-center gap-1"
+                >
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                  </svg>
+                  수정
+                </button>
+
                 {/* 삭제 버튼 */}
                 <button
                   onClick={() => handleOpenDeleteModal(selectedPost.id)}
@@ -541,6 +661,37 @@ const MyTipBoard: React.FC = () => {
               __html: DOMPurify.sanitize(selectedPost.content),
             }}
           />
+
+          {/* 첨부 이미지 갤러리 */}
+          {selectedPost.images && selectedPost.images.length > 0 && (
+            <div className="p-4 border-t border-border">
+              <h4 className="text-sm font-medium text-text-secondary mb-3 flex items-center gap-2">
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                </svg>
+                첨부 이미지 ({selectedPost.images.length}개)
+              </h4>
+              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
+                {selectedPost.images.map((imageUrl, index) => (
+                  <a
+                    key={index}
+                    href={imageUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="block aspect-square rounded-lg overflow-hidden bg-bg-tertiary
+                               hover:ring-2 hover:ring-accent transition-all"
+                  >
+                    <img
+                      src={imageUrl}
+                      alt={`첨부 이미지 ${index + 1}`}
+                      className="w-full h-full object-cover"
+                      loading="lazy"
+                    />
+                  </a>
+                ))}
+              </div>
+            </div>
+          )}
         </div>
       </div>
     );
@@ -725,12 +876,162 @@ const MyTipBoard: React.FC = () => {
     );
   };
 
+  // 수정 비밀번호 확인 모달
+  const renderEditPasswordModal = () => {
+    if (!showEditPasswordModal) return null;
+
+    return (
+      <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
+        <div className="bg-bg-primary border border-border rounded-2xl p-6 w-full max-w-md shadow-xl">
+          <h3 className="text-lg font-bold text-text-primary mb-4">게시글 수정</h3>
+
+          <p className="text-text-secondary mb-4">
+            게시글을 수정하시려면 비밀번호를 입력해주세요.
+          </p>
+
+          {error && (
+            <div className="p-3 mb-4 bg-red-500/10 border border-red-500/30 rounded-lg text-red-500 text-sm">
+              {error}
+            </div>
+          )}
+
+          <input
+            type="password"
+            value={editPassword}
+            onChange={e => setEditPassword(e.target.value)}
+            onKeyDown={e => {
+              if (e.key === 'Enter' && editPassword.trim()) {
+                handleVerifyAndEnterEditMode();
+              }
+            }}
+            placeholder="비밀번호 입력"
+            className="w-full px-4 py-2.5 mb-4 bg-bg-secondary border border-border rounded-lg
+                       text-text-primary placeholder-text-muted
+                       focus:outline-none focus:border-accent focus:ring-1 focus:ring-accent
+                       transition-colors"
+            autoFocus
+          />
+
+          <div className="flex justify-end gap-3">
+            <button
+              onClick={() => {
+                setShowEditPasswordModal(false);
+                setEditPassword('');
+                setEditTargetPost(null);
+                setError(null);
+              }}
+              className="px-4 py-2 text-text-secondary border border-border rounded-lg
+                         hover:bg-bg-secondary transition-colors"
+            >
+              취소
+            </button>
+            <button
+              onClick={handleVerifyAndEnterEditMode}
+              disabled={isVerifyingPassword || !editPassword.trim()}
+              className="px-4 py-2 bg-accent text-white rounded-lg
+                         hover:bg-accent/90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed
+                         flex items-center gap-2"
+            >
+              {isVerifyingPassword && (
+                <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
+              )}
+              확인
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  };
+
+  // 수정 뷰 (전체 페이지)
+  const renderEditView = () => {
+    if (!editTargetPost) return null;
+
+    return (
+      <div className="space-y-4">
+        {/* 뒤로가기 */}
+        <button
+          onClick={handleCancelEdit}
+          className="flex items-center gap-2 text-text-secondary hover:text-text-primary transition-colors"
+        >
+          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+          </svg>
+          수정 취소
+        </button>
+
+        <h3 className="text-lg font-bold text-text-primary">게시글 수정</h3>
+
+        {/* 에러 메시지 */}
+        {error && (
+          <div className="p-3 bg-red-500/10 border border-red-500/30 rounded-lg text-red-500 text-sm">
+            {error}
+          </div>
+        )}
+
+        <div className="space-y-4">
+          {/* 제목 */}
+          <div>
+            <label className="block text-sm font-medium text-text-secondary mb-1">제목</label>
+            <input
+              type="text"
+              value={editFormTitle}
+              onChange={e => setEditFormTitle(e.target.value)}
+              placeholder="제목을 입력하세요"
+              className="w-full px-4 py-2.5 bg-bg-secondary border border-border rounded-lg
+                         text-text-primary placeholder-text-muted
+                         focus:outline-none focus:border-accent focus:ring-1 focus:ring-accent
+                         transition-colors"
+              maxLength={100}
+            />
+          </div>
+
+          {/* 내용 */}
+          <div>
+            <label className="block text-sm font-medium text-text-secondary mb-1">내용</label>
+            <TipEditor
+              content={editFormContent}
+              onChange={setEditFormContent}
+              placeholder="내용을 수정하세요..."
+            />
+          </div>
+        </div>
+
+        {/* 버튼 */}
+        <div className="flex justify-end gap-3">
+          <button
+            type="button"
+            onClick={handleCancelEdit}
+            className="px-6 py-2.5 text-text-secondary border border-border rounded-lg
+                       hover:bg-bg-secondary transition-colors"
+          >
+            취소
+          </button>
+          <button
+            onClick={handleEditSubmit}
+            disabled={updateMutation.isPending || !editFormTitle.trim() || !editFormContent.trim()}
+            className="px-6 py-2.5 bg-accent text-white rounded-lg
+                       hover:bg-accent/90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed
+                       flex items-center gap-2"
+          >
+            {updateMutation.isPending && (
+              <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
+            )}
+            수정하기
+          </button>
+        </div>
+      </div>
+    );
+  };
+
   return (
     <div className="relative">
       {viewMode === 'list' && renderListView()}
       {viewMode === 'detail' && renderDetailView()}
       {viewMode === 'create' && renderCreateView()}
+      {viewMode === 'edit' && renderEditView()}
       {renderDeleteModal()}
+      {renderEditPasswordModal()}
     </div>
   );
 };
