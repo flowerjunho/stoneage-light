@@ -18,7 +18,7 @@ const Dashboard2Page: React.FC = () => {
   const [showPasswordError, setShowPasswordError] = useState(false);
 
   // 서버 URL
-  const serverUrl = 'https://limousines-dod-julie-promotes.trycloudflare.com';
+  const serverUrl = 'https://approximate-pearl-stockings-substantially.trycloudflare.com';
 
   // 상태
   const [folders, setFolders] = useState<string[]>([]);
