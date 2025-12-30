@@ -17,8 +17,8 @@ const Dashboard2Page: React.FC = () => {
   const [password, setPassword] = useState('');
   const [showPasswordError, setShowPasswordError] = useState(false);
 
-  // 서버 URL
-  const serverUrl = 'https://approximate-pearl-stockings-substantially.trycloudflare.com';
+  // API 서버 URL
+  const serverUrl = import.meta.env.VITE_API_URL;
 
   // 상태
   const [folders, setFolders] = useState<string[]>([]);

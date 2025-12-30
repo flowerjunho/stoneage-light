@@ -79,8 +79,8 @@ const DashboardPage: React.FC = () => {
     }
   };
 
-  // Cloudflare Tunnel을 통한 HTTPS 접근 (모든 환경에서 사용)
-  const serverUrl = 'https://printable-convinced-execute-prix.trycloudflare.com';
+  // API 서버 URL
+  const serverUrl = import.meta.env.VITE_API_URL;
   const [error, setError] = useState<string | null>(null);
   const [showMixedContentWarning, setShowMixedContentWarning] = useState(false); // Cloudflare 사용으로 경고 불필요
 

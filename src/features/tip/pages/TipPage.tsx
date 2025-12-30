@@ -3,8 +3,9 @@ import { useSearchParams } from 'react-router-dom';
 import iceCastleData from '@/data/ice_castle.json';
 import weeklyRaidData from '@/data/weekly_raid.json';
 import rightItemsData from '@/data/right_items.json';
+import MyTipBoard from '../components/MyTipBoard';
 
-type MainTab = 'raid';
+type MainTab = 'mytip' | 'raid';
 type RaidSubTab = 'radonta' | 'ice-castle' | 'weekly';
 
 // 라돈타 층별 데이터
@@ -556,7 +557,10 @@ const TipPage: React.FC = () => {
   // URL에서 탭 상태 초기화
   const [mainTab, setMainTab] = useState<MainTab>(() => {
     const tabFromUrl = searchParams.get('tab');
-    return tabFromUrl === 'raid' ? tabFromUrl : 'raid';
+    if (tabFromUrl === 'mytip' || tabFromUrl === 'raid') {
+      return tabFromUrl;
+    }
+    return 'mytip'; // 기본값을 나만의 팁으로 변경
   });
 
   // 레이드 서브탭 상태
@@ -568,26 +572,24 @@ const TipPage: React.FC = () => {
   // 페이지 로드 시 URL에 기본값 설정
   useEffect(() => {
     const currentTab = searchParams.get('tab');
-    const currentSub = searchParams.get('sub');
 
     // URL에 탭 정보가 없으면 기본값 설정
-    if (!currentTab || !currentSub) {
-      setSearchParams({
-        tab: mainTab,
-        sub: raidSubTab
-      }, { replace: true });
+    if (!currentTab) {
+      setSearchParams({ tab: mainTab }, { replace: true });
     }
   }, []);
 
   // 메인 탭 변경 핸들러
   const handleMainTabChange = useCallback((tab: MainTab) => {
     setMainTab(tab);
-    setSearchParams(prev => {
-      const newParams = new URLSearchParams(prev);
-      newParams.set('tab', tab);
-      return newParams;
-    });
-  }, [setSearchParams]);
+    if (tab === 'mytip') {
+      // mytip 탭일 때는 sub 파라미터 제거
+      setSearchParams({ tab });
+    } else {
+      // raid 탭일 때는 sub 파라미터 유지/설정
+      setSearchParams({ tab, sub: raidSubTab });
+    }
+  }, [setSearchParams, raidSubTab]);
 
   // 서브탭 변경 핸들러
   const handleRaidSubTabChange = useCallback((tab: RaidSubTab) => {
@@ -626,9 +628,22 @@ const TipPage: React.FC = () => {
         </div>
       </div>
 
-      {/* 메인 탭 (레이드) */}
+      {/* 메인 탭 (나만의 팁 + 레이드) */}
       <div className="mb-4">
         <div className="flex space-x-1 bg-bg-secondary rounded-lg p-1">
+          <button
+            onClick={() => handleMainTabChange('mytip')}
+            className={`flex-1 py-2 px-4 rounded-md text-sm font-medium transition-colors duration-200 ${
+              mainTab === 'mytip'
+                ? 'bg-accent text-white'
+                : 'text-text-secondary hover:text-text-primary hover:bg-bg-tertiary'
+            }`}
+          >
+            나만의 팁
+            <span className="ml-1 px-1.5 py-0.5 text-[10px] font-bold bg-yellow-500 text-black rounded-full">
+              BETA
+            </span>
+          </button>
           <button
             onClick={() => handleMainTabChange('raid')}
             className={`flex-1 py-2 px-4 rounded-md text-sm font-medium transition-colors duration-200 ${
@@ -640,6 +655,13 @@ const TipPage: React.FC = () => {
             레이드
           </button>
         </div>
+        {/* 나만의 팁 안내 문구 */}
+        {mainTab === 'mytip' && (
+          <div className="flex items-center gap-2 mt-2 text-xs text-yellow-500">
+            <span>⚠️</span>
+            <span>서버가 불안정 할 수 있습니다. 서버 접속이 안될경우 왕/킹에게 문의 주세요.</span>
+          </div>
+        )}
         {/* 레이드 안내 문구 */}
         {mainTab === 'raid' && (
           <div className="flex items-center gap-2 mt-2 text-xs text-yellow-500">
@@ -692,6 +714,11 @@ const TipPage: React.FC = () => {
             </div>
           )}
         </div>
+      )}
+
+      {/* 나만의 팁 컨텐츠 */}
+      {mainTab === 'mytip' && (
+        <MyTipBoard />
       )}
 
       {/* 라돈타 공략 컨텐츠 */}
