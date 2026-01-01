@@ -52,7 +52,7 @@ const RebirthCard: React.FC<RebirthCardProps> = ({
         <div className="mb-6">
           <h4 className="text-lg font-semibold mb-3 text-text-primary">📊 스탯 설정</h4>
 
-          <div className="space-y-3">
+          <div className="space-y-3 p-4 rounded-lg border-2 border-blue-400 dark:border-blue-500 bg-blue-50/50 dark:bg-blue-900/20 shadow-sm">
             {[
               { key: 'con', label: '체', editable: true },
               { key: 'wis', label: '완', editable: true },

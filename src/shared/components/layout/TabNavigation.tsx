@@ -16,6 +16,9 @@ const TabNavigation: React.FC = () => {
   const [activeIndex, setActiveIndex] = useState(0);
   const [indicatorStyle, setIndicatorStyle] = useState({ left: 0, width: 0 });
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
+  const [showLeftArrow, setShowLeftArrow] = useState(false);
+  const [showRightArrow, setShowRightArrow] = useState(false);
+  const [isHoveringNav, setIsHoveringNav] = useState(false);
 
   const tabs: Tab[] = [
     {
@@ -49,6 +52,17 @@ const TabNavigation: React.FC = () => {
       icon: (
         <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+        </svg>
+      ),
+    },
+    {
+      path: '/calculator',
+      label: '계산기',
+      name: 'calculator',
+      color: '#ec4899',
+      icon: (
+        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
         </svg>
       ),
     },
@@ -93,17 +107,6 @@ const TabNavigation: React.FC = () => {
       icon: (
         <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7" />
-        </svg>
-      ),
-    },
-    {
-      path: '/calculator',
-      label: '계산기',
-      name: 'calculator',
-      color: '#ec4899',
-      icon: (
-        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
         </svg>
       ),
     },
@@ -161,6 +164,40 @@ const TabNavigation: React.FC = () => {
     }
   }, [updateIndicatorPosition]);
 
+  // 스크롤 가능 여부 및 화살표 표시 상태 업데이트
+  const updateScrollArrows = useCallback(() => {
+    if (tabsRef.current) {
+      const { scrollLeft, scrollWidth, clientWidth } = tabsRef.current;
+      const hasOverflow = scrollWidth > clientWidth;
+      setShowLeftArrow(hasOverflow && scrollLeft > 5);
+      setShowRightArrow(hasOverflow && scrollLeft < scrollWidth - clientWidth - 5);
+    }
+  }, []);
+
+  useEffect(() => {
+    updateScrollArrows();
+    const tabsContainer = tabsRef.current;
+    if (tabsContainer) {
+      tabsContainer.addEventListener('scroll', updateScrollArrows);
+      window.addEventListener('resize', updateScrollArrows);
+      return () => {
+        tabsContainer.removeEventListener('scroll', updateScrollArrows);
+        window.removeEventListener('resize', updateScrollArrows);
+      };
+    }
+  }, [updateScrollArrows]);
+
+  // 스크롤 함수
+  const scrollTabs = (direction: 'left' | 'right') => {
+    if (tabsRef.current) {
+      const scrollAmount = 150;
+      tabsRef.current.scrollBy({
+        left: direction === 'left' ? -scrollAmount : scrollAmount,
+        behavior: 'smooth',
+      });
+    }
+  };
+
   const activeColor = tabs[activeIndex]?.color || '#fbbf24';
 
   return (
@@ -181,7 +218,47 @@ const TabNavigation: React.FC = () => {
           />
 
           {/* Tab Container */}
-          <div className="relative px-2 py-2 md:px-3 md:py-3">
+          <div
+            className="relative px-2 py-2 md:px-3 md:py-3"
+            onMouseEnter={() => setIsHoveringNav(true)}
+            onMouseLeave={() => setIsHoveringNav(false)}
+          >
+            {/* Left Scroll Button */}
+            {showLeftArrow && isHoveringNav && (
+              <button
+                onClick={() => scrollTabs('left')}
+                className="hidden md:flex absolute left-0 top-1/2 -translate-y-1/2 z-20
+                          w-8 h-8 items-center justify-center
+                          bg-bg-primary/90 backdrop-blur-sm rounded-full
+                          border border-border shadow-lg
+                          hover:bg-bg-secondary transition-all duration-200
+                          text-text-primary hover:scale-110"
+                aria-label="왼쪽으로 스크롤"
+              >
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                </svg>
+              </button>
+            )}
+
+            {/* Right Scroll Button */}
+            {showRightArrow && isHoveringNav && (
+              <button
+                onClick={() => scrollTabs('right')}
+                className="hidden md:flex absolute right-0 top-1/2 -translate-y-1/2 z-20
+                          w-8 h-8 items-center justify-center
+                          bg-bg-primary/90 backdrop-blur-sm rounded-full
+                          border border-border shadow-lg
+                          hover:bg-bg-secondary transition-all duration-200
+                          text-text-primary hover:scale-110"
+                aria-label="오른쪽으로 스크롤"
+              >
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                </svg>
+              </button>
+            )}
+
             {/* Scrollable Tabs */}
             <div
               ref={tabsRef}
