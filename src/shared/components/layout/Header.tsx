@@ -119,10 +119,7 @@ const Header: React.FC = () => {
       </nav>
 
       {/* Hero Section - Immersive */}
-      <header
-        className="relative w-full overflow-hidden"
-        onMouseMove={handleMouseMove}
-      >
+      <header className="relative w-full overflow-hidden" onMouseMove={handleMouseMove}>
         {/* Animated Background */}
         <div className="absolute inset-0 bg-bg-secondary">
           {/* Gradient Mesh */}
@@ -181,7 +178,7 @@ const Header: React.FC = () => {
             {/* Image with overlay */}
             <div className="relative h-72 md:h-96 lg:h-[28rem]">
               <img
-                src={`${import.meta.env.BASE_URL}sa.jpg`}
+                src={`${import.meta.env.BASE_URL}ga.jpeg`}
                 alt="StoneAge Light"
                 className="w-full h-full object-cover"
               />
