@@ -3,10 +3,37 @@
   "totalCount": 454,
   "pets": [
     {
+      "id": "773",
+      "name": "아마란",
+      "source": "포타 마을 점령 보상(부족전 듀얼 우승/준우승)",
+      "imageLink": "https://pooyas.com/files/extravar_upload/109631/270/177/cc2c826d2ddec193ec49b82bda976789.gif",
+      "elementStats": {
+        "water": 8,
+        "fire": 0,
+        "wind": 0,
+        "earth": 2
+      },
+      "baseStats": {
+        "attack": 10,
+        "defense": 6,
+        "agility": 7,
+        "vitality": 53
+      },
+      "growthStats": {
+        "attack": 2.121,
+        "defense": 1.323,
+        "agility": 1.405,
+        "vitality": 10.526
+      },
+      "rideable": "탑승불가",
+      "totalGrowth": "4.849",
+      "grade": "일반등급"
+    },
+    {
       "id": "772",
       "name": "고오다",
-      "source": "듀얼 부족전 우승",
-      "imageLink": "/images/ride/oda.png",
+      "source": "고타나 마을 점령 보상(부족전 듀얼 우승/준우승)",
+      "imageLink": "https://pooyas.com/files/extravar_upload/109631/262/177/6dcbc7a428a9b567c3addd1f2627d48a.gif",
       "elementStats": {
         "water": 0,
         "fire": 0,
