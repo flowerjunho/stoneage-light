@@ -266,6 +266,17 @@ const createItemApi = async (body: Record<string, unknown>) => {
   return data.data;
 };
 
+const updateItemApi = async (id: number, body: Record<string, unknown>) => {
+  const response = await fetch(`${serverUrl}/share/items/${id}`, {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(body),
+  });
+  const data = await response.json();
+  if (!data.success) throw new Error(data.error || 'Failed to update item');
+  return data.data;
+};
+
 const uploadImageApi = async (file: File) => {
   const formData = new FormData();
   formData.append('image', file);
@@ -346,6 +357,17 @@ const deleteImageApi = async (imageUrl: string) => {
   return data.data;
 };
 
+const verifyPasswordApi = async (id: number, password: string) => {
+  const response = await fetch(`${serverUrl}/share/items/${id}/verify`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ password }),
+  });
+  const data = await response.json();
+  if (!data.success) throw new Error(data.error || 'Password verification failed');
+  return data.data;
+};
+
 const SharePage: React.FC = () => {
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
@@ -398,6 +420,11 @@ const SharePage: React.FC = () => {
   const [isDrawing, setIsDrawing] = useState(false);
   const [drawingName, setDrawingName] = useState('');
   const [drawWinner, setDrawWinner] = useState<string | null>(null);
+
+  // Edit state
+  const [showEditPasswordForm, setShowEditPasswordForm] = useState(false);
+  const [editPassword, setEditPassword] = useState('');
+  const [editPasswordError, setEditPasswordError] = useState(false);
 
   // Admin check
   const isAdmin = localStorage.getItem('ADMIN_ID_STONE') === 'flowerjunho';
@@ -520,8 +547,18 @@ const SharePage: React.FC = () => {
     },
   });
 
+  const updateMutation = useMutation({
+    mutationFn: ({ id, body }: { id: number; body: Record<string, unknown> }) => updateItemApi(id, body),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['share-items'] });
+      if (selectedItemId) {
+        queryClient.invalidateQueries({ queryKey: ['share-item', selectedItemId] });
+      }
+    },
+  });
+
   // Derived loading states from mutations
-  const isSubmitting = createMutation.isPending;
+  const isSubmitting = createMutation.isPending || updateMutation.isPending;
   const uploadingImage = uploadImageMutation.isPending;
   const isApplying = applyMutation.isPending;
   const isCompleting = completeMutation.isPending || uncompleteMutation.isPending || drawMutation.isPending;
@@ -577,7 +614,58 @@ const SharePage: React.FC = () => {
     setSelectedItemId(null);
     setShowApplyForm(false);
     setShowCompleteForm(false);
+    setShowEditPasswordForm(false);
+    setEditPassword('');
+    setEditPasswordError(false);
     setSearchParams({});
+  };
+
+  // Handle edit button click
+  const handleEditClick = () => {
+    if (isAdmin) {
+      // 관리자는 바로 수정 모드로 진입
+      enterEditMode();
+    } else {
+      // 일반 사용자는 비밀번호 확인 필요
+      setShowEditPasswordForm(true);
+      setEditPassword('');
+      setEditPasswordError(false);
+    }
+  };
+
+  // Verify password and enter edit mode
+  const handleEditPasswordSubmit = async () => {
+    if (!selectedItem || !editPassword.trim()) {
+      setEditPasswordError(true);
+      return;
+    }
+
+    try {
+      // 비밀번호 검증 API 호출
+      await verifyPasswordApi(selectedItem.id, editPassword);
+      // 비밀번호가 맞으면 수정 모드 진입
+      enterEditMode();
+    } catch {
+      // 비밀번호가 틀리면 에러 표시
+      setEditPasswordError(true);
+    }
+  };
+
+  // Enter edit mode - populate form with current item data
+  const enterEditMode = () => {
+    if (!selectedItem) return;
+
+    setFormTitle(selectedItem.title);
+    setFormCategory(selectedItem.category as Category);
+    setFormTradeType(selectedItem.tradeType);
+    setFormPrice(selectedItem.price ?? 0);
+    setFormCurrency(selectedItem.currency ?? '스톤');
+    setFormContent(selectedItem.content);
+    setFormImages(selectedItem.images ?? []);
+    setFormAuthor(selectedItem.author);
+    setFormPassword(editPassword); // 입력한 비밀번호 사용
+    setShowEditPasswordForm(false);
+    setViewMode('edit');
   };
 
   // Handle browser back button
@@ -640,6 +728,66 @@ const SharePage: React.FC = () => {
       },
       onError: (error) => {
         alert(error.message || '등록에 실패했습니다.');
+      },
+    });
+  };
+
+  // Edit submit
+  const handleEditSubmit = async () => {
+    if (!selectedItemId) return;
+
+    if (!formTitle.trim() || !formAuthor.trim()) {
+      alert('제목, 작성자는 필수입니다.');
+      return;
+    }
+
+    // 관리자가 아닌 경우 비밀번호 필수
+    if (!isAdmin && !formPassword.trim()) {
+      alert('비밀번호를 입력해주세요.');
+      return;
+    }
+
+    if (formTradeType === '판매' && formPrice <= 0) {
+      alert('판매 금액을 입력해주세요.');
+      return;
+    }
+
+    const body: Record<string, unknown> = {
+      title: formTitle,
+      category: formCategory,
+      tradeType: formTradeType,
+      content: formContent || '<p></p>',
+      images: formImages,
+      author: formAuthor,
+    };
+
+    // 관리자가 아닌 경우에만 비밀번호 전송
+    if (!isAdmin) {
+      body.password = formPassword;
+    } else {
+      body.adminEdit = true;
+    }
+
+    // 판매인 경우에만 가격과 화폐 추가
+    if (formTradeType === '판매') {
+      body.price = formPrice;
+      body.currency = formCurrency;
+    }
+
+    updateMutation.mutate({ id: selectedItemId, body }, {
+      onSuccess: () => {
+        alert('수정이 완료되었습니다!');
+        resetForm();
+        setEditPassword('');
+        setViewMode('detail');
+      },
+      onError: (error) => {
+        if (error.message.includes('비밀번호') || error.message.includes('password')) {
+          setEditPasswordError(true);
+          alert('비밀번호가 일치하지 않습니다.');
+        } else {
+          alert(error.message || '수정에 실패했습니다.');
+        }
       },
     });
   };
@@ -1213,6 +1361,13 @@ const SharePage: React.FC = () => {
                 >
                   🎯 {isShare ? '나눔 완료' : '판매 완료'}
                 </button>
+                {/* 수정 버튼 */}
+                <button
+                  onClick={handleEditClick}
+                  className="px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-lg transition-colors"
+                >
+                  ✏️ 수정
+                </button>
                 {/* 관리자만 삭제 가능 */}
                 {isAdmin && (
                   <button
@@ -1236,6 +1391,13 @@ const SharePage: React.FC = () => {
                 >
                   {isCompleting ? '처리 중...' : '↩️ 미완료로 되돌리기'}
                 </button>
+                {/* 수정 버튼 */}
+                <button
+                  onClick={handleEditClick}
+                  className="px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-lg transition-colors"
+                >
+                  ✏️ 수정
+                </button>
                 {/* 관리자만 삭제 가능 */}
                 {isAdmin && (
                   <button
@@ -1250,6 +1412,58 @@ const SharePage: React.FC = () => {
             )}
           </div>
         </div>
+
+        {/* Edit Password Form */}
+        {showEditPasswordForm && (
+          <div className="bg-bg-secondary rounded-xl border border-blue-500 p-6">
+            <h3 className="text-lg font-bold mb-4 text-blue-400">🔒 비밀번호 확인</h3>
+            <p className="text-sm text-text-secondary mb-4">
+              수정하려면 등록 시 입력한 비밀번호를 입력해주세요.
+            </p>
+            <div className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-text-secondary mb-1">
+                  비밀번호 *
+                </label>
+                <input
+                  type="password"
+                  value={editPassword}
+                  onChange={(e) => {
+                    setEditPassword(e.target.value);
+                    setEditPasswordError(false);
+                  }}
+                  onKeyPress={(e) => e.key === 'Enter' && handleEditPasswordSubmit()}
+                  placeholder="비밀번호 입력"
+                  className={`w-full px-4 py-2 bg-bg-tertiary border rounded-lg text-text-primary ${
+                    editPasswordError ? 'border-red-500' : 'border-border'
+                  }`}
+                />
+                {editPasswordError && (
+                  <p className="text-red-500 text-sm mt-1">비밀번호가 일치하지 않습니다.</p>
+                )}
+              </div>
+              <div className="flex gap-3">
+                <button
+                  onClick={handleEditPasswordSubmit}
+                  disabled={!editPassword.trim()}
+                  className="px-6 py-2 bg-blue-500 hover:bg-blue-600 text-white font-bold rounded-lg transition-colors disabled:opacity-50"
+                >
+                  확인
+                </button>
+                <button
+                  onClick={() => {
+                    setShowEditPasswordForm(false);
+                    setEditPassword('');
+                    setEditPasswordError(false);
+                  }}
+                  className="px-6 py-2 bg-gray-600 hover:bg-gray-700 text-white font-bold rounded-lg transition-colors"
+                >
+                  취소
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
 
         {/* Apply Form (나눔 전용) */}
         {showApplyForm && !selectedItem.completed && isShare && (
@@ -1648,6 +1862,223 @@ const SharePage: React.FC = () => {
     </div>
   );
 
+  // Edit view (similar to create but for editing)
+  const renderEditView = () => (
+    <div className="max-w-2xl mx-auto">
+      <button
+        onClick={() => {
+          setViewMode('detail');
+          resetForm();
+          setEditPassword('');
+        }}
+        className="flex items-center gap-2 text-text-secondary hover:text-text-primary transition-colors mb-6"
+      >
+        <span>←</span>
+        <span>상세보기로</span>
+      </button>
+
+      <div className="bg-bg-secondary rounded-xl border border-blue-500 p-6">
+        <h2 className="text-2xl font-bold mb-6 text-blue-400">✏️ 물품 수정</h2>
+
+        <div className="space-y-5">
+          {/* Trade Type */}
+          <div>
+            <label className="block text-sm font-medium text-text-secondary mb-2">
+              거래 유형 *
+            </label>
+            <div className="flex gap-3">
+              {TRADE_TYPES.map((type) => (
+                <button
+                  key={type}
+                  onClick={() => setFormTradeType(type)}
+                  className={`flex-1 py-3 rounded-lg border-2 font-bold transition-all ${
+                    formTradeType === type
+                      ? type === '판매'
+                        ? 'bg-green-500/20 border-green-500 text-green-400'
+                        : 'bg-pink-500/20 border-pink-500 text-pink-400'
+                      : 'bg-bg-tertiary border-border text-text-secondary hover:border-accent'
+                  }`}
+                >
+                  {type === '판매' ? '💰 판매' : '🎁 나눔'}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* Title */}
+          <div>
+            <label className="block text-sm font-medium text-text-secondary mb-2">
+              제목 (물품명) *
+            </label>
+            <input
+              type="text"
+              value={formTitle}
+              onChange={(e) => setFormTitle(e.target.value)}
+              placeholder={formTradeType === '판매' ? '판매할 물품 이름' : '나눔할 물품 이름'}
+              className="w-full px-4 py-3 bg-bg-tertiary border border-border rounded-lg text-text-primary"
+            />
+          </div>
+
+          {/* Category */}
+          <div>
+            <label className="block text-sm font-medium text-text-secondary mb-2">
+              분류 *
+            </label>
+            <div className="flex flex-wrap gap-2">
+              {CATEGORIES.map((cat) => (
+                <button
+                  key={cat}
+                  onClick={() => setFormCategory(cat)}
+                  className={`px-4 py-2 rounded-lg border transition-colors ${
+                    formCategory === cat
+                      ? 'bg-accent text-white border-accent'
+                      : 'bg-bg-tertiary text-text-secondary border-border hover:border-accent'
+                  }`}
+                >
+                  {cat}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* Price (판매일 경우만) */}
+          {formTradeType === '판매' && (
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <label className="block text-sm font-medium text-text-secondary mb-2">
+                  가격 *
+                </label>
+                <input
+                  type="number"
+                  value={formPrice}
+                  onChange={(e) => setFormPrice(Number(e.target.value))}
+                  placeholder="가격 입력"
+                  min={0}
+                  className="w-full px-4 py-3 bg-bg-tertiary border border-border rounded-lg text-text-primary"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-text-secondary mb-2">
+                  화폐 *
+                </label>
+                <div className="flex gap-2">
+                  {CURRENCIES.map((cur) => (
+                    <button
+                      key={cur}
+                      onClick={() => setFormCurrency(cur)}
+                      className={`flex-1 py-3 rounded-lg border transition-colors ${
+                        formCurrency === cur
+                          ? cur === '금화'
+                            ? 'bg-yellow-500/20 border-yellow-500 text-yellow-400'
+                            : 'bg-gray-500/20 border-gray-400 text-gray-300'
+                          : 'bg-bg-tertiary border-border text-text-secondary hover:border-accent'
+                      }`}
+                    >
+                      {cur === '금화' ? '💰 금화' : '💵 스톤'}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Images */}
+          <div>
+            <label className="block text-sm font-medium text-text-secondary mb-2">
+              이미지 (최대 5장)
+            </label>
+            <div className="flex flex-wrap gap-3">
+              {formImages.map((img, idx) => (
+                <div key={idx} className="relative w-24 h-24">
+                  <img
+                    src={getImageUrl(img)}
+                    alt={`이미지 ${idx + 1}`}
+                    className="w-full h-full object-cover rounded-lg"
+                  />
+                  <button
+                    onClick={() => handleRemoveImage(idx)}
+                    className="absolute -top-2 -right-2 w-6 h-6 bg-red-500 text-white rounded-full text-sm"
+                  >
+                    ×
+                  </button>
+                </div>
+              ))}
+              {formImages.length < 5 && (
+                <label className="w-24 h-24 flex items-center justify-center bg-bg-tertiary border-2 border-dashed border-border rounded-lg cursor-pointer hover:border-accent transition-colors">
+                  <input
+                    type="file"
+                    accept="image/*"
+                    onChange={handleImageUpload}
+                    className="hidden"
+                    disabled={uploadingImage}
+                  />
+                  {uploadingImage ? (
+                    <div className="animate-spin w-6 h-6 border-2 border-accent border-t-transparent rounded-full" />
+                  ) : (
+                    <span className="text-3xl text-text-muted">+</span>
+                  )}
+                </label>
+              )}
+            </div>
+          </div>
+
+          {/* Content */}
+          <div>
+            <label className="block text-sm font-medium text-text-secondary mb-2">
+              상세 설명
+            </label>
+            <textarea
+              value={formContent}
+              onChange={(e) => setFormContent(e.target.value)}
+              placeholder="추가 설명이 있다면 입력하세요"
+              rows={4}
+              className="w-full px-4 py-3 bg-bg-tertiary border border-border rounded-lg text-text-primary resize-none"
+            />
+          </div>
+
+          {/* Author */}
+          <div>
+            <label className="block text-sm font-medium text-text-secondary mb-2">
+              작성자 (닉네임) *
+            </label>
+            <input
+              type="text"
+              value={formAuthor}
+              onChange={(e) => setFormAuthor(e.target.value)}
+              placeholder="게임 닉네임"
+              className="w-full px-4 py-3 bg-bg-tertiary border border-border rounded-lg text-text-primary"
+            />
+          </div>
+
+          {/* Password - 관리자가 아닌 경우에만 표시 */}
+          {!isAdmin && (
+            <div>
+              <label className="block text-sm font-medium text-text-secondary mb-2">
+                비밀번호 * (등록 시 입력한 비밀번호)
+              </label>
+              <input
+                type="password"
+                value={formPassword}
+                onChange={(e) => setFormPassword(e.target.value)}
+                placeholder="비밀번호 입력"
+                className="w-full px-4 py-3 bg-bg-tertiary border border-border rounded-lg text-text-primary"
+              />
+            </div>
+          )}
+
+          {/* Submit */}
+          <button
+            onClick={handleEditSubmit}
+            disabled={isSubmitting}
+            className="w-full py-4 font-bold rounded-lg transition-colors disabled:opacity-50 text-lg text-white bg-blue-600 hover:bg-blue-700"
+          >
+            {isSubmitting ? '수정 중...' : '✏️ 수정 완료'}
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+
   // Main authenticated view
   return (
     <div className="min-h-screen bg-bg-primary text-text-primary">
@@ -1686,6 +2117,7 @@ const SharePage: React.FC = () => {
         {viewMode === 'list' && renderListView()}
         {viewMode === 'detail' && renderDetailView()}
         {viewMode === 'create' && renderCreateView()}
+        {viewMode === 'edit' && renderEditView()}
       </main>
     </div>
   );
