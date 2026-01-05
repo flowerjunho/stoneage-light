@@ -60,6 +60,56 @@ class PushNotificationManager {
   }
 
   /**
+   * Safari PWA 여부 확인 (iOS에서 홈 화면에 추가된 경우)
+   */
+  isStandalone(): boolean {
+    return (
+      window.matchMedia('(display-mode: standalone)').matches ||
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      (window.navigator as any).standalone === true
+    );
+  }
+
+  /**
+   * iOS Safari 여부 확인
+   */
+  isIOSSafari(): boolean {
+    const ua = navigator.userAgent;
+    const isIOS = /iPad|iPhone|iPod/.test(ua);
+    const isWebkit = /WebKit/.test(ua);
+    const isNotChrome = !/CriOS/.test(ua);
+    return isIOS && isWebkit && isNotChrome;
+  }
+
+  /**
+   * 푸시 알림 미지원 이유 반환
+   */
+  getUnsupportedReason(): string | null {
+    if (this.isSupported()) return null;
+
+    if (this.isIOSSafari()) {
+      if (!this.isStandalone()) {
+        return '아이폰에서 알림을 받으려면 이 앱을 홈 화면에 추가해주세요. (공유 버튼 → 홈 화면에 추가)';
+      }
+      return 'iOS 16.4 이상에서만 알림이 지원됩니다.';
+    }
+
+    if (!('serviceWorker' in navigator)) {
+      return '이 브라우저는 Service Worker를 지원하지 않습니다.';
+    }
+
+    if (!('PushManager' in window)) {
+      return '이 브라우저는 푸시 알림을 지원하지 않습니다.';
+    }
+
+    if (!('Notification' in window)) {
+      return '이 브라우저는 알림 기능을 지원하지 않습니다.';
+    }
+
+    return '알 수 없는 이유로 알림이 지원되지 않습니다.';
+  }
+
+  /**
    * 알림 권한 요청
    */
   async requestPermission(): Promise<boolean> {

@@ -102,7 +102,7 @@ const BoardPage: React.FC = () => {
       {/* 헤더 */}
       <div className="mb-8">
         <h1 className="text-3xl font-bold text-text-primary mb-4 text-center">
-          💬 스톤에이지 게시판
+          💬 스톤에이지 <span onClick={() => navigate('/trade')}>게시판</span>
         </h1>
         <div className="text-center text-text-secondary space-y-2">
           <p className="text-base md:text-lg">

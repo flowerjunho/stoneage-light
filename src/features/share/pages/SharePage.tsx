@@ -496,6 +496,7 @@ const SharePage: React.FC = () => {
 
   // Push notification state
   const [pushSupported, setPushSupported] = useState(false);
+  const [pushUnsupportedReason, setPushUnsupportedReason] = useState<string | null>(null);
   const [pushPermission, setPushPermission] = useState<NotificationPermission>('default');
   const [isSubscribing, setIsSubscribing] = useState(false);
   const [showPushDialog, setShowPushDialog] = useState(false);
@@ -551,6 +552,8 @@ const SharePage: React.FC = () => {
     if (pushManager.isSupported()) {
       setPushSupported(true);
       setPushPermission(pushManager.getPermissionStatus());
+    } else {
+      setPushUnsupportedReason(pushManager.getUnsupportedReason());
     }
   }, []);
 
@@ -615,12 +618,23 @@ const SharePage: React.FC = () => {
   const pagination = itemsData?.pagination ?? null;
 
   // React Query - Single Item
-  const { data: selectedItem } = useQuery({
+  const { data: selectedItem, isError: isItemError, isFetched: isItemFetched } = useQuery({
     queryKey: ['share-item', selectedItemId],
     queryFn: () => fetchItemApi(selectedItemId!, clientId),
     enabled: !!selectedItemId && viewMode === 'detail',
     staleTime: 1000 * 60 * 2, // 2분 캐시
+    retry: false, // 존재하지 않는 아이템은 재시도하지 않음
   });
+
+  // 존재하지 않는 아이템 접근 시 목록으로 리다이렉트
+  useEffect(() => {
+    if (viewMode === 'detail' && selectedItemId && isItemFetched && (isItemError || !selectedItem)) {
+      // URL에서 item 파라미터 제거하고 목록으로 이동
+      setSearchParams({}, { replace: true });
+      setViewMode('list');
+      setSelectedItemId(null);
+    }
+  }, [viewMode, selectedItemId, isItemFetched, isItemError, selectedItem, setSearchParams]);
 
   // Mutations
   const createMutation = useMutation({
@@ -903,8 +917,8 @@ const SharePage: React.FC = () => {
 
     createMutation.mutate(body, {
       onSuccess: (data) => {
-        // 글 등록 성공 후 푸시 알림 구독 여부 확인
-        if (data?.id && pushSupported) {
+        // 글 등록 성공 후 푸시 알림 구독 여부 확인 (미지원 브라우저에도 안내 다이얼로그 표시)
+        if (data?.id) {
           setPendingPushShareId(data.id);
           setShowPushDialog(true);
         } else {
@@ -2607,68 +2621,97 @@ const SharePage: React.FC = () => {
       {showPushDialog && (
         <div className="fixed inset-0 z-[70] bg-black/70 flex items-center justify-center p-4">
           <div className="bg-bg-secondary rounded-2xl max-w-md w-full p-6 shadow-2xl border border-border">
-            <div className="text-center mb-6">
-              <div className="text-5xl mb-4">🔔</div>
-              <h2 className="text-xl font-bold text-text-primary mb-2">
-                알림을 받으시겠습니까?
-              </h2>
-              <p className="text-text-secondary text-sm">
-                {formTradeType === '나눔'
-                  ? '나눔 신청이나 좋아요가 있을 때 알림을 받을 수 있습니다.'
-                  : '구매 신청이나 좋아요가 있을 때 알림을 받을 수 있습니다.'}
-              </p>
-            </div>
+            {pushSupported ? (
+              <>
+                <div className="text-center mb-6">
+                  <div className="text-5xl mb-4">🔔</div>
+                  <h2 className="text-xl font-bold text-text-primary mb-2">
+                    알림을 받으시겠습니까?
+                  </h2>
+                  <p className="text-text-secondary text-sm">
+                    {formTradeType === '나눔'
+                      ? '나눔 신청이나 좋아요가 있을 때 알림을 받을 수 있습니다.'
+                      : '구매 신청이나 좋아요가 있을 때 알림을 받을 수 있습니다.'}
+                  </p>
+                </div>
 
-            <div className="flex gap-3">
-              <button
-                onClick={async () => {
-                  // 알림 거부
-                  setShowPushDialog(false);
-                  alert(formTradeType === '나눔' ? '나눔이 등록되었습니다!' : '판매가 등록되었습니다!');
-                  resetForm();
-                  setViewMode('list');
-                  setPendingPushShareId(null);
-                }}
-                className="flex-1 py-3 bg-gray-600 hover:bg-gray-700 text-white font-bold rounded-lg transition-colors"
-              >
-                다음에
-              </button>
-              <button
-                onClick={async () => {
-                  if (pendingPushShareId) {
-                    setIsSubscribing(true);
-                    try {
-                      const subscribed = await handlePushSubscribe(pendingPushShareId);
-                      if (subscribed) {
-                        alert(
-                          (formTradeType === '나눔' ? '나눔이 등록되었습니다!\n' : '판매가 등록되었습니다!\n') +
-                          '알림이 활성화되었습니다. 신청이나 좋아요가 있으면 알려드릴게요!'
-                        );
-                      } else {
-                        alert(formTradeType === '나눔' ? '나눔이 등록되었습니다!' : '판매가 등록되었습니다!');
-                      }
-                    } catch (error) {
-                      console.error('푸시 구독 실패:', error);
+                <div className="flex gap-3">
+                  <button
+                    onClick={async () => {
+                      setShowPushDialog(false);
                       alert(formTradeType === '나눔' ? '나눔이 등록되었습니다!' : '판매가 등록되었습니다!');
-                    } finally {
-                      setIsSubscribing(false);
-                    }
-                  }
-                  setShowPushDialog(false);
-                  resetForm();
-                  setViewMode('list');
-                  setPendingPushShareId(null);
-                }}
-                disabled={isSubscribing}
-                className="flex-1 py-3 bg-yellow-500 hover:bg-yellow-600 text-black font-bold rounded-lg transition-colors disabled:opacity-50"
-              >
-                {isSubscribing ? '설정 중...' : '네, 받을게요!'}
-              </button>
-            </div>
+                      resetForm();
+                      setViewMode('list');
+                      setPendingPushShareId(null);
+                    }}
+                    className="flex-1 py-3 bg-gray-600 hover:bg-gray-700 text-white font-bold rounded-lg transition-colors"
+                  >
+                    다음에
+                  </button>
+                  <button
+                    onClick={async () => {
+                      if (pendingPushShareId) {
+                        setIsSubscribing(true);
+                        try {
+                          const subscribed = await handlePushSubscribe(pendingPushShareId);
+                          if (subscribed) {
+                            alert(
+                              (formTradeType === '나눔' ? '나눔이 등록되었습니다!\n' : '판매가 등록되었습니다!\n') +
+                              '알림이 활성화되었습니다. 신청이나 좋아요가 있으면 알려드릴게요!'
+                            );
+                          } else {
+                            alert(formTradeType === '나눔' ? '나눔이 등록되었습니다!' : '판매가 등록되었습니다!');
+                          }
+                        } catch (error) {
+                          console.error('푸시 구독 실패:', error);
+                          alert(formTradeType === '나눔' ? '나눔이 등록되었습니다!' : '판매가 등록되었습니다!');
+                        } finally {
+                          setIsSubscribing(false);
+                        }
+                      }
+                      setShowPushDialog(false);
+                      resetForm();
+                      setViewMode('list');
+                      setPendingPushShareId(null);
+                    }}
+                    disabled={isSubscribing}
+                    className="flex-1 py-3 bg-yellow-500 hover:bg-yellow-600 text-black font-bold rounded-lg transition-colors disabled:opacity-50"
+                  >
+                    {isSubscribing ? '설정 중...' : '네, 받을게요!'}
+                  </button>
+                </div>
 
-            <p className="text-center text-xs text-text-muted mt-4">
-              나중에 상세 페이지에서도 설정할 수 있습니다.
-            </p>
+                <p className="text-center text-xs text-text-muted mt-4">
+                  나중에 상세 페이지에서도 설정할 수 있습니다.
+                </p>
+              </>
+            ) : (
+              <>
+                <div className="text-center mb-6">
+                  <div className="text-5xl mb-4">✅</div>
+                  <h2 className="text-xl font-bold text-text-primary mb-2">
+                    {formTradeType === '나눔' ? '나눔이 등록되었습니다!' : '판매가 등록되었습니다!'}
+                  </h2>
+                  {pushUnsupportedReason && (
+                    <p className="text-text-secondary text-sm mt-3 p-3 bg-yellow-500/10 rounded-lg">
+                      💡 {pushUnsupportedReason}
+                    </p>
+                  )}
+                </div>
+
+                <button
+                  onClick={() => {
+                    setShowPushDialog(false);
+                    resetForm();
+                    setViewMode('list');
+                    setPendingPushShareId(null);
+                  }}
+                  className="w-full py-3 bg-yellow-500 hover:bg-yellow-600 text-black font-bold rounded-lg transition-colors"
+                >
+                  확인
+                </button>
+              </>
+            )}
           </div>
         </div>
       )}
