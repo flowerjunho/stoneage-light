@@ -178,7 +178,7 @@ const Header: React.FC = () => {
             {/* Image with overlay */}
             <div className="relative h-72 md:h-96 lg:h-[28rem]">
               <img
-                src={`${import.meta.env.BASE_URL}ga.jpeg`}
+                src={`${import.meta.env.BASE_URL}sa_1.png`}
                 alt="StoneAge Light"
                 className="w-full h-full object-cover"
               />
