@@ -267,8 +267,8 @@ const createItemApi = async (body: Record<string, unknown>) => {
 };
 
 const updateItemApi = async (id: number, body: Record<string, unknown>) => {
-  const response = await fetch(`${serverUrl}/share/items/${id}`, {
-    method: 'PUT',
+  const response = await fetch(`${serverUrl}/share/items/${id}/update`, {
+    method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(body),
   });
@@ -331,11 +331,11 @@ const drawItemApi = async (id: number) => {
   return data.data;
 };
 
-const deleteItemApi = async (id: number) => {
+const deleteItemApi = async (id: number, options: { adminDelete?: boolean; password?: string }) => {
   const response = await fetch(`${serverUrl}/share/items/${id}`, {
     method: 'DELETE',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ adminDelete: true }),
+    body: JSON.stringify(options),
   });
   const data = await response.json();
   if (!data.success) throw new Error(data.error || 'Failed to delete');
@@ -426,6 +426,14 @@ const SharePage: React.FC = () => {
   const [editPassword, setEditPassword] = useState('');
   const [editPasswordError, setEditPasswordError] = useState(false);
 
+  // Delete state
+  const [showDeletePasswordForm, setShowDeletePasswordForm] = useState(false);
+  const [deletePassword, setDeletePassword] = useState('');
+  const [deletePasswordError, setDeletePasswordError] = useState(false);
+
+  // Scroll to top state
+  const [showScrollTop, setShowScrollTop] = useState(false);
+
   // Admin check
   const isAdmin = localStorage.getItem('ADMIN_ID_STONE') === 'flowerjunho';
 
@@ -455,6 +463,21 @@ const SharePage: React.FC = () => {
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [viewMode, isAuthenticated]);
+
+  // Scroll to top button visibility
+  useEffect(() => {
+    const handleScroll = () => {
+      setShowScrollTop(window.scrollY > 300);
+    };
+
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  // Scroll to top function
+  const scrollToTop = () => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
 
   // React Query - Items List (uses debounced search query)
   const {
@@ -541,7 +564,8 @@ const SharePage: React.FC = () => {
   });
 
   const deleteMutation = useMutation({
-    mutationFn: deleteItemApi,
+    mutationFn: ({ id, options }: { id: number; options: { adminDelete?: boolean; password?: string } }) =>
+      deleteItemApi(id, options),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['share-items'] });
     },
@@ -582,6 +606,18 @@ const SharePage: React.FC = () => {
       setIsAuthenticated(true);
     }
   }, []);
+
+  // Lock body scroll when overlay is open
+  useEffect(() => {
+    if (viewMode === 'detail' || viewMode === 'edit') {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
+    }
+    return () => {
+      document.body.style.overflow = '';
+    };
+  }, [viewMode]);
 
   // Password validation
   const handlePasswordSubmit = () => {
@@ -708,7 +744,7 @@ const SharePage: React.FC = () => {
       title: formTitle,
       category: formCategory,
       tradeType: formTradeType,
-      content: formContent || '<p></p>',
+      content: formContent || '',
       images: formImages,
       author: formAuthor,
       password: formPassword,
@@ -732,44 +768,37 @@ const SharePage: React.FC = () => {
     });
   };
 
-  // Edit submit
+  // Edit submit (비밀번호는 이미 verify로 검증됨)
   const handleEditSubmit = async () => {
-    if (!selectedItemId) return;
+    if (!selectedItemId || !selectedItem) return;
 
-    if (!formTitle.trim() || !formAuthor.trim()) {
-      alert('제목, 작성자는 필수입니다.');
+    if (!formTitle.trim()) {
+      alert('제목은 필수입니다.');
       return;
     }
 
-    // 관리자가 아닌 경우 비밀번호 필수
-    if (!isAdmin && !formPassword.trim()) {
-      alert('비밀번호를 입력해주세요.');
-      return;
-    }
-
-    if (formTradeType === '판매' && formPrice <= 0) {
+    // 판매인 경우 가격 검증
+    if (selectedItem.tradeType === '판매' && formPrice <= 0) {
       alert('판매 금액을 입력해주세요.');
       return;
     }
 
+    // API 문서에 따라 수정 가능한 필드만 전송 (tradeType은 수정 불가)
+    // 비밀번호는 미리 verify로 검증되었으므로 editPassword 사용
     const body: Record<string, unknown> = {
       title: formTitle,
       category: formCategory,
-      tradeType: formTradeType,
-      content: formContent || '<p></p>',
+      content: formContent || '',
       images: formImages,
-      author: formAuthor,
     };
 
-    // 관리자가 아닌 경우에만 비밀번호 전송
+    // 관리자가 아닌 경우에만 비밀번호 전송 (이미 verify로 검증된 비밀번호)
     if (!isAdmin) {
-      body.password = formPassword;
-    } else {
-      body.adminEdit = true;
+      body.password = editPassword;
     }
 
     // 판매인 경우에만 가격과 화폐 추가
-    if (formTradeType === '판매') {
+    if (selectedItem.tradeType === '판매') {
       body.price = formPrice;
       body.currency = formCurrency;
     }
@@ -952,20 +981,48 @@ const SharePage: React.FC = () => {
     }, 80); // 80ms 간격으로 이름 변경
   };
 
-  // Delete item (admin only)
-  const handleDelete = () => {
-    if (!isAdmin) {
-      alert('관리자만 삭제할 수 있습니다.');
+  // Handle delete button click
+  const handleDeleteClick = () => {
+    if (isAdmin) {
+      // 관리자는 바로 삭제
+      executeDelete({ adminDelete: true });
+    } else {
+      // 일반 사용자는 비밀번호 확인 필요
+      setShowDeletePasswordForm(true);
+      setDeletePassword('');
+      setDeletePasswordError(false);
+    }
+  };
+
+  // Verify password and delete
+  const handleDeletePasswordSubmit = async () => {
+    if (!selectedItem || !deletePassword.trim()) {
+      setDeletePasswordError(true);
       return;
     }
 
+    try {
+      // 비밀번호 검증 API 호출
+      await verifyPasswordApi(selectedItem.id, deletePassword);
+      // 비밀번호가 맞으면 삭제 실행
+      executeDelete({ password: deletePassword });
+    } catch {
+      // 비밀번호가 틀리면 에러 표시
+      setDeletePasswordError(true);
+    }
+  };
+
+  // Execute delete
+  const executeDelete = (options: { adminDelete?: boolean; password?: string }) => {
     if (!selectedItemId) return;
 
     if (!confirm('정말 삭제하시겠습니까?')) return;
 
-    deleteMutation.mutate(selectedItemId, {
+    deleteMutation.mutate({ id: selectedItemId, options }, {
       onSuccess: () => {
         alert('삭제되었습니다.');
+        setShowDeletePasswordForm(false);
+        setDeletePassword('');
         setSelectedItemId(null);
         setViewMode('list');
       },
@@ -1032,7 +1089,7 @@ const SharePage: React.FC = () => {
       <div className="min-h-screen bg-bg-primary text-text-primary flex items-center justify-center p-4">
         <div className="absolute top-4 left-4">
           <button
-            onClick={() => navigate('/')}
+            onClick={() => navigate('/pets')}
             className="flex items-center gap-2 px-3 py-2 bg-bg-secondary hover:bg-bg-tertiary border border-border rounded-lg transition-colors"
             aria-label="홈으로 가기"
           >
@@ -1089,58 +1146,60 @@ const SharePage: React.FC = () => {
   // List view
   const renderListView = () => (
     <div className="space-y-6">
-      {/* Trade Type Filter Tabs */}
-      <div className="flex items-center justify-between">
-        <div className="flex gap-2">
-          {[
-            { value: '' as TradeFilter, label: '전체' },
-            { value: '판매' as TradeFilter, label: '💰 판매' },
-            { value: '나눔' as TradeFilter, label: '🎁 나눔' },
-          ].map((tab) => (
-            <button
-              key={tab.value}
-              onClick={() => {
-                setFilterTradeType(tab.value);
-                setCurrentPage(1);
-              }}
-              className={`px-5 py-2.5 rounded-full font-medium transition-all ${
-                filterTradeType === tab.value
-                  ? 'bg-accent text-white shadow-lg'
-                  : 'bg-bg-secondary text-text-secondary hover:bg-bg-tertiary border border-border'
-              }`}
-            >
-              {tab.label}
-            </button>
-          ))}
-        </div>
-        {/* Refresh Button */}
-        <button
-          onClick={() => refetchItems()}
-          disabled={isFetching}
-          className="flex items-center gap-2 px-3 py-2 bg-bg-secondary hover:bg-bg-tertiary border border-border rounded-lg transition-colors disabled:opacity-50"
-          aria-label="새로고침"
-          title="새로고침"
-        >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            className={`h-5 w-5 ${isFetching ? 'animate-spin' : ''}`}
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
+      {/* Sticky Filter Container */}
+      <div className="sticky top-0 z-40 bg-bg-primary pb-2 md:pb-4 -mx-4 px-4 pt-2 -mt-2 space-y-2 md:space-y-4">
+        {/* Trade Type Filter Tabs */}
+        <div className="flex items-center justify-between">
+          <div className="flex gap-1.5 md:gap-2">
+            {[
+              { value: '' as TradeFilter, label: '전체' },
+              { value: '판매' as TradeFilter, label: '💰 판매' },
+              { value: '나눔' as TradeFilter, label: '🎁 나눔' },
+            ].map((tab) => (
+              <button
+                key={tab.value}
+                onClick={() => {
+                  setFilterTradeType(tab.value);
+                  setCurrentPage(1);
+                }}
+                className={`px-3 py-1.5 md:px-5 md:py-2.5 rounded-full text-sm md:text-base font-medium transition-all ${
+                  filterTradeType === tab.value
+                    ? 'bg-accent text-white shadow-lg'
+                    : 'bg-bg-secondary text-text-secondary hover:bg-bg-tertiary border border-border'
+                }`}
+              >
+                {tab.label}
+              </button>
+            ))}
+          </div>
+          {/* Refresh Button */}
+          <button
+            onClick={() => refetchItems()}
+            disabled={isFetching}
+            className="flex items-center gap-2 px-2 py-1.5 md:px-3 md:py-2 bg-bg-secondary hover:bg-bg-tertiary border border-border rounded-lg transition-colors disabled:opacity-50"
+            aria-label="새로고침"
+            title="새로고침"
           >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
-            />
-          </svg>
-        </button>
-      </div>
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              className={`h-4 w-4 md:h-5 md:w-5 ${isFetching ? 'animate-spin' : ''}`}
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
+              />
+            </svg>
+          </button>
+        </div>
 
-      {/* Filters */}
-      <div className="bg-bg-secondary rounded-xl p-4 border border-border">
-        <div className="flex flex-wrap gap-3 items-center">
+        {/* Filters */}
+        <div className="bg-bg-secondary rounded-lg md:rounded-xl p-2.5 md:p-4 border border-border">
+          <div className="flex flex-wrap gap-2 md:gap-3 items-center">
           {/* Category Select */}
           <div className="relative">
             <select
@@ -1149,7 +1208,7 @@ const SharePage: React.FC = () => {
                 setFilterCategory(e.target.value);
                 setCurrentPage(1);
               }}
-              className="appearance-none pl-3 pr-8 py-2.5 bg-bg-tertiary border border-border rounded-xl text-text-primary text-sm font-medium cursor-pointer hover:border-accent focus:border-accent focus:ring-2 focus:ring-accent/20 transition-all"
+              className="appearance-none pl-2 pr-6 py-1.5 md:pl-3 md:pr-8 md:py-2.5 bg-bg-tertiary border border-border rounded-lg md:rounded-xl text-text-primary text-xs md:text-sm font-medium cursor-pointer hover:border-accent focus:border-accent focus:ring-2 focus:ring-accent/20 transition-all"
             >
               <option value="">전체 분류</option>
               {CATEGORIES.map((cat) => (
@@ -1158,7 +1217,7 @@ const SharePage: React.FC = () => {
                 </option>
               ))}
             </select>
-            <span className="absolute right-2 top-1/2 -translate-y-1/2 text-text-secondary pointer-events-none text-xs">▼</span>
+            <span className="absolute right-1.5 md:right-2 top-1/2 -translate-y-1/2 text-text-secondary pointer-events-none text-[10px] md:text-xs">▼</span>
           </div>
 
           {/* Status Select */}
@@ -1169,18 +1228,18 @@ const SharePage: React.FC = () => {
                 setFilterStatus(e.target.value);
                 setCurrentPage(1);
               }}
-              className="appearance-none pl-3 pr-8 py-2.5 bg-bg-tertiary border border-border rounded-xl text-text-primary text-sm font-medium cursor-pointer hover:border-accent focus:border-accent focus:ring-2 focus:ring-accent/20 transition-all"
+              className="appearance-none pl-2 pr-6 py-1.5 md:pl-3 md:pr-8 md:py-2.5 bg-bg-tertiary border border-border rounded-lg md:rounded-xl text-text-primary text-xs md:text-sm font-medium cursor-pointer hover:border-accent focus:border-accent focus:ring-2 focus:ring-accent/20 transition-all"
             >
               <option value="">전체 상태</option>
               <option value="ongoing">진행중</option>
               <option value="completed">완료</option>
             </select>
-            <span className="absolute right-2 top-1/2 -translate-y-1/2 text-text-secondary pointer-events-none text-xs">▼</span>
+            <span className="absolute right-1.5 md:right-2 top-1/2 -translate-y-1/2 text-text-secondary pointer-events-none text-[10px] md:text-xs">▼</span>
           </div>
 
           {/* Search Input with / shortcut hint */}
-          <div className="flex-1 min-w-[200px] relative">
-            <span className="absolute left-3 top-1/2 -translate-y-1/2 text-text-secondary pointer-events-none">🔍</span>
+          <div className="flex-1 min-w-[120px] md:min-w-[200px] relative">
+            <span className="absolute left-2 md:left-3 top-1/2 -translate-y-1/2 text-text-secondary pointer-events-none text-sm">🔍</span>
             <input
               ref={searchInputRef}
               type="text"
@@ -1189,19 +1248,35 @@ const SharePage: React.FC = () => {
                 setSearchQuery(e.target.value);
                 setCurrentPage(1);
               }}
-              placeholder="검색어 입력..."
-              className="w-full pl-9 pr-12 py-2.5 bg-bg-tertiary border border-border rounded-xl text-text-primary text-sm focus:border-accent focus:ring-2 focus:ring-accent/20 transition-all"
+              placeholder="검색..."
+              className="w-full pl-7 pr-8 py-1.5 md:pl-9 md:pr-12 md:py-2.5 bg-bg-tertiary border border-border rounded-lg md:rounded-xl text-text-primary text-xs md:text-sm focus:border-accent focus:ring-2 focus:ring-accent/20 transition-all"
             />
-            <span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-text-muted bg-bg-secondary px-1.5 py-0.5 rounded border border-border">/</span>
+            <span className="absolute right-2 md:right-3 top-1/2 -translate-y-1/2 text-[10px] md:text-xs text-text-muted bg-bg-secondary px-1 md:px-1.5 py-0.5 rounded border border-border hidden md:block">/</span>
           </div>
+
+          {/* Reset Filter Button */}
+          <button
+            onClick={() => {
+              setFilterTradeType('');
+              setFilterCategory('');
+              setFilterStatus('ongoing');
+              setSearchQuery('');
+              setCurrentPage(1);
+            }}
+            className="px-2 py-1.5 md:px-3 md:py-2.5 bg-bg-tertiary hover:bg-bg-primary border border-border text-text-secondary hover:text-text-primary rounded-lg md:rounded-xl text-xs md:text-sm transition-colors"
+            title="필터 초기화"
+          >
+            ↺
+          </button>
 
           <button
             onClick={() => setViewMode('create')}
-            className="px-4 py-2.5 bg-green-600 hover:bg-green-700 text-white rounded-xl text-sm font-medium transition-colors ml-auto flex items-center gap-1.5"
+            className="px-2.5 py-1.5 md:px-4 md:py-2.5 bg-green-600 hover:bg-green-700 text-white rounded-lg md:rounded-xl text-xs md:text-sm font-medium transition-colors flex items-center gap-1"
           >
             <span>+</span>
-            <span>물품 등록</span>
+            <span className="hidden sm:inline">물품 등록</span>
           </button>
+          </div>
         </div>
       </div>
 
@@ -1261,16 +1336,7 @@ const SharePage: React.FC = () => {
     const isShare = selectedItem.tradeType === '나눔';
 
     return (
-      <div className="max-w-4xl mx-auto space-y-6">
-        {/* Back button */}
-        <button
-          onClick={handleBackToList}
-          className="flex items-center gap-2 text-text-secondary hover:text-text-primary transition-colors"
-        >
-          <span>←</span>
-          <span>목록으로</span>
-        </button>
-
+      <div className="space-y-6">
         {/* Main content */}
         <div className="bg-bg-secondary rounded-xl border border-border overflow-hidden">
           {/* Images */}
@@ -1368,16 +1434,14 @@ const SharePage: React.FC = () => {
                 >
                   ✏️ 수정
                 </button>
-                {/* 관리자만 삭제 가능 */}
-                {isAdmin && (
-                  <button
-                    onClick={handleDelete}
-                    disabled={isDeleting}
-                    className="px-6 py-3 bg-red-600 hover:bg-red-700 text-white font-bold rounded-lg transition-colors ml-auto disabled:opacity-50"
-                  >
-                    {isDeleting ? '삭제 중...' : '🗑️ 삭제'}
-                  </button>
-                )}
+                {/* 삭제 버튼 */}
+                <button
+                  onClick={handleDeleteClick}
+                  disabled={isDeleting}
+                  className="px-6 py-3 bg-red-600 hover:bg-red-700 text-white font-bold rounded-lg transition-colors ml-auto disabled:opacity-50"
+                >
+                  {isDeleting ? '삭제 중...' : '🗑️ 삭제'}
+                </button>
               </div>
             )}
 
@@ -1398,16 +1462,14 @@ const SharePage: React.FC = () => {
                 >
                   ✏️ 수정
                 </button>
-                {/* 관리자만 삭제 가능 */}
-                {isAdmin && (
-                  <button
-                    onClick={handleDelete}
-                    disabled={isDeleting}
-                    className="px-6 py-3 bg-red-600 hover:bg-red-700 text-white font-bold rounded-lg transition-colors ml-auto disabled:opacity-50"
-                  >
-                    {isDeleting ? '삭제 중...' : '🗑️ 삭제'}
-                  </button>
-                )}
+                {/* 삭제 버튼 */}
+                <button
+                  onClick={handleDeleteClick}
+                  disabled={isDeleting}
+                  className="px-6 py-3 bg-red-600 hover:bg-red-700 text-white font-bold rounded-lg transition-colors ml-auto disabled:opacity-50"
+                >
+                  {isDeleting ? '삭제 중...' : '🗑️ 삭제'}
+                </button>
               </div>
             )}
           </div>
@@ -1455,6 +1517,58 @@ const SharePage: React.FC = () => {
                     setShowEditPasswordForm(false);
                     setEditPassword('');
                     setEditPasswordError(false);
+                  }}
+                  className="px-6 py-2 bg-gray-600 hover:bg-gray-700 text-white font-bold rounded-lg transition-colors"
+                >
+                  취소
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Delete Password Form */}
+        {showDeletePasswordForm && (
+          <div className="bg-bg-secondary rounded-xl border border-red-500 p-6">
+            <h3 className="text-lg font-bold mb-4 text-red-400">🗑️ 삭제 확인</h3>
+            <p className="text-sm text-text-secondary mb-4">
+              삭제하려면 등록 시 입력한 비밀번호를 입력해주세요.
+            </p>
+            <div className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-text-secondary mb-1">
+                  비밀번호 *
+                </label>
+                <input
+                  type="password"
+                  value={deletePassword}
+                  onChange={(e) => {
+                    setDeletePassword(e.target.value);
+                    setDeletePasswordError(false);
+                  }}
+                  onKeyPress={(e) => e.key === 'Enter' && handleDeletePasswordSubmit()}
+                  placeholder="비밀번호 입력"
+                  className={`w-full px-4 py-2 bg-bg-tertiary border rounded-lg text-text-primary ${
+                    deletePasswordError ? 'border-red-500' : 'border-border'
+                  }`}
+                />
+                {deletePasswordError && (
+                  <p className="text-red-500 text-sm mt-1">비밀번호가 일치하지 않습니다.</p>
+                )}
+              </div>
+              <div className="flex gap-3">
+                <button
+                  onClick={handleDeletePasswordSubmit}
+                  disabled={!deletePassword.trim()}
+                  className="px-6 py-2 bg-red-500 hover:bg-red-600 text-white font-bold rounded-lg transition-colors disabled:opacity-50"
+                >
+                  삭제
+                </button>
+                <button
+                  onClick={() => {
+                    setShowDeletePasswordForm(false);
+                    setDeletePassword('');
+                    setDeletePasswordError(false);
                   }}
                   className="px-6 py-2 bg-gray-600 hover:bg-gray-700 text-white font-bold rounded-lg transition-colors"
                 >
@@ -1863,46 +1977,28 @@ const SharePage: React.FC = () => {
   );
 
   // Edit view (similar to create but for editing)
-  const renderEditView = () => (
-    <div className="max-w-2xl mx-auto">
-      <button
-        onClick={() => {
-          setViewMode('detail');
-          resetForm();
-          setEditPassword('');
-        }}
-        className="flex items-center gap-2 text-text-secondary hover:text-text-primary transition-colors mb-6"
-      >
-        <span>←</span>
-        <span>상세보기로</span>
-      </button>
+  const renderEditView = () => {
+    if (!selectedItem) return null;
 
+    return (
+    <div>
       <div className="bg-bg-secondary rounded-xl border border-blue-500 p-6">
         <h2 className="text-2xl font-bold mb-6 text-blue-400">✏️ 물품 수정</h2>
 
         <div className="space-y-5">
-          {/* Trade Type */}
+          {/* Trade Type - 수정 불가 (읽기 전용) */}
           <div>
             <label className="block text-sm font-medium text-text-secondary mb-2">
-              거래 유형 *
+              거래 유형 (수정 불가)
             </label>
-            <div className="flex gap-3">
-              {TRADE_TYPES.map((type) => (
-                <button
-                  key={type}
-                  onClick={() => setFormTradeType(type)}
-                  className={`flex-1 py-3 rounded-lg border-2 font-bold transition-all ${
-                    formTradeType === type
-                      ? type === '판매'
-                        ? 'bg-green-500/20 border-green-500 text-green-400'
-                        : 'bg-pink-500/20 border-pink-500 text-pink-400'
-                      : 'bg-bg-tertiary border-border text-text-secondary hover:border-accent'
-                  }`}
-                >
-                  {type === '판매' ? '💰 판매' : '🎁 나눔'}
-                </button>
-              ))}
+            <div className={`py-3 px-4 rounded-lg border-2 font-bold text-center ${
+              selectedItem.tradeType === '판매'
+                ? 'bg-green-500/20 border-green-500 text-green-400'
+                : 'bg-pink-500/20 border-pink-500 text-pink-400'
+            }`}>
+              {selectedItem.tradeType === '판매' ? '💰 판매' : '🎁 나눔'}
             </div>
+            <p className="text-xs text-text-muted mt-1">거래 유형은 변경할 수 없습니다.</p>
           </div>
 
           {/* Title */}
@@ -2036,35 +2132,15 @@ const SharePage: React.FC = () => {
             />
           </div>
 
-          {/* Author */}
+          {/* Author - 수정 불가 (읽기 전용) */}
           <div>
             <label className="block text-sm font-medium text-text-secondary mb-2">
-              작성자 (닉네임) *
+              작성자 (수정 불가)
             </label>
-            <input
-              type="text"
-              value={formAuthor}
-              onChange={(e) => setFormAuthor(e.target.value)}
-              placeholder="게임 닉네임"
-              className="w-full px-4 py-3 bg-bg-tertiary border border-border rounded-lg text-text-primary"
-            />
-          </div>
-
-          {/* Password - 관리자가 아닌 경우에만 표시 */}
-          {!isAdmin && (
-            <div>
-              <label className="block text-sm font-medium text-text-secondary mb-2">
-                비밀번호 * (등록 시 입력한 비밀번호)
-              </label>
-              <input
-                type="password"
-                value={formPassword}
-                onChange={(e) => setFormPassword(e.target.value)}
-                placeholder="비밀번호 입력"
-                className="w-full px-4 py-3 bg-bg-tertiary border border-border rounded-lg text-text-primary"
-              />
+            <div className="w-full px-4 py-3 bg-bg-tertiary/50 border border-border rounded-lg text-text-muted">
+              {selectedItem.author}
             </div>
-          )}
+          </div>
 
           {/* Submit */}
           <button
@@ -2078,47 +2154,97 @@ const SharePage: React.FC = () => {
       </div>
     </div>
   );
+  };
 
   // Main authenticated view
   return (
     <div className="min-h-screen bg-bg-primary text-text-primary">
       {/* Header */}
-      <header className="sticky top-0 z-50 bg-bg-secondary/95 backdrop-blur-sm border-b border-border">
-        <div className="max-w-7xl mx-auto px-4 py-4 flex items-center justify-between">
-          <div className="flex items-center gap-4">
-            <button
-              onClick={() => navigate('/')}
-              className="flex items-center gap-2 px-3 py-2 bg-bg-tertiary hover:bg-bg-primary border border-border rounded-lg transition-colors"
-              aria-label="홈으로 가기"
-            >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                className="h-5 w-5"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
+      {viewMode !== 'create' && (
+        <header className="bg-bg-secondary border-b border-border">
+          <div className="max-w-7xl mx-auto px-4 py-4 flex items-center justify-between">
+            <div className="flex items-center gap-4">
+              <button
+                onClick={() => navigate('/pets')}
+                className="flex items-center gap-2 px-3 py-2 bg-bg-tertiary hover:bg-bg-primary border border-border rounded-lg transition-colors"
+                aria-label="홈으로 가기"
               >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"
-                />
-              </svg>
-            </button>
-            <h1 className="text-xl font-bold">형명가 거래소</h1>
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="h-5 w-5"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"
+                  />
+                </svg>
+              </button>
+              <h1 className="text-xl font-bold">형명가 거래소</h1>
+            </div>
+            <ThemeToggle />
           </div>
-          <ThemeToggle />
-        </div>
-      </header>
+        </header>
+      )}
 
       {/* Content */}
       <main className="max-w-7xl mx-auto px-4 py-6">
-        {viewMode === 'list' && renderListView()}
-        {viewMode === 'detail' && renderDetailView()}
+        {renderListView()}
         {viewMode === 'create' && renderCreateView()}
-        {viewMode === 'edit' && renderEditView()}
       </main>
+
+      {/* Detail View - Full Screen Overlay */}
+      {viewMode === 'detail' && (
+        <div className="fixed inset-0 z-50 bg-bg-primary overflow-y-auto">
+          <div className="max-w-4xl mx-auto px-4 py-6">
+            {renderDetailView()}
+          </div>
+          {/* Floating Back Button */}
+          <button
+            onClick={handleBackToList}
+            className="fixed bottom-6 left-6 w-12 h-12 bg-yellow-500 hover:bg-yellow-400 text-black rounded-full shadow-lg flex items-center justify-center transition-all z-[60]"
+            aria-label="목록으로 돌아가기"
+          >
+            ←
+          </button>
+        </div>
+      )}
+
+      {/* Edit View - Full Screen Overlay */}
+      {viewMode === 'edit' && (
+        <div className="fixed inset-0 z-50 bg-bg-primary overflow-y-auto">
+          <div className="max-w-2xl mx-auto px-4 py-6">
+            {renderEditView()}
+          </div>
+          {/* Floating Back Button */}
+          <button
+            onClick={() => {
+              setViewMode('detail');
+              resetForm();
+              setEditPassword('');
+            }}
+            className="fixed bottom-6 left-6 w-12 h-12 bg-yellow-500 hover:bg-yellow-400 text-black rounded-full shadow-lg flex items-center justify-center transition-all z-[60]"
+            aria-label="상세보기로 돌아가기"
+          >
+            ←
+          </button>
+        </div>
+      )}
+
+      {/* Scroll to Top Button */}
+      {showScrollTop && (
+        <button
+          onClick={scrollToTop}
+          className="fixed bottom-6 right-6 w-12 h-12 bg-accent hover:bg-accent/80 text-white rounded-full shadow-lg flex items-center justify-center transition-all z-50"
+          aria-label="상단으로 이동"
+        >
+          ↑
+        </button>
+      )}
     </div>
   );
 };
