@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import ThemeToggle from '@/shared/components/layout/ThemeToggle';
 
@@ -301,21 +301,25 @@ const completeItemApi = async (id: number, receiver: string) => {
 };
 
 const uncompleteItemApi = async (id: number) => {
+  console.log('Calling uncomplete API for id:', id);
   const response = await fetch(`${serverUrl}/share/items/${id}/uncomplete`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
   });
   const data = await response.json();
+  console.log('Uncomplete API response:', data);
   if (!data.success) throw new Error(data.error || 'Failed to uncomplete');
   return data.data;
 };
 
 const drawItemApi = async (id: number) => {
+  console.log('Calling draw API for id:', id);
   const response = await fetch(`${serverUrl}/share/items/${id}/draw`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
   });
   const data = await response.json();
+  console.log('Draw API response:', data);
   if (!data.success) throw new Error(data.error || 'Failed to draw');
   return data.data;
 };
@@ -348,6 +352,7 @@ const deleteImageApi = async (imageUrl: string) => {
 
 const SharePage: React.FC = () => {
   const navigate = useNavigate();
+  const [searchParams, setSearchParams] = useSearchParams();
   const queryClient = useQueryClient();
 
   // Auth state
@@ -355,9 +360,12 @@ const SharePage: React.FC = () => {
   const [password, setPassword] = useState('');
   const [showPasswordError, setShowPasswordError] = useState(false);
 
-  // View state
-  const [viewMode, setViewMode] = useState<ViewMode>('list');
-  const [selectedItemId, setSelectedItemId] = useState<number | null>(null);
+  // URL에서 item 파라미터 읽기
+  const itemIdFromUrl = searchParams.get('item');
+
+  // View state - URL 파라미터에 따라 초기값 설정
+  const [viewMode, setViewMode] = useState<ViewMode>(() => itemIdFromUrl ? 'detail' : 'list');
+  const [selectedItemId, setSelectedItemId] = useState<number | null>(() => itemIdFromUrl ? parseInt(itemIdFromUrl, 10) : null);
 
   // List filters
   const [currentPage, setCurrentPage] = useState(1);
@@ -560,30 +568,45 @@ const SharePage: React.FC = () => {
     }
   };
 
-  // View item detail (with history push)
+  // View item detail (with query param)
   const handleViewItem = (id: number) => {
     setSelectedItemId(id);
     setViewMode('detail');
-    window.history.pushState({ view: 'detail', itemId: id }, '', `#item-${id}`);
+    setSearchParams({ item: String(id) });
+  };
+
+  // Go back to list
+  const handleBackToList = () => {
+    setViewMode('list');
+    setSelectedItemId(null);
+    setShowApplyForm(false);
+    setShowCompleteForm(false);
+    setSearchParams({});
   };
 
   // Handle browser back button
   useEffect(() => {
     const handlePopState = () => {
-      // 뒤로가기 시 목록으로 돌아감
-      if (viewMode === 'detail') {
+      // URL에서 item 파라미터 확인
+      const params = new URLSearchParams(window.location.search);
+      const itemId = params.get('item');
+
+      if (itemId) {
+        // 상세보기로 이동
+        setSelectedItemId(parseInt(itemId, 10));
+        setViewMode('detail');
+      } else {
+        // 목록으로 돌아감
         setViewMode('list');
         setSelectedItemId(null);
         setShowApplyForm(false);
         setShowCompleteForm(false);
-      } else if (viewMode === 'create') {
-        setViewMode('list');
       }
     };
 
     window.addEventListener('popstate', handlePopState);
     return () => window.removeEventListener('popstate', handlePopState);
-  }, [viewMode]);
+  }, []);
 
   // Create item
   const handleCreateSubmit = async () => {
@@ -759,9 +782,14 @@ const SharePage: React.FC = () => {
         // 실제 API 호출
         drawMutation.mutate(selectedItemId, {
           onSuccess: (data) => {
+            console.log('Draw API response:', data);
+
+            // API 응답에서 당첨자 정보 추출
+            const winnerName = data?.winner?.name || data?.receiver || '알 수 없음';
+
             // 최종 당첨자 표시
-            setDrawingName(data.winner.name);
-            setDrawWinner(data.winner.name);
+            setDrawingName(winnerName);
+            setDrawWinner(winnerName);
 
             // 3초 후 모달 닫기
             setTimeout(() => {
@@ -772,6 +800,7 @@ const SharePage: React.FC = () => {
             }, 3000);
           },
           onError: (error) => {
+            console.error('Draw API error:', error);
             setIsDrawing(false);
             setDrawingName('');
             alert(error.message || '추첨에 실패했습니다.');
@@ -1093,9 +1122,7 @@ const SharePage: React.FC = () => {
       <div className="max-w-4xl mx-auto space-y-6">
         {/* Back button */}
         <button
-          onClick={() => {
-            window.history.back();
-          }}
+          onClick={handleBackToList}
           className="flex items-center gap-2 text-text-secondary hover:text-text-primary transition-colors"
         >
           <span>←</span>
