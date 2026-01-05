@@ -42,6 +42,8 @@ interface ShareItem {
   applicants: Applicant[];
   applicantCount?: number;
   views: number;
+  likes: number;
+  liked?: boolean;
   createdAt: string;
   updatedAt: string;
 }
@@ -92,7 +94,9 @@ const getTradeTypeColor = (tradeType: string) => {
 const ItemCard: React.FC<{
   item: ShareItem;
   onClick: () => void;
-}> = ({ item, onClick }) => {
+  onLike: (e: React.MouseEvent) => void;
+  isLiking?: boolean;
+}> = ({ item, onClick, onLike, isLiking }) => {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const imageContainerRef = useRef<HTMLDivElement>(null);
 
@@ -204,6 +208,18 @@ const ItemCard: React.FC<{
           <span>{item.author}</span>
           <span className="flex items-center gap-2">
             <span>👁 {item.views}</span>
+            <button
+              onClick={onLike}
+              disabled={isLiking}
+              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-sm font-medium transition-all ${
+                item.liked
+                  ? 'bg-blue-500/20 text-blue-400'
+                  : 'hover:bg-blue-500/10 text-text-secondary hover:text-blue-400'
+              } disabled:opacity-50`}
+            >
+              <span className="text-base">{item.liked ? '👍' : '👍🏻'}</span>
+              <span>{item.likes ?? 0}</span>
+            </button>
             <span>🙋 {item.applicantCount ?? 0}</span>
           </span>
         </div>
@@ -366,6 +382,19 @@ const verifyPasswordApi = async (id: number, password: string) => {
   const data = await response.json();
   if (!data.success) throw new Error(data.error || 'Password verification failed');
   return data.data;
+};
+
+const likeItemApi = async (id: number, clientId: string) => {
+  const response = await fetch(`${serverUrl}/share/items/${id}/like`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'x-client-id': clientId,
+    },
+  });
+  const data = await response.json();
+  if (!data.success) throw new Error(data.error || 'Failed to like item');
+  return data.data as { likes: number; liked: boolean };
 };
 
 const SharePage: React.FC = () => {
@@ -578,6 +607,27 @@ const SharePage: React.FC = () => {
       if (selectedItemId) {
         queryClient.invalidateQueries({ queryKey: ['share-item', selectedItemId] });
       }
+    },
+  });
+
+  const likeMutation = useMutation({
+    mutationFn: (id: number) => likeItemApi(id, clientId),
+    onSuccess: (data, itemId) => {
+      // 목록 캐시 업데이트
+      queryClient.setQueryData(['share-items', currentPage, filterCategory, filterTradeType, filterStatus, debouncedSearchQuery], (oldData: { items: ShareItem[]; pagination: unknown } | undefined) => {
+        if (!oldData) return oldData;
+        return {
+          ...oldData,
+          items: oldData.items.map(item =>
+            item.id === itemId ? { ...item, likes: data.likes, liked: data.liked } : item
+          ),
+        };
+      });
+      // 상세 캐시 업데이트
+      queryClient.setQueryData(['share-item', itemId], (oldData: ShareItem | undefined) => {
+        if (!oldData) return oldData;
+        return { ...oldData, likes: data.likes, liked: data.liked };
+      });
     },
   });
 
@@ -1299,7 +1349,16 @@ const SharePage: React.FC = () => {
       ) : (
         <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
           {items.map((item) => (
-            <ItemCard key={item.id} item={item} onClick={() => handleViewItem(item.id)} />
+            <ItemCard
+              key={item.id}
+              item={item}
+              onClick={() => handleViewItem(item.id)}
+              onLike={(e) => {
+                e.stopPropagation();
+                likeMutation.mutate(item.id);
+              }}
+              isLiking={likeMutation.isPending}
+            />
           ))}
         </div>
       )}
@@ -1396,6 +1455,18 @@ const SharePage: React.FC = () => {
             <div className="flex items-center gap-4 text-sm text-text-secondary mb-6 flex-wrap">
               <span>작성자: {selectedItem.author}</span>
               <span>👁 {selectedItem.views}</span>
+              <button
+                onClick={() => likeMutation.mutate(selectedItem.id)}
+                disabled={likeMutation.isPending}
+                className={`flex items-center gap-2 px-5 py-2.5 rounded-full text-base font-medium transition-all ${
+                  selectedItem.liked
+                    ? 'bg-blue-500/20 text-blue-400 border border-blue-500/30'
+                    : 'bg-bg-tertiary hover:bg-blue-500/10 text-text-secondary hover:text-blue-400 border border-border'
+                } disabled:opacity-50`}
+              >
+                <span className="text-xl">{selectedItem.liked ? '👍' : '👍🏻'}</span>
+                <span>{selectedItem.likes ?? 0}</span>
+              </button>
               {isShare && (
                 <span>🙋 {selectedItem.applicantCount ?? selectedItem.applicants?.length ?? 0}명 신청</span>
               )}
