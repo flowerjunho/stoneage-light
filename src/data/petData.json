@@ -3,6 +3,33 @@
   "totalCount": 454,
   "pets": [
     {
+      "id": "774",
+      "name": "하르가",
+      "source": "스톤 주머니2",
+      "imageLink": "",
+      "elementStats": {
+        "water": 4,
+        "fire": 6,
+        "wind": 0,
+        "earth": 0
+      },
+      "baseStats": {
+        "attack": 12,
+        "defense": 6,
+        "agility": 8,
+        "vitality": 55
+      },
+      "growthStats": {
+        "attack": 2.205,
+        "defense": 1.229,
+        "agility": 1.602,
+        "vitality": 10.132
+      },
+      "rideable": "탑승가능",
+      "totalGrowth": "5.036",
+      "grade": "일반등급"
+    },
+    {
       "id": "773",
       "name": "아마란",
       "source": "포타 마을 점령 보상(부족전 듀얼 우승/준우승)",
