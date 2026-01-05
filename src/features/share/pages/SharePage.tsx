@@ -301,25 +301,21 @@ const completeItemApi = async (id: number, receiver: string) => {
 };
 
 const uncompleteItemApi = async (id: number) => {
-  console.log('Calling uncomplete API for id:', id);
   const response = await fetch(`${serverUrl}/share/items/${id}/uncomplete`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
   });
   const data = await response.json();
-  console.log('Uncomplete API response:', data);
   if (!data.success) throw new Error(data.error || 'Failed to uncomplete');
   return data.data;
 };
 
 const drawItemApi = async (id: number) => {
-  console.log('Calling draw API for id:', id);
   const response = await fetch(`${serverUrl}/share/items/${id}/draw`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
   });
   const data = await response.json();
-  console.log('Draw API response:', data);
   if (!data.success) throw new Error(data.error || 'Failed to draw');
   return data.data;
 };
@@ -782,8 +778,6 @@ const SharePage: React.FC = () => {
         // 실제 API 호출
         drawMutation.mutate(selectedItemId, {
           onSuccess: (data) => {
-            console.log('Draw API response:', data);
-
             // API 응답에서 당첨자 정보 추출
             const winnerName = data?.winner?.name || data?.receiver || '알 수 없음';
 
@@ -1080,7 +1074,7 @@ const SharePage: React.FC = () => {
           </button>
         </div>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
           {items.map((item) => (
             <ItemCard key={item.id} item={item} onClick={() => handleViewItem(item.id)} />
           ))}
