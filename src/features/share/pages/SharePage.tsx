@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import ThemeToggle from '@/shared/components/layout/ThemeToggle';
+import { pushManager } from '@/shared/utils/pushNotification';
 
 // Debounce hook
 const useDebounce = <T,>(value: T, delay: number): T => {
@@ -27,6 +28,12 @@ interface Applicant {
   appliedAt: string;
 }
 
+interface Buyer {
+  name: string;
+  message?: string;
+  appliedAt: string;
+}
+
 interface ShareItem {
   id: number;
   title: string;
@@ -41,6 +48,8 @@ interface ShareItem {
   receiver: string | null;
   applicants: Applicant[];
   applicantCount?: number;
+  buyers?: Buyer[];
+  buyerCount?: number;
   views: number;
   likes: number;
   liked?: boolean;
@@ -220,7 +229,13 @@ const ItemCard: React.FC<{
               <span className="text-base">{item.liked ? '👍' : '👍🏻'}</span>
               <span>{item.likes ?? 0}</span>
             </button>
-            <span>🙋 {item.applicantCount ?? 0}</span>
+            <span>
+              {item.tradeType === '나눔' ? '🙋' : '🛒'} {
+                item.tradeType === '나눔'
+                  ? (item.applicantCount ?? 0)
+                  : (item.buyerCount ?? 0)
+              }
+            </span>
           </span>
         </div>
       </div>
@@ -313,6 +328,17 @@ const applyItemApi = async (id: number, body: { name: string; message?: string }
   });
   const data = await response.json();
   if (!data.success) throw new Error(data.error || 'Failed to apply');
+  return data.data;
+};
+
+const purchaseItemApi = async (id: number, body: { name: string; message?: string }) => {
+  const response = await fetch(`${serverUrl}/share/items/${id}/purchase`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(body),
+  });
+  const data = await response.json();
+  if (!data.success) throw new Error(data.error || 'Failed to purchase');
   return data.data;
 };
 
@@ -441,6 +467,11 @@ const SharePage: React.FC = () => {
   const [applyMessage, setApplyMessage] = useState('');
   const [showApplyForm, setShowApplyForm] = useState(false);
 
+  // Purchase form state (판매 전용)
+  const [purchaseName, setPurchaseName] = useState('');
+  const [purchaseMessage, setPurchaseMessage] = useState('');
+  const [showPurchaseForm, setShowPurchaseForm] = useState(false);
+
   // Complete form state
   const [manualReceiver, setManualReceiver] = useState('');
   const [showCompleteForm, setShowCompleteForm] = useState(false);
@@ -462,6 +493,13 @@ const SharePage: React.FC = () => {
 
   // Scroll to top state
   const [showScrollTop, setShowScrollTop] = useState(false);
+
+  // Push notification state
+  const [pushSupported, setPushSupported] = useState(false);
+  const [pushPermission, setPushPermission] = useState<NotificationPermission>('default');
+  const [isSubscribing, setIsSubscribing] = useState(false);
+  const [showPushDialog, setShowPushDialog] = useState(false);
+  const [pendingPushShareId, setPendingPushShareId] = useState<number | null>(null);
 
   // Admin check
   const isAdmin = localStorage.getItem('ADMIN_ID_STONE') === 'flowerjunho';
@@ -506,6 +544,50 @@ const SharePage: React.FC = () => {
   // Scroll to top function
   const scrollToTop = () => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  // Push notification initialization
+  useEffect(() => {
+    if (pushManager.isSupported()) {
+      setPushSupported(true);
+      setPushPermission(pushManager.getPermissionStatus());
+    }
+  }, []);
+
+  // Push notification subscription handler
+  const handlePushSubscribe = async (shareId: number) => {
+    if (!pushSupported) {
+      console.log('푸시 알림이 지원되지 않는 브라우저입니다.');
+      return false;
+    }
+
+    setIsSubscribing(true);
+    try {
+      await pushManager.registerSubscription(shareId);
+      pushManager.saveLocalSubscription(shareId);
+      setPushPermission(pushManager.getPermissionStatus());
+      return true;
+    } catch (error) {
+      console.error('푸시 구독 실패:', error);
+      return false;
+    } finally {
+      setIsSubscribing(false);
+    }
+  };
+
+  // Push notification unsubscribe handler
+  const handlePushUnsubscribe = async (shareId: number) => {
+    setIsSubscribing(true);
+    try {
+      await pushManager.unregisterSubscription(shareId);
+      pushManager.removeLocalSubscription(shareId);
+      return true;
+    } catch (error) {
+      console.error('푸시 구독 해제 실패:', error);
+      return false;
+    } finally {
+      setIsSubscribing(false);
+    }
   };
 
   // React Query - Items List (uses debounced search query)
@@ -555,6 +637,16 @@ const SharePage: React.FC = () => {
   const applyMutation = useMutation({
     mutationFn: ({ id, body }: { id: number; body: { name: string; message?: string } }) =>
       applyItemApi(id, body),
+    onSuccess: () => {
+      if (selectedItemId) {
+        queryClient.invalidateQueries({ queryKey: ['share-item', selectedItemId] });
+      }
+    },
+  });
+
+  const purchaseMutation = useMutation({
+    mutationFn: ({ id, body }: { id: number; body: { name: string; message?: string } }) =>
+      purchaseItemApi(id, body),
     onSuccess: () => {
       if (selectedItemId) {
         queryClient.invalidateQueries({ queryKey: ['share-item', selectedItemId] });
@@ -703,6 +795,9 @@ const SharePage: React.FC = () => {
     setShowEditPasswordForm(false);
     setEditPassword('');
     setEditPasswordError(false);
+    setShowPurchaseForm(false);
+    setPurchaseName('');
+    setPurchaseMessage('');
     setSearchParams({});
   };
 
@@ -807,10 +902,16 @@ const SharePage: React.FC = () => {
     }
 
     createMutation.mutate(body, {
-      onSuccess: () => {
-        alert(formTradeType === '나눔' ? '나눔이 등록되었습니다!' : '판매가 등록되었습니다!');
-        resetForm();
-        setViewMode('list');
+      onSuccess: (data) => {
+        // 글 등록 성공 후 푸시 알림 구독 여부 확인
+        if (data?.id && pushSupported) {
+          setPendingPushShareId(data.id);
+          setShowPushDialog(true);
+        } else {
+          alert(formTradeType === '나눔' ? '나눔이 등록되었습니다!' : '판매가 등록되었습니다!');
+          resetForm();
+          setViewMode('list');
+        }
       },
       onError: (error) => {
         alert(error.message || '등록에 실패했습니다.');
@@ -930,6 +1031,31 @@ const SharePage: React.FC = () => {
         },
         onError: (error) => {
           alert(error.message || '신청에 실패했습니다.');
+        },
+      }
+    );
+  };
+
+  // Purchase for sale (판매 전용)
+  const handlePurchase = () => {
+    if (!purchaseName.trim()) {
+      alert('닉네임을 입력해주세요.');
+      return;
+    }
+
+    if (!selectedItemId) return;
+
+    purchaseMutation.mutate(
+      { id: selectedItemId, body: { name: purchaseName, message: purchaseMessage || undefined } },
+      {
+        onSuccess: () => {
+          alert('구매 신청이 완료되었습니다!');
+          setPurchaseName('');
+          setPurchaseMessage('');
+          setShowPurchaseForm(false);
+        },
+        onError: (error) => {
+          alert(error.message || '구매 신청에 실패했습니다.');
         },
       }
     );
@@ -1467,8 +1593,10 @@ const SharePage: React.FC = () => {
                 <span className="text-xl">{selectedItem.liked ? '👍' : '👍🏻'}</span>
                 <span>{selectedItem.likes ?? 0}</span>
               </button>
-              {isShare && (
+              {isShare ? (
                 <span>🙋 {selectedItem.applicantCount ?? selectedItem.applicants?.length ?? 0}명 신청</span>
+              ) : (
+                <span>🛒 {selectedItem.buyerCount ?? selectedItem.buyers?.length ?? 0}명 구매 신청</span>
               )}
               <span>{formatDate(selectedItem.createdAt)}</span>
             </div>
@@ -1483,13 +1611,22 @@ const SharePage: React.FC = () => {
             {/* Actions */}
             {!selectedItem.completed && (
               <div className="flex flex-wrap gap-3 pt-4 border-t border-border">
-                {/* 나눔인 경우에만 신청 버튼 */}
+                {/* 나눔인 경우 신청 버튼 */}
                 {isShare && (
                   <button
                     onClick={() => setShowApplyForm(!showApplyForm)}
                     className="px-6 py-3 bg-pink-500 hover:bg-pink-600 text-white font-bold rounded-lg transition-colors"
                   >
                     🙋 나눔 신청하기
+                  </button>
+                )}
+                {/* 판매인 경우 구매 신청 버튼 */}
+                {!isShare && (
+                  <button
+                    onClick={() => setShowPurchaseForm(!showPurchaseForm)}
+                    className="px-6 py-3 bg-green-500 hover:bg-green-600 text-white font-bold rounded-lg transition-colors"
+                  >
+                    🛒 구매 신청하기
                   </button>
                 )}
                 <button
@@ -1509,10 +1646,35 @@ const SharePage: React.FC = () => {
                 <button
                   onClick={handleDeleteClick}
                   disabled={isDeleting}
-                  className="px-6 py-3 bg-red-600 hover:bg-red-700 text-white font-bold rounded-lg transition-colors ml-auto disabled:opacity-50"
+                  className="px-6 py-3 bg-red-600 hover:bg-red-700 text-white font-bold rounded-lg transition-colors disabled:opacity-50"
                 >
                   {isDeleting ? '삭제 중...' : '🗑️ 삭제'}
                 </button>
+                {/* 알림 토글 버튼 */}
+                {pushSupported && (
+                  <button
+                    onClick={async () => {
+                      if (pushManager.isSubscribedTo(selectedItem.id)) {
+                        await handlePushUnsubscribe(selectedItem.id);
+                      } else {
+                        await handlePushSubscribe(selectedItem.id);
+                      }
+                    }}
+                    disabled={isSubscribing || pushPermission === 'denied'}
+                    className={`px-6 py-3 font-bold rounded-lg transition-colors ml-auto disabled:opacity-50 ${
+                      pushManager.isSubscribedTo(selectedItem.id)
+                        ? 'bg-yellow-500 hover:bg-yellow-600 text-black'
+                        : 'bg-gray-600 hover:bg-gray-700 text-white'
+                    }`}
+                    title={pushPermission === 'denied' ? '브라우저 설정에서 알림을 허용해주세요' : ''}
+                  >
+                    {isSubscribing
+                      ? '처리 중...'
+                      : pushManager.isSubscribedTo(selectedItem.id)
+                        ? '🔔 알림 ON'
+                        : '🔕 알림 OFF'}
+                  </button>
+                )}
               </div>
             )}
 
@@ -1537,10 +1699,35 @@ const SharePage: React.FC = () => {
                 <button
                   onClick={handleDeleteClick}
                   disabled={isDeleting}
-                  className="px-6 py-3 bg-red-600 hover:bg-red-700 text-white font-bold rounded-lg transition-colors ml-auto disabled:opacity-50"
+                  className="px-6 py-3 bg-red-600 hover:bg-red-700 text-white font-bold rounded-lg transition-colors disabled:opacity-50"
                 >
                   {isDeleting ? '삭제 중...' : '🗑️ 삭제'}
                 </button>
+                {/* 알림 토글 버튼 (완료 상태) */}
+                {pushSupported && (
+                  <button
+                    onClick={async () => {
+                      if (pushManager.isSubscribedTo(selectedItem.id)) {
+                        await handlePushUnsubscribe(selectedItem.id);
+                      } else {
+                        await handlePushSubscribe(selectedItem.id);
+                      }
+                    }}
+                    disabled={isSubscribing || pushPermission === 'denied'}
+                    className={`px-6 py-3 font-bold rounded-lg transition-colors ml-auto disabled:opacity-50 ${
+                      pushManager.isSubscribedTo(selectedItem.id)
+                        ? 'bg-yellow-500 hover:bg-yellow-600 text-black'
+                        : 'bg-gray-600 hover:bg-gray-700 text-white'
+                    }`}
+                    title={pushPermission === 'denied' ? '브라우저 설정에서 알림을 허용해주세요' : ''}
+                  >
+                    {isSubscribing
+                      ? '처리 중...'
+                      : pushManager.isSubscribedTo(selectedItem.id)
+                        ? '🔔 알림 ON'
+                        : '🔕 알림 OFF'}
+                  </button>
+                )}
               </div>
             )}
           </div>
@@ -1690,6 +1877,46 @@ const SharePage: React.FC = () => {
           </div>
         )}
 
+        {/* Purchase Form (판매 전용) */}
+        {showPurchaseForm && !selectedItem.completed && !isShare && (
+          <div className="bg-bg-secondary rounded-xl border border-green-500 p-6">
+            <h3 className="text-lg font-bold mb-4 text-green-400">🛒 구매 신청</h3>
+            <div className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-text-secondary mb-1">
+                  닉네임 *
+                </label>
+                <input
+                  type="text"
+                  value={purchaseName}
+                  onChange={(e) => setPurchaseName(e.target.value)}
+                  placeholder="게임 닉네임 입력"
+                  className="w-full px-4 py-2 bg-bg-tertiary border border-border rounded-lg text-text-primary"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-text-secondary mb-1">
+                  메시지 (선택)
+                </label>
+                <textarea
+                  value={purchaseMessage}
+                  onChange={(e) => setPurchaseMessage(e.target.value)}
+                  placeholder="연락처나 하고 싶은 말이 있다면..."
+                  rows={2}
+                  className="w-full px-4 py-2 bg-bg-tertiary border border-border rounded-lg text-text-primary resize-none"
+                />
+              </div>
+              <button
+                onClick={handlePurchase}
+                disabled={purchaseMutation.isPending}
+                className="w-full py-3 bg-green-500 hover:bg-green-600 text-white font-bold rounded-lg transition-colors disabled:opacity-50"
+              >
+                {purchaseMutation.isPending ? '신청 중...' : '구매 신청하기'}
+              </button>
+            </div>
+          </div>
+        )}
+
         {/* Complete Form */}
         {showCompleteForm && !selectedItem.completed && (
           <div className="bg-bg-secondary rounded-xl border border-purple-500 p-6">
@@ -1729,6 +1956,38 @@ const SharePage: React.FC = () => {
                 </div>
               )}
 
+              {/* Buyers list (판매 전용) */}
+              {!isShare && selectedItem.buyers && selectedItem.buyers.length > 0 && (
+                <div>
+                  <label className="block text-sm font-medium text-text-secondary mb-2">
+                    구매 신청자 목록 ({selectedItem.buyers.length}명) - 클릭하여 선택
+                  </label>
+                  <div className="max-h-40 overflow-y-auto bg-bg-tertiary rounded-lg p-3 space-y-2">
+                    {selectedItem.buyers.map((buyer, idx) => (
+                      <div
+                        key={idx}
+                        className={`flex items-center justify-between p-2 rounded cursor-pointer transition-colors ${
+                          manualReceiver === buyer.name
+                            ? 'bg-green-500/20 border border-green-500'
+                            : 'bg-bg-secondary hover:bg-bg-primary'
+                        }`}
+                        onClick={() => setManualReceiver(buyer.name)}
+                      >
+                        <div>
+                          <span className="font-medium text-text-primary">{buyer.name}</span>
+                          {buyer.message && (
+                            <p className="text-xs text-text-secondary mt-1">{buyer.message}</p>
+                          )}
+                        </div>
+                        <span className="text-xs text-text-muted">
+                          {new Date(buyer.appliedAt).toLocaleDateString('ko-KR')}
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
               <div>
                 <label className="block text-sm font-medium text-text-secondary mb-1">
                   {isShare ? '받는 사람' : '구매자'} *
@@ -1737,7 +1996,7 @@ const SharePage: React.FC = () => {
                   type="text"
                   value={manualReceiver}
                   onChange={(e) => setManualReceiver(e.target.value)}
-                  placeholder={isShare ? '직접 입력하거나 위 목록에서 선택' : '구매자 닉네임 입력'}
+                  placeholder={isShare ? '직접 입력하거나 위 목록에서 선택' : '직접 입력하거나 위 목록에서 선택'}
                   className="w-full px-4 py-2 bg-bg-tertiary border border-border rounded-lg text-text-primary"
                 />
               </div>
@@ -1820,24 +2079,32 @@ const SharePage: React.FC = () => {
             </div>
           </div>
         )}
+
+        {/* Buyers Display (판매 + 완료 폼 닫혀있을 때만) */}
+        {!showCompleteForm && !isShare && selectedItem.buyers && selectedItem.buyers.length > 0 && (
+          <div className="bg-bg-secondary rounded-xl border border-green-500/30 p-6">
+            <h3 className="text-lg font-bold mb-4 text-green-400">
+              🛒 구매 신청자 ({selectedItem.buyers.length}명)
+            </h3>
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
+              {selectedItem.buyers.map((buyer, idx) => (
+                <div
+                  key={idx}
+                  className="p-3 bg-bg-tertiary rounded-lg text-center"
+                >
+                  <span className="font-medium text-text-primary">{buyer.name}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
       </div>
     );
   };
 
   // Create view
   const renderCreateView = () => (
-    <div className="max-w-2xl mx-auto">
-      <button
-        onClick={() => {
-          setViewMode('list');
-          resetForm();
-        }}
-        className="flex items-center gap-2 text-text-secondary hover:text-text-primary transition-colors mb-6"
-      >
-        <span>←</span>
-        <span>목록으로</span>
-      </button>
-
+    <div>
       <div className="bg-bg-secondary rounded-xl border border-border p-6">
         <h2 className="text-2xl font-bold mb-6 text-text-primary">🏪 물품 등록</h2>
 
@@ -2265,8 +2532,38 @@ const SharePage: React.FC = () => {
       {/* Content */}
       <main className="max-w-7xl mx-auto px-4 py-6">
         {renderListView()}
-        {viewMode === 'create' && renderCreateView()}
       </main>
+
+      {/* Floating Add Button */}
+      {viewMode === 'list' && isAuthenticated && (
+        <button
+          onClick={() => setViewMode('create')}
+          className="fixed bottom-6 right-6 w-14 h-14 bg-green-500 hover:bg-green-400 text-white rounded-full shadow-lg flex items-center justify-center transition-all z-40 text-2xl font-bold"
+          aria-label="물품 등록"
+        >
+          +
+        </button>
+      )}
+
+      {/* Create View - Full Screen Overlay */}
+      {viewMode === 'create' && (
+        <div className="fixed inset-0 z-50 bg-bg-primary overflow-y-auto">
+          <div className="max-w-2xl mx-auto px-4 py-6">
+            {renderCreateView()}
+          </div>
+          {/* Floating Back Button */}
+          <button
+            onClick={() => {
+              setViewMode('list');
+              resetForm();
+            }}
+            className="fixed bottom-6 left-6 w-12 h-12 bg-yellow-500 hover:bg-yellow-400 text-black rounded-full shadow-lg flex items-center justify-center transition-all z-[60]"
+            aria-label="목록으로 돌아가기"
+          >
+            ←
+          </button>
+        </div>
+      )}
 
       {/* Detail View - Full Screen Overlay */}
       {viewMode === 'detail' && (
@@ -2306,11 +2603,85 @@ const SharePage: React.FC = () => {
         </div>
       )}
 
-      {/* Scroll to Top Button */}
-      {showScrollTop && (
+      {/* Push Notification Dialog */}
+      {showPushDialog && (
+        <div className="fixed inset-0 z-[70] bg-black/70 flex items-center justify-center p-4">
+          <div className="bg-bg-secondary rounded-2xl max-w-md w-full p-6 shadow-2xl border border-border">
+            <div className="text-center mb-6">
+              <div className="text-5xl mb-4">🔔</div>
+              <h2 className="text-xl font-bold text-text-primary mb-2">
+                알림을 받으시겠습니까?
+              </h2>
+              <p className="text-text-secondary text-sm">
+                {formTradeType === '나눔'
+                  ? '나눔 신청이나 좋아요가 있을 때 알림을 받을 수 있습니다.'
+                  : '구매 신청이나 좋아요가 있을 때 알림을 받을 수 있습니다.'}
+              </p>
+            </div>
+
+            <div className="flex gap-3">
+              <button
+                onClick={async () => {
+                  // 알림 거부
+                  setShowPushDialog(false);
+                  alert(formTradeType === '나눔' ? '나눔이 등록되었습니다!' : '판매가 등록되었습니다!');
+                  resetForm();
+                  setViewMode('list');
+                  setPendingPushShareId(null);
+                }}
+                className="flex-1 py-3 bg-gray-600 hover:bg-gray-700 text-white font-bold rounded-lg transition-colors"
+              >
+                다음에
+              </button>
+              <button
+                onClick={async () => {
+                  if (pendingPushShareId) {
+                    setIsSubscribing(true);
+                    try {
+                      const subscribed = await handlePushSubscribe(pendingPushShareId);
+                      if (subscribed) {
+                        alert(
+                          (formTradeType === '나눔' ? '나눔이 등록되었습니다!\n' : '판매가 등록되었습니다!\n') +
+                          '알림이 활성화되었습니다. 신청이나 좋아요가 있으면 알려드릴게요!'
+                        );
+                      } else {
+                        alert(formTradeType === '나눔' ? '나눔이 등록되었습니다!' : '판매가 등록되었습니다!');
+                      }
+                    } catch (error) {
+                      console.error('푸시 구독 실패:', error);
+                      alert(formTradeType === '나눔' ? '나눔이 등록되었습니다!' : '판매가 등록되었습니다!');
+                    } finally {
+                      setIsSubscribing(false);
+                    }
+                  }
+                  setShowPushDialog(false);
+                  resetForm();
+                  setViewMode('list');
+                  setPendingPushShareId(null);
+                }}
+                disabled={isSubscribing}
+                className="flex-1 py-3 bg-yellow-500 hover:bg-yellow-600 text-black font-bold rounded-lg transition-colors disabled:opacity-50"
+              >
+                {isSubscribing ? '설정 중...' : '네, 받을게요!'}
+              </button>
+            </div>
+
+            <p className="text-center text-xs text-text-muted mt-4">
+              나중에 상세 페이지에서도 설정할 수 있습니다.
+            </p>
+          </div>
+        </div>
+      )}
+
+      {/* Scroll to Top Button - slides up from behind + button */}
+      {viewMode === 'list' && (
         <button
           onClick={scrollToTop}
-          className="fixed bottom-6 right-6 w-12 h-12 bg-accent hover:bg-accent/80 text-white rounded-full shadow-lg flex items-center justify-center transition-all z-50"
+          className={`fixed right-6 w-14 h-14 bg-accent hover:bg-accent/80 text-white rounded-full shadow-lg flex items-center justify-center z-30 text-xl transition-all duration-300 ease-out ${
+            showScrollTop
+              ? 'bottom-24 opacity-100 scale-100'
+              : 'bottom-6 opacity-0 scale-75 pointer-events-none'
+          }`}
           aria-label="상단으로 이동"
         >
           ↑

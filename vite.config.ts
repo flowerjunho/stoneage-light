@@ -11,7 +11,8 @@ export default defineConfig({
     react(),
     VitePWA({
       registerType: 'prompt', // 사용자에게 업데이트 알림 표시
-      includeAssets: ['images/**/*', 'sa.jpg', 'myungga.png'],
+      includeAssets: ['images/**/*', 'sa.jpg', 'myungga.png', 'sw-custom.js'],
+      injectRegister: 'auto',
       manifest: {
         name: '스톤에이지 환수강림 라이트',
         short_name: '스톤에이지',
@@ -44,6 +45,8 @@ export default defineConfig({
       workbox: {
         globPatterns: ['**/*.{js,css,html,ico,png,jpg,svg,woff,woff2}'],
         maximumFileSizeToCacheInBytes: 10 * 1024 * 1024, // 10MB로 증가
+        // 커스텀 SW 코드를 메인 SW에 추가
+        importScripts: ['sw-custom.js'],
         runtimeCaching: [
           {
             urlPattern: /^https:\/\/www\.hwansoo\.(net|top)\/.*/i,
