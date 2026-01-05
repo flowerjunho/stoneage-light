@@ -809,7 +809,7 @@ const BattlePage: React.FC = () => {
       setSimProgress(Math.floor((currentIndex / count) * 100));
 
       if (currentIndex < count) {
-        requestAnimationFrame(simulateBatch);
+        setTimeout(simulateBatch, 50); // 50ms 딜레이로 일관된 애니메이션
       } else {
         setSimulationResult({
           total: count,
@@ -825,7 +825,7 @@ const BattlePage: React.FC = () => {
       }
     };
 
-    requestAnimationFrame(simulateBatch);
+    setTimeout(simulateBatch, 50); // 첫 배치도 딜레이 적용
   };
 
   // 전체 데미지 계산 (확장된 버전)
