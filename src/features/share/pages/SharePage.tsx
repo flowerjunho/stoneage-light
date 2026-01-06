@@ -57,12 +57,46 @@ interface ShareItem {
   updatedAt: string;
 }
 
+// Auction Types
+interface AuctionBid {
+  id: number;
+  name: string;
+  amount: number;
+  message?: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+interface AuctionItem {
+  id: number;
+  title: string;
+  category: string;
+  content: string;
+  images: string[];
+  author: string;
+  startPrice: number;
+  buyNowPrice?: number; // 즉시구매가 (선택)
+  currency: '스톤' | '금화';
+  endTime: string;
+  canceled: boolean;
+  soldByBuyNow: boolean; // 즉시구매로 낙찰됨
+  buyNowBuyer: string | null; // 즉시구매자
+  status: 'ongoing' | 'ended' | 'canceled';
+  bids: AuctionBid[];
+  highestBid: { name: string; amount: number } | null;
+  bidCount: number;
+  views: number;
+  createdAt: string;
+  updatedAt: string;
+}
 
 type Category = '아이템' | '페트' | '재화' | '기타';
 type TradeType = '나눔' | '판매';
 type Currency = '스톤' | '금화';
 type TradeFilter = '' | '나눔' | '판매';
 type ViewMode = 'list' | 'detail' | 'create' | 'edit';
+type AuctionStatus = '' | 'ongoing' | 'ended';
+type AuctionViewMode = 'list' | 'detail' | 'create' | 'edit';
 
 const CATEGORIES: Category[] = ['아이템', '페트', '재화', '기타'];
 const TRADE_TYPES: TradeType[] = ['판매', '나눔'];
@@ -70,6 +104,130 @@ const CURRENCIES: Currency[] = ['스톤', '금화'];
 
 // API Base URL
 const serverUrl = import.meta.env.VITE_API_URL;
+
+// ==================== Auction API Functions ====================
+const fetchAuctionItems = async (params: {
+  page?: number;
+  limit?: number;
+  category?: string;
+  status?: string;
+  search?: string;
+}) => {
+  const searchParams = new URLSearchParams();
+  if (params.page) searchParams.set('page', params.page.toString());
+  if (params.limit) searchParams.set('limit', params.limit.toString());
+  if (params.category) searchParams.set('category', params.category);
+  if (params.status) searchParams.set('status', params.status);
+  if (params.search) searchParams.set('search', params.search);
+
+  const response = await fetch(`${serverUrl}/auction/items?${searchParams.toString()}`);
+  const data = await response.json();
+  if (!data.success) throw new Error(data.error || 'Failed to fetch auctions');
+  // API는 auctions 키로 반환하지만, 프론트엔드는 items로 통일
+  return {
+    items: data.data.auctions,
+    pagination: data.data.pagination,
+  };
+};
+
+const fetchAuctionItem = async (id: number) => {
+  const response = await fetch(`${serverUrl}/auction/items/${id}`);
+  const data = await response.json();
+  if (!data.success) throw new Error(data.error || 'Failed to fetch auction');
+  return data.data as AuctionItem;
+};
+
+const createAuctionApi = async (body: {
+  title: string;
+  category: string;
+  content?: string;
+  images?: string[];
+  author: string;
+  password: string;
+  startPrice: number;
+  buyNowPrice?: number;
+  currency: string;
+  endTime: string;
+}) => {
+  const response = await fetch(`${serverUrl}/auction/items`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(body),
+  });
+  const data = await response.json();
+  if (!data.success) throw new Error(data.error || 'Failed to create auction');
+  return data.data;
+};
+
+const bidAuctionApi = async (id: number, body: { name: string; amount: number; message?: string }) => {
+  const response = await fetch(`${serverUrl}/auction/items/${id}/bid`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(body),
+  });
+  const data = await response.json();
+  if (!data.success) throw new Error(data.error || 'Failed to bid');
+  return data.data;
+};
+
+const deleteAuctionApi = async (id: number, password: string) => {
+  const response = await fetch(`${serverUrl}/auction/items/${id}`, {
+    method: 'DELETE',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ password }),
+  });
+  const data = await response.json();
+  if (!data.success) throw new Error(data.error || 'Failed to delete auction');
+  return data;
+};
+
+// 즉시구매 API
+const buyNowAuctionApi = async (id: number, name: string) => {
+  const response = await fetch(`${serverUrl}/auction/items/${id}/buy-now`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ name }),
+  });
+  const data = await response.json();
+  if (!data.success) throw new Error(data.error || 'Failed to buy now');
+  return data.data;
+};
+
+// 경매 이미지 업로드 API
+const uploadAuctionImageApi = async (file: File) => {
+  const formData = new FormData();
+  formData.append('image', file);
+  const response = await fetch(`${serverUrl}/auction/upload-image`, {
+    method: 'POST',
+    body: formData,
+  });
+  const data = await response.json();
+  if (!data.success) throw new Error(data.error || 'Failed to upload image');
+  return data.data.url as string;
+};
+
+// 경매 수정 API (POST /auction/items/:id/update)
+const updateAuctionApi = async (
+  id: number,
+  body: {
+    title?: string;
+    category?: string;
+    content?: string;
+    images?: string[];
+    buyNowPrice?: number | null;
+    endTime?: string;
+  }
+) => {
+  const response = await fetch(`${serverUrl}/auction/items/${id}/update`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(body),
+  });
+  const data = await response.json();
+  if (!data.success) throw new Error(data.error || 'Failed to update auction');
+  return data.data;
+};
+
 
 // Helper function to get full image URL
 const getImageUrl = (url: string) => {
@@ -451,12 +609,14 @@ interface SharePageProps {
   tribe?: 'family' | 'all';
   requireAuth?: boolean;
   title?: string;
+  defaultTab?: 'trade' | 'auction';
 }
 
 const SharePage: React.FC<SharePageProps> = ({
   tribe = 'family',
   requireAuth = true,
   title = '🏪 형명가 거래소',
+  defaultTab = 'trade',
 }) => {
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
@@ -467,12 +627,62 @@ const SharePage: React.FC<SharePageProps> = ({
   const [password, setPassword] = useState('');
   const [showPasswordError, setShowPasswordError] = useState(false);
 
-  // URL에서 item 파라미터 읽기
+  // URL에서 item/auction 파라미터 읽기
   const itemIdFromUrl = searchParams.get('item');
+  const auctionIdFromUrl = searchParams.get('auction');
 
   // View state - URL 파라미터에 따라 초기값 설정
   const [viewMode, setViewMode] = useState<ViewMode>(() => itemIdFromUrl ? 'detail' : 'list');
   const [selectedItemId, setSelectedItemId] = useState<number | null>(() => itemIdFromUrl ? parseInt(itemIdFromUrl, 10) : null);
+
+  // Sub tab state (거래소/경매장) - auction 파라미터가 있으면 경매장 탭으로
+  const [activeSubTab, setActiveSubTab] = useState<'trade' | 'auction'>(() =>
+    auctionIdFromUrl ? 'auction' : defaultTab
+  );
+
+  // ==================== Auction States ====================
+  const [auctionViewMode, setAuctionViewMode] = useState<AuctionViewMode>(() =>
+    auctionIdFromUrl ? 'detail' : 'list'
+  );
+  const [selectedAuctionId, setSelectedAuctionId] = useState<number | null>(() =>
+    auctionIdFromUrl ? parseInt(auctionIdFromUrl, 10) : null
+  );
+  const [auctionPage, setAuctionPage] = useState(1);
+  const [auctionFilterCategory, setAuctionFilterCategory] = useState<string>('');
+  const [auctionFilterStatus, setAuctionFilterStatus] = useState<AuctionStatus>('ongoing');
+  const [auctionSearchQuery, setAuctionSearchQuery] = useState('');
+  const debouncedAuctionSearch = useDebounce(auctionSearchQuery, 300);
+
+  // Auction form state
+  const [auctionFormTitle, setAuctionFormTitle] = useState('');
+  const [auctionFormCategory, setAuctionFormCategory] = useState<Category>('아이템');
+  const [auctionFormContent, setAuctionFormContent] = useState('');
+  const [auctionFormImages, setAuctionFormImages] = useState<string[]>([]);
+  const [auctionFormAuthor, setAuctionFormAuthor] = useState('');
+  const [auctionFormPassword, setAuctionFormPassword] = useState('');
+  const [auctionFormStartPrice, setAuctionFormStartPrice] = useState<number>(0);
+  const [auctionFormBuyNowPrice, setAuctionFormBuyNowPrice] = useState<number>(0); // 즉시구매가 (선택)
+  const [auctionFormCurrency, setAuctionFormCurrency] = useState<Currency>('금화');
+  const [auctionFormEndTime, setAuctionFormEndTime] = useState('');
+
+  // Bid form state
+  const [bidName, setBidName] = useState('');
+  const [bidAmount, setBidAmount] = useState<number>(0);
+  const [bidMessage, setBidMessage] = useState('');
+
+  // Buy now form state (즉시구매)
+  const [buyNowName, setBuyNowName] = useState('');
+  const [showBuyNowForm, setShowBuyNowForm] = useState(false);
+
+  // Auction edit form state
+  const [auctionEditPassword, setAuctionEditPassword] = useState('');
+  const [showAuctionEditPasswordDialog, setShowAuctionEditPasswordDialog] = useState(false);
+  const [isVerifyingPassword, setIsVerifyingPassword] = useState(false);
+
+  // Auction delete state
+  const [showAuctionDeleteDialog, setShowAuctionDeleteDialog] = useState(false);
+  const [auctionDeletePassword, setAuctionDeletePassword] = useState('');
+  const [isDeletingAuction, setIsDeletingAuction] = useState(false);
 
   // List filters
   const [currentPage, setCurrentPage] = useState(1);
@@ -554,6 +764,24 @@ const SharePage: React.FC<SharePageProps> = ({
     }
     return id;
   });
+
+  // URL 파라미터 변경 시 상태 동기화 (뒤로가기 지원)
+  useEffect(() => {
+    const itemId = searchParams.get('item');
+    const auctionId = searchParams.get('auction');
+
+    // 거래소 아이템 상세 → 목록
+    if (!itemId) {
+      setViewMode((prev) => (prev === 'detail' ? 'list' : prev));
+      setSelectedItemId((prev) => (prev !== null ? null : prev));
+    }
+
+    // 경매 상세 → 목록
+    if (!auctionId) {
+      setAuctionViewMode((prev) => (prev === 'detail' ? 'list' : prev));
+      setSelectedAuctionId((prev) => (prev !== null ? null : prev));
+    }
+  }, [searchParams]);
 
   // Keyboard shortcut for search (/ key)
   useEffect(() => {
@@ -689,6 +917,10 @@ const SharePage: React.FC<SharePageProps> = ({
     mutationFn: uploadImageApi,
   });
 
+  const uploadAuctionImageMutation = useMutation({
+    mutationFn: uploadAuctionImageApi,
+  });
+
   const applyMutation = useMutation({
     mutationFn: ({ id, body }: { id: number; body: { name: string; message?: string } }) =>
       applyItemApi(id, body),
@@ -796,12 +1028,121 @@ const SharePage: React.FC<SharePageProps> = ({
     },
   });
 
+  // ==================== Auction Queries ====================
+  const { data: auctionData, isLoading: auctionLoading } = useQuery({
+    queryKey: ['auction-items', auctionPage, auctionFilterCategory, auctionFilterStatus, debouncedAuctionSearch],
+    queryFn: () =>
+      fetchAuctionItems({
+        page: auctionPage,
+        limit: 12,
+        category: auctionFilterCategory || undefined,
+        status: auctionFilterStatus || undefined,
+        search: debouncedAuctionSearch || undefined,
+      }),
+    enabled: activeSubTab === 'auction' && auctionViewMode === 'list',
+  });
+
+  const { data: selectedAuction, isLoading: auctionDetailLoading } = useQuery({
+    queryKey: ['auction-item', selectedAuctionId],
+    queryFn: () => fetchAuctionItem(selectedAuctionId!),
+    enabled: !!selectedAuctionId && auctionViewMode === 'detail',
+  });
+
+  // ==================== Auction Mutations ====================
+  const createAuctionMutation = useMutation({
+    mutationFn: createAuctionApi,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['auction-items'] });
+      setAuctionViewMode('list');
+      // Reset form
+      setAuctionFormTitle('');
+      setAuctionFormCategory('아이템');
+      setAuctionFormContent('');
+      setAuctionFormImages([]);
+      setAuctionFormAuthor('');
+      setAuctionFormPassword('');
+      setAuctionFormStartPrice(0);
+      setAuctionFormCurrency('금화');
+      setAuctionFormEndTime('');
+    },
+  });
+
+  const bidAuctionMutation = useMutation({
+    mutationFn: ({ id, body }: { id: number; body: { name: string; amount: number; message?: string } }) =>
+      bidAuctionApi(id, body),
+    onSuccess: () => {
+      if (selectedAuctionId) {
+        queryClient.invalidateQueries({ queryKey: ['auction-item', selectedAuctionId] });
+        queryClient.invalidateQueries({ queryKey: ['auction-items'] });
+      }
+      // Reset bid form
+      setBidName('');
+      setBidAmount(0);
+      setBidMessage('');
+    },
+  });
+
+  const deleteAuctionMutation = useMutation({
+    mutationFn: ({ id, password }: { id: number; password: string }) => deleteAuctionApi(id, password),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['auction-items'] });
+      setAuctionViewMode('list');
+      setSelectedAuctionId(null);
+      setSearchParams({});
+      alert('경매가 삭제되었습니다.');
+    },
+  });
+
+  const buyNowMutation = useMutation({
+    mutationFn: ({ id, name }: { id: number; name: string }) => buyNowAuctionApi(id, name),
+    onSuccess: () => {
+      if (selectedAuctionId) {
+        queryClient.invalidateQueries({ queryKey: ['auction-item', selectedAuctionId] });
+        queryClient.invalidateQueries({ queryKey: ['auction-items'] });
+      }
+      alert('즉시구매가 완료되었습니다!');
+    },
+  });
+
+  const updateAuctionMutation = useMutation({
+    mutationFn: ({
+      id,
+      body,
+    }: {
+      id: number;
+      body: {
+        title?: string;
+        category?: string;
+        content?: string;
+        images?: string[];
+        buyNowPrice?: number | null;
+        endTime?: string;
+      };
+    }) => updateAuctionApi(id, body),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['auction-items'] });
+      if (selectedAuctionId) {
+        queryClient.invalidateQueries({ queryKey: ['auction-item', selectedAuctionId] });
+      }
+      alert('경매가 수정되었습니다!');
+      setAuctionViewMode('detail');
+    },
+    onError: (error: Error) => {
+      alert(error.message || '경매 수정에 실패했습니다.');
+    },
+  });
+
   // Derived loading states from mutations
   const isSubmitting = createMutation.isPending || updateMutation.isPending;
   const uploadingImage = uploadImageMutation.isPending;
   const isApplying = applyMutation.isPending;
   const isCompleting = completeMutation.isPending || uncompleteMutation.isPending || drawMutation.isPending;
   const isDeleting = deleteMutation.isPending;
+  const isAuctionSubmitting = createAuctionMutation.isPending || updateAuctionMutation.isPending;
+  const isBidding = bidAuctionMutation.isPending;
+  // TODO: 경매 삭제 기능에서 사용 예정
+  const _isAuctionDeleting = deleteAuctionMutation.isPending;
+  void _isAuctionDeleting;
 
   // Auth check on mount
   useEffect(() => {
@@ -2710,6 +3051,1282 @@ const SharePage: React.FC<SharePageProps> = ({
   );
   };
 
+  // ==================== Auction Helper Functions ====================
+
+  // 카운트다운 계산 함수
+  const getTimeRemaining = (endTime: string) => {
+    const total = new Date(endTime).getTime() - Date.now();
+    if (total <= 0) {
+      return { total: 0, days: 0, hours: 0, minutes: 0, seconds: 0, expired: true };
+    }
+    const days = Math.floor(total / (1000 * 60 * 60 * 24));
+    const hours = Math.floor((total / (1000 * 60 * 60)) % 24);
+    const minutes = Math.floor((total / 1000 / 60) % 60);
+    const seconds = Math.floor((total / 1000) % 60);
+    return { total, days, hours, minutes, seconds, expired: false };
+  };
+
+  // 카운트다운 컴포넌트
+  const CountdownTimer = ({ endTime, size = 'md' }: { endTime: string; size?: 'sm' | 'md' | 'lg' }) => {
+    const [timeLeft, setTimeLeft] = useState(getTimeRemaining(endTime));
+
+    useEffect(() => {
+      const timer = setInterval(() => {
+        const remaining = getTimeRemaining(endTime);
+        setTimeLeft(remaining);
+        if (remaining.expired) {
+          clearInterval(timer);
+        }
+      }, 1000);
+
+      return () => clearInterval(timer);
+    }, [endTime]);
+
+    if (timeLeft.expired) {
+      return (
+        <span className={`text-red-500 font-bold ${size === 'sm' ? 'text-xs' : size === 'lg' ? 'text-lg' : 'text-sm'}`}>
+          경매 종료
+        </span>
+      );
+    }
+
+    const sizeClasses = {
+      sm: 'text-xs gap-0.5',
+      md: 'text-sm gap-1',
+      lg: 'text-lg gap-2',
+    };
+
+    const boxClasses = {
+      sm: 'px-1 py-0.5 text-[10px]',
+      md: 'px-2 py-1 text-xs',
+      lg: 'px-3 py-2 text-sm',
+    };
+
+    // 1시간 이하인지 확인 (일이 0이고 시간이 0일 때)
+    const isUrgent = timeLeft.days === 0 && timeLeft.hours === 0;
+    const colorClass = isUrgent ? 'text-red-500' : 'text-amber-500';
+    const bgColorClass = isUrgent ? 'bg-red-500/20' : 'bg-amber-500/20';
+
+    return (
+      <div className={`flex items-center justify-center ${sizeClasses[size]} ${colorClass} font-mono font-bold`}>
+        {timeLeft.days > 0 && (
+          <>
+            <span className={`${bgColorClass} rounded ${boxClasses[size]}`}>{timeLeft.days}일</span>
+          </>
+        )}
+        <span className={`${bgColorClass} rounded ${boxClasses[size]}`}>
+          {String(timeLeft.hours).padStart(2, '0')}
+        </span>
+        <span>:</span>
+        <span className={`${bgColorClass} rounded ${boxClasses[size]}`}>
+          {String(timeLeft.minutes).padStart(2, '0')}
+        </span>
+        <span>:</span>
+        <span className={`${bgColorClass} rounded ${boxClasses[size]}`}>
+          {String(timeLeft.seconds).padStart(2, '0')}
+        </span>
+      </div>
+    );
+  };
+
+  // 경매 등록 핸들러
+  const handleAuctionSubmit = () => {
+    if (!auctionFormTitle.trim()) {
+      alert('제목을 입력해주세요.');
+      return;
+    }
+    if (!auctionFormAuthor.trim()) {
+      alert('닉네임을 입력해주세요.');
+      return;
+    }
+    if (!auctionFormPassword.trim()) {
+      alert('비밀번호를 입력해주세요.');
+      return;
+    }
+    if (auctionFormStartPrice <= 0) {
+      alert('시작가를 입력해주세요.');
+      return;
+    }
+    // 1,000원 단위 검증
+    if (auctionFormStartPrice % 1000 !== 0) {
+      alert('시작가는 1,000원 단위로 입력해주세요.');
+      return;
+    }
+    // 즉시구매가 검증
+    if (auctionFormBuyNowPrice > 0) {
+      if (auctionFormBuyNowPrice % 1000 !== 0) {
+        alert('즉시구매가는 1,000원 단위로 입력해주세요.');
+        return;
+      }
+      if (auctionFormBuyNowPrice <= auctionFormStartPrice) {
+        alert('즉시구매가는 시작가보다 높아야 합니다.');
+        return;
+      }
+    }
+    if (!auctionFormEndTime) {
+      alert('종료 시간을 선택해주세요.');
+      return;
+    }
+
+    const endDate = new Date(auctionFormEndTime);
+    if (endDate <= new Date()) {
+      alert('종료 시간은 현재 시간 이후여야 합니다.');
+      return;
+    }
+
+    createAuctionMutation.mutate({
+      title: auctionFormTitle,
+      category: auctionFormCategory,
+      content: auctionFormContent,
+      images: auctionFormImages,
+      author: auctionFormAuthor,
+      password: auctionFormPassword,
+      startPrice: auctionFormStartPrice,
+      buyNowPrice: auctionFormBuyNowPrice > 0 ? auctionFormBuyNowPrice : undefined,
+      currency: auctionFormCurrency,
+      endTime: auctionFormEndTime,
+    });
+  };
+
+  // 입찰 핸들러
+  const handleBidSubmit = () => {
+    if (!selectedAuction || !selectedAuctionId) return;
+
+    if (!bidName.trim()) {
+      alert('닉네임을 입력해주세요.');
+      return;
+    }
+    if (bidAmount <= 0) {
+      alert('입찰 금액을 입력해주세요.');
+      return;
+    }
+
+    // 1,000원 단위 검증
+    if (bidAmount % 1000 !== 0) {
+      alert('입찰 금액은 1,000원 단위로 입력해주세요.');
+      return;
+    }
+
+    const minBid = selectedAuction.highestBid
+      ? selectedAuction.highestBid.amount + 1000 // 최소 1,000원 더 높아야 함
+      : selectedAuction.startPrice;
+
+    // minBid를 1000 단위로 올림
+    const minBidRounded = Math.ceil(minBid / 1000) * 1000;
+
+    if (bidAmount < minBidRounded) {
+      alert(`입찰 금액은 최소 ${minBidRounded.toLocaleString()} ${selectedAuction.currency} 이상이어야 합니다.`);
+      return;
+    }
+
+    bidAuctionMutation.mutate({
+      id: selectedAuctionId,
+      body: {
+        name: bidName,
+        amount: bidAmount,
+        message: bidMessage || undefined,
+      },
+    });
+  };
+
+  // 즉시구매 핸들러
+  const handleBuyNow = () => {
+    if (!selectedAuction || !selectedAuctionId) return;
+
+    if (!buyNowName.trim()) {
+      alert('닉네임을 입력해주세요.');
+      return;
+    }
+
+    if (!confirm(`${selectedAuction.buyNowPrice?.toLocaleString()} ${selectedAuction.currency}에 즉시구매 하시겠습니까?`)) {
+      return;
+    }
+
+    buyNowMutation.mutate({
+      id: selectedAuctionId,
+      name: buyNowName,
+    });
+  };
+
+  // 경매 수정 버튼 클릭 - 비밀번호 다이얼로그 표시
+  const handleShowAuctionEditDialog = () => {
+    setAuctionEditPassword('');
+    setShowAuctionEditPasswordDialog(true);
+  };
+
+  // 비밀번호 검증 후 수정 모드 진입
+  const handleVerifyAndEnterEdit = async () => {
+    if (!selectedAuction || !selectedAuctionId) return;
+
+    if (!auctionEditPassword.trim()) {
+      alert('비밀번호를 입력해주세요.');
+      return;
+    }
+
+    setIsVerifyingPassword(true);
+    try {
+      // 비밀번호 검증 API 호출
+      const response = await fetch(`${serverUrl}/auction/items/${selectedAuctionId}/verify`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ password: auctionEditPassword }),
+      });
+      const data = await response.json();
+
+      if (!data.success) {
+        alert('비밀번호가 일치하지 않습니다.');
+        return;
+      }
+
+      // 비밀번호 검증 성공 - 폼에 기존 데이터 채우기
+      setAuctionFormTitle(selectedAuction.title);
+      setAuctionFormCategory(selectedAuction.category as Category);
+      setAuctionFormContent(selectedAuction.content || '');
+      setAuctionFormImages(selectedAuction.images || []);
+      setAuctionFormStartPrice(selectedAuction.startPrice);
+      setAuctionFormBuyNowPrice(selectedAuction.buyNowPrice || 0);
+      setAuctionFormCurrency(selectedAuction.currency);
+      setAuctionFormEndTime(selectedAuction.endTime.slice(0, 16)); // datetime-local 형식
+      setAuctionFormAuthor(selectedAuction.author);
+      setAuctionFormPassword('');
+
+      setShowAuctionEditPasswordDialog(false);
+      setAuctionViewMode('edit');
+    } catch {
+      alert('비밀번호 검증에 실패했습니다.');
+    } finally {
+      setIsVerifyingPassword(false);
+    }
+  };
+
+  // 삭제 다이얼로그 표시
+  const handleShowAuctionDeleteDialog = () => {
+    setAuctionDeletePassword('');
+    setShowAuctionDeleteDialog(true);
+  };
+
+  // 경매 삭제 실행
+  const handleDeleteAuction = async () => {
+    if (!selectedAuction || !selectedAuctionId) return;
+
+    if (!auctionDeletePassword.trim()) {
+      alert('비밀번호를 입력해주세요.');
+      return;
+    }
+
+    // 입찰 내역이 있는 경우 삭제 불가
+    if (selectedAuction.bidCount > 0) {
+      alert('입찰 내역이 있어 삭제할 수 없습니다.\n입찰자가 있는 경매는 삭제가 불가능합니다.');
+      return;
+    }
+
+    setIsDeletingAuction(true);
+    try {
+      await deleteAuctionMutation.mutateAsync({
+        id: selectedAuctionId,
+        password: auctionDeletePassword,
+      });
+      setShowAuctionDeleteDialog(false);
+      setAuctionDeletePassword('');
+    } catch (error) {
+      alert(error instanceof Error ? error.message : '삭제에 실패했습니다.');
+    } finally {
+      setIsDeletingAuction(false);
+    }
+  };
+
+  // 경매 수정 제출 핸들러
+  const handleAuctionUpdate = () => {
+    if (!selectedAuctionId) return;
+
+    // 비밀번호 검증
+    if (!auctionEditPassword.trim()) {
+      alert('비밀번호를 입력해주세요.');
+      return;
+    }
+
+    // 제목 검증
+    if (!auctionFormTitle.trim()) {
+      alert('제목을 입력해주세요.');
+      return;
+    }
+
+    // 시작가 검증 (1,000원 단위)
+    if (auctionFormStartPrice <= 0) {
+      alert('시작가를 입력해주세요.');
+      return;
+    }
+    if (auctionFormStartPrice % 1000 !== 0) {
+      alert('시작가는 1,000원 단위로 입력해주세요.');
+      return;
+    }
+
+    // 즉시구매가 검증 (입력된 경우에만, 1,000원 단위)
+    if (auctionFormBuyNowPrice > 0) {
+      if (auctionFormBuyNowPrice % 1000 !== 0) {
+        alert('즉시구매가는 1,000원 단위로 입력해주세요.');
+        return;
+      }
+      if (auctionFormBuyNowPrice <= auctionFormStartPrice) {
+        alert('즉시구매가는 시작가보다 높아야 합니다.');
+        return;
+      }
+    }
+
+    // 종료시간 검증
+    if (!auctionFormEndTime) {
+      alert('종료 시간을 입력해주세요.');
+      return;
+    }
+
+    updateAuctionMutation.mutate({
+      id: selectedAuctionId,
+      body: {
+        title: auctionFormTitle,
+        category: auctionFormCategory,
+        content: auctionFormContent,
+        images: auctionFormImages,
+        buyNowPrice: auctionFormBuyNowPrice > 0 ? auctionFormBuyNowPrice : null,
+        endTime: new Date(auctionFormEndTime).toISOString(),
+      },
+    });
+  };
+
+  // ==================== Auction Render Functions ====================
+
+  // 경매장 목록 뷰
+  const renderAuctionListView = () => (
+    <div className="space-y-6">
+      {/* Filters */}
+      <div className="bg-bg-secondary rounded-lg md:rounded-xl p-2.5 md:p-4 border border-border">
+        <div className="flex flex-wrap gap-2 md:gap-3 items-center">
+          {/* Category Select */}
+          <div className="relative">
+            <select
+              value={auctionFilterCategory}
+              onChange={(e) => {
+                setAuctionFilterCategory(e.target.value);
+                setAuctionPage(1);
+              }}
+              className="appearance-none pl-2 pr-6 py-1.5 md:pl-3 md:pr-8 md:py-2.5 bg-bg-tertiary border border-border rounded-lg md:rounded-xl text-text-primary text-xs md:text-sm font-medium cursor-pointer hover:border-amber-500 focus:border-amber-500 focus:ring-2 focus:ring-amber-500/20 transition-all"
+            >
+              <option value="">전체 분류</option>
+              {CATEGORIES.map((cat) => (
+                <option key={cat} value={cat}>
+                  {cat}
+                </option>
+              ))}
+            </select>
+            <span className="absolute right-1.5 md:right-2 top-1/2 -translate-y-1/2 text-text-secondary pointer-events-none text-[10px] md:text-xs">▼</span>
+          </div>
+
+          {/* Status Select */}
+          <div className="relative">
+            <select
+              value={auctionFilterStatus}
+              onChange={(e) => {
+                setAuctionFilterStatus(e.target.value as AuctionStatus);
+                setAuctionPage(1);
+              }}
+              className="appearance-none pl-2 pr-6 py-1.5 md:pl-3 md:pr-8 md:py-2.5 bg-bg-tertiary border border-border rounded-lg md:rounded-xl text-text-primary text-xs md:text-sm font-medium cursor-pointer hover:border-amber-500 focus:border-amber-500 focus:ring-2 focus:ring-amber-500/20 transition-all"
+            >
+              <option value="">전체 상태</option>
+              <option value="ongoing">진행중</option>
+              <option value="ended">종료됨</option>
+            </select>
+            <span className="absolute right-1.5 md:right-2 top-1/2 -translate-y-1/2 text-text-secondary pointer-events-none text-[10px] md:text-xs">▼</span>
+          </div>
+
+          {/* Search Input */}
+          <div className="flex-1 min-w-[120px] md:min-w-[200px] relative">
+            <span className="absolute left-2 md:left-3 top-1/2 -translate-y-1/2 text-text-secondary pointer-events-none text-sm">🔍</span>
+            <input
+              type="text"
+              value={auctionSearchQuery}
+              onChange={(e) => {
+                setAuctionSearchQuery(e.target.value);
+                setAuctionPage(1);
+              }}
+              placeholder="검색..."
+              className="w-full pl-7 pr-3 py-1.5 md:pl-9 md:pr-4 md:py-2.5 bg-bg-tertiary border border-border rounded-lg md:rounded-xl text-text-primary text-xs md:text-sm focus:border-amber-500 focus:ring-2 focus:ring-amber-500/20 transition-all"
+            />
+          </div>
+
+          {/* Reset Filter Button */}
+          <button
+            onClick={() => {
+              setAuctionFilterCategory('');
+              setAuctionFilterStatus('ongoing');
+              setAuctionSearchQuery('');
+              setAuctionPage(1);
+            }}
+            className="px-2 py-1.5 md:px-3 md:py-2.5 bg-bg-tertiary hover:bg-bg-primary border border-border text-text-secondary hover:text-text-primary rounded-lg md:rounded-xl text-xs md:text-sm transition-colors"
+            title="필터 초기화"
+          >
+            ↺
+          </button>
+
+          <button
+            onClick={() => setAuctionViewMode('create')}
+            className="px-2.5 py-1.5 md:px-4 md:py-2.5 bg-amber-600 hover:bg-amber-700 text-white rounded-lg md:rounded-xl text-xs md:text-sm font-medium transition-colors flex items-center gap-1"
+          >
+            <span>+</span>
+            <span className="hidden sm:inline">경매 등록</span>
+          </button>
+        </div>
+      </div>
+
+      {/* Auction Items Grid */}
+      {auctionLoading ? (
+        <div className="flex items-center justify-center py-20">
+          <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-amber-500"></div>
+        </div>
+      ) : !auctionData?.items || auctionData.items.length === 0 ? (
+        <div className="text-center py-20 text-text-secondary">
+          <p className="text-6xl mb-4">🔨</p>
+          <p className="mb-4">등록된 경매가 없습니다.</p>
+          <button
+            onClick={() => setAuctionViewMode('create')}
+            className="px-6 py-3 bg-amber-500 hover:bg-amber-400 text-white font-bold rounded-lg transition-colors"
+          >
+            🔨 첫 경매 등록하기
+          </button>
+        </div>
+      ) : (
+        <>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            {auctionData.items.map((auction: AuctionItem) => (
+              <div
+                key={auction.id}
+                onClick={() => {
+                  setSelectedAuctionId(auction.id);
+                  setAuctionViewMode('detail');
+                  setSearchParams({ auction: auction.id.toString() });
+                }}
+                className={`bg-bg-secondary rounded-xl border border-border overflow-hidden cursor-pointer hover:border-amber-500/50 hover:shadow-lg hover:shadow-amber-500/10 transition-all ${
+                  auction.status === 'ended' || auction.status === 'canceled' ? 'opacity-60' : ''
+                }`}
+              >
+                {/* Image */}
+                {auction.images && auction.images.length > 0 ? (
+                  <div className="aspect-video relative overflow-hidden bg-bg-tertiary">
+                    <img
+                      src={getImageUrl(auction.images[0])}
+                      alt={auction.title}
+                      className="w-full h-full object-cover"
+                    />
+                    {/* Status Badge */}
+                    <div className="absolute top-2 left-2">
+                      <span
+                        className={`px-2 py-1 rounded-full text-xs font-bold ${
+                          auction.status === 'ongoing'
+                            ? 'bg-amber-500 text-white'
+                            : auction.status === 'ended'
+                            ? 'bg-gray-500 text-white'
+                            : 'bg-red-500 text-white'
+                        }`}
+                      >
+                        {auction.status === 'ongoing' ? '진행중' : auction.status === 'ended' ? '종료' : '취소됨'}
+                      </span>
+                    </div>
+                    {/* Countdown */}
+                    {auction.status === 'ongoing' && (
+                      <div className="absolute bottom-2 right-2 bg-black/70 px-2 py-1 rounded">
+                        <CountdownTimer endTime={auction.endTime} size="sm" />
+                      </div>
+                    )}
+                  </div>
+                ) : (
+                  <div className="aspect-video bg-bg-tertiary flex items-center justify-center relative">
+                    <span className="text-4xl">🔨</span>
+                    {/* Status Badge */}
+                    <div className="absolute top-2 left-2">
+                      <span
+                        className={`px-2 py-1 rounded-full text-xs font-bold ${
+                          auction.status === 'ongoing'
+                            ? 'bg-amber-500 text-white'
+                            : auction.status === 'ended'
+                            ? 'bg-gray-500 text-white'
+                            : 'bg-red-500 text-white'
+                        }`}
+                      >
+                        {auction.status === 'ongoing' ? '진행중' : auction.status === 'ended' ? '종료' : '취소됨'}
+                      </span>
+                    </div>
+                    {/* Countdown */}
+                    {auction.status === 'ongoing' && (
+                      <div className="absolute bottom-2 right-2 bg-black/70 px-2 py-1 rounded">
+                        <CountdownTimer endTime={auction.endTime} size="sm" />
+                      </div>
+                    )}
+                  </div>
+                )}
+
+                {/* Content */}
+                <div className="p-4 space-y-3">
+                  {/* Category & Title */}
+                  <div>
+                    <span className="text-xs text-amber-500 font-medium">{auction.category}</span>
+                    <h3 className="font-bold text-text-primary line-clamp-1">{auction.title}</h3>
+                  </div>
+
+                  {/* Price Info */}
+                  <div className="space-y-1">
+                    <div className="flex justify-between items-center text-sm">
+                      <span className="text-text-secondary">시작가</span>
+                      <span className="text-text-primary">
+                        {auction.startPrice.toLocaleString()} {auction.currency}
+                      </span>
+                    </div>
+                    <div className="flex justify-between items-center text-sm">
+                      <span className="text-text-secondary">현재가</span>
+                      <span className="text-amber-500 font-bold">
+                        {auction.highestBid
+                          ? `${auction.highestBid.amount.toLocaleString()} ${auction.currency}`
+                          : '-'}
+                      </span>
+                    </div>
+                  </div>
+
+                  {/* Footer */}
+                  <div className="flex justify-between items-center text-xs text-text-muted pt-2 border-t border-border">
+                    <span>{auction.author}</span>
+                    <span>입찰 {auction.bidCount}회</span>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          {/* Pagination */}
+          {auctionData.pagination && auctionData.pagination.totalPages > 1 && (
+            <div className="flex justify-center gap-2 mt-6">
+              <button
+                onClick={() => setAuctionPage((p) => Math.max(1, p - 1))}
+                disabled={auctionPage === 1}
+                className="px-3 py-2 bg-bg-secondary border border-border rounded-lg disabled:opacity-50 hover:bg-bg-tertiary transition-colors"
+              >
+                ←
+              </button>
+              <span className="px-4 py-2 bg-bg-secondary border border-border rounded-lg">
+                {auctionPage} / {auctionData.pagination.totalPages}
+              </span>
+              <button
+                onClick={() => setAuctionPage((p) => Math.min(auctionData.pagination.totalPages, p + 1))}
+                disabled={auctionPage === auctionData.pagination.totalPages}
+                className="px-3 py-2 bg-bg-secondary border border-border rounded-lg disabled:opacity-50 hover:bg-bg-tertiary transition-colors"
+              >
+                →
+              </button>
+            </div>
+          )}
+        </>
+      )}
+    </div>
+  );
+
+  // 경매장 상세 뷰
+  const renderAuctionDetailView = () => {
+    if (auctionDetailLoading) {
+      return (
+        <div className="flex items-center justify-center py-20">
+          <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-amber-500"></div>
+        </div>
+      );
+    }
+
+    if (!selectedAuction) {
+      return (
+        <div className="text-center py-20 text-text-secondary">
+          <p>경매를 찾을 수 없습니다.</p>
+        </div>
+      );
+    }
+
+    const isEnded = selectedAuction.status !== 'ongoing';
+    const minBid = selectedAuction.highestBid
+      ? selectedAuction.highestBid.amount + 1000
+      : selectedAuction.startPrice;
+
+    return (
+      <div className="space-y-6">
+        {/* Header */}
+        <div className="flex items-start gap-3">
+          <button
+            onClick={() => {
+              setAuctionViewMode('list');
+              setSelectedAuctionId(null);
+              setSearchParams({});
+            }}
+            className="p-2 bg-bg-secondary border border-border rounded-lg hover:bg-bg-tertiary transition-colors flex-shrink-0"
+          >
+            ←
+          </button>
+          <div className="flex-1 min-w-0">
+            <h1 className="text-xl font-bold break-words">{selectedAuction.title}</h1>
+          </div>
+          <div className="flex items-center gap-2 flex-shrink-0">
+            {/* 수정/삭제 버튼 - 진행중인 경매만 */}
+            {selectedAuction.status === 'ongoing' && (
+              <>
+                <button
+                  onClick={handleShowAuctionEditDialog}
+                  className="px-2 py-1 md:px-3 md:py-1.5 bg-blue-500 hover:bg-blue-400 text-white rounded-lg text-xs md:text-sm font-bold transition-colors whitespace-nowrap"
+                >
+                  수정
+                </button>
+                <button
+                  onClick={handleShowAuctionDeleteDialog}
+                  className="px-2 py-1 md:px-3 md:py-1.5 bg-red-500 hover:bg-red-400 text-white rounded-lg text-xs md:text-sm font-bold transition-colors whitespace-nowrap"
+                >
+                  삭제
+                </button>
+              </>
+            )}
+            <span
+              className={`px-2 py-1 md:px-3 rounded-full text-xs md:text-sm font-bold whitespace-nowrap ${
+                selectedAuction.status === 'ongoing'
+                  ? 'bg-amber-500 text-white'
+                  : selectedAuction.status === 'ended'
+                  ? 'bg-gray-500 text-white'
+                  : 'bg-red-500 text-white'
+              }`}
+            >
+              {selectedAuction.status === 'ongoing' ? '진행중' : selectedAuction.status === 'ended' ? '종료' : '취소됨'}
+            </span>
+          </div>
+        </div>
+
+        {/* Main Content */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          {/* Left - Images & Info */}
+          <div className="space-y-4">
+            {/* Images */}
+            {selectedAuction.images && selectedAuction.images.length > 0 ? (
+              <div className="aspect-video bg-bg-secondary rounded-xl overflow-hidden">
+                <img
+                  src={getImageUrl(selectedAuction.images[0])}
+                  alt={selectedAuction.title}
+                  className="w-full h-full object-contain"
+                />
+              </div>
+            ) : (
+              <div className="aspect-video bg-bg-secondary rounded-xl flex items-center justify-center">
+                <span className="text-6xl">🔨</span>
+              </div>
+            )}
+
+            {/* Thumbnail Gallery */}
+            {selectedAuction.images && selectedAuction.images.length > 1 && (
+              <div className="flex gap-2 overflow-x-auto pb-2">
+                {selectedAuction.images.map((img, idx) => (
+                  <img
+                    key={idx}
+                    src={getImageUrl(img)}
+                    alt={`이미지 ${idx + 1}`}
+                    className="w-20 h-20 object-cover rounded-lg border border-border"
+                  />
+                ))}
+              </div>
+            )}
+
+            {/* Description */}
+            {selectedAuction.content && (
+              <div className="bg-bg-secondary rounded-xl p-4 border border-border">
+                <h3 className="font-bold mb-2 text-text-secondary">상세 설명</h3>
+                <p className="text-text-primary whitespace-pre-wrap">{selectedAuction.content}</p>
+              </div>
+            )}
+
+            {/* Author Info */}
+            <div className="bg-bg-secondary rounded-xl p-4 border border-border">
+              <div className="flex justify-between items-center">
+                <span className="text-text-secondary">등록자</span>
+                <span className="font-bold text-text-primary">{selectedAuction.author}</span>
+              </div>
+              <div className="flex justify-between items-center mt-2">
+                <span className="text-text-secondary">분류</span>
+                <span className="text-amber-500">{selectedAuction.category}</span>
+              </div>
+              <div className="flex justify-between items-center mt-2">
+                <span className="text-text-secondary">조회수</span>
+                <span className="text-text-primary">{selectedAuction.views}</span>
+              </div>
+            </div>
+          </div>
+
+          {/* Right - Auction Info & Bid Form */}
+          <div className="space-y-4">
+            {/* Countdown */}
+            <div className="bg-bg-secondary rounded-xl p-6 border border-amber-500/30 text-center">
+              <h3 className="text-sm text-text-secondary mb-2">남은 시간</h3>
+              <CountdownTimer endTime={selectedAuction.endTime} size="lg" />
+              <p className="text-xs text-text-muted mt-2">
+                종료: {new Date(selectedAuction.endTime).toLocaleString('ko-KR')}
+              </p>
+            </div>
+
+            {/* Price Info */}
+            <div className="bg-bg-secondary rounded-xl p-4 border border-border space-y-3">
+              <div className="flex justify-between items-center">
+                <span className="text-text-secondary">시작가</span>
+                <span className="text-text-primary">
+                  {selectedAuction.startPrice.toLocaleString()} {selectedAuction.currency}
+                </span>
+              </div>
+              <div className="flex justify-between items-center">
+                <span className="text-text-secondary">현재 최고가</span>
+                <span className="text-2xl font-bold text-amber-500">
+                  {selectedAuction.highestBid
+                    ? `${selectedAuction.highestBid.amount.toLocaleString()} ${selectedAuction.currency}`
+                    : '입찰 없음'}
+                </span>
+              </div>
+              {selectedAuction.highestBid && (
+                <div className="flex justify-between items-center text-sm">
+                  <span className="text-text-secondary">최고 입찰자</span>
+                  <span className="text-text-primary">{selectedAuction.highestBid.name}</span>
+                </div>
+              )}
+              {selectedAuction.buyNowPrice && selectedAuction.buyNowPrice > 0 && (
+                <div className="flex justify-between items-center text-sm">
+                  <span className="text-text-secondary">즉시구매가</span>
+                  <span className="text-green-500 font-bold">
+                    {selectedAuction.buyNowPrice.toLocaleString()} {selectedAuction.currency}
+                  </span>
+                </div>
+              )}
+              <div className="flex justify-between items-center text-sm pt-2 border-t border-border">
+                <span className="text-text-secondary">총 입찰 수</span>
+                <span className="text-text-primary">{selectedAuction.bidCount}회</span>
+              </div>
+            </div>
+
+            {/* 즉시구매 완료 표시 */}
+            {selectedAuction.soldByBuyNow && (
+              <div className="bg-green-500/20 rounded-xl p-4 border border-green-500/50 text-center">
+                <p className="text-green-500 font-bold text-lg">🎉 즉시구매 완료!</p>
+                <p className="text-text-secondary text-sm mt-1">
+                  구매자: <span className="text-text-primary font-medium">{selectedAuction.buyNowBuyer}</span>
+                </p>
+              </div>
+            )}
+
+            {/* Buy Now Form - 즉시구매 */}
+            {!isEnded && !selectedAuction.soldByBuyNow && selectedAuction.buyNowPrice && selectedAuction.buyNowPrice > 0 && (
+              <div className="bg-bg-secondary rounded-xl p-4 border border-green-500/50 space-y-4">
+                <h3 className="font-bold text-green-500">⚡ 즉시구매</h3>
+                <p className="text-sm text-text-secondary">
+                  {selectedAuction.buyNowPrice.toLocaleString()} {selectedAuction.currency}에 바로 구매할 수 있습니다.
+                </p>
+                {showBuyNowForm ? (
+                  <>
+                    <div>
+                      <label className="block text-sm text-text-secondary mb-1">닉네임 *</label>
+                      <input
+                        type="text"
+                        value={buyNowName}
+                        onChange={(e) => setBuyNowName(e.target.value)}
+                        placeholder="디스코드 닉네임"
+                        className="w-full px-4 py-3 bg-bg-tertiary border border-border rounded-lg text-text-primary focus:border-green-500 focus:ring-2 focus:ring-green-500/20"
+                      />
+                    </div>
+                    <div className="flex gap-2">
+                      <button
+                        onClick={() => setShowBuyNowForm(false)}
+                        className="flex-1 py-3 bg-bg-tertiary hover:bg-bg-primary border border-border text-text-secondary rounded-lg transition-colors"
+                      >
+                        취소
+                      </button>
+                      <button
+                        onClick={handleBuyNow}
+                        disabled={buyNowMutation.isPending}
+                        className="flex-1 py-3 bg-green-500 hover:bg-green-400 text-white font-bold rounded-lg transition-colors disabled:opacity-50"
+                      >
+                        {buyNowMutation.isPending ? '처리 중...' : `⚡ ${selectedAuction.buyNowPrice.toLocaleString()} ${selectedAuction.currency} 구매`}
+                      </button>
+                    </div>
+                  </>
+                ) : (
+                  <button
+                    onClick={() => setShowBuyNowForm(true)}
+                    className="w-full py-4 bg-green-500 hover:bg-green-400 text-white font-bold rounded-lg transition-colors"
+                  >
+                    ⚡ {selectedAuction.buyNowPrice.toLocaleString()} {selectedAuction.currency} 즉시구매
+                  </button>
+                )}
+              </div>
+            )}
+
+            {/* Bid Form */}
+            {!isEnded && !selectedAuction.soldByBuyNow && (
+              <div className="bg-bg-secondary rounded-xl p-4 border border-amber-500/50 space-y-4">
+                <h3 className="font-bold text-amber-500">💰 입찰하기</h3>
+                <div>
+                  <label className="block text-sm text-text-secondary mb-1">닉네임 *</label>
+                  <input
+                    type="text"
+                    value={bidName}
+                    onChange={(e) => setBidName(e.target.value)}
+                    placeholder="디스코드 닉네임"
+                    className="w-full px-4 py-3 bg-bg-tertiary border border-border rounded-lg text-text-primary focus:border-amber-500 focus:ring-2 focus:ring-amber-500/20"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm text-text-secondary mb-1">
+                    입찰 금액 * (최소 {minBid.toLocaleString()} {selectedAuction.currency})
+                  </label>
+                  <input
+                    type="number"
+                    value={bidAmount || ''}
+                    onChange={(e) => setBidAmount(parseInt(e.target.value) || 0)}
+                    placeholder={`${minBid.toLocaleString()} 이상`}
+                    min={minBid}
+                    className="w-full px-4 py-3 bg-bg-tertiary border border-border rounded-lg text-text-primary focus:border-amber-500 focus:ring-2 focus:ring-amber-500/20"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm text-text-secondary mb-1">메시지 (선택)</label>
+                  <input
+                    type="text"
+                    value={bidMessage}
+                    onChange={(e) => setBidMessage(e.target.value)}
+                    placeholder="판매자에게 전할 메시지"
+                    className="w-full px-4 py-3 bg-bg-tertiary border border-border rounded-lg text-text-primary focus:border-amber-500 focus:ring-2 focus:ring-amber-500/20"
+                  />
+                </div>
+                <button
+                  onClick={handleBidSubmit}
+                  disabled={isBidding}
+                  className="w-full py-4 bg-amber-500 hover:bg-amber-400 text-white font-bold rounded-lg transition-colors disabled:opacity-50"
+                >
+                  {isBidding ? '입찰 중...' : `🔨 ${bidAmount > 0 ? bidAmount.toLocaleString() : minBid.toLocaleString()} ${selectedAuction.currency} 입찰하기`}
+                </button>
+              </div>
+            )}
+
+            {/* Bid History */}
+            <div className="bg-bg-secondary rounded-xl p-4 border border-border">
+              <h3 className="font-bold mb-4 flex items-center gap-2">
+                📜 입찰 내역
+                <span className="text-sm font-normal text-text-secondary">({selectedAuction.bids?.length || 0})</span>
+              </h3>
+              {selectedAuction.bids && selectedAuction.bids.length > 0 ? (
+                <div className="space-y-3 max-h-[300px] overflow-y-auto">
+                  {selectedAuction.bids
+                    .sort((a, b) => b.amount - a.amount)
+                    .map((bid, idx) => (
+                      <div
+                        key={bid.id}
+                        className={`p-3 rounded-lg ${
+                          idx === 0 ? 'bg-amber-500/20 border border-amber-500/30' : 'bg-bg-tertiary'
+                        }`}
+                      >
+                        <div className="flex justify-between items-center">
+                          <span className="font-bold text-text-primary">
+                            {idx === 0 && '👑 '}{bid.name}
+                          </span>
+                          <span className={`font-bold ${idx === 0 ? 'text-amber-500' : 'text-text-primary'}`}>
+                            {bid.amount.toLocaleString()} {selectedAuction.currency}
+                          </span>
+                        </div>
+                        {bid.message && (
+                          <p className="text-sm text-text-secondary mt-1">&quot;{bid.message}&quot;</p>
+                        )}
+                        <p className="text-xs text-text-muted mt-1">
+                          {new Date(bid.createdAt).toLocaleString('ko-KR')}
+                        </p>
+                      </div>
+                    ))}
+                </div>
+              ) : (
+                <p className="text-center text-text-secondary py-4">아직 입찰이 없습니다.</p>
+              )}
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  };
+
+  // 경매 등록 뷰
+  const renderAuctionCreateView = () => (
+    <div className="space-y-6">
+      {/* Header */}
+      <div className="flex items-center gap-4">
+        <button
+          onClick={() => setAuctionViewMode('list')}
+          className="p-2 bg-bg-secondary border border-border rounded-lg hover:bg-bg-tertiary transition-colors"
+        >
+          ←
+        </button>
+        <h1 className="text-xl font-bold">🔨 경매 등록</h1>
+      </div>
+
+      {/* Form */}
+      <div className="bg-bg-secondary rounded-xl p-6 border border-border space-y-6">
+        {/* Title */}
+        <div>
+          <label className="block text-sm font-medium text-text-secondary mb-2">
+            제목 <span className="text-red-500">*</span>
+          </label>
+          <input
+            type="text"
+            value={auctionFormTitle}
+            onChange={(e) => setAuctionFormTitle(e.target.value)}
+            placeholder="경매 물품 제목"
+            className="w-full px-4 py-3 bg-bg-tertiary border border-border rounded-lg text-text-primary focus:border-amber-500 focus:ring-2 focus:ring-amber-500/20"
+          />
+        </div>
+
+        {/* Category */}
+        <div>
+          <label className="block text-sm font-medium text-text-secondary mb-2">분류</label>
+          <select
+            value={auctionFormCategory}
+            onChange={(e) => setAuctionFormCategory(e.target.value as Category)}
+            className="w-full px-4 py-3 bg-bg-tertiary border border-border rounded-lg text-text-primary focus:border-amber-500 focus:ring-2 focus:ring-amber-500/20"
+          >
+            {CATEGORIES.map((cat) => (
+              <option key={cat} value={cat}>
+                {cat}
+              </option>
+            ))}
+          </select>
+        </div>
+
+        {/* Start Price & Currency */}
+        <div className="grid grid-cols-2 gap-4">
+          <div>
+            <label className="block text-sm font-medium text-text-secondary mb-2">
+              시작가 <span className="text-red-500">*</span> <span className="text-xs text-text-muted">(1,000원 단위)</span>
+            </label>
+            <input
+              type="number"
+              value={auctionFormStartPrice || ''}
+              onChange={(e) => setAuctionFormStartPrice(parseInt(e.target.value) || 0)}
+              placeholder="시작 금액"
+              min={1000}
+              step={1000}
+              className="w-full px-4 py-3 bg-bg-tertiary border border-border rounded-lg text-text-primary focus:border-amber-500 focus:ring-2 focus:ring-amber-500/20"
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-text-secondary mb-2">화폐</label>
+            <select
+              value={auctionFormCurrency}
+              onChange={(e) => setAuctionFormCurrency(e.target.value as Currency)}
+              className="w-full px-4 py-3 bg-bg-tertiary border border-border rounded-lg text-text-primary focus:border-amber-500 focus:ring-2 focus:ring-amber-500/20"
+            >
+              <option value="금화">금화</option>
+              <option value="스톤">스톤</option>
+            </select>
+          </div>
+        </div>
+
+        {/* Buy Now Price (Optional) */}
+        <div>
+          <label className="block text-sm font-medium text-text-secondary mb-2">
+            즉시구매가 <span className="text-xs text-text-muted">(선택, 1,000원 단위)</span>
+          </label>
+          <input
+            type="number"
+            value={auctionFormBuyNowPrice || ''}
+            onChange={(e) => setAuctionFormBuyNowPrice(parseInt(e.target.value) || 0)}
+            placeholder="즉시구매 금액 (미입력시 즉시구매 불가)"
+            min={0}
+            step={1000}
+            className="w-full px-4 py-3 bg-bg-tertiary border border-border rounded-lg text-text-primary focus:border-amber-500 focus:ring-2 focus:ring-amber-500/20"
+          />
+          <p className="text-xs text-text-muted mt-1">시작가보다 높게 설정해주세요. 입력하지 않으면 즉시구매가 불가합니다.</p>
+        </div>
+
+        {/* End Time */}
+        <div>
+          <label className="block text-sm font-medium text-text-secondary mb-2">
+            종료 시간 <span className="text-red-500">*</span>
+          </label>
+          <input
+            type="datetime-local"
+            value={auctionFormEndTime}
+            onChange={(e) => setAuctionFormEndTime(e.target.value)}
+            min={new Date().toISOString().slice(0, 16)}
+            className="w-full px-4 py-3 bg-bg-tertiary border border-border rounded-lg text-text-primary focus:border-amber-500 focus:ring-2 focus:ring-amber-500/20"
+          />
+        </div>
+
+        {/* Images */}
+        <div>
+          <label className="block text-sm font-medium text-text-secondary mb-2">
+            이미지 (최대 5장)
+          </label>
+          <div className="flex flex-wrap gap-2">
+            {auctionFormImages.map((img, idx) => (
+              <div key={idx} className="w-24 h-24 relative">
+                <img
+                  src={getImageUrl(img)}
+                  alt={`이미지 ${idx + 1}`}
+                  className="w-full h-full object-cover rounded-lg"
+                />
+                <button
+                  onClick={() => setAuctionFormImages(auctionFormImages.filter((_, i) => i !== idx))}
+                  className="absolute -top-2 -right-2 w-6 h-6 bg-red-500 text-white rounded-full text-sm"
+                >
+                  ×
+                </button>
+              </div>
+            ))}
+            {auctionFormImages.length < 5 && (
+              <label className="w-24 h-24 flex items-center justify-center bg-bg-tertiary border-2 border-dashed border-border rounded-lg cursor-pointer hover:border-amber-500 transition-colors">
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={async (e) => {
+                    const file = e.target.files?.[0];
+                    if (!file) return;
+                    try {
+                      const url = await uploadAuctionImageMutation.mutateAsync(file);
+                      setAuctionFormImages([...auctionFormImages, url]);
+                    } catch (err) {
+                      console.error(err);
+                      alert('이미지 업로드 실패');
+                    }
+                  }}
+                  className="hidden"
+                  disabled={uploadAuctionImageMutation.isPending}
+                />
+                {uploadAuctionImageMutation.isPending ? (
+                  <div className="animate-spin w-6 h-6 border-2 border-amber-500 border-t-transparent rounded-full" />
+                ) : (
+                  <span className="text-3xl text-text-muted">+</span>
+                )}
+              </label>
+            )}
+          </div>
+        </div>
+
+        {/* Content */}
+        <div>
+          <label className="block text-sm font-medium text-text-secondary mb-2">상세 설명</label>
+          <textarea
+            value={auctionFormContent}
+            onChange={(e) => setAuctionFormContent(e.target.value)}
+            placeholder="추가 설명이 있다면 입력하세요"
+            rows={4}
+            className="w-full px-4 py-3 bg-bg-tertiary border border-border rounded-lg text-text-primary resize-none focus:border-amber-500 focus:ring-2 focus:ring-amber-500/20"
+          />
+        </div>
+
+        {/* Author & Password */}
+        <div className="grid grid-cols-2 gap-4">
+          <div>
+            <label className="block text-sm font-medium text-text-secondary mb-2">
+              닉네임 <span className="text-red-500">*</span>
+            </label>
+            <input
+              type="text"
+              value={auctionFormAuthor}
+              onChange={(e) => setAuctionFormAuthor(e.target.value)}
+              placeholder="디스코드 닉네임"
+              className="w-full px-4 py-3 bg-bg-tertiary border border-border rounded-lg text-text-primary focus:border-amber-500 focus:ring-2 focus:ring-amber-500/20"
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-text-secondary mb-2">
+              비밀번호 <span className="text-red-500">*</span>
+            </label>
+            <input
+              type="password"
+              value={auctionFormPassword}
+              onChange={(e) => setAuctionFormPassword(e.target.value)}
+              placeholder="삭제/수정용"
+              className="w-full px-4 py-3 bg-bg-tertiary border border-border rounded-lg text-text-primary focus:border-amber-500 focus:ring-2 focus:ring-amber-500/20"
+            />
+          </div>
+        </div>
+
+        {/* Submit */}
+        <button
+          onClick={handleAuctionSubmit}
+          disabled={isAuctionSubmitting}
+          className="w-full py-4 bg-amber-500 hover:bg-amber-400 text-white font-bold rounded-lg transition-colors disabled:opacity-50 text-lg"
+        >
+          {isAuctionSubmitting ? '등록 중...' : '🔨 경매 등록하기'}
+        </button>
+      </div>
+    </div>
+  );
+
+  // 경매 수정 뷰
+  const renderAuctionEditView = () => (
+    <div className="space-y-6">
+      {/* Header */}
+      <div className="flex items-center gap-4">
+        <button
+          onClick={() => setAuctionViewMode('detail')}
+          className="p-2 bg-bg-secondary border border-border rounded-lg hover:bg-bg-tertiary transition-colors"
+        >
+          ←
+        </button>
+        <h1 className="text-xl font-bold">✏️ 경매 수정</h1>
+      </div>
+
+      {/* Form */}
+      <div className="bg-bg-secondary rounded-xl p-6 border border-border space-y-6">
+        {/* Title */}
+        <div>
+          <label className="block text-sm font-medium text-text-secondary mb-2">
+            제목 <span className="text-red-500">*</span>
+          </label>
+          <input
+            type="text"
+            value={auctionFormTitle}
+            onChange={(e) => setAuctionFormTitle(e.target.value)}
+            placeholder="경매 물품 제목"
+            className="w-full px-4 py-3 bg-bg-tertiary border border-border rounded-lg text-text-primary focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20"
+          />
+        </div>
+
+        {/* Category */}
+        <div>
+          <label className="block text-sm font-medium text-text-secondary mb-2">분류</label>
+          <select
+            value={auctionFormCategory}
+            onChange={(e) => setAuctionFormCategory(e.target.value as Category)}
+            className="w-full px-4 py-3 bg-bg-tertiary border border-border rounded-lg text-text-primary focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20"
+          >
+            {CATEGORIES.map((cat) => (
+              <option key={cat} value={cat}>
+                {cat}
+              </option>
+            ))}
+          </select>
+        </div>
+
+        {/* Start Price (읽기 전용) */}
+        <div>
+          <label className="block text-sm font-medium text-text-secondary mb-2">
+            시작가 <span className="text-xs text-amber-500">(수정 불가)</span>
+          </label>
+          <div className="w-full px-4 py-3 bg-bg-primary border border-border rounded-lg text-text-muted">
+            {auctionFormStartPrice.toLocaleString()} {auctionFormCurrency}
+          </div>
+        </div>
+
+        {/* Buy Now Price (수정 가능) */}
+        <div>
+          <label className="block text-sm font-medium text-text-secondary mb-2">
+            즉시구매가 <span className="text-xs text-text-muted">(선택, 1,000원 단위)</span>
+          </label>
+          <input
+            type="number"
+            value={auctionFormBuyNowPrice || ''}
+            onChange={(e) => setAuctionFormBuyNowPrice(parseInt(e.target.value) || 0)}
+            placeholder="즉시구매 금액 (0 또는 미입력시 삭제)"
+            min={0}
+            step={1000}
+            className="w-full px-4 py-3 bg-bg-tertiary border border-border rounded-lg text-text-primary focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20"
+          />
+          <p className="text-xs text-text-muted mt-1">
+            시작가({auctionFormStartPrice.toLocaleString()})와 현재 최고 입찰가보다 높게 설정해주세요. 0 입력 시 즉시구매가 삭제됩니다.
+          </p>
+        </div>
+
+        {/* End Time */}
+        <div>
+          <label className="block text-sm font-medium text-text-secondary mb-2">
+            종료 시간 <span className="text-red-500">*</span>
+          </label>
+          <input
+            type="datetime-local"
+            value={auctionFormEndTime}
+            onChange={(e) => setAuctionFormEndTime(e.target.value)}
+            className="w-full px-4 py-3 bg-bg-tertiary border border-border rounded-lg text-text-primary focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20"
+          />
+        </div>
+
+        {/* Images */}
+        <div>
+          <label className="block text-sm font-medium text-text-secondary mb-2">
+            이미지 (최대 5장)
+          </label>
+          <div className="flex flex-wrap gap-2">
+            {auctionFormImages.map((img, idx) => (
+              <div key={idx} className="w-24 h-24 relative">
+                <img
+                  src={getImageUrl(img)}
+                  alt={`이미지 ${idx + 1}`}
+                  className="w-full h-full object-cover rounded-lg"
+                />
+                <button
+                  onClick={() => setAuctionFormImages(auctionFormImages.filter((_, i) => i !== idx))}
+                  className="absolute -top-2 -right-2 w-6 h-6 bg-red-500 text-white rounded-full text-sm"
+                >
+                  ×
+                </button>
+              </div>
+            ))}
+            {auctionFormImages.length < 5 && (
+              <label className="w-24 h-24 flex items-center justify-center bg-bg-tertiary border-2 border-dashed border-border rounded-lg cursor-pointer hover:border-blue-500 transition-colors">
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={async (e) => {
+                    const file = e.target.files?.[0];
+                    if (!file) return;
+                    try {
+                      const url = await uploadAuctionImageMutation.mutateAsync(file);
+                      setAuctionFormImages([...auctionFormImages, url]);
+                    } catch (err) {
+                      console.error(err);
+                      alert('이미지 업로드 실패');
+                    }
+                  }}
+                  className="hidden"
+                  disabled={uploadAuctionImageMutation.isPending}
+                />
+                {uploadAuctionImageMutation.isPending ? (
+                  <div className="animate-spin w-6 h-6 border-2 border-blue-500 border-t-transparent rounded-full" />
+                ) : (
+                  <span className="text-3xl text-text-muted">+</span>
+                )}
+              </label>
+            )}
+          </div>
+        </div>
+
+        {/* Content */}
+        <div>
+          <label className="block text-sm font-medium text-text-secondary mb-2">상세 설명</label>
+          <textarea
+            value={auctionFormContent}
+            onChange={(e) => setAuctionFormContent(e.target.value)}
+            placeholder="추가 설명이 있다면 입력하세요"
+            rows={4}
+            className="w-full px-4 py-3 bg-bg-tertiary border border-border rounded-lg text-text-primary resize-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20"
+          />
+        </div>
+
+        {/* Submit */}
+        <div className="flex gap-3">
+          <button
+            onClick={() => setAuctionViewMode('detail')}
+            className="flex-1 py-4 bg-bg-tertiary hover:bg-bg-primary text-text-primary font-bold rounded-lg transition-colors border border-border"
+          >
+            취소
+          </button>
+          <button
+            onClick={handleAuctionUpdate}
+            disabled={isAuctionSubmitting}
+            className="flex-1 py-4 bg-blue-500 hover:bg-blue-400 text-white font-bold rounded-lg transition-colors disabled:opacity-50"
+          >
+            {isAuctionSubmitting ? '수정 중...' : '✏️ 수정하기'}
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+
   // Main authenticated view
   return (
     <div className="min-h-screen bg-bg-primary text-text-primary">
@@ -2748,30 +4365,93 @@ const SharePage: React.FC<SharePageProps> = ({
       {/* 공지 - 탭 네비게이션 거래소(requireAuth=false)에서만 표시 */}
       {!requireAuth && viewMode === 'list' && (
         <div className="max-w-7xl mx-auto px-4 pt-4">
-          <div className="bg-green-500/10 border border-green-500/30 rounded-lg p-3 text-sm text-text-secondary">
+          <div className={`${activeSubTab === 'auction' ? 'bg-amber-500/10 border-amber-500/30' : 'bg-green-500/10 border-green-500/30'} border rounded-lg p-3 text-sm text-text-secondary`}>
             <ul className="space-y-1">
               <li>• 디스코드 닉네임으로 품목을 올려주세요.</li>
               <li>• 회원가입이 없다보니, 디스코드 닉네임만으로 거래를 합니다.</li>
-              <li>• 판매, 나눔이 완료 된다면 꼭 판매/나눔 완료 처리를 해주세요.</li>
+              <li>
+                {activeSubTab === 'auction'
+                  ? '• 경매에 낙찰 된다면, 꼭 상품을 구매 해주세요.'
+                  : '• 판매, 나눔이 완료 된다면 꼭 판매/나눔 완료 처리를 해주세요.'}
+              </li>
               <li>• 등록시 입력한 비밀번호는 삭제 및 수정에 필요합니다. 꼭 잊지 마세요.</li>
             </ul>
           </div>
         </div>
       )}
 
+      {/* Sub Tabs (거래소/경매장) - 탭 네비게이션 거래소에서만 표시 */}
+      {!requireAuth && viewMode === 'list' && (
+        <div className="max-w-7xl mx-auto px-4 pt-4">
+          <div className="flex gap-2">
+            <button
+              onClick={() => {
+                setActiveSubTab('trade');
+                navigate('/market');
+              }}
+              className={`flex-1 py-3 rounded-lg font-bold transition-all ${
+                activeSubTab === 'trade'
+                  ? 'bg-green-500 text-white'
+                  : 'bg-bg-secondary text-text-secondary hover:bg-bg-tertiary border border-border'
+              }`}
+            >
+              🏪 거래소
+            </button>
+            <button
+              onClick={() => {
+                setActiveSubTab('auction');
+                navigate('/auction');
+              }}
+              className={`flex-1 py-3 rounded-lg font-bold transition-all ${
+                activeSubTab === 'auction'
+                  ? 'bg-amber-500 text-white'
+                  : 'bg-bg-secondary text-text-secondary hover:bg-bg-tertiary border border-border'
+              }`}
+            >
+              🔨 경매장
+            </button>
+          </div>
+        </div>
+      )}
+
       {/* Content */}
       <main className="max-w-7xl mx-auto px-4 py-6">
-        {renderListView()}
+        {activeSubTab === 'trade' ? (
+          renderListView()
+        ) : (
+          // 경매장 뷰
+          auctionViewMode === 'list' ? renderAuctionListView() :
+          auctionViewMode === 'detail' ? renderAuctionDetailView() :
+          auctionViewMode === 'edit' ? renderAuctionEditView() :
+          renderAuctionCreateView()
+        )}
       </main>
 
-      {/* Floating Add Button */}
-      {viewMode === 'list' && isAuthenticated && (
+      {/* Floating Add Button - 거래소에서만 표시 */}
+      {viewMode === 'list' && isAuthenticated && activeSubTab === 'trade' && (
         <button
           onClick={() => setViewMode('create')}
           className={`fixed bottom-6 ${requireAuth ? 'right-6' : 'left-6'} w-14 h-14 bg-green-500 hover:bg-green-400 text-white rounded-full shadow-lg flex items-center justify-center transition-all z-40 text-2xl font-bold`}
           aria-label="물품 등록"
         >
           +
+        </button>
+      )}
+
+      {/* Floating Refresh Button - 경매장 상세보기에서 진행중인 경매일 때만 표시 */}
+      {activeSubTab === 'auction' && auctionViewMode === 'detail' && selectedAuction?.status === 'ongoing' && (
+        <button
+          onClick={() => {
+            if (selectedAuctionId) {
+              queryClient.invalidateQueries({ queryKey: ['auction-item', selectedAuctionId] });
+            }
+          }}
+          className="fixed bottom-6 left-6 w-12 h-12 bg-amber-500 hover:bg-amber-400 text-white rounded-full shadow-lg flex items-center justify-center transition-all z-40"
+          aria-label="새로고침"
+        >
+          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+          </svg>
         </button>
       )}
 
@@ -2830,6 +4510,125 @@ const SharePage: React.FC<SharePageProps> = ({
           >
             ←
           </button>
+        </div>
+      )}
+
+      {/* Auction Edit Password Dialog */}
+      {showAuctionEditPasswordDialog && (
+        <div className="fixed inset-0 z-[70] bg-black/70 flex items-center justify-center p-4">
+          <div className="bg-bg-secondary rounded-2xl max-w-sm w-full p-6 shadow-2xl border border-border">
+            <h3 className="text-lg font-bold text-text-primary mb-4 text-center">
+              ✏️ 경매 수정
+            </h3>
+            <p className="text-sm text-text-secondary mb-4 text-center">
+              등록 시 설정한 비밀번호를 입력해주세요.
+            </p>
+            <input
+              type="password"
+              value={auctionEditPassword}
+              onChange={(e) => setAuctionEditPassword(e.target.value)}
+              placeholder="비밀번호"
+              className="w-full px-4 py-3 bg-bg-tertiary border border-border rounded-lg text-text-primary focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 mb-4"
+              onKeyDown={(e) => {
+                if (e.key === 'Enter') {
+                  handleVerifyAndEnterEdit();
+                }
+              }}
+              autoFocus
+            />
+            <div className="flex gap-3">
+              <button
+                onClick={() => {
+                  setShowAuctionEditPasswordDialog(false);
+                  setAuctionEditPassword('');
+                }}
+                className="flex-1 py-3 bg-bg-tertiary hover:bg-bg-primary text-text-primary font-bold rounded-lg transition-colors border border-border"
+              >
+                취소
+              </button>
+              <button
+                onClick={handleVerifyAndEnterEdit}
+                disabled={isVerifyingPassword}
+                className="flex-1 py-3 bg-blue-500 hover:bg-blue-400 text-white font-bold rounded-lg transition-colors disabled:opacity-50"
+              >
+                {isVerifyingPassword ? '확인 중...' : '확인'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Auction Delete Password Dialog */}
+      {showAuctionDeleteDialog && (
+        <div className="fixed inset-0 z-[70] bg-black/70 flex items-center justify-center p-4">
+          <div className="bg-bg-secondary rounded-2xl max-w-sm w-full p-6 shadow-2xl border border-border">
+            <h3 className="text-lg font-bold text-text-primary mb-4 text-center">
+              🗑️ 경매 삭제
+            </h3>
+            {selectedAuction && selectedAuction.bidCount > 0 ? (
+              <>
+                <div className="bg-red-500/10 border border-red-500/30 rounded-lg p-4 mb-4">
+                  <p className="text-red-400 text-sm text-center font-medium">
+                    ⚠️ 입찰 내역이 있어 삭제할 수 없습니다.
+                  </p>
+                  <p className="text-red-400/80 text-xs text-center mt-2">
+                    입찰자가 있는 경매는 삭제가 불가능합니다.
+                  </p>
+                </div>
+                <button
+                  onClick={() => {
+                    setShowAuctionDeleteDialog(false);
+                    setAuctionDeletePassword('');
+                  }}
+                  className="w-full py-3 bg-bg-tertiary hover:bg-bg-primary text-text-primary font-bold rounded-lg transition-colors border border-border"
+                >
+                  닫기
+                </button>
+              </>
+            ) : (
+              <>
+                <p className="text-sm text-text-secondary mb-4 text-center">
+                  등록 시 설정한 비밀번호를 입력해주세요.
+                </p>
+                <div className="bg-amber-500/10 border border-amber-500/30 rounded-lg p-3 mb-4">
+                  <p className="text-amber-400 text-xs text-center">
+                    ⚠️ 삭제된 경매는 복구할 수 없습니다.
+                  </p>
+                </div>
+                <input
+                  type="password"
+                  value={auctionDeletePassword}
+                  onChange={(e) => setAuctionDeletePassword(e.target.value)}
+                  placeholder="비밀번호"
+                  className="w-full px-4 py-3 bg-bg-tertiary border border-border rounded-lg text-text-primary focus:border-red-500 focus:ring-2 focus:ring-red-500/20 mb-4"
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter') {
+                      handleDeleteAuction();
+                    }
+                  }}
+                  autoFocus
+                />
+                <div className="flex gap-3">
+                  <button
+                    onClick={() => {
+                      setShowAuctionDeleteDialog(false);
+                      setAuctionDeletePassword('');
+                    }}
+                    className="flex-1 py-3 bg-bg-tertiary hover:bg-bg-primary text-text-primary font-bold rounded-lg transition-colors border border-border"
+                  >
+                    취소
+                  </button>
+                  <button
+                    onClick={handleDeleteAuction}
+                    disabled={isDeletingAuction}
+                    className="flex-1 py-3 bg-red-500 hover:bg-red-400 text-white font-bold rounded-lg transition-colors disabled:opacity-50"
+                  >
+                    {isDeletingAuction ? '삭제 중...' : '삭제'}
+                  </button>
+                </div>
+              </>
+            )}
+          </div>
         </div>
       )}
 

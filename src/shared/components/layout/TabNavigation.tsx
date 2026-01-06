@@ -138,7 +138,9 @@ const TabNavigation: React.FC = () => {
   useEffect(() => {
     const currentPath = location.pathname;
     const index = tabs.findIndex(
-      tab => currentPath === tab.path || (currentPath === '/' && tab.path === '/pets')
+      tab => currentPath === tab.path ||
+        (currentPath === '/' && tab.path === '/pets') ||
+        (currentPath === '/auction' && tab.path === '/market')
     );
     setActiveIndex(index >= 0 ? index : 0);
   // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -278,7 +280,8 @@ const TabNavigation: React.FC = () => {
               {tabs.map((tab, index) => {
                 const isActive =
                   location.pathname === tab.path ||
-                  (location.pathname === '/' && tab.path === '/pets');
+                  (location.pathname === '/' && tab.path === '/pets') ||
+                  (location.pathname === '/auction' && tab.path === '/market');
                 const isHovered = hoveredIndex === index;
 
                 return (
