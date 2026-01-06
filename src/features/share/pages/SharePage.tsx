@@ -487,6 +487,8 @@ const SharePage: React.FC<SharePageProps> = ({
   // Complete form state
   const [manualReceiver, setManualReceiver] = useState('');
   const [showCompleteForm, setShowCompleteForm] = useState(false);
+  const [completePassword, setCompletePassword] = useState('');
+  const [completePasswordError, setCompletePasswordError] = useState(false);
 
   // Draw animation state
   const [isDrawing, setIsDrawing] = useState(false);
@@ -819,6 +821,8 @@ const SharePage: React.FC<SharePageProps> = ({
     setSelectedItemId(null);
     setShowApplyForm(false);
     setShowCompleteForm(false);
+    setCompletePassword('');
+    setCompletePasswordError(false);
     setShowEditPasswordForm(false);
     setEditPassword('');
     setEditPasswordError(false);
@@ -1089,34 +1093,52 @@ const SharePage: React.FC<SharePageProps> = ({
     );
   };
 
-  // Complete share/sale (no password required)
-  const handleComplete = () => {
+  // Complete share/sale (password required)
+  const handleComplete = async () => {
     if (!manualReceiver.trim()) {
       alert('받는 사람을 입력해주세요.');
       return;
     }
 
+    if (!completePassword.trim()) {
+      alert('비밀번호를 입력해주세요.');
+      setCompletePasswordError(true);
+      return;
+    }
+
     if (!selectedItemId || !selectedItem) return;
 
-    const tradeType = selectedItem.tradeType;
-    const receiver = manualReceiver;
+    try {
+      // 비밀번호 검증 API 호출
+      await verifyPasswordApi(selectedItemId, completePassword);
 
-    completeMutation.mutate(
-      { id: selectedItemId, receiver },
-      {
-        onSuccess: () => {
-          const message = tradeType === '판매'
-            ? `${receiver}님에게 판매 완료되었습니다!`
-            : `${receiver}님에게 나눔 완료되었습니다!`;
-          alert(message);
-          setManualReceiver('');
-          setShowCompleteForm(false);
-        },
-        onError: (error) => {
-          alert(error.message || '완료 처리에 실패했습니다.');
-        },
-      }
-    );
+      // 비밀번호가 맞으면 완료 처리
+      const tradeType = selectedItem.tradeType;
+      const receiver = manualReceiver;
+
+      completeMutation.mutate(
+        { id: selectedItemId, receiver },
+        {
+          onSuccess: () => {
+            const message = tradeType === '판매'
+              ? `${receiver}님에게 판매 완료되었습니다!`
+              : `${receiver}님에게 나눔 완료되었습니다!`;
+            alert(message);
+            setManualReceiver('');
+            setCompletePassword('');
+            setCompletePasswordError(false);
+            setShowCompleteForm(false);
+          },
+          onError: (error) => {
+            alert(error.message || '완료 처리에 실패했습니다.');
+          },
+        }
+      );
+    } catch {
+      // 비밀번호가 틀리면 에러 표시
+      setCompletePasswordError(true);
+      alert('비밀번호가 일치하지 않습니다.');
+    }
   };
 
   // Uncomplete (toggle back to in-progress)
@@ -2041,6 +2063,27 @@ const SharePage: React.FC<SharePageProps> = ({
                   placeholder={isShare ? '직접 입력하거나 위 목록에서 선택' : '직접 입력하거나 위 목록에서 선택'}
                   className="w-full px-4 py-2 bg-bg-tertiary border border-border rounded-lg text-text-primary"
                 />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-text-secondary mb-1">
+                  비밀번호 *
+                </label>
+                <input
+                  type="password"
+                  value={completePassword}
+                  onChange={(e) => {
+                    setCompletePassword(e.target.value);
+                    setCompletePasswordError(false);
+                  }}
+                  placeholder="등록 시 입력한 비밀번호"
+                  className={`w-full px-4 py-2 bg-bg-tertiary border rounded-lg text-text-primary ${
+                    completePasswordError ? 'border-red-500' : 'border-border'
+                  }`}
+                />
+                {completePasswordError && (
+                  <p className="text-red-500 text-sm mt-1">비밀번호가 일치하지 않습니다.</p>
+                )}
               </div>
 
               <div className="flex gap-3">
