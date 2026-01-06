@@ -344,6 +344,24 @@ const purchaseItemApi = async (id: number, body: { name: string; message?: strin
   return data.data;
 };
 
+const cancelApplyApi = async (id: number) => {
+  const response = await fetch(`${serverUrl}/share/items/${id}/apply`, {
+    method: 'DELETE',
+  });
+  const data = await response.json();
+  if (!data.success) throw new Error(data.error || 'Failed to cancel apply');
+  return data.data;
+};
+
+const cancelPurchaseApi = async (id: number) => {
+  const response = await fetch(`${serverUrl}/share/items/${id}/purchase`, {
+    method: 'DELETE',
+  });
+  const data = await response.json();
+  if (!data.success) throw new Error(data.error || 'Failed to cancel purchase');
+  return data.data;
+};
+
 const completeItemApi = async (id: number, receiver: string) => {
   const response = await fetch(`${serverUrl}/share/items/${id}/complete`, {
     method: 'POST',
@@ -468,7 +486,7 @@ const SharePage: React.FC<SharePageProps> = ({
   const [formCategory, setFormCategory] = useState<Category>('아이템');
   const [formTradeType, setFormTradeType] = useState<TradeType>('판매');
   const [formPrice, setFormPrice] = useState<number>(0);
-  const [formCurrency, setFormCurrency] = useState<Currency>('스톤');
+  const [formCurrency, setFormCurrency] = useState<Currency>('금화');
   const [formContent, setFormContent] = useState('');
   const [formImages, setFormImages] = useState<string[]>([]);
   const [formAuthor, setFormAuthor] = useState('');
@@ -483,6 +501,10 @@ const SharePage: React.FC<SharePageProps> = ({
   const [purchaseName, setPurchaseName] = useState('');
   const [purchaseMessage, setPurchaseMessage] = useState('');
   const [showPurchaseForm, setShowPurchaseForm] = useState(false);
+
+  // Cancel form state (신청 취소)
+  const [showCancelForm, setShowCancelForm] = useState(false);
+  const [cancelConfirmText, setCancelConfirmText] = useState('');
 
   // Complete form state
   const [manualReceiver, setManualReceiver] = useState('');
@@ -683,6 +705,24 @@ const SharePage: React.FC<SharePageProps> = ({
     },
   });
 
+  const cancelApplyMutation = useMutation({
+    mutationFn: (id: number) => cancelApplyApi(id),
+    onSuccess: () => {
+      if (selectedItemId) {
+        queryClient.invalidateQueries({ queryKey: ['share-item', selectedItemId] });
+      }
+    },
+  });
+
+  const cancelPurchaseMutation = useMutation({
+    mutationFn: (id: number) => cancelPurchaseApi(id),
+    onSuccess: () => {
+      if (selectedItemId) {
+        queryClient.invalidateQueries({ queryKey: ['share-item', selectedItemId] });
+      }
+    },
+  });
+
   const completeMutation = useMutation({
     mutationFn: ({ id, receiver }: { id: number; receiver: string }) => completeItemApi(id, receiver),
     onSuccess: () => {
@@ -829,6 +869,8 @@ const SharePage: React.FC<SharePageProps> = ({
     setShowPurchaseForm(false);
     setPurchaseName('');
     setPurchaseMessage('');
+    setShowCancelForm(false);
+    setCancelConfirmText('');
     setSearchParams({});
   };
 
@@ -1091,6 +1133,30 @@ const SharePage: React.FC<SharePageProps> = ({
         },
       }
     );
+  };
+
+  // Cancel apply/purchase (신청 취소)
+  const handleCancel = () => {
+    if (cancelConfirmText !== '취소함') {
+      alert('"취소함"을 정확히 입력해주세요.');
+      return;
+    }
+
+    if (!selectedItemId || !selectedItem) return;
+
+    const isShare = selectedItem.tradeType === '나눔';
+    const mutation = isShare ? cancelApplyMutation : cancelPurchaseMutation;
+
+    mutation.mutate(selectedItemId, {
+      onSuccess: () => {
+        alert(isShare ? '나눔 신청이 취소되었습니다.' : '구매 신청이 취소되었습니다.');
+        setCancelConfirmText('');
+        setShowCancelForm(false);
+      },
+      onError: (error) => {
+        alert(error.message || '신청 취소에 실패했습니다.');
+      },
+    });
   };
 
   // Complete share/sale (password required)
@@ -1693,6 +1759,13 @@ const SharePage: React.FC<SharePageProps> = ({
                     🛒 구매 신청하기
                   </button>
                 )}
+                {/* 신청 취소 버튼 */}
+                <button
+                  onClick={() => setShowCancelForm(!showCancelForm)}
+                  className="px-6 py-3 bg-gray-500 hover:bg-gray-600 text-white font-bold rounded-lg transition-colors"
+                >
+                  ❌ 신청 취소
+                </button>
                 <button
                   onClick={() => setShowCompleteForm(!showCompleteForm)}
                   className="px-6 py-3 bg-purple-600 hover:bg-purple-700 text-white font-bold rounded-lg transition-colors"
@@ -1976,6 +2049,36 @@ const SharePage: React.FC<SharePageProps> = ({
                 className="w-full py-3 bg-green-500 hover:bg-green-600 text-white font-bold rounded-lg transition-colors disabled:opacity-50"
               >
                 {purchaseMutation.isPending ? '신청 중...' : '구매 신청하기'}
+              </button>
+            </div>
+          </div>
+        )}
+
+        {/* Cancel Form (신청 취소) */}
+        {showCancelForm && !selectedItem.completed && (
+          <div className="bg-bg-secondary rounded-xl border border-gray-500 p-6">
+            <h3 className="text-lg font-bold mb-4 text-gray-400">
+              ❌ {isShare ? '나눔' : '구매'} 신청 취소
+            </h3>
+            <div className="space-y-4">
+              <p className="text-text-secondary text-sm">
+                신청을 취소하려면 아래에 <span className="text-red-400 font-bold">"취소함"</span>을 입력해주세요.
+              </p>
+              <div>
+                <input
+                  type="text"
+                  value={cancelConfirmText}
+                  onChange={(e) => setCancelConfirmText(e.target.value)}
+                  placeholder="취소함"
+                  className="w-full px-4 py-2 bg-bg-tertiary border border-border rounded-lg text-text-primary"
+                />
+              </div>
+              <button
+                onClick={handleCancel}
+                disabled={cancelApplyMutation.isPending || cancelPurchaseMutation.isPending}
+                className="w-full py-3 bg-gray-500 hover:bg-gray-600 text-white font-bold rounded-lg transition-colors disabled:opacity-50"
+              >
+                {(cancelApplyMutation.isPending || cancelPurchaseMutation.isPending) ? '취소 중...' : '신청 취소하기'}
               </button>
             </div>
           </div>
