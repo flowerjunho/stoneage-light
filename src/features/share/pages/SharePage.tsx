@@ -1607,6 +1607,20 @@ const SharePage: React.FC = () => {
                 <span className="text-xl">{selectedItem.liked ? '👍' : '👍🏻'}</span>
                 <span>{selectedItem.likes ?? 0}</span>
               </button>
+              <button
+                onClick={() => {
+                  const url = `${window.location.origin}${window.location.pathname}#/trade?item=${selectedItem.id}`;
+                  navigator.clipboard.writeText(url).then(() => {
+                    alert('링크가 복사되었습니다!');
+                  }).catch(() => {
+                    alert('링크 복사에 실패했습니다.');
+                  });
+                }}
+                className="flex items-center gap-2 px-5 py-2.5 rounded-full text-base font-medium transition-all bg-bg-tertiary hover:bg-gray-500/20 text-text-secondary hover:text-text-primary border border-border"
+              >
+                <span className="text-xl">🔗</span>
+                <span>공유</span>
+              </button>
               {isShare ? (
                 <span>🙋 {selectedItem.applicantCount ?? selectedItem.applicants?.length ?? 0}명 신청</span>
               ) : (
