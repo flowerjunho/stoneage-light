@@ -735,7 +735,7 @@ const SharePage: React.FC<SharePageProps> = ({
     mutationFn: (id: number) => likeItemApi(id, clientId),
     onSuccess: (data, itemId) => {
       // 목록 캐시 업데이트
-      queryClient.setQueryData(['share-items', currentPage, filterCategory, filterTradeType, filterStatus, debouncedSearchQuery], (oldData: { items: ShareItem[]; pagination: unknown } | undefined) => {
+      queryClient.setQueryData(['share-items', tribe, currentPage, filterCategory, filterTradeType, filterStatus, debouncedSearchQuery], (oldData: { items: ShareItem[]; pagination: unknown } | undefined) => {
         if (!oldData) return oldData;
         return {
           ...oldData,
