@@ -4429,30 +4429,38 @@ const SharePage: React.FC<SharePageProps> = ({
 
       {/* Floating Add Button - 거래소에서만 표시 */}
       {viewMode === 'list' && isAuthenticated && activeSubTab === 'trade' && (
-        <button
-          onClick={() => setViewMode('create')}
-          className={`fixed bottom-6 ${requireAuth ? 'right-6' : 'left-6'} w-14 h-14 bg-green-500 hover:bg-green-400 text-white rounded-full shadow-lg flex items-center justify-center transition-all z-40 text-2xl font-bold`}
-          aria-label="물품 등록"
-        >
-          +
-        </button>
+        <div className="fixed bottom-6 left-0 right-0 z-40 pointer-events-none">
+          <div className={`max-w-7xl mx-auto px-4 flex ${requireAuth ? 'justify-end' : 'justify-start'}`}>
+            <button
+              onClick={() => setViewMode('create')}
+              className="w-14 h-14 bg-green-500 hover:bg-green-400 text-white rounded-full shadow-lg flex items-center justify-center transition-all text-2xl font-bold pointer-events-auto"
+              aria-label="물품 등록"
+            >
+              +
+            </button>
+          </div>
+        </div>
       )}
 
       {/* Floating Refresh Button - 경매장 상세보기에서 진행중인 경매일 때만 표시 */}
       {activeSubTab === 'auction' && auctionViewMode === 'detail' && selectedAuction?.status === 'ongoing' && (
-        <button
-          onClick={() => {
-            if (selectedAuctionId) {
-              queryClient.invalidateQueries({ queryKey: ['auction-item', selectedAuctionId] });
-            }
-          }}
-          className="fixed bottom-6 left-6 w-12 h-12 bg-amber-500 hover:bg-amber-400 text-white rounded-full shadow-lg flex items-center justify-center transition-all z-40"
-          aria-label="새로고침"
-        >
-          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
-          </svg>
-        </button>
+        <div className="fixed bottom-6 left-0 right-0 z-40 pointer-events-none">
+          <div className="max-w-7xl mx-auto px-4 flex justify-start">
+            <button
+              onClick={() => {
+                if (selectedAuctionId) {
+                  queryClient.invalidateQueries({ queryKey: ['auction-item', selectedAuctionId] });
+                }
+              }}
+              className="w-12 h-12 bg-amber-500 hover:bg-amber-400 text-white rounded-full shadow-lg flex items-center justify-center transition-all pointer-events-auto"
+              aria-label="새로고침"
+            >
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+              </svg>
+            </button>
+          </div>
+        </div>
       )}
 
       {/* Create View - Full Screen Overlay */}
