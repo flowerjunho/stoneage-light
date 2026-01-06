@@ -89,7 +89,7 @@ const AppContent: React.FC = () => {
   if (isTradePage) {
     return (
       <Routes>
-        <Route path="/trade" element={<SharePage />} />
+        <Route path="/trade" element={<SharePage tribe="family" requireAuth={true} title="🏪 형명가 거래소" />} />
       </Routes>
     );
   }
@@ -103,6 +103,7 @@ const AppContent: React.FC = () => {
           <Route path="/" element={<Navigate to="/pets" replace />} />
           <Route path="/notice" element={<NoticePage />} />
           <Route path="/notice/:type/:noteId" element={<PatchNoteDetailPage />} />
+          <Route path="/market" element={<SharePage tribe="all" requireAuth={false} title="🏪 거래소" />} />
           <Route path="/pets" element={<PetsPage />} />
           <Route path="/boarding" element={<BoardingPage />} />
           <Route path="/tip" element={<TipPage />} />

@@ -251,6 +251,7 @@ const fetchItemsApi = async (params: {
   tradeType?: string;
   status?: string;
   search?: string;
+  tribe?: string;
 }) => {
   const searchParams = new URLSearchParams();
   searchParams.append('page', params.page.toString());
@@ -259,6 +260,7 @@ const fetchItemsApi = async (params: {
   if (params.tradeType) searchParams.append('tradeType', params.tradeType);
   if (params.status) searchParams.append('status', params.status);
   if (params.search) searchParams.append('search', params.search);
+  if (params.tribe) searchParams.append('tribe', params.tribe);
 
   const response = await fetch(`${serverUrl}/share/items?${searchParams}`);
   const data = await response.json();
@@ -423,13 +425,23 @@ const likeItemApi = async (id: number, clientId: string) => {
   return data.data as { likes: number; liked: boolean };
 };
 
-const SharePage: React.FC = () => {
+interface SharePageProps {
+  tribe?: 'family' | 'all';
+  requireAuth?: boolean;
+  title?: string;
+}
+
+const SharePage: React.FC<SharePageProps> = ({
+  tribe = 'family',
+  requireAuth = true,
+  title = '🏪 형명가 거래소',
+}) => {
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
   const queryClient = useQueryClient();
 
-  // Auth state
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  // Auth state - requireAuth가 false면 자동으로 인증된 상태
+  const [isAuthenticated, setIsAuthenticated] = useState(!requireAuth);
   const [password, setPassword] = useState('');
   const [showPasswordError, setShowPasswordError] = useState(false);
 
@@ -600,7 +612,7 @@ const SharePage: React.FC = () => {
     isFetching,
     refetch: refetchItems,
   } = useQuery({
-    queryKey: ['share-items', currentPage, filterCategory, filterTradeType, filterStatus, debouncedSearchQuery],
+    queryKey: ['share-items', tribe, currentPage, filterCategory, filterTradeType, filterStatus, debouncedSearchQuery],
     queryFn: () =>
       fetchItemsApi({
         page: currentPage,
@@ -609,6 +621,7 @@ const SharePage: React.FC = () => {
         tradeType: filterTradeType || undefined,
         status: filterStatus || undefined,
         search: debouncedSearchQuery || undefined,
+        tribe,
       }),
     enabled: isAuthenticated && viewMode === 'list',
     staleTime: 1000 * 60 * 5, // 5분 캐시
@@ -765,7 +778,7 @@ const SharePage: React.FC = () => {
 
   // Lock body scroll when overlay is open
   useEffect(() => {
-    if (viewMode === 'detail' || viewMode === 'edit') {
+    if (viewMode === 'detail' || viewMode === 'edit' || viewMode === 'create') {
       document.body.style.overflow = 'hidden';
     } else {
       document.body.style.overflow = '';
@@ -907,6 +920,7 @@ const SharePage: React.FC = () => {
       images: formImages,
       author: formAuthor,
       password: formPassword,
+      tribe,
     };
 
     // 판매인 경우에만 가격과 화폐 추가
@@ -1305,7 +1319,7 @@ const SharePage: React.FC = () => {
 
         <div className="bg-bg-secondary rounded-2xl p-8 shadow-2xl border border-border max-w-md w-full">
           <div className="text-center mb-8">
-            <h1 className="text-3xl font-bold mb-2">형명가 거래소</h1>
+            <h1 className="text-3xl font-bold mb-2">{title.replace(/^[^\s]+\s/, '')}</h1>
             <p className="text-text-secondary">비밀번호를 입력해주세요</p>
           </div>
 
@@ -2525,8 +2539,8 @@ const SharePage: React.FC = () => {
   // Main authenticated view
   return (
     <div className="min-h-screen bg-bg-primary text-text-primary">
-      {/* Header */}
-      {viewMode !== 'create' && (
+      {/* Header - 형명가 거래소(requireAuth)에서만 표시 */}
+      {requireAuth && viewMode !== 'create' && (
         <header className="bg-bg-secondary border-b border-border">
           <div className="max-w-7xl mx-auto px-4 py-4 flex items-center justify-between">
             <div className="flex items-center gap-4">
@@ -2550,11 +2564,25 @@ const SharePage: React.FC = () => {
                   />
                 </svg>
               </button>
-              <h1 className="text-xl font-bold">형명가 거래소</h1>
+              <h1 className="text-xl font-bold">{title.replace(/^[^\s]+\s/, '')}</h1>
             </div>
             <ThemeToggle />
           </div>
         </header>
+      )}
+
+      {/* 공지 - 탭 네비게이션 거래소(requireAuth=false)에서만 표시 */}
+      {!requireAuth && viewMode === 'list' && (
+        <div className="max-w-7xl mx-auto px-4 pt-4">
+          <div className="bg-green-500/10 border border-green-500/30 rounded-lg p-3 text-sm text-text-secondary">
+            <ul className="space-y-1">
+              <li>• 디스코드 닉네임으로 품목을 올려주세요.</li>
+              <li>• 회원가입이 없다보니, 디스코드 닉네임만으로 거래를 합니다.</li>
+              <li>• 판매, 나눔이 완료 된다면 꼭 판매/나눔 완료 처리를 해주세요.</li>
+              <li>• 등록시 입력한 비밀번호는 삭제 및 수정에 필요합니다. 꼭 잊지 마세요.</li>
+            </ul>
+          </div>
+        </div>
       )}
 
       {/* Content */}
@@ -2566,7 +2594,7 @@ const SharePage: React.FC = () => {
       {viewMode === 'list' && isAuthenticated && (
         <button
           onClick={() => setViewMode('create')}
-          className="fixed bottom-6 right-6 w-14 h-14 bg-green-500 hover:bg-green-400 text-white rounded-full shadow-lg flex items-center justify-center transition-all z-40 text-2xl font-bold"
+          className={`fixed bottom-6 ${requireAuth ? 'right-6' : 'left-6'} w-14 h-14 bg-green-500 hover:bg-green-400 text-white rounded-full shadow-lg flex items-center justify-center transition-all z-40 text-2xl font-bold`}
           aria-label="물품 등록"
         >
           +
@@ -2730,8 +2758,8 @@ const SharePage: React.FC = () => {
         </div>
       )}
 
-      {/* Scroll to Top Button - slides up from behind + button */}
-      {viewMode === 'list' && (
+      {/* Scroll to Top Button - slides up from behind + button (only for requireAuth pages) */}
+      {viewMode === 'list' && requireAuth && (
         <button
           onClick={scrollToTop}
           className={`fixed right-6 w-14 h-14 bg-accent hover:bg-accent/80 text-white rounded-full shadow-lg flex items-center justify-center z-30 text-xl transition-all duration-300 ease-out ${
