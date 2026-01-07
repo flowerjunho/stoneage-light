@@ -967,19 +967,6 @@ body {
   .stat-grid {
     grid-template-columns: repeat(2, 1fr);
   }
-
-  /* iOS Safari 자동 확대 방지 - 폰트 16px 이상이면 확대 안됨 */
-  input[type='text'],
-  input[type='number'],
-  input[type='email'],
-  input[type='password'],
-  input[type='search'],
-  input[type='tel'],
-  input[type='url'],
-  textarea,
-  select {
-    font-size: 16px;
-  }
 }
 
 /* ========================================

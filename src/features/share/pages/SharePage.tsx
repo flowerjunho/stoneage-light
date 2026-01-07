@@ -355,7 +355,7 @@ const ItemCard: React.FC<{
             {item.category}
           </span>
           {item.completed && item.receiver && (
-            <span className="text-xs text-green-500 truncate">→ {item.receiver}</span>
+            <span className="text-sm font-medium text-pink-400 truncate">🎉 {item.receiver}</span>
           )}
         </div>
         <h3 className="font-medium text-text-primary truncate mb-1">{item.title}</h3>
@@ -725,6 +725,7 @@ const SharePage: React.FC<SharePageProps> = ({
   const [showCompleteForm, setShowCompleteForm] = useState(false);
   const [completePassword, setCompletePassword] = useState('');
   const [completePasswordError, setCompletePasswordError] = useState(false);
+  const [completePasswordConfirmed, setCompletePasswordConfirmed] = useState(false);
 
   // Draw animation state
   const [isDrawing, setIsDrawing] = useState(false);
@@ -1441,13 +1442,15 @@ const SharePage: React.FC<SharePageProps> = ({
     if (!selectedItemId) return;
 
     applyMutation.mutate(
-      { id: selectedItemId, body: { name: applyName, message: applyMessage || undefined } },
+      { id: selectedItemId, body: { name: applyName, password: applyPassword, message: applyMessage || undefined } },
       {
         onSuccess: () => {
           alert('신청이 완료되었습니다!');
           setApplyName('');
+          setApplyPassword('');
           setApplyMessage('');
           setShowApplyForm(false);
+          setApplyPasswordConfirmed(false);
         },
         onError: (error) => {
           alert(error.message || '신청에 실패했습니다.');
@@ -1505,24 +1508,16 @@ const SharePage: React.FC<SharePageProps> = ({
     });
   };
 
-  // Complete share/sale (password required)
+  // Complete share/sale (password already verified in UI)
   const handleComplete = async () => {
     if (!manualReceiver.trim()) {
       alert('받는 사람을 입력해주세요.');
       return;
     }
 
-    if (!completePassword.trim()) {
-      alert('비밀번호를 입력해주세요.');
-      setCompletePasswordError(true);
-      return;
-    }
-
     if (!selectedItemId || !selectedItem) return;
 
     try {
-      // 비밀번호 검증 API 호출
-      await verifyPasswordApi(selectedItemId, completePassword);
 
       // 비밀번호가 맞으면 완료 처리
       const tradeType = selectedItem.tradeType;
@@ -1539,6 +1534,7 @@ const SharePage: React.FC<SharePageProps> = ({
             setManualReceiver('');
             setCompletePassword('');
             setCompletePasswordError(false);
+            setCompletePasswordConfirmed(false);
             setShowCompleteForm(false);
           },
           onError: (error) => {
@@ -1547,9 +1543,7 @@ const SharePage: React.FC<SharePageProps> = ({
         }
       );
     } catch {
-      // 비밀번호가 틀리면 에러 표시
-      setCompletePasswordError(true);
-      alert('비밀번호가 일치하지 않습니다.');
+      alert('완료 처리에 실패했습니다.');
     }
   };
 
@@ -2136,6 +2130,12 @@ const SharePage: React.FC<SharePageProps> = ({
                     setShowApplyForm(false);
                     setShowPurchaseForm(false);
                     setShowCancelForm(false);
+                    // 나눔 완료 폼 열 때 상태 초기화
+                    if (!showCompleteForm) {
+                      setCompletePassword('');
+                      setCompletePasswordError(false);
+                      setCompletePasswordConfirmed(false);
+                    }
                   }}
                   className="px-6 py-3 bg-purple-600 hover:bg-purple-700 text-white font-bold rounded-lg transition-colors"
                 >
@@ -2461,123 +2461,146 @@ const SharePage: React.FC<SharePageProps> = ({
               🎯 {isShare ? '나눔' : '판매'} 완료 처리
             </h3>
             <div className="space-y-4">
-              {/* Applicants list (나눔 전용) */}
-              {isShare && selectedItem.applicants && selectedItem.applicants.length > 0 && (
-                <div>
-                  <label className="block text-sm font-medium text-text-secondary mb-2">
-                    신청자 목록 ({selectedItem.applicants.length}명) - 클릭하여 선택
-                  </label>
-                  <div className="max-h-40 overflow-y-auto bg-bg-tertiary rounded-lg p-3 space-y-2">
-                    {selectedItem.applicants.map((app, idx) => (
-                      <div
-                        key={idx}
-                        className={`flex items-center justify-between p-2 rounded cursor-pointer transition-colors ${
-                          manualReceiver === app.name
-                            ? 'bg-accent/20 border border-accent'
-                            : 'bg-bg-secondary hover:bg-bg-primary'
-                        }`}
-                        onClick={() => setManualReceiver(app.name)}
-                      >
-                        <div>
-                          <span className="font-medium text-text-primary">{app.name}</span>
-                          {app.message && (
-                            <p className="text-xs text-text-secondary mt-1">{app.message}</p>
-                          )}
-                        </div>
-                        <span className="text-xs text-text-muted">
-                          {new Date(app.appliedAt).toLocaleDateString('ko-KR')}
-                        </span>
-                      </div>
-                    ))}
+              {/* Step 1: Password verification */}
+              {!completePasswordConfirmed && (
+                <>
+                  <div>
+                    <label className="block text-sm font-medium text-text-secondary mb-1">
+                      비밀번호 확인 *
+                    </label>
+                    <input
+                      type="password"
+                      value={completePassword}
+                      onChange={(e) => {
+                        setCompletePassword(e.target.value);
+                        setCompletePasswordError(false);
+                      }}
+                      placeholder="등록 시 입력한 비밀번호"
+                      className={`w-full px-4 py-2 bg-bg-tertiary border rounded-lg text-text-primary ${
+                        completePasswordError ? 'border-red-500' : 'border-border'
+                      }`}
+                    />
+                    {completePasswordError && (
+                      <p className="text-red-500 text-sm mt-1">비밀번호가 일치하지 않습니다.</p>
+                    )}
                   </div>
-                </div>
-              )}
-
-              {/* Buyers list (판매 전용) */}
-              {!isShare && selectedItem.buyers && selectedItem.buyers.length > 0 && (
-                <div>
-                  <label className="block text-sm font-medium text-text-secondary mb-2">
-                    구매 신청자 목록 ({selectedItem.buyers.length}명) - 클릭하여 선택
-                  </label>
-                  <div className="max-h-40 overflow-y-auto bg-bg-tertiary rounded-lg p-3 space-y-2">
-                    {selectedItem.buyers.map((buyer, idx) => (
-                      <div
-                        key={idx}
-                        className={`flex items-center justify-between p-2 rounded cursor-pointer transition-colors ${
-                          manualReceiver === buyer.name
-                            ? 'bg-green-500/20 border border-green-500'
-                            : 'bg-bg-secondary hover:bg-bg-primary'
-                        }`}
-                        onClick={() => setManualReceiver(buyer.name)}
-                      >
-                        <div>
-                          <span className="font-medium text-text-primary">{buyer.name}</span>
-                          {buyer.message && (
-                            <p className="text-xs text-text-secondary mt-1">{buyer.message}</p>
-                          )}
-                        </div>
-                        <span className="text-xs text-text-muted">
-                          {new Date(buyer.appliedAt).toLocaleDateString('ko-KR')}
-                        </span>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              )}
-
-              <div>
-                <label className="block text-sm font-medium text-text-secondary mb-1">
-                  {isShare ? '받는 사람' : '구매자'} *
-                </label>
-                <input
-                  type="text"
-                  value={manualReceiver}
-                  onChange={(e) => setManualReceiver(e.target.value)}
-                  placeholder={isShare ? '직접 입력하거나 위 목록에서 선택' : '직접 입력하거나 위 목록에서 선택'}
-                  className="w-full px-4 py-2 bg-bg-tertiary border border-border rounded-lg text-text-primary"
-                />
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-text-secondary mb-1">
-                  비밀번호 *
-                </label>
-                <input
-                  type="password"
-                  value={completePassword}
-                  onChange={(e) => {
-                    setCompletePassword(e.target.value);
-                    setCompletePasswordError(false);
-                  }}
-                  placeholder="등록 시 입력한 비밀번호"
-                  className={`w-full px-4 py-2 bg-bg-tertiary border rounded-lg text-text-primary ${
-                    completePasswordError ? 'border-red-500' : 'border-border'
-                  }`}
-                />
-                {completePasswordError && (
-                  <p className="text-red-500 text-sm mt-1">비밀번호가 일치하지 않습니다.</p>
-                )}
-              </div>
-
-              <div className="flex gap-3">
-                <button
-                  onClick={handleComplete}
-                  disabled={isCompleting}
-                  className="flex-1 py-3 bg-purple-600 hover:bg-purple-700 text-white font-bold rounded-lg transition-colors disabled:opacity-50"
-                >
-                  {isCompleting ? '처리 중...' : `${isShare ? '나눔' : '판매'} 완료`}
-                </button>
-                {/* 랜덤 추첨 버튼 (나눔 + 신청자 있을 때만) */}
-                {isShare && selectedItem.applicants && selectedItem.applicants.length > 0 && (
                   <button
-                    onClick={handleDraw}
-                    disabled={isCompleting}
-                    className="flex-1 py-3 bg-gradient-to-r from-pink-500 to-yellow-500 hover:from-pink-600 hover:to-yellow-600 text-white font-bold rounded-lg transition-colors disabled:opacity-50"
+                    onClick={() => {
+                      if (completePassword === selectedItem.password) {
+                        setCompletePasswordConfirmed(true);
+                        setCompletePasswordError(false);
+                      } else {
+                        setCompletePasswordError(true);
+                      }
+                    }}
+                    className="w-full py-3 bg-purple-600 hover:bg-purple-700 text-white font-bold rounded-lg transition-colors"
                   >
-                    {isCompleting ? '추첨 중...' : '🎲 랜덤 추첨'}
+                    확인
                   </button>
-                )}
-              </div>
+                </>
+              )}
+
+              {/* Step 2: Select receiver (after password confirmed) */}
+              {completePasswordConfirmed && (
+                <>
+                  {/* Applicants list (나눔 전용) */}
+                  {isShare && selectedItem.applicants && selectedItem.applicants.length > 0 && (
+                    <div>
+                      <label className="block text-sm font-medium text-text-secondary mb-2">
+                        신청자 목록 ({selectedItem.applicants.length}명) - 클릭하여 선택
+                      </label>
+                      <div className="max-h-40 overflow-y-auto bg-bg-tertiary rounded-lg p-3 space-y-2">
+                        {selectedItem.applicants.map((app, idx) => (
+                          <div
+                            key={idx}
+                            className={`flex items-center justify-between p-2 rounded cursor-pointer transition-colors ${
+                              manualReceiver === app.name
+                                ? 'bg-accent/20 border border-accent'
+                                : 'bg-bg-secondary hover:bg-bg-primary'
+                            }`}
+                            onClick={() => setManualReceiver(app.name)}
+                          >
+                            <div>
+                              <span className="font-medium text-text-primary">{app.name}</span>
+                              {app.message && (
+                                <p className="text-xs text-text-secondary mt-1">{app.message}</p>
+                              )}
+                            </div>
+                            <span className="text-xs text-text-muted">
+                              {new Date(app.appliedAt).toLocaleDateString('ko-KR')}
+                            </span>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Buyers list (판매 전용) */}
+                  {!isShare && selectedItem.buyers && selectedItem.buyers.length > 0 && (
+                    <div>
+                      <label className="block text-sm font-medium text-text-secondary mb-2">
+                        구매 신청자 목록 ({selectedItem.buyers.length}명) - 클릭하여 선택
+                      </label>
+                      <div className="max-h-40 overflow-y-auto bg-bg-tertiary rounded-lg p-3 space-y-2">
+                        {selectedItem.buyers.map((buyer, idx) => (
+                          <div
+                            key={idx}
+                            className={`flex items-center justify-between p-2 rounded cursor-pointer transition-colors ${
+                              manualReceiver === buyer.name
+                                ? 'bg-green-500/20 border border-green-500'
+                                : 'bg-bg-secondary hover:bg-bg-primary'
+                            }`}
+                            onClick={() => setManualReceiver(buyer.name)}
+                          >
+                            <div>
+                              <span className="font-medium text-text-primary">{buyer.name}</span>
+                              {buyer.message && (
+                                <p className="text-xs text-text-secondary mt-1">{buyer.message}</p>
+                              )}
+                            </div>
+                            <span className="text-xs text-text-muted">
+                              {new Date(buyer.appliedAt).toLocaleDateString('ko-KR')}
+                            </span>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
+                  <div>
+                    <label className="block text-sm font-medium text-text-secondary mb-1">
+                      {isShare ? '받는 사람' : '구매자'} *
+                    </label>
+                    <input
+                      type="text"
+                      value={manualReceiver}
+                      onChange={(e) => setManualReceiver(e.target.value)}
+                      placeholder={isShare ? '직접 입력하거나 위 목록에서 선택' : '직접 입력하거나 위 목록에서 선택'}
+                      className="w-full px-4 py-2 bg-bg-tertiary border border-border rounded-lg text-text-primary"
+                    />
+                  </div>
+
+                  <div className="flex gap-3">
+                    <button
+                      onClick={handleComplete}
+                      disabled={isCompleting}
+                      className="flex-1 py-3 bg-purple-600 hover:bg-purple-700 text-white font-bold rounded-lg transition-colors disabled:opacity-50"
+                    >
+                      {isCompleting ? '처리 중...' : `${isShare ? '나눔' : '판매'} 완료`}
+                    </button>
+                    {/* 랜덤 추첨 버튼 (나눔 + 신청자 있을 때만) */}
+                    {isShare && selectedItem.applicants && selectedItem.applicants.length > 0 && (
+                      <button
+                        onClick={handleDraw}
+                        disabled={isCompleting}
+                        className="flex-1 py-3 bg-gradient-to-r from-pink-500 to-yellow-500 hover:from-pink-600 hover:to-yellow-600 text-white font-bold rounded-lg transition-colors disabled:opacity-50"
+                      >
+                        {isCompleting ? '추첨 중...' : '🎲 랜덤 추첨'}
+                      </button>
+                    )}
+                  </div>
+                </>
+              )}
             </div>
           </div>
         )}
@@ -2619,21 +2642,37 @@ const SharePage: React.FC<SharePageProps> = ({
           </div>
         )}
 
-        {/* Applicants Display (나눔 + 완료 폼 닫혀있을 때만) */}
-        {!showCompleteForm && isShare && selectedItem.applicants && selectedItem.applicants.length > 0 && (
+        {/* Applicants Display (나눔 + 완료 폼 닫혀있거나 완료 상태일 때) */}
+        {(!showCompleteForm || selectedItem.completed) && isShare && selectedItem.applicants && selectedItem.applicants.length > 0 && (
           <div className="bg-bg-secondary rounded-xl border border-border p-6">
             <h3 className="text-lg font-bold mb-4 text-text-primary">
               🙋 신청자 ({selectedItem.applicants.length}명)
             </h3>
             <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
-              {selectedItem.applicants.map((app, idx) => (
-                <div
-                  key={idx}
-                  className="p-3 bg-bg-tertiary rounded-lg text-center"
-                >
-                  <span className="font-medium text-text-primary">{app.name}</span>
-                </div>
-              ))}
+              {selectedItem.applicants.map((app, idx) => {
+                const isSelectedReceiver =
+                  selectedItem.completed && selectedItem.receiver === app.name;
+                return (
+                  <div
+                    key={idx}
+                    className={`p-3 rounded-lg text-center ${
+                      isSelectedReceiver
+                        ? 'bg-pink-500/20 border border-pink-500/50'
+                        : 'bg-bg-tertiary'
+                    }`}
+                  >
+                    <span
+                      className={`font-medium ${
+                        isSelectedReceiver ? 'text-pink-400' : 'text-text-primary'
+                      }`}
+                    >
+                      {isSelectedReceiver && '🎉 '}
+                      {app.name}
+                      {isSelectedReceiver && ' (당첨)'}
+                    </span>
+                  </div>
+                );
+              })}
             </div>
           </div>
         )}
