@@ -1095,12 +1095,13 @@ const SharePage: React.FC<SharePageProps> = ({
 
   const buyNowMutation = useMutation({
     mutationFn: ({ id, name }: { id: number; name: string }) => buyNowAuctionApi(id, name),
-    onSuccess: () => {
-      if (selectedAuctionId) {
-        queryClient.invalidateQueries({ queryKey: ['auction-item', selectedAuctionId] });
-        queryClient.invalidateQueries({ queryKey: ['auction-items'] });
+    onSuccess: (data, variables) => {
+      // API 응답 데이터로 캐시 즉시 업데이트
+      if (data) {
+        queryClient.setQueryData(['auction-item', variables.id], data);
       }
-      alert('즉시구매가 완료되었습니다!');
+      queryClient.invalidateQueries({ queryKey: ['auction-items'] });
+      alert('즉시구매가 완료되었습니다! 경매가 종료되었습니다.');
     },
   });
 
