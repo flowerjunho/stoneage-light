@@ -80,7 +80,7 @@ interface AuctionItem {
   endTime: string;
   canceled: boolean;
   soldByBuyNow: boolean; // 즉시구매로 낙찰됨
-  buyNowBuyer: string | null; // 즉시구매자
+  buyNowBuyer: { name: string; ip: string; purchasedAt: string } | null; // 즉시구매자
   status: 'ongoing' | 'ended' | 'canceled';
   bids: AuctionBid[];
   highestBid: { name: string; amount: number } | null;
@@ -3803,11 +3803,11 @@ const SharePage: React.FC<SharePageProps> = ({
             </div>
 
             {/* 즉시구매 완료 표시 */}
-            {selectedAuction.soldByBuyNow && (
+            {selectedAuction.soldByBuyNow && selectedAuction.buyNowBuyer && (
               <div className="bg-green-500/20 rounded-xl p-4 border border-green-500/50 text-center">
                 <p className="text-green-500 font-bold text-lg">🎉 즉시구매 완료!</p>
                 <p className="text-text-secondary text-sm mt-1">
-                  구매자: <span className="text-text-primary font-medium">{selectedAuction.buyNowBuyer}</span>
+                  구매자: <span className="text-text-primary font-medium">{selectedAuction.buyNowBuyer.name}</span>
                 </p>
               </div>
             )}
