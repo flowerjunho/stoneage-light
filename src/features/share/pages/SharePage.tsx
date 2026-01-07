@@ -649,7 +649,7 @@ const SharePage: React.FC<SharePageProps> = ({
   );
   const [auctionPage, setAuctionPage] = useState(1);
   const [auctionFilterCategory, setAuctionFilterCategory] = useState<string>('');
-  const [auctionFilterStatus, setAuctionFilterStatus] = useState<AuctionStatus>('ongoing');
+  const [auctionFilterStatus, setAuctionFilterStatus] = useState<AuctionStatus>('');
   const [auctionSearchQuery, setAuctionSearchQuery] = useState('');
   const debouncedAuctionSearch = useDebounce(auctionSearchQuery, 300);
 
