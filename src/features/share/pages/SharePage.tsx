@@ -1442,15 +1442,13 @@ const SharePage: React.FC<SharePageProps> = ({
     if (!selectedItemId) return;
 
     applyMutation.mutate(
-      { id: selectedItemId, body: { name: applyName, password: applyPassword, message: applyMessage || undefined } },
+      { id: selectedItemId, body: { name: applyName, message: applyMessage || undefined } },
       {
         onSuccess: () => {
           alert('신청이 완료되었습니다!');
           setApplyName('');
-          setApplyPassword('');
           setApplyMessage('');
           setShowApplyForm(false);
-          setApplyPasswordConfirmed(false);
         },
         onError: (error) => {
           alert(error.message || '신청에 실패했습니다.');
@@ -2485,11 +2483,12 @@ const SharePage: React.FC<SharePageProps> = ({
                     )}
                   </div>
                   <button
-                    onClick={() => {
-                      if (completePassword === selectedItem.password) {
+                    onClick={async () => {
+                      try {
+                        await verifyPasswordApi(selectedItem.id, completePassword);
                         setCompletePasswordConfirmed(true);
                         setCompletePasswordError(false);
-                      } else {
+                      } catch {
                         setCompletePasswordError(true);
                       }
                     }}
