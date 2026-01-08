@@ -62,16 +62,25 @@ const getPigOwner = (room: GameRoom, pigId: number): Player | undefined => {
 
 interface MultiplayerPigRaceProps {
   onBack: () => void;
+  initialMode?: 'menu' | 'room' | 'input' | null;
+  initialRoomCode?: string | null;
 }
 
 type ViewPhase = 'menu' | 'create' | 'join' | 'lobby' | 'game';
 
-const MultiplayerPigRace = ({ onBack }: MultiplayerPigRaceProps) => {
-  // 뷰 상태
-  const [viewPhase, setViewPhase] = useState<ViewPhase>('menu');
+const MultiplayerPigRace = ({ onBack, initialMode, initialRoomCode }: MultiplayerPigRaceProps) => {
+  // 뷰 상태 - 초기 모드에 따라 설정
+  const getInitialViewPhase = (): ViewPhase => {
+    if (initialMode === 'room') return 'create';
+    if (initialMode === 'input') return 'join';
+    return 'menu';
+  };
+
+  const [viewPhase, setViewPhase] = useState<ViewPhase>(getInitialViewPhase());
   const [playerName, setPlayerName] = useState('');
-  const [roomCodeInput, setRoomCodeInput] = useState('');
+  const [roomCodeInput, setRoomCodeInput] = useState(initialRoomCode || '');
   const [maxPlayers, setMaxPlayers] = useState(10);
+  const [autoJoinAttempted, setAutoJoinAttempted] = useState(false);
 
   // 게임 상태
   const [room, setRoom] = useState<GameRoom | null>(null);
@@ -184,6 +193,50 @@ const MultiplayerPigRace = ({ onBack }: MultiplayerPigRaceProps) => {
       }
     };
   }, [stopConnection, stopPolling]);
+
+  // initialMode/initialRoomCode props 변경 시 상태 업데이트
+  useEffect(() => {
+    if (initialMode === 'room') {
+      setViewPhase('create');
+    } else if (initialMode === 'input') {
+      setViewPhase('join');
+    }
+  }, [initialMode]);
+
+  useEffect(() => {
+    if (initialRoomCode) {
+      setRoomCodeInput(initialRoomCode);
+    }
+  }, [initialRoomCode]);
+
+  // URL 방 코드로 자동 입장 시도
+  useEffect(() => {
+    const autoJoin = async () => {
+      if (initialRoomCode && playerName.trim() && !autoJoinAttempted && viewPhase === 'join') {
+        setAutoJoinAttempted(true);
+        setIsLoading(true);
+        setError(null);
+
+        console.log('🔗 URL 방 코드로 자동 입장 시도:', initialRoomCode);
+        const response = await joinRoom(initialRoomCode.toUpperCase(), playerName.trim());
+
+        if (response.success && response.data) {
+          console.log('✅ 자동 입장 성공:', response.data.roomCode);
+          setRoom(response.data);
+          setViewPhase('lobby');
+          startSSE(response.data.roomCode);
+          startPolling(response.data.roomCode);
+        } else {
+          console.error('❌ 자동 입장 실패:', response.error);
+          setError(response.error || '방 입장에 실패했습니다');
+        }
+
+        setIsLoading(false);
+      }
+    };
+
+    autoJoin();
+  }, [initialRoomCode, playerName, autoJoinAttempted, viewPhase, startSSE, startPolling]);
 
   // 방 생성
   const handleCreateRoom = async () => {
@@ -1009,12 +1062,27 @@ const MultiplayerPigRace = ({ onBack }: MultiplayerPigRaceProps) => {
           <p className="text-3xl font-mono font-bold text-accent tracking-widest">
             {room.roomCode}
           </p>
-          <button
-            onClick={() => navigator.clipboard.writeText(room.roomCode)}
-            className="mt-2 text-sm text-text-secondary hover:text-text-primary"
-          >
-            📋 복사하기
-          </button>
+          <div className="mt-2 flex gap-3 justify-center">
+            <button
+              onClick={() => {
+                navigator.clipboard.writeText(room.roomCode);
+                alert('코드가 복사되었습니다!');
+              }}
+              className="text-sm text-text-secondary hover:text-text-primary"
+            >
+              📋 코드 복사
+            </button>
+            <button
+              onClick={() => {
+                const url = `${window.location.origin}/#/game?type=multi&code=${room.roomCode}`;
+                navigator.clipboard.writeText(url);
+                alert('링크가 복사되었습니다!');
+              }}
+              className="text-sm text-text-secondary hover:text-text-primary"
+            >
+              🔗 링크 복사 (바로 입장)
+            </button>
+          </div>
         </div>
 
         {/* 플레이어 목록 */}

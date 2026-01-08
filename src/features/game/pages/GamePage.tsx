@@ -1,12 +1,30 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import LadderGame from '../components/LadderGame';
 import PigRaceGame from '../components/PigRaceGame';
 import MultiplayerPigRace from '../components/MultiplayerPigRace';
 
 type GameType = 'ladder' | 'pigrace' | 'multiplayer' | null;
+type MultiplayerMode = 'menu' | 'room' | 'input' | null;
 
 const GamePage = () => {
+  const [searchParams, setSearchParams] = useSearchParams();
   const [selectedGame, setSelectedGame] = useState<GameType>(null);
+
+  // 쿼리 파라미터에서 초기 상태 설정
+  const queryType = searchParams.get('type');
+  const queryMode = searchParams.get('mode') as MultiplayerMode;
+  const queryCode = searchParams.get('code'); // 방 코드 (6자리)
+
+  // code가 있으면 자동으로 입장 화면으로 이동
+  const effectiveMode = queryCode ? 'input' : queryMode;
+
+  // URL 쿼리 파라미터 처리
+  useEffect(() => {
+    if (queryType === 'multi') {
+      setSelectedGame('multiplayer');
+    }
+  }, [queryType]);
 
   const games = [
     {
@@ -32,12 +50,24 @@ const GamePage = () => {
     },
   ];
 
+  const handleSelectGame = (gameId: GameType) => {
+    setSelectedGame(gameId);
+    if (gameId === 'multiplayer') {
+      setSearchParams({ type: 'multi' });
+    }
+  };
+
+  const handleBack = () => {
+    setSelectedGame(null);
+    setSearchParams({});
+  };
+
   const renderGameList = () => (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
       {games.map((game) => (
         <button
           key={game.id}
-          onClick={() => setSelectedGame(game.id)}
+          onClick={() => handleSelectGame(game.id)}
           className={`relative overflow-hidden rounded-2xl p-6 text-left transition-all duration-300 hover:scale-[1.02] hover:shadow-xl bg-gradient-to-br ${game.color}`}
         >
           <div className="absolute top-0 right-0 text-8xl opacity-20 transform translate-x-4 -translate-y-4">
@@ -56,11 +86,17 @@ const GamePage = () => {
   const renderSelectedGame = () => {
     switch (selectedGame) {
       case 'ladder':
-        return <LadderGame onBack={() => setSelectedGame(null)} />;
+        return <LadderGame onBack={handleBack} />;
       case 'pigrace':
-        return <PigRaceGame onBack={() => setSelectedGame(null)} />;
+        return <PigRaceGame onBack={handleBack} />;
       case 'multiplayer':
-        return <MultiplayerPigRace onBack={() => setSelectedGame(null)} />;
+        return (
+          <MultiplayerPigRace
+            onBack={handleBack}
+            initialMode={effectiveMode}
+            initialRoomCode={queryCode}
+          />
+        );
       default:
         return null;
     }
