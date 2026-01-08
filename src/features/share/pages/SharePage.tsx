@@ -55,6 +55,7 @@ interface ShareItem {
   liked?: boolean;
   createdAt: string;
   updatedAt: string;
+  ip?: string;
 }
 
 // Auction Types
@@ -105,6 +106,34 @@ const CURRENCIES: Currency[] = ['스톤', '금화'];
 // API Base URL
 const serverUrl = import.meta.env.VITE_API_URL;
 
+// IP 차단 여부 확인
+const checkBlockedIp = async (): Promise<boolean> => {
+  try {
+    const response = await fetch(`${serverUrl}/admin/check-ip`);
+    const data = await response.json();
+    return data.blocked === true;
+  } catch (error) {
+    console.error('IP 차단 확인 실패:', error);
+    return false; // 확인 실패 시 차단하지 않음
+  }
+};
+
+// IP 차단 (관리자 전용)
+const blockIpApi = async (ip: string, reason?: string): Promise<{ success: boolean; message?: string }> => {
+  try {
+    const response = await fetch(`${serverUrl}/admin/blocked-ips`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ ip, reason: reason || '관리자에 의한 차단' }),
+    });
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.error('IP 차단 실패:', error);
+    return { success: false, message: 'IP 차단에 실패했습니다.' };
+  }
+};
+
 // ==================== Auction API Functions ====================
 const fetchAuctionItems = async (params: {
   page?: number;
@@ -149,6 +178,12 @@ const createAuctionApi = async (body: {
   currency: string;
   endTime: string;
 }) => {
+  // IP 차단 여부 확인
+  const isBlocked = await checkBlockedIp();
+  if (isBlocked) {
+    throw new Error('차단된 IP입니다.');
+  }
+
   const response = await fetch(`${serverUrl}/auction/items`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
@@ -447,6 +482,12 @@ const fetchItemApi = async (id: number, clientId: string) => {
 };
 
 const createItemApi = async (body: Record<string, unknown>) => {
+  // IP 차단 여부 확인
+  const isBlocked = await checkBlockedIp();
+  if (isBlocked) {
+    throw new Error('차단된 IP입니다.');
+  }
+
   const response = await fetch(`${serverUrl}/share/items`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
@@ -2045,6 +2086,25 @@ const SharePage: React.FC<SharePageProps> = ({
 
             <div className="flex items-center gap-4 text-sm text-text-secondary mb-6 flex-wrap">
               <span>작성자: {selectedItem.author}</span>
+              {isAdmin && selectedItem.ip && (
+                <span className="flex items-center gap-2">
+                  <span className="text-yellow-500">🔒 IP: {selectedItem.ip}</span>
+                  <button
+                    onClick={async () => {
+                      if (!confirm(`${selectedItem.ip} IP를 차단하시겠습니까?`)) return;
+                      const result = await blockIpApi(selectedItem.ip!);
+                      if (result.success) {
+                        alert('IP가 차단되었습니다.');
+                      } else {
+                        alert(result.message || 'IP 차단에 실패했습니다.');
+                      }
+                    }}
+                    className="px-2 py-0.5 text-xs bg-red-500/20 text-red-400 border border-red-500/30 rounded hover:bg-red-500/30 transition-colors"
+                  >
+                    🚫 차단
+                  </button>
+                </span>
+              )}
               <span>👁 {selectedItem.views}</span>
               <button
                 onClick={() => likeMutation.mutate(selectedItem.id)}
