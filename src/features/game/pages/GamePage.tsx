@@ -66,7 +66,7 @@ const GamePage = () => {
   const renderGameIcon = (icon: string, size: 'sm' | 'lg') => {
     if (icon === 'ho') {
       const sizeClass = size === 'lg' ? 'w-24 h-24' : 'w-12 h-12';
-      return <img src="/ho.svg" alt="천호" className={sizeClass} />;
+      return <img src={`${import.meta.env.BASE_URL}ho.svg`} alt="천호" className={sizeClass} />;
     }
     return <span>{icon}</span>;
   };

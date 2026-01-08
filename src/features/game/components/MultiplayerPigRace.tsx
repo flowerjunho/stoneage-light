@@ -992,7 +992,7 @@ const MultiplayerPigRace = ({ onBack, initialMode, initialRoomCode }: Multiplaye
     <div className="space-y-6">
       <div className="text-center">
         <div className="mb-4">
-          <img src="/ho.svg" alt="천호" className="w-20 h-20 mx-auto" />
+          <img src={`${import.meta.env.BASE_URL}ho.svg`} alt="천호" className="w-20 h-20 mx-auto" />
         </div>
         <h2 className="text-2xl font-bold text-text-primary">천호 레이스</h2>
         <p className="text-text-secondary mt-2">친구들과 함께 레이스를 즐겨보세요!</p>
@@ -1515,7 +1515,7 @@ const MultiplayerPigRace = ({ onBack, initialMode, initialRoomCode }: Multiplaye
                   </div>
                   {/* 호 캐릭터 이미지 */}
                   <img
-                    src="/ho.svg"
+                    src={`${import.meta.env.BASE_URL}ho.svg`}
                     alt={`호${pig.id + 1}`}
                     width="50"
                     height="50"
@@ -1627,7 +1627,7 @@ const MultiplayerPigRace = ({ onBack, initialMode, initialRoomCode }: Multiplaye
         </button>
         <div>
           <h2 className="text-xl font-bold text-text-primary flex items-center gap-2">
-            <img src="/ho.svg" alt="천호" className="w-6 h-6" />
+            <img src={`${import.meta.env.BASE_URL}ho.svg`} alt="천호" className="w-6 h-6" />
             천호 레이스
           </h2>
           <p className="text-sm text-text-secondary">
