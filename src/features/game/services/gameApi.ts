@@ -190,6 +190,7 @@ export const updateGameState = async (
     raceStartTime?: number | null;
     raceEndTime?: number | null;
     pigs?: PigState[];
+    resetPlayers?: boolean; // 재경기 시 플레이어 선택/준비 초기화
   }
 ): Promise<ApiResponse<GameRoom>> => {
   return apiCall<GameRoom>(`/api/game/rooms/${roomCode}/state`, {

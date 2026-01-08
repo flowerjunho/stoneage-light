@@ -336,6 +336,9 @@ function leaveRoom(roomCode, playerId) {
   const room = getRoom(roomCode);
   if (!room) throw new NotFoundError('방을 찾을 수 없습니다.');
 
+  const wasHost = room.hostId === playerId;
+  const wasGameInProgress = ['countdown', 'racing'].includes(room.status);
+
   // 1. 플레이어 제거
   room.players = room.players.filter(p => p.id !== playerId);
 
@@ -346,18 +349,35 @@ function leaveRoom(roomCode, playerId) {
   }
 
   // 3. 방장이 나간 경우 새 방장 지정 (가장 먼저 입장한 사람)
-  if (room.hostId === playerId) {
+  if (wasHost) {
     room.players.sort((a, b) => a.joinedAt - b.joinedAt);
     room.hostId = room.players[0].id;
+
+    // 4. 게임 진행 중이면 host_changed 이벤트 발행 (게임 루프 인계 필요)
+    if (wasGameInProgress) {
+      emitHostChangedEvent(roomCode, room.hostId, room);
+    }
   }
 
   room.updatedAt = Date.now();
 
-  // 4. 저장 및 이벤트 발행
+  // 5. 저장 및 일반 업데이트 이벤트 발행
   saveRoom(roomCode, room);
   emitRoomEvent(roomCode, room);
 
   return { message: '방에서 나갔습니다.' };
+}
+
+// host_changed 이벤트 발행 함수
+function emitHostChangedEvent(roomCode, newHostId, room) {
+  const connections = roomConnections.get(roomCode);
+  if (!connections) return;
+
+  const data = JSON.stringify({ newHostId, room });
+  connections.forEach(res => {
+    res.write(`event: host_changed\n`);
+    res.write(`data: ${data}\n\n`);
+  });
 }
 ```
 
@@ -381,7 +401,7 @@ X-Player-ID: player_1704067200000_abc123def
 
 ### 5. 돼지 선택
 
-플레이어가 응원할 돼지를 선택합니다.
+플레이어가 응원할 돼지를 선택합니다. **선택 해제도 가능합니다.**
 
 **POST** `/api/game/rooms/:roomCode/select-pig`
 
@@ -396,14 +416,45 @@ X-Player-ID: player_1704067200000_abc123def
 | 필드 | 타입 | 필수 | 설명 | 유효성 검사 |
 |------|------|------|------|-------------|
 | playerId | string | ✅ | 플레이어 ID | 방에 존재해야 함 |
-| pigId | number | ✅ | 돼지 번호 | 0-9 범위 |
+| pigId | number | ✅ | 돼지 번호 | **-1 또는 0-9 범위** |
+
+#### pigId 특수값
+| pigId | 동작 |
+|-------|------|
+| -1 | 현재 선택 해제 (selectedPig = null로 설정) |
+| 0-9 | 해당 번호 돼지 선택 |
+
+#### 선택 해제 예시
+```json
+{
+  "playerId": "player_1704067200000_abc123def",
+  "pigId": -1
+}
+```
+→ 플레이어의 selectedPig이 null로 설정됨
+
+#### 프론트엔드 토글 구현 예시
+```typescript
+// 클라이언트에서 토글 로직 처리
+const handlePigClick = async (pigId: number) => {
+  // 같은 돼지 클릭 시 -1 전송하여 선택 해제
+  const targetPigId = currentPlayer?.selectedPig === pigId ? -1 : pigId;
+
+  await fetch(`/api/game/rooms/${roomCode}/select-pig`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ playerId: myPlayerId, pigId: targetPigId })
+  });
+  // SSE로 업데이트된 상태 자동 수신
+};
+```
 
 #### Response 에러
 | Status | error | 상황 |
 |--------|-------|------|
-| 400 | "잘못된 돼지 번호입니다." | pigId가 0-9 범위 밖 |
+| 400 | "잘못된 돼지 번호입니다." | pigId가 -1 미만 또는 9 초과 |
 | 404 | "플레이어를 찾을 수 없습니다." | 방에 없는 playerId |
-| 409 | "이미 다른 플레이어가 선택한 돼지입니다." | 중복 선택 |
+| 409 | "이미 다른 플레이어가 선택한 돼지입니다." | 다른 사람이 이미 선택한 돼지 |
 
 #### 서버 구현 로직
 ```javascript
@@ -416,8 +467,8 @@ function selectPig(roomCode, playerId, pigId) {
     throw new ConflictError('돼지를 선택할 수 없는 상태입니다.');
   }
 
-  // 2. 돼지 번호 유효성
-  if (pigId < 0 || pigId > 9) {
+  // 2. 돼지 번호 유효성 (-1은 선택 해제)
+  if (pigId < -1 || pigId > 9) {
     throw new BadRequestError('잘못된 돼지 번호입니다.');
   }
 
@@ -425,17 +476,26 @@ function selectPig(roomCode, playerId, pigId) {
   const player = room.players.find(p => p.id === playerId);
   if (!player) throw new NotFoundError('플레이어를 찾을 수 없습니다.');
 
-  // 4. 중복 선택 체크 (본인이 이미 선택한 것은 허용)
+  // 4. 선택 해제 (-1인 경우)
+  if (pigId === -1) {
+    player.selectedPig = null;
+    room.updatedAt = Date.now();
+    saveRoom(roomCode, room);
+    emitRoomEvent(roomCode, room);
+    return room;
+  }
+
+  // 5. 중복 선택 체크 (다른 플레이어가 이미 선택한 돼지)
   const alreadySelected = room.players.find(p => p.selectedPig === pigId && p.id !== playerId);
   if (alreadySelected) {
     throw new ConflictError('이미 다른 플레이어가 선택한 돼지입니다.');
   }
 
-  // 5. 선택 저장
+  // 6. 선택 저장
   player.selectedPig = pigId;
   room.updatedAt = Date.now();
 
-  // 6. 저장 및 이벤트 발행
+  // 7. 저장 및 이벤트 발행
   saveRoom(roomCode, room);
   emitRoomEvent(roomCode, room);
 
@@ -575,18 +635,43 @@ function startGame(roomCode, playerId) {
   ],
   "countdown": 0,
   "raceStartTime": 1704067400000,
-  "raceEndTime": null
+  "raceEndTime": null,
+  "resetPlayers": false
 }
 ```
 
 | 필드 | 타입 | 필수 | 설명 |
 |------|------|------|------|
 | playerId | string | ✅ | 요청자 ID (방장만 가능) |
-| status | GameStatus | ✅ | 게임 상태 |
-| pigs | PigState[] | ✅ | 돼지 상태 배열 (10개) |
+| status | GameStatus | ❌ | 게임 상태 |
+| pigs | PigState[] | ❌ | 돼지 상태 배열 (10개) |
 | countdown | number | ❌ | 카운트다운 값 (0-3) |
-| raceStartTime | number | ❌ | 레이스 시작 시간 |
-| raceEndTime | number | ❌ | 레이스 종료 시간 |
+| raceStartTime | number \| null | ❌ | 레이스 시작 시간 |
+| raceEndTime | number \| null | ❌ | 레이스 종료 시간 |
+| resetPlayers | boolean | ❌ | **플레이어 선택/준비 상태 초기화 (재경기용)** |
+
+#### resetPlayers 옵션 (재경기 시 사용)
+
+`resetPlayers: true`로 설정하면 모든 플레이어의 상태가 초기화됩니다:
+- `selectedPig` → `null` (돼지 선택 해제)
+- `isReady` → `false` (준비 상태 해제)
+
+#### 재경기 요청 예시
+```json
+{
+  "playerId": "player_1704067200000_abc123def",
+  "status": "waiting",
+  "pigs": [
+    { "id": 0, "position": 0, "speed": 0, "status": "normal", "finishTime": null, "rank": null },
+    { "id": 1, "position": 0, "speed": 0, "status": "normal", "finishTime": null, "rank": null },
+    ...
+  ],
+  "countdown": 3,
+  "raceStartTime": null,
+  "raceEndTime": null,
+  "resetPlayers": true
+}
+```
 
 #### Response 에러
 | Status | error | 상황 |
@@ -608,12 +693,21 @@ function updateGameState(roomCode, playerId, updates) {
   if (updates.status) room.status = updates.status;
   if (updates.pigs) room.pigs = updates.pigs;
   if (updates.countdown !== undefined) room.countdown = updates.countdown;
-  if (updates.raceStartTime) room.raceStartTime = updates.raceStartTime;
-  if (updates.raceEndTime) room.raceEndTime = updates.raceEndTime;
+  if (updates.raceStartTime !== undefined) room.raceStartTime = updates.raceStartTime;
+  if (updates.raceEndTime !== undefined) room.raceEndTime = updates.raceEndTime;
+
+  // 3. 재경기 시 플레이어 상태 초기화
+  if (updates.resetPlayers === true) {
+    room.players = room.players.map(player => ({
+      ...player,
+      selectedPig: null,  // 돼지 선택 해제
+      isReady: false      // 준비 상태 해제
+    }));
+  }
 
   room.updatedAt = Date.now();
 
-  // 3. 저장 및 이벤트 발행
+  // 4. 저장 및 이벤트 발행
   saveRoom(roomCode, room);
   emitRoomEvent(roomCode, room);
 
@@ -710,6 +804,44 @@ data: {"error":"방을 찾을 수 없습니다."}
 event: room_deleted
 data: {"message":"방이 삭제되었습니다."}
 
+```
+
+**게임 중 방장 변경 시 (host_changed):**
+```
+event: host_changed
+data: {"newHostId":"player_xyz","room":{...전체 GameRoom 객체}}
+
+```
+
+> ⚠️ **중요**: 게임이 진행 중(`countdown` 또는 `racing` 상태)일 때 방장이 나가면 `host_changed` 이벤트가 발생합니다. 새 방장으로 지정된 클라이언트는 이 이벤트를 받으면 **게임 루프(카운트다운/레이스 애니메이션)를 인계받아 실행**해야 합니다.
+
+#### host_changed 이벤트 데이터 구조
+```typescript
+interface HostChangedEvent {
+  newHostId: string;     // 새 방장 플레이어 ID
+  room: GameRoom;        // 전체 방 상태 (hostId가 새 방장으로 업데이트됨)
+}
+```
+
+#### 클라이언트 처리 예시
+```typescript
+eventSource.addEventListener('host_changed', (e: MessageEvent) => {
+  const { newHostId, room } = JSON.parse(e.data);
+
+  // 방 상태 업데이트
+  setRoom(room);
+
+  // 내가 새 방장인지 확인
+  if (newHostId === myPlayerId) {
+    console.log('내가 새 방장이 되었습니다!');
+
+    // 게임 진행 중이면 게임 루프 인계
+    if (room.status === 'countdown' || room.status === 'racing') {
+      // 카운트다운/레이스 애니메이션 시작
+      startGameLoop(room);
+    }
+  }
+});
 ```
 
 #### 서버 구현 코드 (Node.js + Express)
@@ -1692,3 +1824,4 @@ fetch('http://localhost:3000/api/game/rooms', {
 |------|------|----------|
 | v1.0 | 2024-01-01 | 최초 작성 (폴링 방식) |
 | v2.0 | 2024-01-08 | SSE 방식으로 전환, CORS 설정 추가, 완전한 서버 구현 예시 추가 |
+| v2.1 | 2025-01-08 | 돼지 선택 해제 기능 추가 (pigId: -1), 재경기 시 플레이어 초기화 옵션 추가 (resetPlayers), 게임 중 방장 변경 시 host_changed 이벤트 추가 |

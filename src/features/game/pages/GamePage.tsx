@@ -20,11 +20,12 @@ const GamePage = () => {
   const effectiveMode = queryCode ? 'input' : queryMode;
 
   // URL 쿼리 파라미터 처리
+  // code가 있거나 type=multi면 멀티플레이어 게임 자동 선택
   useEffect(() => {
-    if (queryType === 'multi') {
+    if (queryType === 'multi' || queryCode) {
       setSelectedGame('multiplayer');
     }
-  }, [queryType]);
+  }, [queryType, queryCode]);
 
   const games = [
     {
