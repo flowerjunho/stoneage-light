@@ -1,8 +1,9 @@
 import { useState } from 'react';
 import LadderGame from '../components/LadderGame';
 import PigRaceGame from '../components/PigRaceGame';
+import MultiplayerPigRace from '../components/MultiplayerPigRace';
 
-type GameType = 'ladder' | 'pigrace' | null;
+type GameType = 'ladder' | 'pigrace' | 'multiplayer' | null;
 
 const GamePage = () => {
   const [selectedGame, setSelectedGame] = useState<GameType>(null);
@@ -21,6 +22,13 @@ const GamePage = () => {
       description: '귀여운 돼지들의 달리기 경주!',
       icon: '🐷',
       color: 'from-pink-500 to-rose-500',
+    },
+    {
+      id: 'multiplayer' as GameType,
+      name: '멀티플레이어 돼지 레이스',
+      description: '친구들과 함께 실시간 레이스!',
+      icon: '🎮',
+      color: 'from-purple-500 to-indigo-500',
     },
   ];
 
@@ -51,6 +59,8 @@ const GamePage = () => {
         return <LadderGame onBack={() => setSelectedGame(null)} />;
       case 'pigrace':
         return <PigRaceGame onBack={() => setSelectedGame(null)} />;
+      case 'multiplayer':
+        return <MultiplayerPigRace onBack={() => setSelectedGame(null)} />;
       default:
         return null;
     }
