@@ -716,13 +716,18 @@ const MultiplayerPigRace = ({ onBack, initialMode, initialRoomCode }: Multiplaye
         const newPosition = Math.min(100, pig.position + speed);
 
         if (newPosition >= 100 && pig.finishTime === null) {
-          const finishedCount = currentPigs.filter(p => p.finishTime !== null).length;
+          // 선택된 돼지들 중에서만 순위 계산 (관전자 돼지 제외)
+          const finishedSelectedCount = currentPigs.filter(
+            p => p.finishTime !== null && selectedPigIds.has(p.id)
+          ).length;
+          // 선택되지 않은 돼지는 순위 없음 (null)
+          const rank = selectedPigIds.has(pig.id) ? finishedSelectedCount + 1 : null;
           return {
             ...pig,
             position: 100,
             speed: 0,
             finishTime: elapsed,
-            rank: finishedCount + 1,
+            rank,
             status: 'normal' as const,
           };
         }
