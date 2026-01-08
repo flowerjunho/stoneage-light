@@ -3,13 +3,21 @@ import { useSearchParams } from 'react-router-dom';
 import LadderGame from '../components/LadderGame';
 import PigRaceGame from '../components/PigRaceGame';
 import MultiplayerPigRace from '../components/MultiplayerPigRace';
+import RelayPigRace from '../components/RelayPigRace';
+import { getRoomState, type GameRoom } from '../services/gameApi';
 
-type GameType = 'ladder' | 'pigrace' | 'multiplayer' | null;
+type GameType = 'ladder' | 'pigrace' | 'multiplayer' | 'relay' | null;
 type MultiplayerMode = 'menu' | 'room' | 'input' | null;
 
 const GamePage = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const [selectedGame, setSelectedGame] = useState<GameType>(null);
+  const [isDetectingRoom, setIsDetectingRoom] = useState(false);
+  // 릴레이 방 만들기 버튼에서 직접 전달하는 모드 (URL 파라미터보다 우선)
+  const [directRelayMode, setDirectRelayMode] = useState<MultiplayerMode>(null);
+  // 천호 레이스에서 릴레이 방 입장 시 전달하는 방 정보
+  const [relayRoomFromMultiplayer, setRelayRoomFromMultiplayer] = useState<GameRoom | null>(null);
+  const [relayPlayerName, setRelayPlayerName] = useState<string | null>(null);
 
   // 쿼리 파라미터에서 초기 상태 설정
   const queryType = searchParams.get('type');
@@ -20,11 +28,39 @@ const GamePage = () => {
   const effectiveMode = queryCode ? 'input' : queryMode;
 
   // URL 쿼리 파라미터 처리
-  // code가 있거나 type=multi면 멀티플레이어 게임 자동 선택
+  // code가 있으면 서버에서 게임 모드 자동 감지
   useEffect(() => {
-    if (queryType === 'multi' || queryCode) {
-      setSelectedGame('multiplayer');
-    }
+    const detectGameMode = async () => {
+      // code가 있으면 서버에서 방 정보 조회하여 게임 모드 감지
+      if (queryCode) {
+        setIsDetectingRoom(true);
+        try {
+          const response = await getRoomState(queryCode);
+          if (response.success && response.data) {
+            // 릴레이 방이면 릴레이로, 아니면 천호 레이스로
+            if (response.data.gameMode === 'relay') {
+              setSelectedGame('relay');
+            } else {
+              setSelectedGame('multiplayer');
+            }
+          } else {
+            // 방을 찾지 못하면 천호 레이스로 (입장 시 에러 표시됨)
+            setSelectedGame('multiplayer');
+          }
+        } catch {
+          setSelectedGame('multiplayer');
+        }
+        setIsDetectingRoom(false);
+        return;
+      }
+
+      // type=multi면 천호 레이스 선택
+      if (queryType === 'multi') {
+        setSelectedGame('multiplayer');
+      }
+    };
+
+    detectGameMode();
   }, [queryType, queryCode]);
 
   const games = [
@@ -60,6 +96,9 @@ const GamePage = () => {
 
   const handleBack = () => {
     setSelectedGame(null);
+    setDirectRelayMode(null); // 직접 모드 초기화
+    setRelayRoomFromMultiplayer(null); // 릴레이 방 정보 초기화
+    setRelayPlayerName(null);
     setSearchParams({});
   };
 
@@ -67,6 +106,10 @@ const GamePage = () => {
     if (icon === 'ho') {
       const sizeClass = size === 'lg' ? 'w-24 h-24' : 'w-12 h-12';
       return <img src={`${import.meta.env.BASE_URL}ho.svg`} alt="천호" className={sizeClass} />;
+    }
+    if (icon === 'relay') {
+      const sizeClass = size === 'lg' ? 'text-8xl' : 'text-4xl';
+      return <span className={sizeClass}>🏃</span>;
     }
     return <span>{icon}</span>;
   };
@@ -104,12 +147,57 @@ const GamePage = () => {
             onBack={handleBack}
             initialMode={effectiveMode}
             initialRoomCode={queryCode}
+            onGoToRelay={() => {
+              setDirectRelayMode('room'); // 직접 모드 설정 (URL보다 우선)
+              setSelectedGame('relay');
+              setSearchParams({ type: 'multi' }); // URL은 천호 레이스 유지
+            }}
+            onJoinRelayRoom={async (roomCode, playerName) => {
+              // 천호 레이스에서 릴레이 방 코드로 입장 시 호출됨
+              // 이미 joinRoom이 호출된 상태이므로 방 정보를 가져와서 릴레이로 전환
+              const response = await getRoomState(roomCode);
+              if (response.success && response.data) {
+                setRelayRoomFromMultiplayer(response.data);
+                setRelayPlayerName(playerName);
+                setSelectedGame('relay');
+                setSearchParams({ type: 'multi', code: roomCode }); // URL은 천호 레이스 유지
+              }
+            }}
+          />
+        );
+      case 'relay':
+        return (
+          <RelayPigRace
+            onBack={() => {
+              // 릴레이에서 뒤로가기 시 천호 레이스 메뉴로 돌아감
+              setSelectedGame('multiplayer');
+              setDirectRelayMode(null);
+              setRelayRoomFromMultiplayer(null);
+              setRelayPlayerName(null);
+              setSearchParams({ type: 'multi' });
+            }}
+            initialMode={directRelayMode || effectiveMode}
+            initialRoomCode={queryCode}
+            alreadyJoinedRoom={relayRoomFromMultiplayer}
+            alreadyJoinedPlayerName={relayPlayerName}
           />
         );
       default:
         return null;
     }
   };
+
+  // 방 정보 조회 중 로딩 표시
+  if (isDetectingRoom) {
+    return (
+      <div className="min-h-screen pt-2 pb-20 flex items-center justify-center">
+        <div className="text-center">
+          <div className="text-4xl animate-bounce mb-4">🔍</div>
+          <p className="text-text-secondary">방 정보 확인 중...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen pt-2 pb-20">

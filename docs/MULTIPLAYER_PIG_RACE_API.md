@@ -1,4 +1,4 @@
-# 멀티플레이어 돼지 레이스 API 명세서 v2.0
+# 멀티플레이어 돼지 레이스 API 명세서 v3.0
 
 ## 개요
 
@@ -7,24 +7,50 @@
 
 ## 기본 정보
 
-- **Base URL**: `https://your-api-domain.com`
-- **Content-Type**: `application/json`
-- **SSE Content-Type**: `text/event-stream`
-- **저장 방식**: JSON 파일 (방별 개별 파일 권장)
+| 항목 | 값 |
+|------|-----|
+| Base URL | `/api/game` |
+| Content-Type | `application/json` |
+| SSE Content-Type | `text/event-stream` |
+| 저장 방식 | JSON 파일 (`game-rooms/` 디렉토리) |
+| 게임 모드 | `normal` (일반 레이스), `relay` (릴레이 레이스) |
 
 ---
 
 ## 목차
 
-1. [데이터 구조](#데이터-구조)
-2. [REST API 엔드포인트](#rest-api-엔드포인트)
-3. [SSE 실시간 스트림](#sse-실시간-스트림)
-4. [CORS 설정](#cors-설정)
-5. [이벤트 발행 시스템](#이벤트-발행-시스템)
-6. [서버 구현 가이드](#서버-구현-가이드)
-7. [에러 코드](#에러-코드)
-8. [게임 흐름](#게임-흐름)
-9. [테스트 시나리오](#테스트-시나리오)
+1. [게임 모드](#게임-모드)
+2. [데이터 구조](#데이터-구조)
+3. [REST API 엔드포인트](#rest-api-엔드포인트)
+4. [SSE 실시간 스트림](#sse-실시간-스트림)
+5. [CORS 설정](#cors-설정)
+6. [에러 코드](#에러-코드)
+7. [게임 흐름도](#게임-흐름도)
+8. [테스트 시나리오](#테스트-시나리오)
+
+---
+
+## 게임 모드
+
+### 일반 모드 (normal)
+- 각 플레이어가 1마리씩 돼지를 선택하여 레이스
+- 먼저 결승선에 도달하는 돼지가 우승
+- 편도 레이스 (0 → 100)
+
+### 릴레이 모드 (relay) ⭐ NEW
+- 팀 대항전 (A팀 vs B팀)
+- 각 팀에 돼지 1마리씩 (총 2마리 고정)
+- **왕복 레이스**: 출발 → 결승선 → 출발점 복귀
+- 한 주자가 왕복 완료하면 다음 주자가 출발
+- 마지막 주자가 먼저 복귀하는 팀 승리
+
+**릴레이 레이스 흐름:**
+```
+1번 주자: 0 → 100 → 0 (왕복 완료) → 2번 주자에게 바통 전달
+2번 주자: 0 → 100 → 0 (왕복 완료) → 3번 주자에게 바통 전달
+...
+마지막 주자: 0 → 100 → 0 (왕복 완료) → 팀 완주!
+```
 
 ---
 
@@ -34,27 +60,30 @@
 
 ```typescript
 interface Player {
-  id: string;                    // 고유 플레이어 ID (클라이언트에서 생성)
-  name: string;                  // 플레이어 닉네임 (2-10자)
-  selectedPig: number | null;    // 선택한 돼지 번호 (0-9, null이면 미선택)
+  id: string;                    // 플레이어 고유 ID (클라이언트에서 생성)
+  name: string;                  // 닉네임 (2-10자)
+  selectedPig: number | null;    // 선택한 돼지 색상 번호 (0-29, null이면 미선택)
   isReady: boolean;              // 준비 완료 여부
+  isSpectator: boolean;          // 관전자 여부
+  team: 'A' | 'B' | null;        // 릴레이 모드: 소속 팀
+  runnerOrder: number | null;    // 릴레이 모드: 주자 순서 (1, 2, 3...)
   joinedAt: number;              // 입장 시간 (Unix timestamp ms)
 }
 ```
 
-### PigState (돼지 상태)
+### PigState (일반 모드 돼지 상태)
 
 ```typescript
 interface PigState {
-  id: number;                    // 돼지 번호 (0-9)
+  id: number;                    // 돼지 번호 (0 ~ 플레이어수-1, 동적으로 증감)
   position: number;              // 현재 위치 (0-100, 100이면 완주)
-  speed: number;                 // 현재 속도 (0-10)
+  speed: number;                 // 현재 속도
   status: PigStatus;             // 현재 상태
-  finishTime: number | null;     // 완주 시간 ms (null이면 미완주)
-  rank: number | null;           // 순위 (null이면 미완주)
+  finishTime: number | null;     // 완주 시간 (ms), null이면 미완주
+  rank: number | null;           // 순위, null이면 미완주
 }
 
-type PigStatus = 'normal' | 'turbo' | 'superBoost' | 'boost' | 'slip' | 'tired';
+type PigStatus = 'normal' | 'boost' | 'superBoost' | 'turbo' | 'tired' | 'slip';
 ```
 
 **상태 설명:**
@@ -67,34 +96,61 @@ type PigStatus = 'normal' | 'turbo' | 'superBoost' | 'boost' | 'slip' | 'tired';
 | tired | 지침 | 0.2x |
 | slip | 미끄러짐 | 0.05x |
 
+### RelayPigState (릴레이 모드 돼지 상태) ⭐ NEW
+
+```typescript
+interface RelayPigState {
+  id: number;                    // 돼지 번호 (0: A팀, 1: B팀)
+  team: 'A' | 'B';               // 소속 팀
+  position: number;              // 현재 위치 (0-100)
+  speed: number;                 // 현재 속도
+  status: PigStatus;             // 현재 상태
+  direction: 'forward' | 'backward'; // 이동 방향 (forward: 0→100, backward: 100→0)
+  finishTime: number | null;     // 팀 최종 완주 시간
+  rank: number | null;           // 팀 순위 (1등 또는 2등)
+}
+```
+
+> **일반 모드**: 돼지 수 = 참가자 수 (동적 증감)
+> **릴레이 모드**: 돼지 수 = 2마리 (팀당 1마리, 고정)
+
+### RelayState (릴레이 모드 전용) ⭐ NEW
+
+```typescript
+interface RelayState {
+  teamA: TeamRelayState;
+  teamB: TeamRelayState;
+}
+
+interface TeamRelayState {
+  currentRunner: number;         // 현재 달리는 주자 순서 (1부터 시작)
+  completedRunners: number;      // 완주한 주자 수
+  totalRunners: number;          // 총 주자 수
+  finishTime: number | null;     // 팀 완주 시간
+}
+```
+
 ### GameRoom (게임 방)
 
 ```typescript
 interface GameRoom {
   roomCode: string;              // 6자리 방 코드 (예: "A1B2C3")
   hostId: string;                // 방장 플레이어 ID
+  gameMode: 'normal' | 'relay';  // ⭐ 게임 모드
   status: GameStatus;            // 게임 상태
-  players: Player[];             // 참가 플레이어 목록 (최대 10명)
-  pigs: PigState[];              // 돼지 상태 배열 (10마리)
-  maxPlayers: number;            // 최대 참가자 수 (기본값: 6, 최대: 10)
-  raceStartTime: number | null;  // 레이스 시작 시간 (Unix timestamp ms)
-  raceEndTime: number | null;    // 레이스 종료 시간 (Unix timestamp ms)
+  players: Player[];             // 참가자 목록 (최대 30명)
+  pigs: PigState[] | RelayPigState[]; // 돼지 상태
+  maxPlayers: number;            // 최대 인원 (2-30)
+  raceStartTime: number | null;  // 레이스 시작 시간
+  raceEndTime: number | null;    // 레이스 종료 시간
   countdown: number;             // 카운트다운 (3, 2, 1, 0)
-  createdAt: number;             // 방 생성 시간 (Unix timestamp ms)
-  updatedAt: number;             // 마지막 업데이트 시간 (Unix timestamp ms)
+  relay: RelayState | null;      // ⭐ 릴레이 모드 전용 상태 (일반 모드면 null)
+  createdAt: number;             // 방 생성 시간
+  updatedAt: number;             // 마지막 업데이트 시간
 }
 
 type GameStatus = 'waiting' | 'selecting' | 'countdown' | 'racing' | 'finished';
 ```
-
-**상태 설명:**
-| status | 설명 | 허용 동작 |
-|--------|------|----------|
-| waiting | 대기 중 | 입장, 퇴장, 돼지 선택, 준비 |
-| selecting | 돼지 선택 중 | 퇴장, 돼지 선택, 준비 |
-| countdown | 카운트다운 | - |
-| racing | 레이스 중 | 상태 업데이트 (호스트만) |
-| finished | 게임 종료 | 재시작, 퇴장 |
 
 ### ApiResponse (API 응답)
 
@@ -112,601 +168,408 @@ interface ApiResponse<T> {
 
 ### 1. 방 생성
 
-새로운 게임 방을 생성합니다.
+새 게임 방을 만들고 방장이 됩니다.
 
-**POST** `/api/game/rooms`
-
-#### Request Headers
 ```
-Content-Type: application/json
+POST /api/game/rooms
 ```
 
-#### Request Body
+**Request Body:**
 ```json
 {
-  "playerId": "player_1704067200000_abc123def",
+  "playerId": "player_1704067200000_abc123",
   "playerName": "닉네임",
-  "maxPlayers": 6
+  "maxPlayers": 6,
+  "gameMode": "normal"
 }
 ```
 
-| 필드 | 타입 | 필수 | 설명 | 유효성 검사 |
-|------|------|------|------|-------------|
-| playerId | string | ✅ | 플레이어 고유 ID | 최소 10자 |
-| playerName | string | ✅ | 플레이어 닉네임 | 2-10자, 특수문자 제한 |
-| maxPlayers | number | ❌ | 최대 인원 | 2-10 (기본값: 6) |
+| 필드 | 타입 | 필수 | 설명 |
+|------|------|:----:|------|
+| playerId | string | O | 플레이어 고유 ID |
+| playerName | string | O | 닉네임 (2-10자) |
+| maxPlayers | number | X | 최대 인원 (기본값: 6, 범위: 2-30) |
+| gameMode | string | X | 게임 모드: `normal` (기본값) 또는 `relay` |
 
-#### Response 200 (성공)
+**Response 200 (일반 모드):**
 ```json
 {
   "success": true,
   "data": {
     "roomCode": "A1B2C3",
-    "hostId": "player_1704067200000_abc123def",
+    "hostId": "player_1704067200000_abc123",
+    "gameMode": "normal",
     "status": "waiting",
     "players": [
       {
-        "id": "player_1704067200000_abc123def",
+        "id": "player_1704067200000_abc123",
         "name": "닉네임",
         "selectedPig": null,
         "isReady": false,
+        "isSpectator": false,
+        "team": null,
+        "runnerOrder": null,
         "joinedAt": 1704067200000
       }
     ],
     "pigs": [
-      { "id": 0, "position": 0, "speed": 0, "status": "normal", "finishTime": null, "rank": null },
-      { "id": 1, "position": 0, "speed": 0, "status": "normal", "finishTime": null, "rank": null },
-      { "id": 2, "position": 0, "speed": 0, "status": "normal", "finishTime": null, "rank": null },
-      { "id": 3, "position": 0, "speed": 0, "status": "normal", "finishTime": null, "rank": null },
-      { "id": 4, "position": 0, "speed": 0, "status": "normal", "finishTime": null, "rank": null },
-      { "id": 5, "position": 0, "speed": 0, "status": "normal", "finishTime": null, "rank": null },
-      { "id": 6, "position": 0, "speed": 0, "status": "normal", "finishTime": null, "rank": null },
-      { "id": 7, "position": 0, "speed": 0, "status": "normal", "finishTime": null, "rank": null },
-      { "id": 8, "position": 0, "speed": 0, "status": "normal", "finishTime": null, "rank": null },
-      { "id": 9, "position": 0, "speed": 0, "status": "normal", "finishTime": null, "rank": null }
+      {"id": 0, "position": 0, "speed": 0, "status": "normal", "finishTime": null, "rank": null}
     ],
     "maxPlayers": 6,
     "raceStartTime": null,
     "raceEndTime": null,
     "countdown": 3,
+    "relay": null,
     "createdAt": 1704067200000,
     "updatedAt": 1704067200000
   }
 }
 ```
 
-#### Response 400 (에러)
+**Response 200 (릴레이 모드):**
 ```json
 {
-  "success": false,
-  "error": "플레이어 정보가 필요합니다."
+  "success": true,
+  "data": {
+    "roomCode": "A1B2C3",
+    "hostId": "player_1704067200000_abc123",
+    "gameMode": "relay",
+    "status": "waiting",
+    "players": [...],
+    "pigs": [
+      {"id": 0, "team": "A", "position": 0, "speed": 0, "status": "normal", "direction": "forward", "finishTime": null, "rank": null},
+      {"id": 1, "team": "B", "position": 0, "speed": 0, "status": "normal", "direction": "forward", "finishTime": null, "rank": null}
+    ],
+    "relay": {
+      "teamA": {"currentRunner": 1, "completedRunners": 0, "totalRunners": 0, "finishTime": null},
+      "teamB": {"currentRunner": 1, "completedRunners": 0, "totalRunners": 0, "finishTime": null}
+    },
+    ...
+  }
 }
 ```
 
-#### 서버 구현 로직
-```javascript
-function createRoom(playerId, playerName, maxPlayers = 6) {
-  // 1. 유효성 검사
-  if (!playerId || playerId.length < 10) throw new Error('유효하지 않은 플레이어 ID');
-  if (!playerName || playerName.length < 2 || playerName.length > 10) throw new Error('닉네임은 2-10자');
-  if (maxPlayers < 2 || maxPlayers > 10) maxPlayers = 6;
+> **일반 모드**: 방장 1명이므로 돼지 1마리 생성, 입장/퇴장 시 동적 증감
+> **릴레이 모드**: 돼지 2마리 고정 (팀당 1마리), 입장/퇴장해도 변화 없음
 
-  // 2. 고유 방 코드 생성 (중복 체크 필수)
-  let roomCode;
-  do {
-    roomCode = generateRoomCode();
-  } while (roomExists(roomCode));
-
-  // 3. 방 데이터 생성
-  const room = {
-    roomCode,
-    hostId: playerId,
-    status: 'waiting',
-    players: [{
-      id: playerId,
-      name: playerName,
-      selectedPig: null,
-      isReady: false,
-      joinedAt: Date.now()
-    }],
-    pigs: Array.from({ length: 10 }, (_, i) => ({
-      id: i,
-      position: 0,
-      speed: 0,
-      status: 'normal',
-      finishTime: null,
-      rank: null
-    })),
-    maxPlayers,
-    raceStartTime: null,
-    raceEndTime: null,
-    countdown: 3,
-    createdAt: Date.now(),
-    updatedAt: Date.now()
-  };
-
-  // 4. 파일 저장
-  saveRoom(roomCode, room);
-
-  return room;
-}
+**Response 400:**
+```json
+{"success": false, "error": "플레이어 정보가 필요합니다."}
+{"success": false, "error": "닉네임은 2-10자 사이여야 합니다."}
+{"success": false, "error": "게임 모드는 normal 또는 relay만 가능합니다."}
 ```
 
 ---
 
 ### 2. 방 입장
 
-기존 게임 방에 입장합니다.
+기존 방에 참가합니다. 관전자로 입장할 수도 있습니다.
 
-**POST** `/api/game/rooms/:roomCode/join`
+```
+POST /api/game/rooms/:roomCode/join
+```
 
-#### URL Parameters
-| 파라미터 | 타입 | 설명 |
-|----------|------|------|
-| roomCode | string | 6자리 방 코드 (대소문자 구분 없음) |
+**URL Parameters:**
+| 파라미터 | 설명 |
+|----------|------|
+| roomCode | 6자리 방 코드 (대소문자 무관) |
 
-#### Request Body
+**Request Body:**
 ```json
 {
-  "playerId": "player_1704067260000_xyz789ghi",
-  "playerName": "참가자"
+  "playerId": "player_1704067260000_xyz789",
+  "playerName": "참가자",
+  "isSpectator": false
 }
 ```
 
-#### Response 200 (성공)
-전체 GameRoom 객체 반환
+| 필드 | 타입 | 필수 | 설명 |
+|------|------|:----:|------|
+| playerId | string | O | 플레이어 고유 ID |
+| playerName | string | O | 닉네임 (2-10자) |
+| isSpectator | boolean | X | 관전자 여부 (기본값: false) |
 
-#### Response 에러
-| Status | error | 상황 |
-|--------|-------|------|
-| 400 | "플레이어 정보가 필요합니다." | playerId/playerName 누락 |
-| 404 | "방을 찾을 수 없습니다." | 존재하지 않는 roomCode |
-| 409 | "방이 가득 찼습니다." | maxPlayers 초과 |
-| 409 | "게임이 이미 시작되었습니다." | status가 waiting/selecting이 아님 |
-
-#### 서버 구현 로직
-```javascript
-function joinRoom(roomCode, playerId, playerName) {
-  // 1. 방 조회 (대소문자 무시)
-  const room = getRoom(roomCode.toUpperCase());
-  if (!room) throw new NotFoundError('방을 찾을 수 없습니다.');
-
-  // 2. 상태 확인
-  if (!['waiting', 'selecting'].includes(room.status)) {
-    throw new ConflictError('게임이 이미 시작되었습니다.');
-  }
-
-  // 3. 중복 입장 체크
-  const existingPlayer = room.players.find(p => p.id === playerId);
-  if (existingPlayer) {
-    return room; // 기존 정보 반환
-  }
-
-  // 4. 인원 체크
-  if (room.players.length >= room.maxPlayers) {
-    throw new ConflictError('방이 가득 찼습니다.');
-  }
-
-  // 5. 플레이어 추가
-  room.players.push({
-    id: playerId,
-    name: playerName,
-    selectedPig: null,
-    isReady: false,
-    joinedAt: Date.now()
-  });
-  room.updatedAt = Date.now();
-
-  // 6. 저장 및 이벤트 발행
-  saveRoom(roomCode, room);
-  emitRoomEvent(roomCode, room); // SSE로 모든 클라이언트에 전송
-
-  return room;
+**Response 200:**
+```json
+{
+  "success": true,
+  "data": { /* GameRoom 객체 (players에 새 플레이어 추가됨) */ }
 }
+```
+
+> - **참가자**로 입장 시 돼지도 1마리 추가됩니다.
+> - **관전자**로 입장 시 돼지는 추가되지 않습니다. 관전자는 돼지 선택/준비가 불가합니다.
+
+**Response 404:**
+```json
+{"success": false, "error": "방을 찾을 수 없습니다."}
+```
+
+**Response 409:**
+```json
+{"success": false, "error": "방이 가득 찼습니다."}
+{"success": false, "error": "게임이 이미 시작되었습니다."}
 ```
 
 ---
 
 ### 3. 방 퇴장
 
-게임 방에서 나갑니다.
+방에서 나갑니다. 방장이 나가면 다음 참가자가 방장이 됩니다.
 
-**POST** `/api/game/rooms/:roomCode/leave`
+```
+POST /api/game/rooms/:roomCode/leave
+```
 
-#### Request Body
+**Request Body:**
 ```json
 {
-  "playerId": "player_1704067260000_xyz789ghi"
+  "playerId": "player_1704067260000_xyz789"
 }
 ```
 
-#### Response 200 (성공)
+**Response 200:**
+```json
+{"success": true, "data": {"message": "방에서 나갔습니다."}}
+```
+
+마지막 플레이어가 나가면:
+```json
+{"success": true, "data": {"message": "방이 삭제되었습니다."}}
+```
+
+---
+
+### 4. 플레이어 강퇴 (방장 전용)
+
+방장이 준비하지 않은 플레이어 등을 강퇴합니다. 대기/선택 상태에서만 가능합니다.
+
+```
+POST /api/game/rooms/:roomCode/kick
+```
+
+**Request Body:**
+```json
+{
+  "playerId": "player_1704067200000_abc123",
+  "targetPlayerId": "player_1704067260000_xyz789"
+}
+```
+
+| 필드 | 타입 | 설명 |
+|------|------|------|
+| playerId | string | 방장의 플레이어 ID |
+| targetPlayerId | string | 강퇴할 플레이어의 ID |
+
+**Response 200:**
 ```json
 {
   "success": true,
-  "data": {
-    "message": "방에서 나갔습니다."
-  }
+  "message": "닉네임님을 강퇴했습니다.",
+  "data": { /* GameRoom 객체 */ }
 }
 ```
 
-#### 서버 구현 로직
-```javascript
-function leaveRoom(roomCode, playerId) {
-  const room = getRoom(roomCode);
-  if (!room) throw new NotFoundError('방을 찾을 수 없습니다.');
+**Response 403:**
+```json
+{"success": false, "error": "방장만 강퇴할 수 있습니다."}
+```
 
-  const wasHost = room.hostId === playerId;
-  const wasGameInProgress = ['countdown', 'racing'].includes(room.status);
+**Response 409:**
+```json
+{"success": false, "error": "게임 중에는 강퇴할 수 없습니다."}
+```
 
-  // 1. 플레이어 제거
-  room.players = room.players.filter(p => p.id !== playerId);
+> 강퇴된 플레이어는 `kicked` SSE 이벤트를 수신합니다.
 
-  // 2. 모든 플레이어가 나간 경우 방 삭제
-  if (room.players.length === 0) {
-    deleteRoom(roomCode);
-    return { message: '방이 삭제되었습니다.' };
-  }
+---
 
-  // 3. 방장이 나간 경우 새 방장 지정 (가장 먼저 입장한 사람)
-  if (wasHost) {
-    room.players.sort((a, b) => a.joinedAt - b.joinedAt);
-    room.hostId = room.players[0].id;
+### 5. 방 상태 조회
 
-    // 4. 게임 진행 중이면 host_changed 이벤트 발행 (게임 루프 인계 필요)
-    if (wasGameInProgress) {
-      emitHostChangedEvent(roomCode, room.hostId, room);
-    }
-  }
+현재 방 상태를 조회합니다. (SSE 연결 전 초기 상태 확인용)
 
-  room.updatedAt = Date.now();
+```
+GET /api/game/rooms/:roomCode
+```
 
-  // 5. 저장 및 일반 업데이트 이벤트 발행
-  saveRoom(roomCode, room);
-  emitRoomEvent(roomCode, room);
-
-  return { message: '방에서 나갔습니다.' };
+**Response 200:**
+```json
+{
+  "success": true,
+  "data": { /* GameRoom 객체 */ }
 }
+```
 
-// host_changed 이벤트 발행 함수
-function emitHostChangedEvent(roomCode, newHostId, room) {
-  const connections = roomConnections.get(roomCode);
-  if (!connections) return;
-
-  const data = JSON.stringify({ newHostId, room });
-  connections.forEach(res => {
-    res.write(`event: host_changed\n`);
-    res.write(`data: ${data}\n\n`);
-  });
-}
+**Response 404:**
+```json
+{"success": false, "error": "방을 찾을 수 없습니다."}
 ```
 
 ---
 
-### 4. 방 상태 조회 (단발성)
+### 6. 팀 선택 (릴레이 모드 전용) ⭐ NEW
 
-현재 방 상태를 1회 조회합니다. SSE 연결 전 초기 상태 확인용.
+릴레이 모드에서 A팀 또는 B팀을 선택합니다.
 
-**GET** `/api/game/rooms/:roomCode`
-
-#### Request Headers
 ```
-X-Player-ID: player_1704067200000_abc123def
+POST /api/game/rooms/:roomCode/select-team
 ```
 
-#### Response 200 (성공)
-전체 GameRoom 객체 반환
-
----
-
-### 5. 돼지 선택
-
-플레이어가 응원할 돼지를 선택합니다. **선택 해제도 가능합니다.**
-
-**POST** `/api/game/rooms/:roomCode/select-pig`
-
-#### Request Body
+**Request Body:**
 ```json
 {
-  "playerId": "player_1704067200000_abc123def",
-  "pigId": 2
-}
-```
-
-| 필드 | 타입 | 필수 | 설명 | 유효성 검사 |
-|------|------|------|------|-------------|
-| playerId | string | ✅ | 플레이어 ID | 방에 존재해야 함 |
-| pigId | number | ✅ | 돼지 번호 | **-1 또는 0-9 범위** |
-
-#### pigId 특수값
-| pigId | 동작 |
-|-------|------|
-| -1 | 현재 선택 해제 (selectedPig = null로 설정) |
-| 0-9 | 해당 번호 돼지 선택 |
-
-#### 선택 해제 예시
-```json
-{
-  "playerId": "player_1704067200000_abc123def",
-  "pigId": -1
-}
-```
-→ 플레이어의 selectedPig이 null로 설정됨
-
-#### 프론트엔드 토글 구현 예시
-```typescript
-// 클라이언트에서 토글 로직 처리
-const handlePigClick = async (pigId: number) => {
-  // 같은 돼지 클릭 시 -1 전송하여 선택 해제
-  const targetPigId = currentPlayer?.selectedPig === pigId ? -1 : pigId;
-
-  await fetch(`/api/game/rooms/${roomCode}/select-pig`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ playerId: myPlayerId, pigId: targetPigId })
-  });
-  // SSE로 업데이트된 상태 자동 수신
-};
-```
-
-#### Response 에러
-| Status | error | 상황 |
-|--------|-------|------|
-| 400 | "잘못된 돼지 번호입니다." | pigId가 -1 미만 또는 9 초과 |
-| 404 | "플레이어를 찾을 수 없습니다." | 방에 없는 playerId |
-| 409 | "이미 다른 플레이어가 선택한 돼지입니다." | 다른 사람이 이미 선택한 돼지 |
-
-#### 서버 구현 로직
-```javascript
-function selectPig(roomCode, playerId, pigId) {
-  const room = getRoom(roomCode);
-  if (!room) throw new NotFoundError('방을 찾을 수 없습니다.');
-
-  // 1. 상태 확인
-  if (!['waiting', 'selecting'].includes(room.status)) {
-    throw new ConflictError('돼지를 선택할 수 없는 상태입니다.');
-  }
-
-  // 2. 돼지 번호 유효성 (-1은 선택 해제)
-  if (pigId < -1 || pigId > 9) {
-    throw new BadRequestError('잘못된 돼지 번호입니다.');
-  }
-
-  // 3. 플레이어 찾기
-  const player = room.players.find(p => p.id === playerId);
-  if (!player) throw new NotFoundError('플레이어를 찾을 수 없습니다.');
-
-  // 4. 선택 해제 (-1인 경우)
-  if (pigId === -1) {
-    player.selectedPig = null;
-    room.updatedAt = Date.now();
-    saveRoom(roomCode, room);
-    emitRoomEvent(roomCode, room);
-    return room;
-  }
-
-  // 5. 중복 선택 체크 (다른 플레이어가 이미 선택한 돼지)
-  const alreadySelected = room.players.find(p => p.selectedPig === pigId && p.id !== playerId);
-  if (alreadySelected) {
-    throw new ConflictError('이미 다른 플레이어가 선택한 돼지입니다.');
-  }
-
-  // 6. 선택 저장
-  player.selectedPig = pigId;
-  room.updatedAt = Date.now();
-
-  // 7. 저장 및 이벤트 발행
-  saveRoom(roomCode, room);
-  emitRoomEvent(roomCode, room);
-
-  return room;
-}
-```
-
----
-
-### 6. 준비 완료/해제
-
-플레이어의 준비 상태를 토글합니다. **돼지를 선택하지 않은 플레이어도 준비할 수 있습니다 (관전 모드).**
-
-**POST** `/api/game/rooms/:roomCode/ready`
-
-#### Request Body
-```json
-{
-  "playerId": "player_1704067200000_abc123def"
-}
-```
-
-#### 관전 모드 설명
-
-돼지를 선택하지 않은 플레이어는 **관전자**로 게임에 참여합니다:
-- 관전자도 "준비 완료" 가능 (관전 준비)
-- 관전자는 레이스를 볼 수 있지만 돼지를 응원하지는 않음
-- 게임 시작 조건: **돼지를 선택한 참가자가 2명 이상** + 모든 플레이어(참가자+관전자) 준비 완료
-
-> ⚠️ **중요**: 서버에서 "먼저 돼지를 선택해주세요" 같은 검사를 하면 안 됩니다. 돼지 미선택자도 준비할 수 있어야 관전 모드가 동작합니다.
-
-#### 서버 구현 로직
-```javascript
-function toggleReady(roomCode, playerId) {
-  const room = getRoom(roomCode);
-  if (!room) throw new NotFoundError('방을 찾을 수 없습니다.');
-
-  // 1. 상태 확인
-  if (!['waiting', 'selecting'].includes(room.status)) {
-    throw new ConflictError('준비 상태를 변경할 수 없습니다.');
-  }
-
-  // 2. 플레이어 찾기
-  const player = room.players.find(p => p.id === playerId);
-  if (!player) throw new NotFoundError('플레이어를 찾을 수 없습니다.');
-
-  // ⚠️ 돼지 선택 여부 검사 없음! 관전자도 준비 가능
-
-  // 3. 방장은 자동 준비 (토글 불가)
-  if (player.id === room.hostId) {
-    player.isReady = true;
-    // 방장은 항상 준비 상태
-  } else {
-    // 4. 준비 토글
-    player.isReady = !player.isReady;
-  }
-
-  room.updatedAt = Date.now();
-
-  // 5. 저장 및 이벤트 발행
-  saveRoom(roomCode, room);
-  emitRoomEvent(roomCode, room);
-
-  return room;
-}
-```
-
----
-
-### 7. 플레이어 강퇴 (방장 전용)
-
-방장이 다른 플레이어를 강퇴합니다.
-
-**POST** `/api/game/rooms/:roomCode/kick`
-
-#### Request Body
-```json
-{
-  "playerId": "player_1704067200000_abc123def",
-  "targetPlayerId": "player_1704067260000_xyz789ghi"
+  "playerId": "player_1704067200000_abc123",
+  "team": "A"
 }
 ```
 
 | 필드 | 타입 | 필수 | 설명 |
-|------|------|------|------|
-| playerId | string | ✅ | 요청자 ID (방장만 가능) |
-| targetPlayerId | string | ✅ | 강퇴할 플레이어 ID |
+|------|------|:----:|------|
+| playerId | string | O | 플레이어 ID |
+| team | string | O | 선택할 팀: `"A"` 또는 `"B"` |
 
-#### Response 200 (성공)
-전체 GameRoom 객체 반환 (강퇴된 플레이어 제외)
+**Response 200:**
+```json
+{
+  "success": true,
+  "data": { /* GameRoom 객체 (해당 플레이어의 team이 변경됨) */ }
+}
+```
 
-#### Response 에러
-| Status | error | 상황 |
-|--------|-------|------|
-| 403 | "방장만 강퇴할 수 있습니다." | hostId가 아닌 경우 |
-| 404 | "플레이어를 찾을 수 없습니다." | targetPlayerId가 방에 없음 |
-| 400 | "자기 자신은 강퇴할 수 없습니다." | playerId === targetPlayerId |
+**Response 400:**
+```json
+{"success": false, "error": "팀은 A 또는 B만 선택할 수 있습니다."}
+```
 
-#### 서버 구현 로직
+**Response 409:**
+```json
+{"success": false, "error": "릴레이 모드에서만 팀을 선택할 수 있습니다."}
+{"success": false, "error": "대기 중일 때만 팀을 선택할 수 있습니다."}
+{"success": false, "error": "관전자는 팀을 선택할 수 없습니다."}
+```
+
+> **팀 변경 시 주자 순서 자동 초기화**: 팀을 변경하면 기존 runnerOrder가 `null`로 초기화됩니다.
+
+---
+
+### 7. 주자 순서 일괄 배정 (방장 전용, 릴레이 모드) ⭐ NEW
+
+릴레이 모드에서 방장이 게임 시작 전 모든 플레이어의 주자 순서를 한번에 배정합니다.
+프론트엔드에서 랜덤 순서를 생성하여 이 API로 일괄 배정합니다.
+
+```
+POST /api/game/rooms/:roomCode/assign-runner-orders
+```
+
+**Request Body:**
+```json
+{
+  "playerId": "player_1704067200000_abc123",
+  "assignments": [
+    { "playerId": "player_a", "order": 1 },
+    { "playerId": "player_b", "order": 2 },
+    { "playerId": "player_c", "order": 1 },
+    { "playerId": "player_d", "order": 2 }
+  ]
+}
+```
+
+| 필드 | 타입 | 필수 | 설명 |
+|------|------|:----:|------|
+| playerId | string | O | 방장의 플레이어 ID |
+| assignments | array | O | 플레이어별 주자 순서 배열 |
+| assignments[].playerId | string | O | 대상 플레이어 ID |
+| assignments[].order | number | O | 주자 순서 (1부터 시작) |
+
+**Response 200:**
+```json
+{
+  "success": true,
+  "data": { /* GameRoom 객체 (모든 플레이어의 runnerOrder가 배정됨) */ }
+}
+```
+
+**Response 403:**
+```json
+{"success": false, "error": "방장만 주자 순서를 배정할 수 있습니다."}
+```
+
+**Response 409:**
+```json
+{"success": false, "error": "릴레이 모드에서만 주자 순서를 배정할 수 있습니다."}
+{"success": false, "error": "대기 중일 때만 주자 순서를 배정할 수 있습니다."}
+```
+
+**Response 422:**
+```json
+{"success": false, "error": "같은 팀 내에서 순서가 중복되었습니다."}
+{"success": false, "error": "A팀의 주자 순서가 올바르지 않습니다. 1부터 연속된 번호여야 합니다."}
+```
+
+**서버 구현 요구사항:**
+1. `playerId`가 방장(`hostId`)인지 검증
+2. `gameMode`가 `relay`인지 검증
+3. `status`가 `waiting`인지 검증
+4. 각 플레이어가 방에 존재하는지 검증
+5. 각 플레이어의 `runnerOrder` 필드를 업데이트
+6. 같은 팀 내에서 순서 중복 검증
+7. 각 팀의 순서가 1부터 연속되어야 함 검증 (예: 1,2,3 ✓ / 1,3 ✗)
+
+**서버 구현 예시:**
 ```javascript
-function kickPlayer(roomCode, playerId, targetPlayerId) {
+function assignRunnerOrders(roomCode, playerId, assignments) {
   const room = getRoom(roomCode);
   if (!room) throw new NotFoundError('방을 찾을 수 없습니다.');
 
-  // 1. 권한 확인 (방장만 가능)
+  // 1. 권한 확인 (방장만)
   if (room.hostId !== playerId) {
-    throw new ForbiddenError('방장만 강퇴할 수 있습니다.');
+    throw new ForbiddenError('방장만 주자 순서를 배정할 수 있습니다.');
   }
 
-  // 2. 자기 자신 강퇴 방지
-  if (playerId === targetPlayerId) {
-    throw new BadRequestError('자기 자신은 강퇴할 수 없습니다.');
+  // 2. 게임 모드 확인
+  if (room.gameMode !== 'relay') {
+    throw new ConflictError('릴레이 모드에서만 주자 순서를 배정할 수 있습니다.');
   }
 
-  // 3. 대상 플레이어 확인
-  const targetPlayer = room.players.find(p => p.id === targetPlayerId);
-  if (!targetPlayer) {
-    throw new NotFoundError('플레이어를 찾을 수 없습니다.');
+  // 3. 상태 확인
+  if (room.status !== 'waiting') {
+    throw new ConflictError('대기 중일 때만 주자 순서를 배정할 수 있습니다.');
   }
 
-  // 4. 플레이어 제거 (돼지는 그대로 유지 - 다른 플레이어가 선택 가능)
-  // ⚠️ 중요: room.pigs 배열은 건드리지 않음!
-  room.players = room.players.filter(p => p.id !== targetPlayerId);
-  room.updatedAt = Date.now();
+  // 4. 배정 적용
+  const teamAOrders = [];
+  const teamBOrders = [];
 
-  // 5. 저장 및 이벤트 발행
-  saveRoom(roomCode, room);
-
-  // 6. 강퇴당한 플레이어에게만 kicked 이벤트 전송
-  emitKickedEvent(roomCode, targetPlayerId, { message: '방장에 의해 강퇴되었습니다.' });
-
-  // 7. 나머지 플레이어에게 업데이트 이벤트 전송
-  emitRoomEvent(roomCode, room);
-
-  return room;
-}
-
-// kicked 이벤트 발행 함수 (강퇴당한 플레이어에게만)
-function emitKickedEvent(roomCode, targetPlayerId, data) {
-  const connections = roomConnections.get(roomCode);
-  if (!connections) return;
-
-  // 강퇴당한 플레이어의 연결만 찾아서 kicked 이벤트 전송
-  connections.forEach((res, connPlayerId) => {
-    if (connPlayerId === targetPlayerId) {
-      res.write(`event: kicked\n`);
-      res.write(`data: ${JSON.stringify(data)}\n\n`);
+  for (const assignment of assignments) {
+    const player = room.players.find(p => p.id === assignment.playerId);
+    if (!player) {
+      throw new NotFoundError(`플레이어를 찾을 수 없습니다: ${assignment.playerId}`);
     }
-  });
-}
-```
 
-> ⚠️ **중요**: 강퇴 시 `room.pigs` 배열은 절대 수정하지 않습니다!
-> 돼지는 10마리 고정이며, 강퇴된 플레이어가 선택했던 돼지는 자동으로 선택 해제됩니다 (해당 플레이어가 삭제되면 `selectedPig`도 사라짐).
-> 다른 플레이어가 해당 돼지를 다시 선택할 수 있습니다.
+    player.runnerOrder = assignment.order;
 
----
-
-### 8. 게임 시작
-
-방장이 게임을 시작합니다.
-
-**POST** `/api/game/rooms/:roomCode/start`
-
-#### Request Body
-```json
-{
-  "playerId": "player_1704067200000_abc123def"
-}
-```
-
-#### Response 에러
-| Status | error | 상황 |
-|--------|-------|------|
-| 403 | "방장만 게임을 시작할 수 있습니다." | hostId가 아닌 경우 |
-| 422 | "최소 2명의 플레이어가 필요합니다." | players.length < 2 |
-| 422 | "모든 플레이어가 준비를 완료해야 합니다." | isReady가 false인 플레이어 존재 |
-
-#### 서버 구현 로직
-```javascript
-function startGame(roomCode, playerId) {
-  const room = getRoom(roomCode);
-  if (!room) throw new NotFoundError('방을 찾을 수 없습니다.');
-
-  // 1. 방장 확인
-  if (room.hostId !== playerId) {
-    throw new ForbiddenError('방장만 게임을 시작할 수 있습니다.');
+    // 팀별 순서 수집 (검증용)
+    if (player.team === 'A') teamAOrders.push(assignment.order);
+    if (player.team === 'B') teamBOrders.push(assignment.order);
   }
 
-  // 2. 상태 확인
-  if (!['waiting', 'selecting'].includes(room.status)) {
-    throw new ConflictError('게임을 시작할 수 없는 상태입니다.');
-  }
+  // 5. 순서 연속성 검증
+  const validateOrders = (orders, teamName) => {
+    if (orders.length === 0) return;
+    orders.sort((a, b) => a - b);
+    for (let i = 0; i < orders.length; i++) {
+      if (orders[i] !== i + 1) {
+        throw new UnprocessableError(
+          `${teamName}팀의 주자 순서가 올바르지 않습니다. 1부터 연속된 번호여야 합니다.`
+        );
+      }
+    }
+  };
 
-  // 3. 최소 인원 확인
-  if (room.players.length < 2) {
-    throw new UnprocessableError('최소 2명의 플레이어가 필요합니다.');
-  }
+  validateOrders(teamAOrders, 'A');
+  validateOrders(teamBOrders, 'B');
 
-  // 4. 준비 상태 확인 (방장 제외)
-  const notReady = room.players.filter(p => p.id !== room.hostId && !p.isReady);
-  if (notReady.length > 0) {
-    throw new UnprocessableError('모든 플레이어가 준비를 완료해야 합니다.');
-  }
-
-  // 5. 카운트다운 시작
-  room.status = 'countdown';
-  room.countdown = 3;
   room.updatedAt = Date.now();
-
-  // 6. 저장 및 이벤트 발행
   saveRoom(roomCode, room);
   emitRoomEvent(roomCode, room);
 
@@ -716,1205 +579,785 @@ function startGame(roomCode, playerId) {
 
 ---
 
-### 8. 게임 상태 업데이트
+### 8. 돼지(색상) 선택
 
-방장(호스트)이 게임 상태를 업데이트합니다. **레이스 중 호스트만 이 API를 호출합니다.**
+플레이어가 돼지 색상을 선택합니다. **같은 돼지를 다시 선택하면 선택이 해제됩니다 (토글).**
 
-**PUT** `/api/game/rooms/:roomCode/state`
+일반 모드에서는 돼지 번호를 선택하고, 릴레이 모드에서는 돼지 색상만 선택합니다.
 
-#### Request Body
+```
+POST /api/game/rooms/:roomCode/select-pig
+```
+
+**Request Body:**
 ```json
 {
-  "playerId": "player_1704067200000_abc123def",
+  "playerId": "player_1704067200000_abc123",
+  "pigId": 3
+}
+```
+
+| 필드 | 타입 | 설명 |
+|------|------|------|
+| playerId | string | 플레이어 ID |
+| pigId | number | 돼지 번호 (일반: 0~플레이어수-1, 릴레이: 색상 번호 0-29) |
+
+**동작 방식:**
+- **새 돼지 선택**: `selectedPig`가 해당 번호로 설정됨
+- **같은 돼지 재선택**: `selectedPig`가 `null`로 설정됨 (선택 해제)
+- **다른 돼지로 변경**: 기존 선택 해제 후 새 돼지 선택
+
+**Response 200:**
+```json
+{
+  "success": true,
+  "data": { /* GameRoom 객체 (해당 플레이어의 selectedPig가 변경됨) */ }
+}
+```
+
+**Response 400:**
+```json
+{"success": false, "error": "잘못된 돼지 번호입니다."}
+```
+
+**Response 409:**
+```json
+{"success": false, "error": "이미 다른 플레이어가 선택한 돼지입니다."}
+{"success": false, "error": "돼지를 선택할 수 없는 상태입니다."}
+```
+
+---
+
+### 9. 준비 완료/해제
+
+준비 상태를 토글합니다. 방장은 항상 준비 상태입니다.
+
+> **참가자, 관전자 모두 준비 가능**합니다. 돼지를 선택하지 않아도 준비할 수 있습니다.
+
+```
+POST /api/game/rooms/:roomCode/ready
+```
+
+**Request Body:**
+```json
+{
+  "playerId": "player_1704067260000_xyz789"
+}
+```
+
+**Response 200:**
+```json
+{
+  "success": true,
+  "data": { /* GameRoom 객체 (해당 플레이어의 isReady가 토글됨) */ }
+}
+```
+
+**Response 409:**
+```json
+{"success": false, "error": "준비 상태를 변경할 수 없습니다."}
+```
+
+---
+
+### 10. 게임 시작 (방장 전용)
+
+게임을 시작합니다. 모든 플레이어가 준비 완료해야 합니다.
+
+```
+POST /api/game/rooms/:roomCode/start
+```
+
+**Request Body:**
+```json
+{
+  "playerId": "player_1704067200000_abc123"
+}
+```
+
+**Response 200:**
+```json
+{
+  "success": true,
+  "data": { /* GameRoom 객체 (status: "countdown", countdown: 3) */ }
+}
+```
+
+**Response 403:**
+```json
+{"success": false, "error": "방장만 게임을 시작할 수 있습니다."}
+```
+
+**Response 409:**
+```json
+{"success": false, "error": "게임을 시작할 수 없는 상태입니다."}
+```
+
+**Response 422 (공통):**
+```json
+{"success": false, "error": "최소 2명의 플레이어가 필요합니다."}
+{"success": false, "error": "모든 플레이어가 준비를 완료해야 합니다."}
+```
+
+**Response 422 (릴레이 모드 전용):**
+```json
+{"success": false, "error": "각 팀에 최소 1명의 플레이어가 필요합니다."}
+{"success": false, "error": "모든 참가자가 팀을 선택해야 합니다."}
+{"success": false, "error": "모든 참가자가 주자 순서를 선택해야 합니다."}
+{"success": false, "error": "A팀의 주자 순서가 올바르지 않습니다. 1부터 연속된 번호여야 합니다."}
+{"success": false, "error": "B팀의 주자 순서가 올바르지 않습니다. 1부터 연속된 번호여야 합니다."}
+```
+
+> **릴레이 모드 게임 시작 조건:**
+> 1. 모든 플레이어 준비 완료
+> 2. 양 팀에 최소 1명 이상
+> 3. 모든 참가자(관전자 제외)가 팀 선택 완료
+> 4. 모든 참가자가 주자 순서 선택 완료
+> 5. 각 팀의 주자 순서가 1부터 연속 (예: 1,2,3 ✓ / 1,3 ✗)
+
+---
+
+### 11. 게임 상태 업데이트 (방장 전용)
+
+레이스 진행 중 돼지 위치/상태를 업데이트합니다.
+
+```
+PUT /api/game/rooms/:roomCode/state
+```
+
+**Request Body:**
+```json
+{
+  "playerId": "player_1704067200000_abc123",
   "status": "racing",
-  "pigs": [
-    { "id": 0, "position": 45.5, "speed": 2.3, "status": "boost", "finishTime": null, "rank": null },
-    { "id": 1, "position": 52.1, "speed": 1.8, "status": "normal", "finishTime": null, "rank": null },
-    { "id": 2, "position": 100, "speed": 0, "status": "normal", "finishTime": 15234, "rank": 1 },
-    ...
-  ],
   "countdown": 0,
   "raceStartTime": 1704067400000,
   "raceEndTime": null,
-  "resetPlayers": false
+  "pigs": [
+    {"id": 0, "position": 45.5, "speed": 2.3, "status": "boost", "finishTime": null, "rank": null},
+    {"id": 1, "position": 52.1, "speed": 1.8, "status": "normal", "finishTime": null, "rank": null},
+    {"id": 2, "position": 100, "speed": 0, "status": "normal", "finishTime": 15234, "rank": 1}
+  ]
+}
+```
+
+**릴레이 모드 업데이트 예시:**
+```json
+{
+  "playerId": "player_1704067200000_abc123",
+  "status": "racing",
+  "pigs": [
+    {"id": 0, "team": "A", "position": 75, "speed": 2, "status": "normal", "direction": "backward", "finishTime": null, "rank": null},
+    {"id": 1, "team": "B", "position": 50, "speed": 1.5, "status": "normal", "direction": "forward", "finishTime": null, "rank": null}
+  ],
+  "relay": {
+    "teamA": {"currentRunner": 2, "completedRunners": 1, "totalRunners": 3, "finishTime": null},
+    "teamB": {"currentRunner": 1, "completedRunners": 0, "totalRunners": 3, "finishTime": null}
+  }
 }
 ```
 
 | 필드 | 타입 | 필수 | 설명 |
-|------|------|------|------|
-| playerId | string | ✅ | 요청자 ID (방장만 가능) |
-| status | GameStatus | ❌ | 게임 상태 |
-| pigs | PigState[] | ❌ | 돼지 상태 배열 (10개) |
-| countdown | number | ❌ | 카운트다운 값 (0-3) |
-| raceStartTime | number \| null | ❌ | 레이스 시작 시간 |
-| raceEndTime | number \| null | ❌ | 레이스 종료 시간 |
-| resetPlayers | boolean | ❌ | **플레이어 선택/준비 상태 초기화 (재경기용)** |
+|------|------|:----:|------|
+| playerId | string | O | 방장 ID |
+| status | GameStatus | X | 게임 상태 |
+| countdown | number | X | 카운트다운 값 |
+| raceStartTime | number | X | 레이스 시작 시간 |
+| raceEndTime | number | X | 레이스 종료 시간 |
+| pigs | PigState[] | X | 돼지 상태 배열 |
+| relay | RelayState | X | 릴레이 모드 상태 |
+| resetPlayers | boolean | X | 재경기 시 플레이어 선택/준비 초기화 |
 
-#### resetPlayers 옵션 (재경기 시 사용)
-
-`resetPlayers: true`로 설정하면 모든 플레이어의 상태가 초기화됩니다:
-- `selectedPig` → `null` (돼지 선택 해제)
-- `isReady` → `false` (준비 상태 해제)
-
-#### 재경기 요청 예시
-```json
-{
-  "playerId": "player_1704067200000_abc123def",
-  "status": "waiting",
-  "pigs": [
-    { "id": 0, "position": 0, "speed": 0, "status": "normal", "finishTime": null, "rank": null },
-    { "id": 1, "position": 0, "speed": 0, "status": "normal", "finishTime": null, "rank": null },
-    ...
-  ],
-  "countdown": 3,
-  "raceStartTime": null,
-  "raceEndTime": null,
-  "resetPlayers": true
-}
-```
-
-#### Response 에러
-| Status | error | 상황 |
-|--------|-------|------|
-| 403 | "방장만 게임 상태를 업데이트할 수 있습니다." | hostId가 아닌 경우 |
-
-#### 서버 구현 로직
-```javascript
-function updateGameState(roomCode, playerId, updates) {
-  const room = getRoom(roomCode);
-  if (!room) throw new NotFoundError('방을 찾을 수 없습니다.');
-
-  // 1. 방장 확인
-  if (room.hostId !== playerId) {
-    throw new ForbiddenError('방장만 게임 상태를 업데이트할 수 있습니다.');
-  }
-
-  // 2. 상태 업데이트
-  if (updates.status) room.status = updates.status;
-  if (updates.pigs) room.pigs = updates.pigs;
-  if (updates.countdown !== undefined) room.countdown = updates.countdown;
-  if (updates.raceStartTime !== undefined) room.raceStartTime = updates.raceStartTime;
-  if (updates.raceEndTime !== undefined) room.raceEndTime = updates.raceEndTime;
-
-  // 3. 재경기 시 플레이어 상태 초기화
-  if (updates.resetPlayers === true) {
-    room.players = room.players.map(player => ({
-      ...player,
-      selectedPig: null,  // 돼지 선택 해제
-      isReady: false      // 준비 상태 해제
-    }));
-  }
-
-  room.updatedAt = Date.now();
-
-  // 4. 저장 및 이벤트 발행
-  saveRoom(roomCode, room);
-  emitRoomEvent(roomCode, room);
-
-  return room;
-}
-```
-
----
-
-### 9. 방 삭제
-
-게임 방을 삭제합니다 (방장 전용).
-
-**DELETE** `/api/game/rooms/:roomCode`
-
-#### Request Body
-```json
-{
-  "playerId": "player_1704067200000_abc123def"
-}
-```
-
-#### Response 200 (성공)
+**Response 200:**
 ```json
 {
   "success": true,
-  "data": {
-    "message": "방이 삭제되었습니다."
-  }
+  "data": { /* 업데이트된 GameRoom 객체 */ }
 }
+```
+
+**Response 403:**
+```json
+{"success": false, "error": "방장만 게임 상태를 업데이트할 수 있습니다."}
 ```
 
 ---
 
-## SSE 실시간 스트림
+### 12. 방 삭제 (방장 전용)
 
-### 10. 방 이벤트 구독 ⭐ 핵심
+방을 삭제합니다.
 
-방의 실시간 상태 변경을 SSE로 수신합니다. **폴링 대신 이 엔드포인트 사용.**
-
-**GET** `/api/game/rooms/:roomCode/events`
-
-#### Query Parameters
-| 파라미터 | 타입 | 필수 | 설명 |
-|----------|------|------|------|
-| playerId | string | ✅ | 플레이어 ID |
-
-#### Request Example
 ```
-GET /api/game/rooms/A1B2C3/events?playerId=player_1704067200000_abc123def
+DELETE /api/game/rooms/:roomCode
 ```
 
-#### Response Headers
+**Request Body:**
+```json
+{
+  "playerId": "player_1704067200000_abc123"
+}
+```
+
+**Response 200:**
+```json
+{"success": true, "data": {"message": "방이 삭제되었습니다."}}
+```
+
+**Response 403:**
+```json
+{"success": false, "error": "방장만 방을 삭제할 수 있습니다."}
+```
+
+---
+
+## SSE (Server-Sent Events) 실시간 스트림
+
+### 13. 방 이벤트 구독
+
+방의 실시간 상태 변경을 수신합니다. **폴링 대신 반드시 이 엔드포인트를 사용하세요.**
+
+```
+GET /api/game/rooms/:roomCode/events?playerId=player_123
+```
+
+**Query Parameters:**
+| 파라미터 | 필수 | 설명 |
+|----------|:----:|------|
+| playerId | O | 플레이어 ID (방에 입장한 플레이어만 가능) |
+
+**Response Headers:**
 ```
 Content-Type: text/event-stream
 Cache-Control: no-cache
 Connection: keep-alive
-Access-Control-Allow-Origin: *
-X-Accel-Buffering: no
 ```
 
-#### SSE 이벤트 형식
+---
 
-**연결 성공 시 초기 상태 전송:**
+### SSE 이벤트 종류
+
+#### 1. `connected` - 연결 성공
+
+SSE 연결 즉시 현재 방 상태를 전송합니다.
+
 ```
 event: connected
-data: {"roomCode":"A1B2C3","status":"waiting",...}
+data: {"roomCode":"A1B2C3","hostId":"player_123","status":"waiting","players":[...],...}
 
 ```
 
-**상태 변경 시 업데이트 전송:**
+#### 2. `update` - 상태 업데이트
+
+방 상태가 변경될 때마다 전송됩니다.
+
 ```
 event: update
-data: {"roomCode":"A1B2C3","status":"racing","pigs":[...],...}
+data: {"roomCode":"A1B2C3","hostId":"player_123","status":"racing","players":[...],"pigs":[...],...}
 
 ```
 
-**연결 유지 (30초마다):**
+#### 3. `ping` - 연결 유지
+
+30초마다 전송됩니다. 연결 유지용이므로 무시해도 됩니다.
+
 ```
 event: ping
 data: {"timestamp":1704067200000}
 
 ```
 
-**에러 발생 시:**
-```
-event: error
-data: {"error":"방을 찾을 수 없습니다."}
+#### 4. `room_deleted` - 방 삭제됨
 
-```
+방이 삭제되면 전송됩니다. 이 이벤트 후 연결이 종료됩니다.
 
-**방 삭제 시:**
 ```
 event: room_deleted
 data: {"message":"방이 삭제되었습니다."}
 
 ```
 
-**게임 중 방장 변경 시 (host_changed):**
+#### 5. `kicked` - 강퇴됨
+
+방장에 의해 강퇴되었을 때 해당 플레이어에게만 전송됩니다.
+
+```
+event: kicked
+data: {"message":"방장에 의해 강퇴되었습니다."}
+
+```
+
+#### 6. `host_changed` - 게임 중 방장 변경 ⚠️ 중요
+
+**게임 진행 중(countdown 또는 racing)** 방장이 퇴장하면 전송됩니다.
+
+새 방장은 이 이벤트를 받으면 **게임 업데이트 루프를 즉시 시작**해야 합니다.
+
 ```
 event: host_changed
-data: {"newHostId":"player_xyz","room":{...전체 GameRoom 객체}}
+data: {"newHostId":"player_456","room":{...전체 방 상태...}}
 
-```
-
-> ⚠️ **중요**: 게임이 진행 중(`countdown` 또는 `racing` 상태)일 때 방장이 나가면 `host_changed` 이벤트가 발생합니다. 새 방장으로 지정된 클라이언트는 이 이벤트를 받으면 **게임 루프(카운트다운/레이스 애니메이션)를 인계받아 실행**해야 합니다.
-
-#### host_changed 이벤트 데이터 구조
-```typescript
-interface HostChangedEvent {
-  newHostId: string;     // 새 방장 플레이어 ID
-  room: GameRoom;        // 전체 방 상태 (hostId가 새 방장으로 업데이트됨)
-}
-```
-
-#### 클라이언트 처리 예시
-```typescript
-eventSource.addEventListener('host_changed', (e: MessageEvent) => {
-  const { newHostId, room } = JSON.parse(e.data);
-
-  // 방 상태 업데이트
-  setRoom(room);
-
-  // 내가 새 방장인지 확인
-  if (newHostId === myPlayerId) {
-    console.log('내가 새 방장이 되었습니다!');
-
-    // 게임 진행 중이면 게임 루프 인계
-    if (room.status === 'countdown' || room.status === 'racing') {
-      // 카운트다운/레이스 애니메이션 시작
-      startGameLoop(room);
-    }
-  }
-});
-```
-
-#### 서버 구현 코드 (Node.js + Express)
-
-```javascript
-const roomConnections = new Map(); // roomCode -> Set<Response>
-
-app.get('/api/game/rooms/:roomCode/events', (req, res) => {
-  const { roomCode } = req.params;
-  const { playerId } = req.query;
-
-  // 1. 방 존재 확인
-  const room = getRoom(roomCode.toUpperCase());
-  if (!room) {
-    res.status(404).json({ success: false, error: '방을 찾을 수 없습니다.' });
-    return;
-  }
-
-  // 2. 플레이어 확인
-  const player = room.players.find(p => p.id === playerId);
-  if (!player) {
-    res.status(403).json({ success: false, error: '방에 참가하지 않은 플레이어입니다.' });
-    return;
-  }
-
-  // 3. SSE 헤더 설정
-  res.setHeader('Content-Type', 'text/event-stream');
-  res.setHeader('Cache-Control', 'no-cache');
-  res.setHeader('Connection', 'keep-alive');
-  res.setHeader('Access-Control-Allow-Origin', '*');
-  res.setHeader('X-Accel-Buffering', 'no'); // nginx 버퍼링 비활성화
-  res.flushHeaders();
-
-  // 4. 초기 상태 전송
-  res.write(`event: connected\n`);
-  res.write(`data: ${JSON.stringify(room)}\n\n`);
-
-  // 5. 연결 저장
-  if (!roomConnections.has(roomCode)) {
-    roomConnections.set(roomCode, new Set());
-  }
-  roomConnections.get(roomCode).add(res);
-
-  // 6. 연결 유지를 위한 ping (30초마다)
-  const pingInterval = setInterval(() => {
-    res.write(`event: ping\n`);
-    res.write(`data: ${JSON.stringify({ timestamp: Date.now() })}\n\n`);
-  }, 30000);
-
-  // 7. 연결 종료 처리
-  req.on('close', () => {
-    clearInterval(pingInterval);
-    const connections = roomConnections.get(roomCode);
-    if (connections) {
-      connections.delete(res);
-      if (connections.size === 0) {
-        roomConnections.delete(roomCode);
-      }
-    }
-    console.log(`SSE 연결 종료: ${roomCode} / ${playerId}`);
-  });
-});
-
-// 이벤트 발행 함수
-function emitRoomEvent(roomCode, room) {
-  const connections = roomConnections.get(roomCode);
-  if (!connections) return;
-
-  const data = JSON.stringify(room);
-  connections.forEach(res => {
-    res.write(`event: update\n`);
-    res.write(`data: ${data}\n\n`);
-  });
-}
-
-// 방 삭제 시 이벤트
-function emitRoomDeleted(roomCode) {
-  const connections = roomConnections.get(roomCode);
-  if (!connections) return;
-
-  connections.forEach(res => {
-    res.write(`event: room_deleted\n`);
-    res.write(`data: ${JSON.stringify({ message: '방이 삭제되었습니다.' })}\n\n`);
-    res.end();
-  });
-  roomConnections.delete(roomCode);
-}
-```
-
-#### 클라이언트 사용 예시 (TypeScript)
-
-```typescript
-// gameApi.ts
-export const subscribeToRoom = (
-  roomCode: string,
-  playerId: string,
-  callbacks: {
-    onConnected: (room: GameRoom) => void;
-    onUpdate: (room: GameRoom) => void;
-    onError: (error: string) => void;
-    onDeleted: () => void;
-  }
-): EventSource => {
-  const url = `${API_BASE_URL}/api/game/rooms/${roomCode}/events?playerId=${playerId}`;
-  const eventSource = new EventSource(url);
-
-  eventSource.addEventListener('connected', (e: MessageEvent) => {
-    const room = JSON.parse(e.data) as GameRoom;
-    callbacks.onConnected(room);
-  });
-
-  eventSource.addEventListener('update', (e: MessageEvent) => {
-    const room = JSON.parse(e.data) as GameRoom;
-    callbacks.onUpdate(room);
-  });
-
-  eventSource.addEventListener('error', (e: MessageEvent) => {
-    if (e.data) {
-      const { error } = JSON.parse(e.data);
-      callbacks.onError(error);
-    }
-  });
-
-  eventSource.addEventListener('room_deleted', () => {
-    callbacks.onDeleted();
-    eventSource.close();
-  });
-
-  eventSource.onerror = () => {
-    // 자동 재연결 시도됨 (EventSource 기본 동작)
-    console.warn('SSE 연결 끊김, 재연결 시도 중...');
-  };
-
-  return eventSource;
-};
-
-// React 컴포넌트에서 사용
-useEffect(() => {
-  if (!roomCode || !playerId) return;
-
-  const eventSource = subscribeToRoom(roomCode, playerId, {
-    onConnected: (room) => {
-      console.log('SSE 연결됨');
-      setRoom(room);
-    },
-    onUpdate: (room) => {
-      setRoom(room);
-    },
-    onError: (error) => {
-      console.error('SSE 에러:', error);
-      // 폴링으로 폴백 가능
-    },
-    onDeleted: () => {
-      alert('방이 삭제되었습니다.');
-      onBack();
-    }
-  });
-
-  return () => {
-    eventSource.close();
-  };
-}, [roomCode, playerId]);
 ```
 
 ---
 
-## CORS 설정
+## 에러 코드 정리
 
-**반드시 모든 엔드포인트에 CORS 설정 필요!**
+### 공통 에러
 
-### Express.js 설정
+| HTTP | error | 설명 |
+|:----:|-------|------|
+| 400 | 플레이어 정보가 필요합니다. | playerId 또는 playerName 누락 |
+| 400 | 닉네임은 2-10자 사이여야 합니다. | playerName 길이 오류 |
+| 400 | 게임 모드는 normal 또는 relay만 가능합니다. | 잘못된 gameMode |
+| 403 | 방장만 게임을 시작할 수 있습니다. | 비방장이 시작 시도 |
+| 403 | 방장만 게임 상태를 업데이트할 수 있습니다. | 비방장이 상태 업데이트 시도 |
+| 403 | 방장만 방을 삭제할 수 있습니다. | 비방장이 삭제 시도 |
+| 403 | 방에 참가하지 않은 플레이어입니다. | SSE 연결 시 방에 없는 플레이어 |
+| 404 | 방을 찾을 수 없습니다. | 존재하지 않는 roomCode |
+| 404 | 플레이어를 찾을 수 없습니다. | 방에 없는 playerId |
+| 409 | 방이 가득 찼습니다. | maxPlayers 초과 |
+| 409 | 게임이 이미 시작되었습니다. | 진행 중 입장 시도 |
+| 409 | 준비 상태를 변경할 수 없습니다. | 게임 중 준비 토글 시도 |
+| 409 | 게임을 시작할 수 없는 상태입니다. | 이미 진행 중 |
+| 422 | 최소 2명의 플레이어가 필요합니다. | 1명일 때 시작 |
+| 422 | 모든 플레이어가 준비를 완료해야 합니다. | 미준비자 존재 |
 
-```javascript
-const cors = require('cors');
+### 일반 모드 전용 에러
 
-// CORS 옵션
-const corsOptions = {
-  origin: '*', // 또는 특정 도메인: ['https://your-frontend.com']
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'X-Player-ID'],
-  credentials: false
-};
+| HTTP | error | 설명 |
+|:----:|-------|------|
+| 400 | 잘못된 돼지 번호입니다. | pigId가 유효 범위 밖 |
+| 409 | 이미 다른 플레이어가 선택한 돼지입니다. | 중복 선택 |
+| 409 | 돼지를 선택할 수 없는 상태입니다. | 게임 중 선택 시도 |
 
-// 모든 라우트에 CORS 적용
-app.use(cors(corsOptions));
+### 릴레이 모드 전용 에러 ⭐ NEW
 
-// OPTIONS 프리플라이트 요청 처리 (중요!)
-app.options('*', cors(corsOptions));
-```
-
-### Cloudflare Workers 설정
-
-```javascript
-const corsHeaders = {
-  'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
-  'Access-Control-Allow-Headers': 'Content-Type, X-Player-ID',
-};
-
-// OPTIONS 요청 처리
-if (request.method === 'OPTIONS') {
-  return new Response(null, { headers: corsHeaders });
-}
-
-// 응답에 CORS 헤더 추가
-return new Response(JSON.stringify(data), {
-  headers: {
-    'Content-Type': 'application/json',
-    ...corsHeaders
-  }
-});
-```
-
----
-
-## 이벤트 발행 시스템
-
-### 이벤트 발행이 필요한 API
-
-| API | 이벤트 발행 | 설명 |
-|-----|------------|------|
-| POST /rooms | ❌ | 방 생성자만 알면 됨 |
-| POST /rooms/:code/join | ✅ | 새 플레이어 입장 알림 |
-| POST /rooms/:code/leave | ✅ | 플레이어 퇴장 알림 |
-| POST /rooms/:code/select-pig | ✅ | 돼지 선택 변경 알림 |
-| POST /rooms/:code/ready | ✅ | 준비 상태 변경 알림 |
-| POST /rooms/:code/start | ✅ | 게임 시작 알림 |
-| PUT /rooms/:code/state | ✅ | 게임 상태 업데이트 (레이스 중 100ms마다) |
-| DELETE /rooms/:code | ✅ | 방 삭제 알림 (room_deleted 이벤트) |
-
-### 이벤트 발행 구현
-
-```javascript
-const EventEmitter = require('events');
-const roomEvents = new EventEmitter();
-
-// 구독 시 사용
-roomEvents.on(`room:${roomCode}`, (room) => {
-  // SSE로 전송
-});
-
-// API에서 사용
-function emitRoomEvent(roomCode, room) {
-  roomEvents.emit(`room:${roomCode}`, room);
-
-  // SSE 연결된 클라이언트에 전송
-  const connections = roomConnections.get(roomCode);
-  if (connections) {
-    const data = JSON.stringify(room);
-    connections.forEach(res => {
-      res.write(`event: update\n`);
-      res.write(`data: ${data}\n\n`);
-    });
-  }
-}
-```
+| HTTP | error | 설명 |
+|:----:|-------|------|
+| 400 | 팀은 A 또는 B만 선택할 수 있습니다. | 잘못된 team 값 |
+| 400 | 주자 순서는 1 이상의 정수여야 합니다. | 0 이하의 order 값 |
+| 403 | 방장만 주자 순서를 배정할 수 있습니다. | 비방장이 순서 배정 시도 |
+| 409 | 릴레이 모드에서만 팀을 선택할 수 있습니다. | 일반 모드에서 팀 선택 시도 |
+| 409 | 릴레이 모드에서만 주자 순서를 배정할 수 있습니다. | 일반 모드에서 순서 배정 시도 |
+| 409 | 대기 중일 때만 팀을 선택할 수 있습니다. | 게임 중 팀 변경 시도 |
+| 409 | 대기 중일 때만 주자 순서를 배정할 수 있습니다. | 게임 중 순서 변경 시도 |
+| 409 | 관전자는 팀을 선택할 수 없습니다. | 관전자가 팀 선택 시도 |
+| 422 | 각 팀에 최소 1명의 플레이어가 필요합니다. | 한 팀에 0명인 상태로 시작 시도 |
+| 422 | 모든 참가자가 팀을 선택해야 합니다. | 팀 미선택 참가자 존재 |
+| 422 | 모든 참가자가 주자 순서를 선택해야 합니다. | 순서 미선택 참가자 존재 |
+| 422 | A팀의 주자 순서가 올바르지 않습니다. 1부터 연속된 번호여야 합니다. | 순서 비연속 (예: 1,3) |
+| 422 | B팀의 주자 순서가 올바르지 않습니다. 1부터 연속된 번호여야 합니다. | 순서 비연속 (예: 1,3) |
 
 ---
 
-## 서버 구현 가이드
+## 게임 흐름도
 
-### 파일 구조
+### 일반 모드 (Normal Mode)
 
 ```
-/server
-├── index.js                 # 메인 서버
-├── routes/
-│   └── game.js             # 게임 API 라우터
-├── services/
-│   ├── roomService.js      # 방 관리 로직
-│   └── sseService.js       # SSE 관리
-├── data/
-│   └── rooms/              # 방 데이터 저장
-│       ├── A1B2C3.json
-│       └── X9Y8Z7.json
-└── utils/
-    ├── roomCode.js         # 방 코드 생성
-    └── errors.js           # 커스텀 에러
+┌─────────────────────────────────────────────────────────────────┐
+│  1. 방 생성/입장                                                 │
+│     POST /rooms (방장) 또는 POST /rooms/:code/join (참가자)      │
+│     → 응답으로 받은 roomCode로 SSE 연결                          │
+│     GET /rooms/:code/events?playerId=xxx                        │
+└─────────────────────────────────────────────────────────────────┘
+                              ↓
+┌─────────────────────────────────────────────────────────────────┐
+│  2. 대기실 (status: "waiting")                                   │
+│     - SSE로 실시간 플레이어 목록 동기화                           │
+│     - POST /rooms/:code/select-pig (돼지 선택)                   │
+│     - POST /rooms/:code/ready (준비 완료)                        │
+└─────────────────────────────────────────────────────────────────┘
+                              ↓
+┌─────────────────────────────────────────────────────────────────┐
+│  3. 게임 시작 (방장만)                                           │
+│     POST /rooms/:code/start                                      │
+│     → status: "countdown"                                        │
+│     → SSE로 모든 클라이언트에 전파                               │
+└─────────────────────────────────────────────────────────────────┘
+                              ↓
+┌─────────────────────────────────────────────────────────────────┐
+│  4. 카운트다운 (status: "countdown")                             │
+│     방장이 PUT /rooms/:code/state로 countdown: 3→2→1→0          │
+│     → SSE로 모든 클라이언트에 전파                               │
+└─────────────────────────────────────────────────────────────────┘
+                              ↓
+┌─────────────────────────────────────────────────────────────────┐
+│  5. 레이스 (status: "racing")                                    │
+│     방장이 100ms마다 PUT /rooms/:code/state로 pigs 업데이트      │
+│     → SSE로 모든 클라이언트에 전파                               │
+│     → 참가자는 SSE로 받은 pigs 데이터로 화면 렌더링              │
+└─────────────────────────────────────────────────────────────────┘
+                              ↓
+┌─────────────────────────────────────────────────────────────────┐
+│  6. 종료 (status: "finished")                                    │
+│     모든 돼지 완주 시 방장이 status: "finished" 업데이트         │
+│     → 결과 화면 표시                                            │
+└─────────────────────────────────────────────────────────────────┘
 ```
 
-### 방 코드 생성
-
-```javascript
-// utils/roomCode.js
-const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
-
-function generateRoomCode() {
-  let code = '';
-  for (let i = 0; i < 6; i++) {
-    code += chars.charAt(Math.floor(Math.random() * chars.length));
-  }
-  return code;
-}
-
-function generateUniqueRoomCode(existingCodes) {
-  let code;
-  let attempts = 0;
-  const maxAttempts = 100;
-
-  do {
-    code = generateRoomCode();
-    attempts++;
-    if (attempts > maxAttempts) {
-      throw new Error('방 코드 생성 실패');
-    }
-  } while (existingCodes.has(code));
-
-  return code;
-}
-```
-
-### 파일 저장/읽기
-
-```javascript
-// services/roomService.js
-const fs = require('fs').promises;
-const path = require('path');
-
-const ROOMS_DIR = path.join(__dirname, '../data/rooms');
-
-async function ensureRoomsDir() {
-  try {
-    await fs.mkdir(ROOMS_DIR, { recursive: true });
-  } catch (err) {
-    // 이미 존재하면 무시
-  }
-}
-
-async function saveRoom(roomCode, room) {
-  await ensureRoomsDir();
-  const filePath = path.join(ROOMS_DIR, `${roomCode}.json`);
-  await fs.writeFile(filePath, JSON.stringify(room, null, 2));
-}
-
-async function getRoom(roomCode) {
-  try {
-    const filePath = path.join(ROOMS_DIR, `${roomCode}.json`);
-    const data = await fs.readFile(filePath, 'utf8');
-    return JSON.parse(data);
-  } catch (err) {
-    return null;
-  }
-}
-
-async function deleteRoom(roomCode) {
-  try {
-    const filePath = path.join(ROOMS_DIR, `${roomCode}.json`);
-    await fs.unlink(filePath);
-  } catch (err) {
-    // 파일이 없으면 무시
-  }
-}
-
-async function getAllRoomCodes() {
-  await ensureRoomsDir();
-  const files = await fs.readdir(ROOMS_DIR);
-  return new Set(files.map(f => f.replace('.json', '')));
-}
-```
-
-### 자동 정리
-
-```javascript
-// 30분 이상 업데이트 없는 방 삭제
-async function cleanupOldRooms() {
-  const THIRTY_MINUTES = 30 * 60 * 1000;
-  const now = Date.now();
-
-  const roomCodes = await getAllRoomCodes();
-
-  for (const code of roomCodes) {
-    const room = await getRoom(code);
-    if (room && now - room.updatedAt > THIRTY_MINUTES) {
-      await deleteRoom(code);
-      emitRoomDeleted(code);
-      console.log(`오래된 방 삭제: ${code}`);
-    }
-  }
-}
-
-// 5분마다 실행
-setInterval(cleanupOldRooms, 5 * 60 * 1000);
-```
-
-### 완전한 Express 서버 예시
-
-```javascript
-// index.js
-const express = require('express');
-const cors = require('cors');
-const { v4: uuidv4 } = require('uuid');
-
-const app = express();
-const PORT = process.env.PORT || 3000;
-
-// 미들웨어
-app.use(cors({
-  origin: '*',
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'X-Player-ID'],
-}));
-app.options('*', cors());
-app.use(express.json());
-
-// 인메모리 저장소 (프로덕션에서는 파일 또는 DB 사용)
-const rooms = new Map();
-const roomConnections = new Map(); // SSE 연결
-
-// 유틸리티 함수
-function generateRoomCode() {
-  const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
-  let code = '';
-  for (let i = 0; i < 6; i++) {
-    code += chars.charAt(Math.floor(Math.random() * chars.length));
-  }
-  return code;
-}
-
-function emitRoomEvent(roomCode, room) {
-  const connections = roomConnections.get(roomCode);
-  if (!connections) return;
-
-  const data = JSON.stringify(room);
-  connections.forEach(res => {
-    res.write(`event: update\n`);
-    res.write(`data: ${data}\n\n`);
-  });
-}
-
-// API 라우트
-// 1. 방 생성
-app.post('/api/game/rooms', (req, res) => {
-  const { playerId, playerName, maxPlayers = 6 } = req.body;
-
-  if (!playerId || !playerName) {
-    return res.status(400).json({ success: false, error: '플레이어 정보가 필요합니다.' });
-  }
-
-  let roomCode;
-  do {
-    roomCode = generateRoomCode();
-  } while (rooms.has(roomCode));
-
-  const room = {
-    roomCode,
-    hostId: playerId,
-    status: 'waiting',
-    players: [{
-      id: playerId,
-      name: playerName,
-      selectedPig: null,
-      isReady: false,
-      joinedAt: Date.now()
-    }],
-    pigs: Array.from({ length: 10 }, (_, i) => ({
-      id: i,
-      position: 0,
-      speed: 0,
-      status: 'normal',
-      finishTime: null,
-      rank: null
-    })),
-    maxPlayers: Math.min(Math.max(maxPlayers, 2), 10),
-    raceStartTime: null,
-    raceEndTime: null,
-    countdown: 3,
-    createdAt: Date.now(),
-    updatedAt: Date.now()
-  };
-
-  rooms.set(roomCode, room);
-  res.json({ success: true, data: room });
-});
-
-// 2. 방 입장
-app.post('/api/game/rooms/:roomCode/join', (req, res) => {
-  const { roomCode } = req.params;
-  const { playerId, playerName } = req.body;
-
-  const room = rooms.get(roomCode.toUpperCase());
-  if (!room) {
-    return res.status(404).json({ success: false, error: '방을 찾을 수 없습니다.' });
-  }
-
-  if (!['waiting', 'selecting'].includes(room.status)) {
-    return res.status(409).json({ success: false, error: '게임이 이미 시작되었습니다.' });
-  }
-
-  const existing = room.players.find(p => p.id === playerId);
-  if (existing) {
-    return res.json({ success: true, data: room });
-  }
-
-  if (room.players.length >= room.maxPlayers) {
-    return res.status(409).json({ success: false, error: '방이 가득 찼습니다.' });
-  }
-
-  room.players.push({
-    id: playerId,
-    name: playerName,
-    selectedPig: null,
-    isReady: false,
-    joinedAt: Date.now()
-  });
-  room.updatedAt = Date.now();
-
-  emitRoomEvent(roomCode, room);
-  res.json({ success: true, data: room });
-});
-
-// 3. 방 퇴장
-app.post('/api/game/rooms/:roomCode/leave', (req, res) => {
-  const { roomCode } = req.params;
-  const { playerId } = req.body;
-
-  const room = rooms.get(roomCode.toUpperCase());
-  if (!room) {
-    return res.status(404).json({ success: false, error: '방을 찾을 수 없습니다.' });
-  }
-
-  room.players = room.players.filter(p => p.id !== playerId);
-
-  if (room.players.length === 0) {
-    rooms.delete(roomCode);
-    return res.json({ success: true, data: { message: '방이 삭제되었습니다.' } });
-  }
-
-  if (room.hostId === playerId) {
-    room.players.sort((a, b) => a.joinedAt - b.joinedAt);
-    room.hostId = room.players[0].id;
-  }
-
-  room.updatedAt = Date.now();
-  emitRoomEvent(roomCode, room);
-  res.json({ success: true, data: { message: '방에서 나갔습니다.' } });
-});
-
-// 4. 방 상태 조회
-app.get('/api/game/rooms/:roomCode', (req, res) => {
-  const { roomCode } = req.params;
-  const room = rooms.get(roomCode.toUpperCase());
-
-  if (!room) {
-    return res.status(404).json({ success: false, error: '방을 찾을 수 없습니다.' });
-  }
-
-  res.json({ success: true, data: room });
-});
-
-// 5. 돼지 선택
-app.post('/api/game/rooms/:roomCode/select-pig', (req, res) => {
-  const { roomCode } = req.params;
-  const { playerId, pigId } = req.body;
-
-  const room = rooms.get(roomCode.toUpperCase());
-  if (!room) {
-    return res.status(404).json({ success: false, error: '방을 찾을 수 없습니다.' });
-  }
-
-  if (pigId < 0 || pigId > 9) {
-    return res.status(400).json({ success: false, error: '잘못된 돼지 번호입니다.' });
-  }
-
-  const player = room.players.find(p => p.id === playerId);
-  if (!player) {
-    return res.status(404).json({ success: false, error: '플레이어를 찾을 수 없습니다.' });
-  }
-
-  const alreadySelected = room.players.find(p => p.selectedPig === pigId && p.id !== playerId);
-  if (alreadySelected) {
-    return res.status(409).json({ success: false, error: '이미 다른 플레이어가 선택한 돼지입니다.' });
-  }
-
-  player.selectedPig = pigId;
-  room.updatedAt = Date.now();
-
-  emitRoomEvent(roomCode, room);
-  res.json({ success: true, data: room });
-});
-
-// 6. 준비 완료
-app.post('/api/game/rooms/:roomCode/ready', (req, res) => {
-  const { roomCode } = req.params;
-  const { playerId } = req.body;
-
-  const room = rooms.get(roomCode.toUpperCase());
-  if (!room) {
-    return res.status(404).json({ success: false, error: '방을 찾을 수 없습니다.' });
-  }
-
-  const player = room.players.find(p => p.id === playerId);
-  if (!player) {
-    return res.status(404).json({ success: false, error: '플레이어를 찾을 수 없습니다.' });
-  }
-
-  if (player.id === room.hostId) {
-    player.isReady = true;
-  } else {
-    player.isReady = !player.isReady;
-  }
-
-  room.updatedAt = Date.now();
-
-  emitRoomEvent(roomCode, room);
-  res.json({ success: true, data: room });
-});
-
-// 7. 게임 시작
-app.post('/api/game/rooms/:roomCode/start', (req, res) => {
-  const { roomCode } = req.params;
-  const { playerId } = req.body;
-
-  const room = rooms.get(roomCode.toUpperCase());
-  if (!room) {
-    return res.status(404).json({ success: false, error: '방을 찾을 수 없습니다.' });
-  }
-
-  if (room.hostId !== playerId) {
-    return res.status(403).json({ success: false, error: '방장만 게임을 시작할 수 있습니다.' });
-  }
-
-  if (room.players.length < 2) {
-    return res.status(422).json({ success: false, error: '최소 2명의 플레이어가 필요합니다.' });
-  }
-
-  const notReady = room.players.filter(p => p.id !== room.hostId && !p.isReady);
-  if (notReady.length > 0) {
-    return res.status(422).json({ success: false, error: '모든 플레이어가 준비를 완료해야 합니다.' });
-  }
-
-  room.status = 'countdown';
-  room.countdown = 3;
-  room.updatedAt = Date.now();
-
-  emitRoomEvent(roomCode, room);
-  res.json({ success: true, data: room });
-});
-
-// 8. 게임 상태 업데이트
-app.put('/api/game/rooms/:roomCode/state', (req, res) => {
-  const { roomCode } = req.params;
-  const { playerId, status, pigs, countdown, raceStartTime, raceEndTime } = req.body;
-
-  const room = rooms.get(roomCode.toUpperCase());
-  if (!room) {
-    return res.status(404).json({ success: false, error: '방을 찾을 수 없습니다.' });
-  }
-
-  if (room.hostId !== playerId) {
-    return res.status(403).json({ success: false, error: '방장만 게임 상태를 업데이트할 수 있습니다.' });
-  }
-
-  if (status) room.status = status;
-  if (pigs) room.pigs = pigs;
-  if (countdown !== undefined) room.countdown = countdown;
-  if (raceStartTime) room.raceStartTime = raceStartTime;
-  if (raceEndTime) room.raceEndTime = raceEndTime;
-
-  room.updatedAt = Date.now();
-
-  emitRoomEvent(roomCode, room);
-  res.json({ success: true, data: room });
-});
-
-// 9. 방 삭제
-app.delete('/api/game/rooms/:roomCode', (req, res) => {
-  const { roomCode } = req.params;
-  const { playerId } = req.body;
-
-  const room = rooms.get(roomCode.toUpperCase());
-  if (!room) {
-    return res.status(404).json({ success: false, error: '방을 찾을 수 없습니다.' });
-  }
-
-  if (room.hostId !== playerId) {
-    return res.status(403).json({ success: false, error: '방장만 방을 삭제할 수 있습니다.' });
-  }
-
-  // SSE 클라이언트에 삭제 알림
-  const connections = roomConnections.get(roomCode);
-  if (connections) {
-    connections.forEach(res => {
-      res.write(`event: room_deleted\n`);
-      res.write(`data: ${JSON.stringify({ message: '방이 삭제되었습니다.' })}\n\n`);
-      res.end();
-    });
-    roomConnections.delete(roomCode);
-  }
-
-  rooms.delete(roomCode);
-  res.json({ success: true, data: { message: '방이 삭제되었습니다.' } });
-});
-
-// 10. SSE 이벤트 구독 ⭐
-app.get('/api/game/rooms/:roomCode/events', (req, res) => {
-  const { roomCode } = req.params;
-  const { playerId } = req.query;
-
-  const room = rooms.get(roomCode.toUpperCase());
-  if (!room) {
-    return res.status(404).json({ success: false, error: '방을 찾을 수 없습니다.' });
-  }
-
-  const player = room.players.find(p => p.id === playerId);
-  if (!player) {
-    return res.status(403).json({ success: false, error: '방에 참가하지 않은 플레이어입니다.' });
-  }
-
-  // SSE 헤더
-  res.setHeader('Content-Type', 'text/event-stream');
-  res.setHeader('Cache-Control', 'no-cache');
-  res.setHeader('Connection', 'keep-alive');
-  res.setHeader('Access-Control-Allow-Origin', '*');
-  res.setHeader('X-Accel-Buffering', 'no');
-  res.flushHeaders();
-
-  // 초기 상태 전송
-  res.write(`event: connected\n`);
-  res.write(`data: ${JSON.stringify(room)}\n\n`);
-
-  // 연결 저장
-  if (!roomConnections.has(roomCode)) {
-    roomConnections.set(roomCode, new Set());
-  }
-  roomConnections.get(roomCode).add(res);
-
-  console.log(`SSE 연결: ${roomCode} / ${playerId}`);
-
-  // Ping (30초마다)
-  const pingInterval = setInterval(() => {
-    res.write(`event: ping\n`);
-    res.write(`data: ${JSON.stringify({ timestamp: Date.now() })}\n\n`);
-  }, 30000);
-
-  // 연결 종료
-  req.on('close', () => {
-    clearInterval(pingInterval);
-    const connections = roomConnections.get(roomCode);
-    if (connections) {
-      connections.delete(res);
-      if (connections.size === 0) {
-        roomConnections.delete(roomCode);
-      }
-    }
-    console.log(`SSE 연결 종료: ${roomCode} / ${playerId}`);
-  });
-});
-
-// 서버 시작
-app.listen(PORT, () => {
-  console.log(`서버 실행 중: http://localhost:${PORT}`);
-});
-```
-
----
-
-## 에러 코드
-
-| HTTP Status | error 메시지 | 상황 |
-|-------------|-------------|------|
-| 400 | "플레이어 정보가 필요합니다." | playerId 또는 playerName 누락 |
-| 400 | "잘못된 돼지 번호입니다." | pigId가 0-9 범위 밖 |
-| 403 | "방장만 게임을 시작할 수 있습니다." | 방장이 아닌 사람이 시작 요청 |
-| 403 | "방장만 게임 상태를 업데이트할 수 있습니다." | 방장이 아닌 사람이 상태 업데이트 |
-| 403 | "방장만 방을 삭제할 수 있습니다." | 방장이 아닌 사람이 삭제 요청 |
-| 403 | "방에 참가하지 않은 플레이어입니다." | SSE 연결 시 방에 없는 플레이어 |
-| 404 | "방을 찾을 수 없습니다." | 존재하지 않는 roomCode |
-| 404 | "플레이어를 찾을 수 없습니다." | 방에 없는 playerId |
-| 409 | "방이 가득 찼습니다." | maxPlayers 초과 |
-| 409 | "게임이 이미 시작되었습니다." | waiting/selecting이 아닌 상태에서 입장 시도 |
-| 409 | "이미 다른 플레이어가 선택한 돼지입니다." | 중복 돼지 선택 |
-| 409 | "돼지를 선택할 수 없는 상태입니다." | 게임 진행 중 돼지 선택 시도 |
-| 409 | "준비 상태를 변경할 수 없습니다." | 게임 진행 중 준비 토글 시도 |
-| 422 | "최소 2명의 플레이어가 필요합니다." | 1명일 때 게임 시작 |
-| 422 | "모든 플레이어가 준비를 완료해야 합니다." | 미준비 플레이어 존재 |
-
----
-
-## 게임 흐름
+### 릴레이 모드 (Relay Mode) ⭐ NEW
 
 ```
-┌─────────────────────────────────────────────────────────────────────┐
-│                           게임 흐름도                                │
-└─────────────────────────────────────────────────────────────────────┘
-
-1. 방 생성 (POST /api/game/rooms)
-   └─ 방장이 방 생성
-   └─ status: "waiting"
-   └─ 방장은 SSE 연결 (GET /api/game/rooms/:code/events)
-
-2. 플레이어 입장 (POST /api/game/rooms/:code/join)
-   └─ 방 코드 입력하여 입장
-   └─ status: "waiting"
-   └─ 입장 후 SSE 연결
-   └─ 모든 클라이언트에 SSE로 플레이어 목록 업데이트
-
-3. 돼지 선택 (POST /api/game/rooms/:code/select-pig)
-   └─ 각 플레이어가 돼지 선택
-   └─ SSE로 선택 현황 실시간 동기화
-
-4. 준비 완료 (POST /api/game/rooms/:code/ready)
-   └─ 방장 제외 모든 플레이어가 준비
-   └─ SSE로 준비 상태 실시간 동기화
-
-5. 게임 시작 - 방장만 (POST /api/game/rooms/:code/start)
-   └─ 모든 플레이어 준비 완료 시 시작 가능
-   └─ status: "countdown"
-   └─ SSE로 모든 클라이언트에 카운트다운 시작 알림
-
-6. 카운트다운 + 레이스 진행
-   └─ 방장이 상태 업데이트 (PUT /api/game/rooms/:code/state)
-   └─ status: "countdown" → "racing" → "finished"
-   └─ 100ms마다 SSE로 모든 클라이언트에 돼지 위치 동기화
-
-7. 결과 확인
-   └─ status: "finished"
-   └─ 최종 순위 표시
-
-┌─────────────────────────────────────────────────────────────────────┐
-│                        상태 전이 다이어그램                          │
-└─────────────────────────────────────────────────────────────────────┘
-
-  ┌──────────┐   게임 시작   ┌───────────┐   카운트다운   ┌─────────┐
-  │ waiting  │ ───────────→ │ countdown │ ────────────→ │ racing  │
-  └──────────┘              └───────────┘   완료 (0)     └─────────┘
-       │                                                      │
-       │ (선택적)                                              │ 모든 돼지
-       ↓                                                      │ 완주
-  ┌───────────┐                                              ↓
-  │ selecting │                                         ┌──────────┐
-  └───────────┘                                         │ finished │
-                                                        └──────────┘
+┌─────────────────────────────────────────────────────────────────┐
+│  1. 방 생성 (gameMode: "relay")                                  │
+│     POST /rooms { ..., gameMode: "relay" }                       │
+│     → 돼지 2마리 자동 생성 (A팀, B팀 각 1마리)                   │
+└─────────────────────────────────────────────────────────────────┘
+                              ↓
+┌─────────────────────────────────────────────────────────────────┐
+│  2. 돼지 색상 선택                                               │
+│     POST /rooms/:code/select-pig { pigId: 5 }                    │
+│     → 각 플레이어가 원하는 색상 선택 (30가지)                    │
+└─────────────────────────────────────────────────────────────────┘
+                              ↓
+┌─────────────────────────────────────────────────────────────────┐
+│  3. 팀 선택                                                      │
+│     POST /rooms/:code/select-team { team: "A" }                  │
+│     → 각 플레이어가 A팀 또는 B팀 선택                            │
+└─────────────────────────────────────────────────────────────────┘
+                              ↓
+┌─────────────────────────────────────────────────────────────────┐
+│  4. 준비 완료                                                    │
+│     POST /rooms/:code/ready                                      │
+│     → 모든 참가자 준비 완료 필요                                 │
+└─────────────────────────────────────────────────────────────────┘
+                              ↓
+┌─────────────────────────────────────────────────────────────────┐
+│  5. 주자 순서 랜덤 배정 + 게임 시작 (방장만)                     │
+│     POST /rooms/:code/assign-runner-orders                       │
+│     → 방장이 랜덤 순서 생성 후 일괄 배정                         │
+│     POST /rooms/:code/start                                      │
+│     → relay.teamA/B.totalRunners 자동 설정                       │
+└─────────────────────────────────────────────────────────────────┘
+                              ↓
+┌─────────────────────────────────────────────────────────────────┐
+│  6. 릴레이 레이스 (status: "racing") 🏃                          │
+│                                                                  │
+│     [1번 주자 왕복]                                              │
+│     ┌────────────────────────────────────────────────┐          │
+│     │ A팀 1번: 0 ──forward──→ 100 ──backward──→ 0    │          │
+│     │ B팀 1번: 0 ──forward──→ 100 ──backward──→ 0    │          │
+│     └────────────────────────────────────────────────┘          │
+│              ↓ 왕복 완료 시 바통 전달                            │
+│     [2번 주자 왕복]                                              │
+│     ┌────────────────────────────────────────────────┐          │
+│     │ A팀 2번: 0 ──forward──→ 100 ──backward──→ 0    │          │
+│     │ B팀 2번: 0 ──forward──→ 100 ──backward──→ 0    │          │
+│     └────────────────────────────────────────────────┘          │
+│              ↓ ... 마지막 주자까지 반복                          │
+│                                                                  │
+│     [상태 업데이트 데이터 예시]                                   │
+│     pigs[0]: {team:"A", position:75, direction:"backward"}       │
+│     pigs[1]: {team:"B", position:50, direction:"forward"}        │
+│     relay.teamA: {currentRunner:2, completedRunners:1}           │
+│     relay.teamB: {currentRunner:1, completedRunners:0}           │
+└─────────────────────────────────────────────────────────────────┘
+                              ↓
+┌─────────────────────────────────────────────────────────────────┐
+│  7. 종료 (status: "finished")                                    │
+│     한 팀의 마지막 주자가 먼저 왕복 완료 시                      │
+│     → relay.teamA/B.finishTime 설정                              │
+│     → pigs[].rank로 팀 순위 표시 (1등/2등)                       │
+└─────────────────────────────────────────────────────────────────┘
 ```
 
 ---
 
 ## 테스트 시나리오
 
-### 시나리오 1: 기본 게임 플로우 (SSE)
+### 일반 모드 테스트
 
 ```bash
-# 1. 플레이어 A가 방 생성
-curl -X POST http://localhost:3000/api/game/rooms \
+# 1. 방 생성 (일반 모드)
+curl -X POST http://localhost:5000/api/game/rooms \
   -H "Content-Type: application/json" \
-  -d '{"playerId":"player_a","playerName":"호스트"}'
+  -d '{"playerId":"player_a","playerName":"호스트","gameMode":"normal"}'
 
-# 응답: roomCode = "A1B2C3"
+# 2. SSE 연결 (roomCode = A1B2C3)
+curl -N "http://localhost:5000/api/game/rooms/A1B2C3/events?playerId=player_a"
 
-# 2. 플레이어 A가 SSE 연결
-curl -N "http://localhost:3000/api/game/rooms/A1B2C3/events?playerId=player_a"
-
-# 3. 플레이어 B가 입장 (다른 터미널)
-curl -X POST http://localhost:3000/api/game/rooms/A1B2C3/join \
+# 3. 방 입장 (다른 터미널에서)
+curl -X POST http://localhost:5000/api/game/rooms/A1B2C3/join \
   -H "Content-Type: application/json" \
   -d '{"playerId":"player_b","playerName":"참가자"}'
+# → 위의 SSE 연결에서 event: update 수신됨
 
-# → A의 SSE에서 자동으로 update 이벤트 수신
-
-# 4. 플레이어 B가 SSE 연결
-curl -N "http://localhost:3000/api/game/rooms/A1B2C3/events?playerId=player_b"
-
-# 5. A, B 각각 돼지 선택
-curl -X POST http://localhost:3000/api/game/rooms/A1B2C3/select-pig \
+# 4. 돼지 선택
+curl -X POST http://localhost:5000/api/game/rooms/A1B2C3/select-pig \
   -H "Content-Type: application/json" \
   -d '{"playerId":"player_a","pigId":0}'
 
-curl -X POST http://localhost:3000/api/game/rooms/A1B2C3/select-pig \
-  -H "Content-Type: application/json" \
-  -d '{"playerId":"player_b","pigId":1}'
-
-# 6. B가 준비 완료
-curl -X POST http://localhost:3000/api/game/rooms/A1B2C3/ready \
+# 5. 준비 완료
+curl -X POST http://localhost:5000/api/game/rooms/A1B2C3/ready \
   -H "Content-Type: application/json" \
   -d '{"playerId":"player_b"}'
 
-# 7. A(방장)가 게임 시작
-curl -X POST http://localhost:3000/api/game/rooms/A1B2C3/start \
+# 6. 게임 시작
+curl -X POST http://localhost:5000/api/game/rooms/A1B2C3/start \
   -H "Content-Type: application/json" \
   -d '{"playerId":"player_a"}'
+```
 
-# 8. A가 게임 상태 업데이트 (레이스 중)
-curl -X PUT http://localhost:3000/api/game/rooms/A1B2C3/state \
+### 릴레이 모드 테스트 ⭐ NEW
+
+```bash
+# 1. 릴레이 모드 방 생성
+curl -X POST http://localhost:5000/api/game/rooms \
   -H "Content-Type: application/json" \
-  -d '{"playerId":"player_a","status":"racing","pigs":[...]}'
-```
+  -d '{"playerId":"player_a","playerName":"호스트","gameMode":"relay","maxPlayers":10}'
 
-### 시나리오 2: SSE 연결 테스트 (브라우저)
+# 2. SSE 연결
+curl -N "http://localhost:5000/api/game/rooms/A1B2C3/events?playerId=player_a"
 
-```javascript
-// 브라우저 콘솔에서 테스트
-const eventSource = new EventSource(
-  'http://localhost:3000/api/game/rooms/A1B2C3/events?playerId=player_a'
-);
+# 3. 다른 플레이어 입장
+curl -X POST http://localhost:5000/api/game/rooms/A1B2C3/join \
+  -H "Content-Type: application/json" \
+  -d '{"playerId":"player_b","playerName":"참가자1"}'
 
-eventSource.addEventListener('connected', (e) => {
-  console.log('연결됨:', JSON.parse(e.data));
-});
+curl -X POST http://localhost:5000/api/game/rooms/A1B2C3/join \
+  -H "Content-Type: application/json" \
+  -d '{"playerId":"player_c","playerName":"참가자2"}'
 
-eventSource.addEventListener('update', (e) => {
-  console.log('업데이트:', JSON.parse(e.data));
-});
+curl -X POST http://localhost:5000/api/game/rooms/A1B2C3/join \
+  -H "Content-Type: application/json" \
+  -d '{"playerId":"player_d","playerName":"참가자3"}'
 
-eventSource.addEventListener('ping', (e) => {
-  console.log('ping:', JSON.parse(e.data));
-});
+# 4. 돼지 색상 선택 (각자)
+curl -X POST http://localhost:5000/api/game/rooms/A1B2C3/select-pig \
+  -H "Content-Type: application/json" \
+  -d '{"playerId":"player_a","pigId":0}'
 
-eventSource.onerror = (e) => {
-  console.error('에러:', e);
-};
-```
+curl -X POST http://localhost:5000/api/game/rooms/A1B2C3/select-pig \
+  -H "Content-Type: application/json" \
+  -d '{"playerId":"player_b","pigId":5}'
 
-### 시나리오 3: 방장 이탈 테스트
+curl -X POST http://localhost:5000/api/game/rooms/A1B2C3/select-pig \
+  -H "Content-Type: application/json" \
+  -d '{"playerId":"player_c","pigId":10}'
 
-1. A가 방 생성, B, C가 입장
-2. A가 퇴장 (POST /leave)
-3. B가 새 방장이 됨 (joinedAt 기준)
-4. SSE로 모든 클라이언트에 hostId 변경 알림
+curl -X POST http://localhost:5000/api/game/rooms/A1B2C3/select-pig \
+  -H "Content-Type: application/json" \
+  -d '{"playerId":"player_d","pigId":15}'
 
-### 시나리오 4: CORS 테스트
+# 5. 팀 선택 (A팀 2명, B팀 2명)
+curl -X POST http://localhost:5000/api/game/rooms/A1B2C3/select-team \
+  -H "Content-Type: application/json" \
+  -d '{"playerId":"player_a","team":"A"}'
 
-```javascript
-// 다른 도메인에서 API 호출 테스트
-fetch('http://localhost:3000/api/game/rooms', {
-  method: 'POST',
-  headers: {
-    'Content-Type': 'application/json',
-  },
-  body: JSON.stringify({
-    playerId: 'test_player',
-    playerName: '테스트'
-  })
-})
-.then(res => res.json())
-.then(console.log)
-.catch(console.error);
+curl -X POST http://localhost:5000/api/game/rooms/A1B2C3/select-team \
+  -H "Content-Type: application/json" \
+  -d '{"playerId":"player_b","team":"A"}'
+
+curl -X POST http://localhost:5000/api/game/rooms/A1B2C3/select-team \
+  -H "Content-Type: application/json" \
+  -d '{"playerId":"player_c","team":"B"}'
+
+curl -X POST http://localhost:5000/api/game/rooms/A1B2C3/select-team \
+  -H "Content-Type: application/json" \
+  -d '{"playerId":"player_d","team":"B"}'
+
+# 6. 준비 완료 (방장 제외 모든 플레이어)
+curl -X POST http://localhost:5000/api/game/rooms/A1B2C3/ready \
+  -H "Content-Type: application/json" \
+  -d '{"playerId":"player_b"}'
+
+curl -X POST http://localhost:5000/api/game/rooms/A1B2C3/ready \
+  -H "Content-Type: application/json" \
+  -d '{"playerId":"player_c"}'
+
+curl -X POST http://localhost:5000/api/game/rooms/A1B2C3/ready \
+  -H "Content-Type: application/json" \
+  -d '{"playerId":"player_d"}'
+
+# 7. 주자 순서 배정 (방장이 랜덤 순서로)
+curl -X POST http://localhost:5000/api/game/rooms/A1B2C3/assign-runner-orders \
+  -H "Content-Type: application/json" \
+  -d '{
+    "playerId":"player_a",
+    "assignments":[
+      {"playerId":"player_a","order":1},
+      {"playerId":"player_b","order":2},
+      {"playerId":"player_c","order":1},
+      {"playerId":"player_d","order":2}
+    ]
+  }'
+
+# 8. 게임 시작
+curl -X POST http://localhost:5000/api/game/rooms/A1B2C3/start \
+  -H "Content-Type: application/json" \
+  -d '{"playerId":"player_a"}'
+# → relay.teamA/B.totalRunners가 자동으로 설정됨
+
+# 9. 릴레이 상태 업데이트 (방장만, 레이스 중)
+curl -X PUT http://localhost:5000/api/game/rooms/A1B2C3/state \
+  -H "Content-Type: application/json" \
+  -d '{
+    "playerId":"player_a",
+    "status":"racing",
+    "pigs":[
+      {"id":0,"team":"A","position":50,"speed":2,"status":"normal","direction":"forward","finishTime":null,"rank":null},
+      {"id":1,"team":"B","position":75,"speed":1.5,"status":"normal","direction":"forward","finishTime":null,"rank":null}
+    ],
+    "relay":{
+      "teamA":{"currentRunner":1,"completedRunners":0,"totalRunners":2,"finishTime":null},
+      "teamB":{"currentRunner":1,"completedRunners":0,"totalRunners":2,"finishTime":null}
+    }
+  }'
 ```
 
 ---
 
-## 주의사항
+### 14. 하트비트 (플레이어 활성 상태 갱신) ⭐ NEW
 
-1. **SSE 연결 관리**
-   - 클라이언트 연결 종료 시 반드시 정리
-   - 메모리 누수 방지를 위해 연결 맵 관리 필수
-   - nginx 사용 시 `X-Accel-Buffering: no` 헤더 필수
+클라이언트가 주기적으로 하트비트를 전송하여 활성 상태임을 서버에 알립니다.
+서버는 일정 시간 동안 하트비트가 없는 플레이어를 비활성으로 처리하여 자동으로 방에서 제거합니다.
 
-2. **CORS 설정**
-   - 모든 엔드포인트에 CORS 헤더 필수
-   - OPTIONS 프리플라이트 요청 처리 필수
-   - SSE 엔드포인트도 CORS 적용
+```
+POST /api/game/rooms/:roomCode/heartbeat
+```
 
-3. **방 코드 충돌**
-   - 생성 시 반드시 기존 코드와 중복 체크
-   - 대소문자 구분 없이 처리 (toUpperCase)
+**Request Body:**
+```json
+{
+  "playerId": "player_1704067200000_abc123"
+}
+```
 
-4. **시간 동기화**
-   - 모든 timestamp는 서버 시간 기준
-   - 클라이언트 시간 의존 금지
+| 필드 | 타입 | 필수 | 설명 |
+|------|------|:----:|------|
+| playerId | string | O | 플레이어 ID |
 
-5. **상태 전이 규칙**
-   - waiting → selecting → countdown → racing → finished
-   - waiting에서 바로 countdown 가능 (selecting 생략)
-   - 역방향 전이 불가
+**Response 200:**
+```json
+{
+  "success": true,
+  "data": {
+    "message": "하트비트 수신 완료"
+  }
+}
+```
 
-6. **방장 권한**
-   - 게임 시작: 방장만
-   - 상태 업데이트: 방장만
-   - 방 삭제: 방장만
-   - 방장 이탈 시 자동 위임
+**Response 404:**
+```json
+{"success": false, "error": "방을 찾을 수 없습니다."}
+{"success": false, "error": "플레이어를 찾을 수 없습니다."}
+```
 
-7. **자동 정리**
-   - 30분 이상 업데이트 없는 방 자동 삭제
-   - 정리 시 SSE로 room_deleted 이벤트 발행
+**클라이언트 구현:**
+- 방 입장 후 즉시 하트비트 1회 전송
+- 이후 **10초마다** 하트비트 전송
+- 방 퇴장, 강퇴, 연결 종료 시 하트비트 중지
+
+**서버 구현 요구사항:**
+
+1. **Player 타입에 lastHeartbeat 필드 추가:**
+```typescript
+interface Player {
+  // ... 기존 필드들
+  lastHeartbeat: number;  // 마지막 하트비트 시간 (Unix timestamp ms)
+}
+```
+
+2. **하트비트 수신 시 처리:**
+```javascript
+function handleHeartbeat(roomCode, playerId) {
+  const room = getRoom(roomCode);
+  if (!room) throw new NotFoundError('방을 찾을 수 없습니다.');
+
+  const player = room.players.find(p => p.id === playerId);
+  if (!player) throw new NotFoundError('플레이어를 찾을 수 없습니다.');
+
+  // 마지막 하트비트 시간 갱신
+  player.lastHeartbeat = Date.now();
+  room.updatedAt = Date.now();
+
+  saveRoom(roomCode, room);
+
+  return { message: '하트비트 수신 완료' };
+}
+```
+
+3. **비활성 플레이어 자동 제거 (권장: 15초 타임아웃):**
+```javascript
+// 주기적으로 실행 (예: 5초마다)
+function cleanupInactivePlayers() {
+  const HEARTBEAT_TIMEOUT = 15000; // 15초
+  const now = Date.now();
+
+  for (const roomCode of getAllRoomCodes()) {
+    const room = getRoom(roomCode);
+    if (!room) continue;
+
+    // 대기 중이거나 게임 중일 때만 체크
+    if (room.status === 'waiting' || room.status === 'selecting') {
+      const inactivePlayers = room.players.filter(
+        p => now - (p.lastHeartbeat || p.joinedAt) > HEARTBEAT_TIMEOUT
+      );
+
+      for (const player of inactivePlayers) {
+        console.log(`[Heartbeat] 비활성 플레이어 제거: ${player.name} (${player.id})`);
+
+        // 플레이어 제거 로직 (leave와 동일)
+        removePlayerFromRoom(roomCode, player.id);
+      }
+    }
+  }
+}
+
+// 5초마다 실행
+setInterval(cleanupInactivePlayers, 5000);
+```
+
+4. **방 입장 시 lastHeartbeat 초기화:**
+```javascript
+function joinRoom(roomCode, playerId, playerName) {
+  // ... 기존 로직
+
+  const newPlayer = {
+    id: playerId,
+    name: playerName,
+    selectedPig: null,
+    isReady: false,
+    isSpectator: false,
+    team: null,
+    runnerOrder: null,
+    joinedAt: Date.now(),
+    lastHeartbeat: Date.now()  // 입장 시 초기화
+  };
+
+  room.players.push(newPlayer);
+  // ...
+}
+```
+
+5. **SSE 이벤트 전파:**
+비활성 플레이어가 제거되면 `update` 이벤트를 전파하여 다른 플레이어들에게 알립니다.
+
+**타임아웃 설정 권장값:**
+| 항목 | 값 | 설명 |
+|------|-----|------|
+| 클라이언트 하트비트 주기 | 10초 | `setInterval(() => sendHeartbeat(roomCode), 10000)` |
+| 서버 타임아웃 | 15초 | 하트비트 주기의 1.5배 (네트워크 지연 고려) |
+| 서버 체크 주기 | 5초 | 비활성 플레이어 체크 간격 |
+
+> **참고**: 게임 진행 중(countdown, racing, finished)에는 하트비트 타임아웃을 적용하지 않는 것이 좋습니다. 게임 중에는 클라이언트가 게임 로직에 집중하므로 하트비트가 지연될 수 있습니다.
+
+---
+
+## 주요 특징
+
+1. **SSE 실시간 동기화**: 폴링 대비 서버 부하 90% 감소
+2. **방장 권한 시스템**: 게임 시작, 상태 업데이트, 방 삭제는 방장만 가능
+3. **자동 정리**: 30분 이상 업데이트 없는 방 자동 삭제
+4. **방장 위임**: 방장 퇴장 시 가장 먼저 입장한 플레이어로 자동 위임
+5. **동적 돼지 수 (일반 모드)**: 플레이어 수 = 돼지 수 (입장 시 추가, 퇴장 시 제거)
+6. **고정 돼지 수 (릴레이 모드)**: 팀당 1마리, 총 2마리 고정
+7. **최대 30명**: 최대 30명까지 플레이 가능
+8. **2가지 게임 모드**: 일반(normal) / 릴레이(relay) 모드 지원
+9. **릴레이 왕복 레이스**: 각 주자가 출발→결승→출발 왕복 후 다음 주자 출발
+10. **랜덤 주자 순서**: 방장이 게임 시작 시 팀 내 주자 순서를 랜덤 배정
+11. **하트비트 기반 플레이어 관리**: 비활성 플레이어 자동 제거 (15초 타임아웃)
 
 ---
 
@@ -1924,4 +1367,5 @@ fetch('http://localhost:3000/api/game/rooms', {
 |------|------|----------|
 | v1.0 | 2024-01-01 | 최초 작성 (폴링 방식) |
 | v2.0 | 2024-01-08 | SSE 방식으로 전환, CORS 설정 추가, 완전한 서버 구현 예시 추가 |
-| v2.1 | 2025-01-08 | 돼지 선택 해제 기능 추가 (pigId: -1), 재경기 시 플레이어 초기화 옵션 추가 (resetPlayers), 게임 중 방장 변경 시 host_changed 이벤트 추가 |
+| v2.1 | 2025-01-08 | 돼지 선택 해제 기능 추가, 재경기 시 플레이어 초기화 옵션 추가, 게임 중 방장 변경 시 host_changed 이벤트 추가 |
+| v3.0 | 2025-01-09 | **릴레이 모드 추가**: 팀 대항전, 왕복 레이스, 주자 순서 일괄 배정 API 추가 |

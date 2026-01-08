@@ -14,6 +14,7 @@ import {
   getCurrentPlayer,
   subscribeToRoom,
   getRoomState,
+  sendHeartbeat,
   type SSEConnection,
 } from '../services/gameApi';
 
@@ -126,11 +127,13 @@ interface MultiplayerPigRaceProps {
   onBack: () => void;
   initialMode?: 'menu' | 'room' | 'input' | null;
   initialRoomCode?: string | null;
+  onGoToRelay?: () => void; // 릴레이 방 만들기로 이동
+  onJoinRelayRoom?: (roomCode: string, playerName: string) => void; // 릴레이 방 입장으로 이동
 }
 
 type ViewPhase = 'menu' | 'create' | 'join' | 'lobby' | 'game';
 
-const MultiplayerPigRace = ({ onBack, initialMode, initialRoomCode }: MultiplayerPigRaceProps) => {
+const MultiplayerPigRace = ({ onBack, initialMode, initialRoomCode, onGoToRelay, onJoinRelayRoom }: MultiplayerPigRaceProps) => {
   // 뷰 상태 - 초기 모드에 따라 설정
   const getInitialViewPhase = (): ViewPhase => {
     if (initialMode === 'room') return 'create';
@@ -162,6 +165,7 @@ const MultiplayerPigRace = ({ onBack, initialMode, initialRoomCode }: Multiplaye
 
   // 폴링 인터벌 ref
   const pollingIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const heartbeatIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   // SSE 연결 정리
   const stopConnection = useCallback(() => {
@@ -174,46 +178,37 @@ const MultiplayerPigRace = ({ onBack, initialMode, initialRoomCode }: Multiplaye
   // 폴링 정리
   const stopPolling = useCallback(() => {
     if (pollingIntervalRef.current) {
-      console.log('[Polling] 폴링 중지');
       clearInterval(pollingIntervalRef.current);
       pollingIntervalRef.current = null;
     }
   }, []);
 
+  // 하트비트 정리
+  const stopHeartbeat = useCallback(() => {
+    if (heartbeatIntervalRef.current) {
+      clearInterval(heartbeatIntervalRef.current);
+      heartbeatIntervalRef.current = null;
+    }
+  }, []);
+
   // SSE 연결 시작
   const startSSE = useCallback((roomCode: string) => {
-    console.log('[SSE] startSSE 호출됨, roomCode:', roomCode);
-
     // 기존 연결 정리
     if (sseConnectionRef.current) {
-      console.log('[SSE] 기존 연결 종료');
       sseConnectionRef.current.close();
     }
 
-    console.log('[SSE] subscribeToRoom 호출 시작');
     const connection = subscribeToRoom(
       roomCode,
       (updatedRoom) => {
-        console.log('[SSE] 🔔 방 상태 업데이트 수신!');
-        console.log('[SSE] - 플레이어 수:', updatedRoom.players.length);
-        console.log('[SSE] - 방 상태:', updatedRoom.status);
-        console.log('[SSE] - 새 hostId:', updatedRoom.hostId);
-        console.log('[SSE] - isHostRacingRef:', isHostRacingRef.current);
-
         // 일반 update 이벤트에서도 hostId 변경 감지 (host_changed 이벤트 대신 update로 올 수 있음)
         setRoom(prevRoom => {
           if (prevRoom && prevRoom.hostId !== updatedRoom.hostId) {
             const myPlayerId = getCurrentPlayerId();
-            console.log('[SSE] 🔄 hostId 변경 감지! (update 이벤트)');
-            console.log('[SSE] - 이전 hostId:', prevRoom.hostId);
-            console.log('[SSE] - 새 hostId:', updatedRoom.hostId);
-            console.log('[SSE] - 내 ID:', myPlayerId);
 
             // 내가 새 방장이 되었고, 게임 중이면 게임 루프 인계
             if (updatedRoom.hostId === myPlayerId) {
-              console.log('[SSE] 🎉 내가 새 방장이 되었습니다! (update 이벤트)');
               if (updatedRoom.status === 'countdown' || updatedRoom.status === 'racing') {
-                console.log('[SSE] 🏁 게임 진행 중 - 게임 루프 인계 트리거!');
                 // setTimeout으로 state 업데이트 후 트리거
                 setTimeout(() => setHostTakeoverTrigger(prev => prev + 1), 0);
               }
@@ -225,67 +220,52 @@ const MultiplayerPigRace = ({ onBack, initialMode, initialRoomCode }: Multiplaye
         // 호스트가 레이싱 중이면 돼지 위치 업데이트만 무시 (로컬 애니메이션 우선)
         // 단, 레이싱 중에도 status가 finished로 바뀌면 받아야 함
         if (isHostRacingRef.current && updatedRoom.status === 'racing') {
-          console.log('[SSE] ⏭️ 호스트 레이싱 중 - racing 상태 업데이트 무시 (이미 setRoom 완료)');
           return;
         }
       },
-      (errorMsg) => {
-        console.error('[SSE] ❌ 에러:', errorMsg);
+      () => {
+        // 에러 처리
       },
       // host_changed 이벤트 처리 (게임 중 방장 변경)
       (hostChangedData: HostChangedData) => {
         const myPlayerId = getCurrentPlayerId();
-        console.log('[SSE] 🔄 방장 변경 이벤트!');
-        console.log('[SSE] - 새 방장 ID:', hostChangedData.newHostId);
-        console.log('[SSE] - 내 ID:', myPlayerId);
-        console.log('[SSE] - 현재 게임 상태:', hostChangedData.room.status);
 
         // 먼저 room 상태 업데이트 (hostId가 변경됨)
         setRoom(hostChangedData.room);
 
         // 내가 새 방장인지 확인
         if (hostChangedData.newHostId === myPlayerId) {
-          console.log('[SSE] 🎉 내가 새 방장이 되었습니다! 게임 루프를 인계받습니다.');
-
           // 게임 중이면 트리거를 통해 useEffect 강제 실행
           if (hostChangedData.room.status === 'countdown' || hostChangedData.room.status === 'racing') {
-            console.log('[SSE] 🏁 게임 진행 중 - 게임 루프 인계 트리거!');
             // 트리거 값을 변경하여 useEffect 강제 재실행
             setHostTakeoverTrigger(prev => prev + 1);
           }
-        } else {
-          console.log('[SSE] 방장이 다른 사람으로 변경되었습니다:', hostChangedData.newHostId);
         }
       },
       // kicked 이벤트 처리 (플레이어 강퇴)
       // 서버는 강퇴당한 플레이어에게만 kicked 이벤트를 보냄
       (kickedData: KickedData) => {
-        console.log('[SSE] 🚫 강퇴 이벤트! (내가 강퇴당함)');
-        console.log('[SSE] - 메시지:', kickedData.message);
-
         // kicked 이벤트를 받으면 무조건 자신이 강퇴당한 것
         alert(kickedData.message || '방장에 의해 강퇴되었습니다.');
         // 연결 종료하고 메뉴로 이동
         stopConnection();
         stopPolling();
+        stopHeartbeat();
         setRoom(null);
         setViewPhase('menu');
       }
     );
 
-    console.log('[SSE] 연결 객체 저장됨');
     sseConnectionRef.current = connection;
-  }, [stopConnection, stopPolling]);
+  }, [stopConnection, stopPolling, stopHeartbeat]);
 
   // 폴링 시작 (SSE 폴백용)
   // 게스트는 레이싱 중에도 폴링해서 돼지 위치 업데이트 받음
-  const startPolling = useCallback((roomCode: string, interval: number = 3000) => {
+  const startPolling = useCallback((roomCode: string, interval: number = 5000) => {
     // 기존 폴링 정리
     if (pollingIntervalRef.current) {
       clearInterval(pollingIntervalRef.current);
     }
-
-    console.log(`[Polling] 폴링 시작 (${interval}ms 간격)`);
 
     pollingIntervalRef.current = setInterval(async () => {
       // 호스트가 레이싱 중이면 폴링 안 함 (로컬 애니메이션 사용)
@@ -300,20 +280,15 @@ const MultiplayerPigRace = ({ onBack, initialMode, initialRoomCode }: Multiplaye
         const myPlayerId = getCurrentPlayerId();
         const meInRoom = response.data.players.find(p => p.id === myPlayerId);
         if (!meInRoom) {
-          console.log('[Polling] ❌ 플레이어 목록에 내가 없음 - 강퇴됨!');
           alert('방장에 의해 강퇴되었습니다.');
           stopConnection();
           stopPolling();
+          stopHeartbeat();
           setRoom(null);
           setViewPhase('menu');
           return;
         }
 
-        console.log(`[Polling] 📥 상태: ${response.data.status}, 플레이어:`, response.data.players.map(p => ({
-          name: p.name,
-          isReady: p.isReady,
-          selectedPig: p.selectedPig
-        })));
         setRoom(prev => {
           // 호스트가 레이싱 중이면 업데이트하지 않음
           if (isHostRacingRef.current && response.data!.status === 'racing') {
@@ -321,20 +296,60 @@ const MultiplayerPigRace = ({ onBack, initialMode, initialRoomCode }: Multiplaye
           }
           return response.data!;
         });
+      } else {
+        // 방을 찾을 수 없는 경우 (방이 삭제되었거나 서버 오류)
+        alert('방을 찾을 수 없습니다. 메뉴로 이동합니다.');
+        stopConnection();
+        stopPolling();
+        stopHeartbeat();
+        setRoom(null);
+        setViewPhase('menu');
       }
     }, interval);
-  }, [stopConnection, stopPolling]);
+  }, [stopConnection, stopPolling, stopHeartbeat]);
+
+  // 하트비트 전송 (10초마다 - 서버에서 15초 동안 응답 없으면 제거)
+  const startHeartbeat = useCallback((roomCode: string) => {
+    if (heartbeatIntervalRef.current) clearInterval(heartbeatIntervalRef.current);
+
+    // 즉시 한번 하트비트 전송
+    sendHeartbeat(roomCode);
+
+    // 10초마다 하트비트 전송
+    heartbeatIntervalRef.current = setInterval(() => {
+      sendHeartbeat(roomCode);
+    }, 10000);
+  }, []);
 
   // 정리
   useEffect(() => {
     return () => {
       stopConnection();
       stopPolling();
+      stopHeartbeat();
       if (animationRef.current) {
         cancelAnimationFrame(animationRef.current);
       }
     };
-  }, [stopConnection, stopPolling]);
+  }, [stopConnection, stopPolling, stopHeartbeat]);
+
+  // 브라우저 종료/새로고침 시 방 나가기
+  useEffect(() => {
+    const handleBeforeUnload = () => {
+      if (room) {
+        // sendBeacon으로 비동기 요청 (브라우저 종료 시에도 전송됨)
+        const API_BASE_URL = import.meta.env.VITE_API_URL || 'https://api.example.com';
+        const playerId = localStorage.getItem('game-player-id');
+        navigator.sendBeacon(
+          `${API_BASE_URL}/api/game/rooms/${room.roomCode}/leave`,
+          JSON.stringify({ playerId })
+        );
+      }
+    };
+
+    window.addEventListener('beforeunload', handleBeforeUnload);
+    return () => window.removeEventListener('beforeunload', handleBeforeUnload);
+  }, [room]);
 
   // initialMode/initialRoomCode props 변경 시 상태 업데이트
   useEffect(() => {
@@ -364,20 +379,15 @@ const MultiplayerPigRace = ({ onBack, initialMode, initialRoomCode }: Multiplaye
     setIsLoading(true);
     setError(null);
 
-    console.log('🏠 방 생성 요청...');
     const response = await createRoom(playerName.trim(), maxPlayers);
-    console.log('🏠 방 생성 응답:', response);
 
     if (response.success && response.data) {
-      console.log('✅ 방 생성 성공:', response.data.roomCode);
-      console.log('- 플레이어:', response.data.players);
-      console.log('- 돼지 수:', response.data.pigs.length);
       setRoom(response.data);
       setViewPhase('lobby');
       startSSE(response.data.roomCode);
       startPolling(response.data.roomCode); // SSE 폴백용 폴링 시작
+      startHeartbeat(response.data.roomCode); // 하트비트 시작
     } else {
-      console.error('❌ 방 생성 실패:', response.error);
       setError(response.error || '방 생성에 실패했습니다');
     }
 
@@ -398,20 +408,22 @@ const MultiplayerPigRace = ({ onBack, initialMode, initialRoomCode }: Multiplaye
     setIsLoading(true);
     setError(null);
 
-    console.log('🚪 방 입장 요청...');
     const response = await joinRoom(roomCodeInput.trim().toUpperCase(), playerName.trim());
-    console.log('🚪 방 입장 응답:', response);
 
     if (response.success && response.data) {
-      console.log('✅ 방 입장 성공:', response.data.roomCode);
-      console.log('- 현재 플레이어 수:', response.data.players.length);
-      console.log('- 플레이어들:', response.data.players.map(p => p.name).join(', '));
+      // 릴레이 방이면 릴레이 페이지로 이동
+      if (response.data.gameMode === 'relay' && onJoinRelayRoom) {
+        setIsLoading(false);
+        onJoinRelayRoom(response.data.roomCode, playerName.trim());
+        return;
+      }
+
       setRoom(response.data);
       setViewPhase('lobby');
       startSSE(response.data.roomCode);
       startPolling(response.data.roomCode); // SSE 폴백용 폴링 시작
+      startHeartbeat(response.data.roomCode); // 하트비트 시작
     } else {
-      console.error('❌ 방 입장 실패:', response.error);
       setError(response.error || '방 입장에 실패했습니다');
     }
 
@@ -424,6 +436,7 @@ const MultiplayerPigRace = ({ onBack, initialMode, initialRoomCode }: Multiplaye
 
     stopConnection();
     stopPolling();
+    stopHeartbeat();
     await leaveRoom(room.roomCode);
     setRoom(null);
     setViewPhase('menu');
@@ -435,11 +448,9 @@ const MultiplayerPigRace = ({ onBack, initialMode, initialRoomCode }: Multiplaye
     if (!room || isRefreshing) return;
 
     setIsRefreshing(true);
-    console.log('[Manual] 🔄 수동 새로고침...');
 
     const response = await getRoomState(room.roomCode);
     if (response.success && response.data) {
-      console.log('[Manual] ✅ 새로고침 성공:', response.data.players.length, '명');
       setRoom(response.data);
     }
 
@@ -452,7 +463,6 @@ const MultiplayerPigRace = ({ onBack, initialMode, initialRoomCode }: Multiplaye
     if (!room || !isCurrentPlayerHost(room) || isRestarting) return;
 
     setIsRestarting(true);
-    console.log('🔄 재경기 준비 모드로 전환...');
 
     // 돼지 위치 초기화 (선택도 초기화하여 새로 선택 가능)
     const resetPigs = room.pigs.map(pig => ({
@@ -477,17 +487,10 @@ const MultiplayerPigRace = ({ onBack, initialMode, initialRoomCode }: Multiplaye
     });
 
     if (response.success && response.data) {
-      console.log('✅ 재경기 대기 상태로 전환!');
-      console.log('📋 서버 응답 플레이어 상태:', response.data.players.map(p => ({
-        name: p.name,
-        isReady: p.isReady,
-        selectedPig: p.selectedPig
-      })));
       setRoom(response.data);
       setRaceTime(0);
       setGuestRaceTime(0);
     } else {
-      console.error('❌ 재경기 준비 실패:', response.error);
       alert('재경기 준비에 실패했습니다.');
     }
 
@@ -499,7 +502,6 @@ const MultiplayerPigRace = ({ onBack, initialMode, initialRoomCode }: Multiplaye
     if (!room || !isCurrentPlayerHost(room) || isRestarting) return;
 
     setIsRestarting(true);
-    console.log('🔄 재경기 시작...');
 
     // 돼지 위치 초기화 (선택은 유지)
     const resetPigs = room.pigs.map(pig => ({
@@ -521,12 +523,10 @@ const MultiplayerPigRace = ({ onBack, initialMode, initialRoomCode }: Multiplaye
     });
 
     if (response.success && response.data) {
-      console.log('✅ 재경기 시작!');
       setRoom(response.data);
       setRaceTime(0);
       setGuestRaceTime(0);
     } else {
-      console.error('❌ 재경기 시작 실패:', response.error);
       alert('재경기 시작에 실패했습니다.');
     }
 
@@ -549,38 +549,26 @@ const MultiplayerPigRace = ({ onBack, initialMode, initialRoomCode }: Multiplaye
   const handleToggleReady = async () => {
     if (!room) return;
 
-    console.log('준비 완료 요청:', room.roomCode);
     const response = await toggleReady(room.roomCode);
-    console.log('준비 완료 응답:', response);
     if (response.success && response.data) {
       setRoom(response.data);
     } else {
-      console.error('준비 완료 실패:', response.error);
       alert(`준비 완료 실패: ${response.error || '알 수 없는 오류'}`);
     }
   };
 
   // 게임 시작 (호스트만)
   const handleStartGame = async () => {
-    console.log('🎮 게임 시작 클릭');
-    console.log('- room:', room);
-    console.log('- isHost:', room ? isCurrentPlayerHost(room) : 'no room');
-
     if (!room || !isCurrentPlayerHost(room)) {
-      console.log('❌ 게임 시작 조건 불충족');
       return;
     }
 
-    console.log('📤 startGame API 호출...');
     const response = await startGame(room.roomCode);
-    console.log('📥 startGame 응답:', response);
 
     if (response.success && response.data) {
-      console.log('✅ 게임 시작 성공, 상태:', response.data.status);
       setRoom(response.data);
       setViewPhase('game');
     } else {
-      console.error('❌ 게임 시작 실패:', response.error);
       alert(`게임 시작 실패: ${response.error || '알 수 없는 오류'}`);
     }
   };
@@ -594,8 +582,6 @@ const MultiplayerPigRace = ({ onBack, initialMode, initialRoomCode }: Multiplaye
   useEffect(() => {
     if (!room || room.status !== 'countdown' || !isCurrentPlayerHost(room)) return;
 
-    console.log('⏱️ 카운트다운 시작 (방장):', room.countdown);
-    console.log('⏱️ 현재 방장:', room.hostId);
     const roomCode = room.roomCode;
 
     const countdownInterval = setInterval(async () => {
@@ -603,11 +589,9 @@ const MultiplayerPigRace = ({ onBack, initialMode, initialRoomCode }: Multiplaye
         if (!prev || prev.status !== 'countdown') return prev;
 
         const newCountdown = prev.countdown - 1;
-        console.log('⏱️ 카운트다운:', newCountdown);
 
         if (newCountdown <= 0) {
           // 카운트다운 종료 → racing 상태로 전환
-          console.log('🏁 카운트다운 종료! racing으로 전환');
           clearInterval(countdownInterval);
 
           // 서버에 racing 상태 업데이트
@@ -653,19 +637,9 @@ const MultiplayerPigRace = ({ onBack, initialMode, initialRoomCode }: Multiplaye
   }, [room]);
 
   useEffect(() => {
-    console.log('🏁 레이스 useEffect 실행');
-    console.log('- room:', room?.roomCode);
-    console.log('- status:', room?.status);
-    console.log('- isHost:', room ? isCurrentPlayerHost(room) : 'no room');
-
     if (!room || room.status !== 'racing' || !isCurrentPlayerHost(room)) {
-      console.log('⏸️ 레이스 애니메이션 조건 불충족');
       return;
     }
-
-    console.log('🚀 레이스 애니메이션 시작!');
-    console.log('- 돼지 수:', room.pigs.length);
-    console.log('- 플레이어 수:', room.players.length);
 
     // 호스트 레이싱 플래그 설정 (SSE 업데이트 무시)
     isHostRacingRef.current = true;
@@ -674,7 +648,6 @@ const MultiplayerPigRace = ({ onBack, initialMode, initialRoomCode }: Multiplaye
     const selectedPigIds = new Set(
       room.players.map(p => p.selectedPig).filter((id): id is number => id !== null)
     );
-    console.log('- 선택된 돼지들:', Array.from(selectedPigIds));
 
     const RACE_DURATION = 20000;
     const FPS = 60;
@@ -690,13 +663,11 @@ const MultiplayerPigRace = ({ onBack, initialMode, initialRoomCode }: Multiplaye
     const isHostTakeover = serverElapsed > 500; // 500ms 이상 경과했으면 인계로 판단
 
     if (isHostTakeover) {
-      console.log('🔄 방장 인계 - 서버 경과 시간:', serverElapsed, 'ms');
       // 인계 시: 서버 경과 시간을 기준으로 startTimeRef 설정
       startTimeRef.current = performance.now() - serverElapsed;
       // 서버에서 받은 돼지 위치 유지
       pigsRef.current = [...room.pigs];
     } else {
-      console.log('🏁 새 레이스 시작');
       startTimeRef.current = performance.now();
       // 초기 돼지 상태 설정
       pigsRef.current = [...room.pigs];
@@ -827,7 +798,6 @@ const MultiplayerPigRace = ({ onBack, initialMode, initialRoomCode }: Multiplaye
         });
 
         if (allFinished) {
-          console.log('🏆 레이스 종료!');
           isAnimating = false;
           isHostRacingRef.current = false; // 레이스 종료 - SSE 다시 받기
 
@@ -888,8 +858,6 @@ const MultiplayerPigRace = ({ onBack, initialMode, initialRoomCode }: Multiplaye
       return;
     }
 
-    console.log('🎮 게스트 보간 애니메이션 시작');
-
     // 초기 상태 설정
     setInterpolatedPigs(room.pigs);
     guestStartTimeRef.current = performance.now();
@@ -938,12 +906,9 @@ const MultiplayerPigRace = ({ onBack, initialMode, initialRoomCode }: Multiplaye
 
   // 게임 상태 변경 감지
   useEffect(() => {
-    console.log('📺 상태 변경 감지:', room?.status);
     if (room?.status === 'countdown' || room?.status === 'racing' || room?.status === 'finished') {
-      console.log('📺 → game 화면으로 전환');
       setViewPhase('game');
     } else if (room?.status === 'waiting' || room?.status === 'selecting') {
-      console.log('📺 → lobby 화면으로 전환');
       setViewPhase('lobby');
     }
   }, [room?.status]);
@@ -953,23 +918,18 @@ const MultiplayerPigRace = ({ onBack, initialMode, initialRoomCode }: Multiplaye
     if (!room) return;
 
     const isHost = isCurrentPlayerHost(room);
-    console.log(`[Polling] 📡 상태: ${room.status}, 호스트: ${isHost}`);
 
     if (room.status === 'racing' && !isHost) {
       // 게스트가 레이싱 중이면 빠른 폴링
-      console.log('[Polling] 🏃 게스트 레이싱 - 500ms');
       startPolling(room.roomCode, 500);
     } else if (room.status === 'waiting' || room.status === 'selecting') {
-      // 로비에서는 3초 폴링 (호스트/게스트 모두)
-      console.log('[Polling] 🏠 로비 - 3초');
-      startPolling(room.roomCode, 3000);
+      // 로비에서는 5초 폴링 (호스트/게스트 모두)
+      startPolling(room.roomCode, 5000);
     } else if (room.status === 'finished') {
       // 게임 종료 후에도 폴링 유지 (재경기 대기 감지용)
-      console.log('[Polling] 🏁 게임 종료 - 재경기 감지용 1초');
       startPolling(room.roomCode, 1000); // 1초로 줄여서 빠른 감지
     } else if (room.status === 'countdown') {
       // 카운트다운 중에도 폴링 유지
-      console.log('[Polling] ⏱️ 카운트다운 - 500ms');
       startPolling(room.roomCode, 500);
     }
   }, [room?.status, room?.roomCode, startPolling, stopPolling]);
@@ -1005,6 +965,14 @@ const MultiplayerPigRace = ({ onBack, initialMode, initialRoomCode }: Multiplaye
         >
           🏠 방 만들기
         </button>
+        {onGoToRelay && (
+          <button
+            onClick={onGoToRelay}
+            className="w-full py-4 bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-400 hover:to-orange-400 text-white font-bold rounded-xl transition-all text-lg"
+          >
+            🏃 릴레이 방 만들기
+          </button>
+        )}
         <button
           onClick={() => setViewPhase('join')}
           className="w-full py-4 bg-gradient-to-r from-blue-500 to-cyan-500 hover:from-blue-400 hover:to-cyan-400 text-white font-bold rounded-xl transition-all text-lg"
@@ -1316,6 +1284,7 @@ const MultiplayerPigRace = ({ onBack, initialMode, initialRoomCode }: Multiplaye
               </span>
             </div>
             <div className="grid grid-cols-5 gap-2">
+              {/* 서버에서 제공하는 pigs 배열 사용 (접속 인원 수만큼) */}
               {room.pigs.map((pig) => {
                 const owner = getPigOwner(room, pig.id);
                 const isSelected = currentPlayer?.selectedPig === pig.id;
@@ -1324,6 +1293,7 @@ const MultiplayerPigRace = ({ onBack, initialMode, initialRoomCode }: Multiplaye
                 // 준비 완료 상태면 클릭 불가
                 const canClick = !isPlayerReady && (isAvailable || isSelected);
 
+                const isOriginal = getPigColor(pig.id) === 'original';
                 return (
                   <button
                     key={pig.id}
@@ -1338,8 +1308,8 @@ const MultiplayerPigRace = ({ onBack, initialMode, initialRoomCode }: Multiplaye
                     }`}
                   >
                     <div
-                      className="w-8 h-8 rounded-full mx-auto mb-1"
-                      style={{ backgroundColor: getPigColor(pig.id) }}
+                      className={`w-8 h-8 rounded-full mx-auto mb-1 ${isOriginal ? 'border-2 border-white' : ''}`}
+                      style={{ backgroundColor: getPigBgColor(pig.id) }}
                     />
                     <p className="text-xs text-text-secondary truncate">
                       {owner ? owner.name : `${pig.id + 1}번`}
