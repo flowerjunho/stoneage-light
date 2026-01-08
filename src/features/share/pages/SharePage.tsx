@@ -170,11 +170,11 @@ const bidAuctionApi = async (id: number, body: { name: string; amount: number; m
   return data.data;
 };
 
-const deleteAuctionApi = async (id: number, password: string) => {
+const deleteAuctionApi = async (id: number, password: string, adminDelete?: boolean) => {
   const response = await fetch(`${serverUrl}/auction/items/${id}`, {
     method: 'DELETE',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ password }),
+    body: JSON.stringify({ password, adminDelete }),
   });
   const data = await response.json();
   if (!data.success) throw new Error(data.error || 'Failed to delete auction');
@@ -1086,7 +1086,8 @@ const SharePage: React.FC<SharePageProps> = ({
   });
 
   const deleteAuctionMutation = useMutation({
-    mutationFn: ({ id, password }: { id: number; password: string }) => deleteAuctionApi(id, password),
+    mutationFn: ({ id, password, adminDelete }: { id: number; password: string; adminDelete?: boolean }) =>
+      deleteAuctionApi(id, password, adminDelete),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['auction-items'] });
       setAuctionViewMode('list');
@@ -1628,7 +1629,15 @@ const SharePage: React.FC<SharePageProps> = ({
 
   // Verify password and delete
   const handleDeletePasswordSubmit = async () => {
-    if (!selectedItem || !deletePassword.trim()) {
+    if (!selectedItem) return;
+
+    // 관리자는 비밀번호 없이 삭제 가능
+    if (isAdmin) {
+      executeDelete({ adminDelete: true });
+      return;
+    }
+
+    if (!deletePassword.trim()) {
       setDeletePasswordError(true);
       return;
     }
@@ -2292,9 +2301,10 @@ const SharePage: React.FC<SharePageProps> = ({
           <div className="bg-bg-secondary rounded-xl border border-red-500 p-6">
             <h3 className="text-lg font-bold mb-4 text-red-400">🗑️ 삭제 확인</h3>
             <p className="text-sm text-text-secondary mb-4">
-              삭제하려면 등록 시 입력한 비밀번호를 입력해주세요.
+              {isAdmin ? '관리자 권한으로 삭제합니다. 확인 버튼을 눌러주세요.' : '삭제하려면 등록 시 입력한 비밀번호를 입력해주세요.'}
             </p>
             <div className="space-y-4">
+              {!isAdmin && (
               <div>
                 <label className="block text-sm font-medium text-text-secondary mb-1">
                   비밀번호 *
@@ -2316,10 +2326,11 @@ const SharePage: React.FC<SharePageProps> = ({
                   <p className="text-red-500 text-sm mt-1">비밀번호가 일치하지 않습니다.</p>
                 )}
               </div>
+              )}
               <div className="flex gap-3">
                 <button
                   onClick={handleDeletePasswordSubmit}
-                  disabled={!deletePassword.trim()}
+                  disabled={!isAdmin && !deletePassword.trim()}
                   className="px-6 py-2 bg-red-500 hover:bg-red-600 text-white font-bold rounded-lg transition-colors disabled:opacity-50"
                 >
                   삭제
@@ -3346,12 +3357,13 @@ const SharePage: React.FC<SharePageProps> = ({
   const handleDeleteAuction = async () => {
     if (!selectedAuction || !selectedAuctionId) return;
 
-    if (!auctionDeletePassword.trim()) {
+    // 관리자가 아닌 경우 비밀번호 필수
+    if (!isAdmin && !auctionDeletePassword.trim()) {
       alert('비밀번호를 입력해주세요.');
       return;
     }
 
-    // 입찰 내역이 있는 경우 삭제 불가
+    // 입찰 내역이 있는 경우 삭제 불가 (관리자도 동일)
     if (selectedAuction.bidCount > 0) {
       alert('입찰 내역이 있어 삭제할 수 없습니다.\n입찰자가 있는 경매는 삭제가 불가능합니다.');
       return;
@@ -3361,7 +3373,8 @@ const SharePage: React.FC<SharePageProps> = ({
     try {
       await deleteAuctionMutation.mutateAsync({
         id: selectedAuctionId,
-        password: auctionDeletePassword,
+        password: isAdmin ? 'admin' : auctionDeletePassword,
+        adminDelete: isAdmin,
       });
       setShowAuctionDeleteDialog(false);
       setAuctionDeletePassword('');
@@ -4633,26 +4646,28 @@ const SharePage: React.FC<SharePageProps> = ({
             ) : (
               <>
                 <p className="text-sm text-text-secondary mb-4 text-center">
-                  등록 시 설정한 비밀번호를 입력해주세요.
+                  {isAdmin ? '관리자 권한으로 삭제합니다. 확인 버튼을 눌러주세요.' : '등록 시 설정한 비밀번호를 입력해주세요.'}
                 </p>
                 <div className="bg-amber-500/10 border border-amber-500/30 rounded-lg p-3 mb-4">
                   <p className="text-amber-400 text-xs text-center">
                     ⚠️ 삭제된 경매는 복구할 수 없습니다.
                   </p>
                 </div>
-                <input
-                  type="password"
-                  value={auctionDeletePassword}
-                  onChange={(e) => setAuctionDeletePassword(e.target.value)}
-                  placeholder="비밀번호"
-                  className="w-full px-4 py-3 bg-bg-tertiary border border-border rounded-lg text-text-primary focus:border-red-500 focus:ring-2 focus:ring-red-500/20 mb-4"
-                  onKeyDown={(e) => {
-                    if (e.key === 'Enter') {
-                      handleDeleteAuction();
-                    }
-                  }}
-                  autoFocus
-                />
+                {!isAdmin && (
+                  <input
+                    type="password"
+                    value={auctionDeletePassword}
+                    onChange={(e) => setAuctionDeletePassword(e.target.value)}
+                    placeholder="비밀번호"
+                    className="w-full px-4 py-3 bg-bg-tertiary border border-border rounded-lg text-text-primary focus:border-red-500 focus:ring-2 focus:ring-red-500/20 mb-4"
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter') {
+                        handleDeleteAuction();
+                      }
+                    }}
+                    autoFocus
+                  />
+                )}
                 <div className="flex gap-3">
                   <button
                     onClick={() => {
