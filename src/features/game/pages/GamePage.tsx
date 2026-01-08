@@ -44,9 +44,9 @@ const GamePage = () => {
     },
     {
       id: 'multiplayer' as GameType,
-      name: '멀티플레이어 돼지 레이스',
+      name: '천호 레이스',
       description: '친구들과 함께 실시간 레이스!',
-      icon: '🎮',
+      icon: 'ho', // ho.svg 이미지 사용
       color: 'from-purple-500 to-indigo-500',
     },
   ];
@@ -63,6 +63,14 @@ const GamePage = () => {
     setSearchParams({});
   };
 
+  const renderGameIcon = (icon: string, size: 'sm' | 'lg') => {
+    if (icon === 'ho') {
+      const sizeClass = size === 'lg' ? 'w-24 h-24' : 'w-12 h-12';
+      return <img src="/ho.svg" alt="천호" className={sizeClass} />;
+    }
+    return <span>{icon}</span>;
+  };
+
   const renderGameList = () => (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
       {games.map((game) => (
@@ -72,10 +80,10 @@ const GamePage = () => {
           className={`relative overflow-hidden rounded-2xl p-6 text-left transition-all duration-300 hover:scale-[1.02] hover:shadow-xl bg-gradient-to-br ${game.color}`}
         >
           <div className="absolute top-0 right-0 text-8xl opacity-20 transform translate-x-4 -translate-y-4">
-            {game.icon}
+            {renderGameIcon(game.icon, 'lg')}
           </div>
           <div className="relative z-10">
-            <div className="text-4xl mb-3">{game.icon}</div>
+            <div className="text-4xl mb-3">{renderGameIcon(game.icon, 'sm')}</div>
             <h3 className="text-xl font-bold text-white mb-2">{game.name}</h3>
             <p className="text-white/80 text-sm">{game.description}</p>
           </div>

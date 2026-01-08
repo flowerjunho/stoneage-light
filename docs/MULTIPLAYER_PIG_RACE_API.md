@@ -565,7 +565,96 @@ function toggleReady(roomCode, playerId) {
 
 ---
 
-### 7. 게임 시작
+### 7. 플레이어 강퇴 (방장 전용)
+
+방장이 다른 플레이어를 강퇴합니다.
+
+**POST** `/api/game/rooms/:roomCode/kick`
+
+#### Request Body
+```json
+{
+  "playerId": "player_1704067200000_abc123def",
+  "targetPlayerId": "player_1704067260000_xyz789ghi"
+}
+```
+
+| 필드 | 타입 | 필수 | 설명 |
+|------|------|------|------|
+| playerId | string | ✅ | 요청자 ID (방장만 가능) |
+| targetPlayerId | string | ✅ | 강퇴할 플레이어 ID |
+
+#### Response 200 (성공)
+전체 GameRoom 객체 반환 (강퇴된 플레이어 제외)
+
+#### Response 에러
+| Status | error | 상황 |
+|--------|-------|------|
+| 403 | "방장만 강퇴할 수 있습니다." | hostId가 아닌 경우 |
+| 404 | "플레이어를 찾을 수 없습니다." | targetPlayerId가 방에 없음 |
+| 400 | "자기 자신은 강퇴할 수 없습니다." | playerId === targetPlayerId |
+
+#### 서버 구현 로직
+```javascript
+function kickPlayer(roomCode, playerId, targetPlayerId) {
+  const room = getRoom(roomCode);
+  if (!room) throw new NotFoundError('방을 찾을 수 없습니다.');
+
+  // 1. 권한 확인 (방장만 가능)
+  if (room.hostId !== playerId) {
+    throw new ForbiddenError('방장만 강퇴할 수 있습니다.');
+  }
+
+  // 2. 자기 자신 강퇴 방지
+  if (playerId === targetPlayerId) {
+    throw new BadRequestError('자기 자신은 강퇴할 수 없습니다.');
+  }
+
+  // 3. 대상 플레이어 확인
+  const targetPlayer = room.players.find(p => p.id === targetPlayerId);
+  if (!targetPlayer) {
+    throw new NotFoundError('플레이어를 찾을 수 없습니다.');
+  }
+
+  // 4. 플레이어 제거 (돼지는 그대로 유지 - 다른 플레이어가 선택 가능)
+  // ⚠️ 중요: room.pigs 배열은 건드리지 않음!
+  room.players = room.players.filter(p => p.id !== targetPlayerId);
+  room.updatedAt = Date.now();
+
+  // 5. 저장 및 이벤트 발행
+  saveRoom(roomCode, room);
+
+  // 6. 강퇴당한 플레이어에게만 kicked 이벤트 전송
+  emitKickedEvent(roomCode, targetPlayerId, { message: '방장에 의해 강퇴되었습니다.' });
+
+  // 7. 나머지 플레이어에게 업데이트 이벤트 전송
+  emitRoomEvent(roomCode, room);
+
+  return room;
+}
+
+// kicked 이벤트 발행 함수 (강퇴당한 플레이어에게만)
+function emitKickedEvent(roomCode, targetPlayerId, data) {
+  const connections = roomConnections.get(roomCode);
+  if (!connections) return;
+
+  // 강퇴당한 플레이어의 연결만 찾아서 kicked 이벤트 전송
+  connections.forEach((res, connPlayerId) => {
+    if (connPlayerId === targetPlayerId) {
+      res.write(`event: kicked\n`);
+      res.write(`data: ${JSON.stringify(data)}\n\n`);
+    }
+  });
+}
+```
+
+> ⚠️ **중요**: 강퇴 시 `room.pigs` 배열은 절대 수정하지 않습니다!
+> 돼지는 10마리 고정이며, 강퇴된 플레이어가 선택했던 돼지는 자동으로 선택 해제됩니다 (해당 플레이어가 삭제되면 `selectedPig`도 사라짐).
+> 다른 플레이어가 해당 돼지를 다시 선택할 수 있습니다.
+
+---
+
+### 8. 게임 시작
 
 방장이 게임을 시작합니다.
 

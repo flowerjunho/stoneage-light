@@ -17,8 +17,9 @@ import {
   type SSEConnection,
 } from '../services/gameApi';
 
-// 돼지 색상 정의 (프론트엔드에서만 사용) - 30개 고유 색상
+// 돼지 색상 정의 (프론트엔드에서만 사용) - 첫 번째는 원본 색상
 const PIG_COLORS = [
+  'original', // 원본 (필터 없음)
   '#FF6B6B', // 빨강
   '#4ECDC4', // 청록
   '#FFE66D', // 노랑
@@ -48,12 +49,72 @@ const PIG_COLORS = [
   '#00CEC9', // 틸
   '#636E72', // 그레이
   '#D63031', // 크림슨
-  '#0984E3', // 블루
 ];
 
 // 돼지 색상 가져오기
 const getPigColor = (pigId: number): string => {
   return PIG_COLORS[pigId % PIG_COLORS.length];
+};
+
+// 배경색용 색상 가져오기 (original일 경우 회색 반환)
+const getPigBgColor = (pigId: number): string => {
+  const color = PIG_COLORS[pigId % PIG_COLORS.length];
+  return color === 'original' ? '#9CA3AF' : color; // 원본이면 회색
+};
+
+// HEX to HSL 변환 (그레이스케일 이미지에 색상을 입히기 위해)
+const hexToHsl = (hex: string): { h: number; s: number; l: number } => {
+  const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+  if (!result) return { h: 0, s: 100, l: 50 };
+
+  const r = parseInt(result[1], 16) / 255;
+  const g = parseInt(result[2], 16) / 255;
+  const b = parseInt(result[3], 16) / 255;
+
+  const max = Math.max(r, g, b);
+  const min = Math.min(r, g, b);
+  let h = 0;
+  let s = 0;
+  const l = (max + min) / 2;
+
+  if (max !== min) {
+    const d = max - min;
+    s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
+    switch (max) {
+      case r: h = ((g - b) / d + (g < b ? 6 : 0)) / 6; break;
+      case g: h = ((b - r) / d + 2) / 6; break;
+      case b: h = ((r - g) / d + 4) / 6; break;
+    }
+  }
+
+  return { h: h * 360, s: s * 100, l: l * 100 };
+};
+
+// 그레이스케일 이미지에 색상을 입히는 CSS filter 생성
+const getColorFilter = (color: string): string => {
+  // 원본 색상이면 필터 없음
+  if (color === 'original') {
+    return 'none';
+  }
+
+  const { h, s, l } = hexToHsl(color);
+
+  // 흰색 계열 (밝기 90% 이상, 채도 10% 이하)
+  if (l > 90 && s < 10) {
+    return 'brightness(2) contrast(0.8)';
+  }
+
+  // 회색 계열 (채도 10% 이하)
+  if (s < 10) {
+    const grayBrightness = 0.5 + (l / 100);
+    return `brightness(${grayBrightness}) contrast(1.1)`;
+  }
+
+  // grayscale → sepia로 기본 색조 부여 → hue-rotate로 원하는 색상으로 회전 → saturate로 채도 조절
+  // brightness로 명도 조절
+  const brightness = l > 50 ? 1 + (l - 50) / 100 : 0.8 + (l / 250);
+  const saturate = s / 50;
+  return `sepia(1) hue-rotate(${h - 50}deg) saturate(${saturate}) brightness(${brightness})`;
 };
 
 // 돼지 소유자 찾기 (Player.selectedPig 기반)
@@ -913,25 +974,6 @@ const MultiplayerPigRace = ({ onBack, initialMode, initialRoomCode }: Multiplaye
     }
   }, [room?.status, room?.roomCode, startPolling, stopPolling]);
 
-  // 색상 유틸리티
-  const darkenColor = (hex: string, percent: number) => {
-    const num = parseInt(hex.replace('#', ''), 16);
-    const amt = Math.round(2.55 * percent);
-    const R = Math.max((num >> 16) - amt, 0);
-    const G = Math.max(((num >> 8) & 0x00ff) - amt, 0);
-    const B = Math.max((num & 0x0000ff) - amt, 0);
-    return `#${(0x1000000 + R * 0x10000 + G * 0x100 + B).toString(16).slice(1)}`;
-  };
-
-  const lightenColor = (hex: string, percent: number) => {
-    const num = parseInt(hex.replace('#', ''), 16);
-    const amt = Math.round(2.55 * percent);
-    const R = Math.min((num >> 16) + amt, 255);
-    const G = Math.min(((num >> 8) & 0x00ff) + amt, 255);
-    const B = Math.min((num & 0x0000ff) + amt, 255);
-    return `#${(0x1000000 + R * 0x10000 + G * 0x100 + B).toString(16).slice(1)}`;
-  };
-
   const getStatusEmoji = (status: PigState['status']) => {
     switch (status) {
       case 'turbo': return '🔥';
@@ -949,8 +991,10 @@ const MultiplayerPigRace = ({ onBack, initialMode, initialRoomCode }: Multiplaye
   const renderMenu = () => (
     <div className="space-y-6">
       <div className="text-center">
-        <div className="text-6xl mb-4">🐷</div>
-        <h2 className="text-2xl font-bold text-text-primary">멀티플레이어 돼지 레이스</h2>
+        <div className="mb-4">
+          <img src="/ho.svg" alt="천호" className="w-20 h-20 mx-auto" />
+        </div>
+        <h2 className="text-2xl font-bold text-text-primary">천호 레이스</h2>
         <p className="text-text-secondary mt-2">친구들과 함께 레이스를 즐겨보세요!</p>
       </div>
 
@@ -1143,11 +1187,9 @@ const MultiplayerPigRace = ({ onBack, initialMode, initialRoomCode }: Multiplaye
 
     // 방장을 제외한 모든 플레이어가 준비 완료해야 함
     const allReady = room.players.every(p => p.isReady || p.id === room.hostId);
-    // 돼지를 선택한 참가자가 2명 이상이어야 게임 시작 가능
+    // 돼지를 선택한 참가자가 2명 이상이어야 게임 시작 가능 (방장도 관전 가능)
     const hasEnoughParticipants = participants.length >= 2;
-    // 방장도 돼지를 선택해야 함
-    const hostHasSelectedPig = currentPlayer?.selectedPig !== null;
-    const canStart = isHost && allReady && hasEnoughParticipants && hostHasSelectedPig;
+    const canStart = isHost && allReady && hasEnoughParticipants;
 
     return (
       <div className="space-y-6">
@@ -1330,8 +1372,6 @@ const MultiplayerPigRace = ({ onBack, initialMode, initialRoomCode }: Multiplaye
                 >
                   {!hasEnoughParticipants
                     ? '참가자 2명 이상 필요'
-                    : !hostHasSelectedPig
-                    ? '돼지 선택 필요'
                     : !allReady
                     ? '모두 준비 대기'
                     : isRematchWaiting
@@ -1444,6 +1484,7 @@ const MultiplayerPigRace = ({ onBack, initialMode, initialRoomCode }: Multiplaye
             const isMyPig = getCurrentPlayer(room)?.selectedPig === pig.id;
             const statusEmoji = getStatusEmoji(pig.status);
             const pigColor = getPigColor(pig.id);
+            const isOriginal = pigColor === 'original';
 
             return (
               <div
@@ -1466,40 +1507,24 @@ const MultiplayerPigRace = ({ onBack, initialMode, initialRoomCode }: Multiplaye
                   <div
                     className={`text-[10px] font-bold whitespace-nowrap px-1.5 py-0.5 rounded-full mb-0.5 ${
                       isMyPig ? 'ring-2 ring-white' : ''
-                    }`}
-                    style={{ backgroundColor: pigColor, color: '#000' }}
+                    } ${isOriginal ? 'border border-gray-500' : ''}`}
+                    style={{ backgroundColor: getPigBgColor(pig.id), color: '#000' }}
                   >
                     {owner?.name || `돼지${pig.id + 1}`}
                     {pig.rank && <span className="ml-1">#{pig.rank}</span>}
                   </div>
-                  {/* 돼지 SVG */}
-                  <svg
-                    width="45"
-                    height="35"
-                    viewBox="0 0 50 40"
+                  {/* 호 캐릭터 이미지 */}
+                  <img
+                    src="/ho.svg"
+                    alt={`호${pig.id + 1}`}
+                    width="50"
+                    height="50"
                     className={`drop-shadow-md ${pig.finishTime ? 'scale-110' : ''}`}
                     style={{
                       animation: isRacing && !pig.finishTime ? 'pigRun 0.2s infinite' : 'none',
+                      filter: getColorFilter(pigColor),
                     }}
-                  >
-                    <ellipse cx="25" cy="22" rx="16" ry="12" fill={pigColor} />
-                    <ellipse cx="13" cy="12" rx="4" ry="5" fill={pigColor} />
-                    <ellipse cx="37" cy="12" rx="4" ry="5" fill={pigColor} />
-                    <ellipse cx="13" cy="12" rx="2.5" ry="3" fill={darkenColor(pigColor, 20)} />
-                    <ellipse cx="37" cy="12" rx="2.5" ry="3" fill={darkenColor(pigColor, 20)} />
-                    <ellipse cx="25" cy="18" rx="9" ry="7" fill={lightenColor(pigColor, 10)} />
-                    <ellipse cx="25" cy="20" rx="5" ry="3.5" fill={darkenColor(pigColor, 30)} />
-                    <circle cx="22.5" cy="20" r="1.2" fill="#333" />
-                    <circle cx="27.5" cy="20" r="1.2" fill="#333" />
-                    <circle cx="20" cy="15" r="2.5" fill="white" />
-                    <circle cx="30" cy="15" r="2.5" fill="white" />
-                    <circle cx="20.5" cy="15" r="1.2" fill="#333" />
-                    <circle cx="30.5" cy="15" r="1.2" fill="#333" />
-                    <rect x="14" y="31" width="4" height="5" rx="2" fill={darkenColor(pigColor, 20)} />
-                    <rect x="21" y="31" width="4" height="5" rx="2" fill={darkenColor(pigColor, 20)} />
-                    <rect x="28" y="31" width="4" height="5" rx="2" fill={darkenColor(pigColor, 20)} />
-                    <rect x="35" y="31" width="4" height="5" rx="2" fill={darkenColor(pigColor, 20)} />
-                  </svg>
+                  />
                 </div>
               </div>
             );
@@ -1516,7 +1541,7 @@ const MultiplayerPigRace = ({ onBack, initialMode, initialRoomCode }: Multiplaye
               .map((pig) => {
                 const owner = getPigOwner(room, pig.id);
                 const isMyPig = getCurrentPlayer(room)?.selectedPig === pig.id;
-                const pigColor = getPigColor(pig.id);
+                const isOriginal = getPigColor(pig.id) === 'original';
 
                 return (
                   <div
@@ -1537,8 +1562,8 @@ const MultiplayerPigRace = ({ onBack, initialMode, initialRoomCode }: Multiplaye
                         {pig.rank && pig.rank > 3 && `${pig.rank}등`}
                       </span>
                       <div
-                        className="w-5 h-5 rounded-full"
-                        style={{ backgroundColor: pigColor }}
+                        className={`w-5 h-5 rounded-full ${isOriginal ? 'border-2 border-gray-400' : ''}`}
+                        style={{ backgroundColor: getPigBgColor(pig.id) }}
                       />
                       <span className={pig.rank === 1 ? 'text-yellow-400 font-bold' : 'text-text-primary'}>
                         {owner?.name || `돼지${pig.id + 1}`}
@@ -1601,7 +1626,10 @@ const MultiplayerPigRace = ({ onBack, initialMode, initialRoomCode }: Multiplaye
           </svg>
         </button>
         <div>
-          <h2 className="text-xl font-bold text-text-primary">🐷 멀티플레이어</h2>
+          <h2 className="text-xl font-bold text-text-primary flex items-center gap-2">
+            <img src="/ho.svg" alt="천호" className="w-6 h-6" />
+            천호 레이스
+          </h2>
           <p className="text-sm text-text-secondary">
             {viewPhase === 'menu' && '친구들과 함께 플레이'}
             {viewPhase === 'create' && '새 방 만들기'}
