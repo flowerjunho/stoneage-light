@@ -22,6 +22,7 @@ import BattlePage from '@/features/battle/pages/BattlePage';
 import DashboardPage from '@/features/dashboard/pages/DashboardPage';
 import Dashboard2Page from '@/features/dashboard/pages/Dashboard2Page';
 import SharePage from '@/features/share/pages/SharePage';
+import GamePage from '@/features/game/pages/GamePage';
 import { VisitTracker } from '@/shared/utils/visitTracker';
 
 const AppContent: React.FC = () => {
@@ -113,6 +114,7 @@ const AppContent: React.FC = () => {
           <Route path="/quests/:questId" element={<QuestDetailPage />} />
           <Route path="/maps" element={<MapsPage />} />
           <Route path="/maps/:mapId" element={<MapDetailPage />} />
+          <Route path="/game" element={<GamePage />} />
           <Route path="/calculator" element={<CalculatorPage />} />
           <Route path="/board" element={<BoardPage />} />
         </Routes>
