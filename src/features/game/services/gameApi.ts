@@ -216,6 +216,22 @@ export const deleteRoom = async (
   });
 };
 
+/**
+ * 플레이어 강퇴 (호스트만)
+ */
+export const kickPlayer = async (
+  roomCode: string,
+  targetPlayerId: string
+): Promise<ApiResponse<GameRoom>> => {
+  return apiCall<GameRoom>(`/api/game/rooms/${roomCode}/kick`, {
+    method: 'POST',
+    body: JSON.stringify({
+      playerId: getPlayerId(),
+      targetPlayerId,
+    }),
+  });
+};
+
 // ========== 유틸리티 함수 ==========
 
 export const getCurrentPlayerId = getPlayerId;
@@ -235,9 +251,14 @@ export const getPlayerByPigId = (room: GameRoom, pigId: number): Player | undefi
 // ========== SSE (Server-Sent Events) ==========
 
 export interface SSEEvent {
-  event: 'room_update' | 'player_joined' | 'player_left' | 'pig_selected' | 'player_ready' | 'game_starting' | 'game_started' | 'race_update' | 'race_finished' | 'room_closed' | 'error' | 'connected' | 'heartbeat' | 'host_changed';
-  data: GameRoom | { message: string; playerId?: string; playerName?: string } | HostChangedData;
+  event: 'room_update' | 'player_joined' | 'player_left' | 'pig_selected' | 'player_ready' | 'game_starting' | 'game_started' | 'race_update' | 'race_finished' | 'room_closed' | 'error' | 'connected' | 'heartbeat' | 'host_changed' | 'kicked';
+  data: GameRoom | { message: string; playerId?: string; playerName?: string } | HostChangedData | KickedData;
   timestamp: number;
+}
+
+// kicked 이벤트 데이터 타입 (서버에서 message만 보냄 - 본인에게만 전송되므로)
+export interface KickedData {
+  message: string;
 }
 
 // host_changed 이벤트 데이터 타입
@@ -259,13 +280,15 @@ export interface SSEConnection {
  * @param onUpdate - 방 상태 업데이트 콜백
  * @param onError - 에러 발생 시 콜백
  * @param onHostChanged - 방장 변경 시 콜백 (게임 중 방장이 나가면 호출)
+ * @param onKicked - 강퇴당했을 때 콜백
  * @returns SSE 연결 객체 (close 함수 포함)
  */
 export const subscribeToRoom = (
   roomCode: string,
   onUpdate: (room: GameRoom) => void,
   onError?: (error: string) => void,
-  onHostChanged?: (data: HostChangedData) => void
+  onHostChanged?: (data: HostChangedData) => void,
+  onKicked?: (data: KickedData) => void
 ): SSEConnection => {
   const playerId = getPlayerId();
   const url = `${API_BASE_URL}/api/game/rooms/${roomCode}/events?playerId=${playerId}`;
@@ -320,7 +343,8 @@ export const subscribeToRoom = (
     'room_closed',
     'room_deleted',   // 방 삭제
     'ping',           // 하트비트
-    'heartbeat'
+    'heartbeat',
+    'kicked'          // 플레이어 강퇴
   ];
 
   console.log('[SSE] 이벤트 리스너 등록 시작:', eventTypes.join(', '));
@@ -360,6 +384,25 @@ export const subscribeToRoom = (
       }
     } catch (err) {
       console.error('[SSE] host_changed 파싱 오류:', err);
+    }
+  });
+
+  // kicked 이벤트 (플레이어 강퇴) - 별도 처리
+  // 서버는 강퇴당한 플레이어에게만 kicked 이벤트를 보냄
+  eventSource.addEventListener('kicked', (event: MessageEvent) => {
+    console.log('[SSE] 🚫 kicked 이벤트 수신! (내가 강퇴당함)');
+    console.log('[SSE] raw data:', event.data);
+    try {
+      const data = JSON.parse(event.data) as KickedData;
+      console.log('[SSE] kicked 파싱됨:', data);
+
+      // onKicked 콜백 호출 (kicked 이벤트를 받으면 무조건 자신이 강퇴당한 것)
+      if (onKicked) {
+        console.log('[SSE] onKicked 콜백 호출');
+        onKicked(data);
+      }
+    } catch (err) {
+      console.error('[SSE] kicked 파싱 오류:', err);
     }
   });
 

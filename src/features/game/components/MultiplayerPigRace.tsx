@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
-import type { GameRoom, PigState, Player, HostChangedData } from '../services/gameApi';
+import type { GameRoom, PigState, Player, HostChangedData, KickedData } from '../services/gameApi';
 import {
   createRoom,
   joinRoom,
@@ -8,6 +8,7 @@ import {
   toggleReady,
   startGame,
   updateGameState,
+  kickPlayer,
   getCurrentPlayerId,
   isCurrentPlayerHost,
   getCurrentPlayer,
@@ -98,6 +99,26 @@ const MultiplayerPigRace = ({ onBack, initialMode, initialRoomCode }: Multiplaye
   // 방장 인계 트리거 (게임 중 방장이 바뀌면 새 방장이 게임 루프 시작)
   const [hostTakeoverTrigger, setHostTakeoverTrigger] = useState(0);
 
+  // 폴링 인터벌 ref
+  const pollingIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
+
+  // SSE 연결 정리
+  const stopConnection = useCallback(() => {
+    if (sseConnectionRef.current) {
+      sseConnectionRef.current.close();
+      sseConnectionRef.current = null;
+    }
+  }, []);
+
+  // 폴링 정리
+  const stopPolling = useCallback(() => {
+    if (pollingIntervalRef.current) {
+      console.log('[Polling] 폴링 중지');
+      clearInterval(pollingIntervalRef.current);
+      pollingIntervalRef.current = null;
+    }
+  }, []);
+
   // SSE 연결 시작
   const startSSE = useCallback((roomCode: string) => {
     console.log('[SSE] startSSE 호출됨, roomCode:', roomCode);
@@ -174,23 +195,26 @@ const MultiplayerPigRace = ({ onBack, initialMode, initialRoomCode }: Multiplaye
         } else {
           console.log('[SSE] 방장이 다른 사람으로 변경되었습니다:', hostChangedData.newHostId);
         }
+      },
+      // kicked 이벤트 처리 (플레이어 강퇴)
+      // 서버는 강퇴당한 플레이어에게만 kicked 이벤트를 보냄
+      (kickedData: KickedData) => {
+        console.log('[SSE] 🚫 강퇴 이벤트! (내가 강퇴당함)');
+        console.log('[SSE] - 메시지:', kickedData.message);
+
+        // kicked 이벤트를 받으면 무조건 자신이 강퇴당한 것
+        alert(kickedData.message || '방장에 의해 강퇴되었습니다.');
+        // 연결 종료하고 메뉴로 이동
+        stopConnection();
+        stopPolling();
+        setRoom(null);
+        setViewPhase('menu');
       }
     );
 
     console.log('[SSE] 연결 객체 저장됨');
     sseConnectionRef.current = connection;
-  }, []);
-
-  // SSE 연결 정리
-  const stopConnection = useCallback(() => {
-    if (sseConnectionRef.current) {
-      sseConnectionRef.current.close();
-      sseConnectionRef.current = null;
-    }
-  }, []);
-
-  // 폴링 인터벌 ref
-  const pollingIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  }, [stopConnection, stopPolling]);
 
   // 폴링 시작 (SSE 폴백용)
   // 게스트는 레이싱 중에도 폴링해서 돼지 위치 업데이트 받음
@@ -211,6 +235,19 @@ const MultiplayerPigRace = ({ onBack, initialMode, initialRoomCode }: Multiplaye
       const response = await getRoomState(roomCode);
 
       if (response.success && response.data) {
+        // 강퇴 감지: 내가 플레이어 목록에 없으면 강퇴된 것
+        const myPlayerId = getCurrentPlayerId();
+        const meInRoom = response.data.players.find(p => p.id === myPlayerId);
+        if (!meInRoom) {
+          console.log('[Polling] ❌ 플레이어 목록에 내가 없음 - 강퇴됨!');
+          alert('방장에 의해 강퇴되었습니다.');
+          stopConnection();
+          stopPolling();
+          setRoom(null);
+          setViewPhase('menu');
+          return;
+        }
+
         console.log(`[Polling] 📥 상태: ${response.data.status}, 플레이어:`, response.data.players.map(p => ({
           name: p.name,
           isReady: p.isReady,
@@ -225,16 +262,7 @@ const MultiplayerPigRace = ({ onBack, initialMode, initialRoomCode }: Multiplaye
         });
       }
     }, interval);
-  }, []);
-
-  // 폴링 정리
-  const stopPolling = useCallback(() => {
-    if (pollingIntervalRef.current) {
-      console.log('[Polling] 폴링 중지');
-      clearInterval(pollingIntervalRef.current);
-      pollingIntervalRef.current = null;
-    }
-  }, []);
+  }, [stopConnection, stopPolling]);
 
   // 정리
   useEffect(() => {
@@ -1172,7 +1200,7 @@ const MultiplayerPigRace = ({ onBack, initialMode, initialRoomCode }: Multiplaye
                       <span className="text-xs text-accent">(나)</span>
                     )}
                   </div>
-                  <div>
+                  <div className="flex items-center gap-2">
                     {isPlayerHost ? (
                       <span className="text-xs px-2 py-1 bg-yellow-500/20 text-yellow-400 rounded">
                         방장
@@ -1185,6 +1213,23 @@ const MultiplayerPigRace = ({ onBack, initialMode, initialRoomCode }: Multiplaye
                       <span className="text-xs px-2 py-1 bg-gray-500/20 text-gray-400 rounded">
                         대기중
                       </span>
+                    )}
+                    {/* 방장만 다른 플레이어 강퇴 가능 */}
+                    {isHost && !isPlayerHost && (
+                      <button
+                        onClick={async () => {
+                          if (!confirm(`${player.name}님을 강퇴하시겠습니까?`)) return;
+                          const result = await kickPlayer(room.roomCode, player.id);
+                          if (result.success && result.data) {
+                            setRoom(result.data);
+                          } else {
+                            alert(result.error || '강퇴에 실패했습니다.');
+                          }
+                        }}
+                        className="text-xs px-2 py-1 bg-red-500/20 text-red-400 hover:bg-red-500/30 rounded transition-colors"
+                      >
+                        강퇴
+                      </button>
                     )}
                   </div>
                 </div>
