@@ -491,7 +491,8 @@ const applyItemApi = async (id: number, body: { name: string; message?: string }
   return data.data;
 };
 
-const purchaseItemApi = async (id: number, body: { name: string; message?: string }) => {
+// 임시 비활성화 (악용 방지)
+/* const purchaseItemApi = async (id: number, body: { name: string; message?: string }) => {
   const response = await fetch(`${serverUrl}/share/items/${id}/purchase`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
@@ -500,7 +501,7 @@ const purchaseItemApi = async (id: number, body: { name: string; message?: strin
   const data = await response.json();
   if (!data.success) throw new Error(data.error || 'Failed to purchase');
   return data.data;
-};
+}; */
 
 const cancelApplyApi = async (id: number, name: string) => {
   const response = await fetch(`${serverUrl}/share/items/${id}/apply`, {
@@ -711,10 +712,10 @@ const SharePage: React.FC<SharePageProps> = ({
   const [applyMessage, setApplyMessage] = useState('');
   const [showApplyForm, setShowApplyForm] = useState(false);
 
-  // Purchase form state (판매 전용)
-  const [purchaseName, setPurchaseName] = useState('');
+  // Purchase form state (판매 전용) - 임시 비활성화 (악용 방지)
+  /* const [purchaseName, setPurchaseName] = useState('');
   const [purchaseMessage, setPurchaseMessage] = useState('');
-  const [showPurchaseForm, setShowPurchaseForm] = useState(false);
+  const [showPurchaseForm, setShowPurchaseForm] = useState(false); */
 
   // Cancel form state (신청 취소)
   const [showCancelForm, setShowCancelForm] = useState(false);
@@ -932,7 +933,8 @@ const SharePage: React.FC<SharePageProps> = ({
     },
   });
 
-  const purchaseMutation = useMutation({
+  // 임시 비활성화 (악용 방지)
+  /* const purchaseMutation = useMutation({
     mutationFn: ({ id, body }: { id: number; body: { name: string; message?: string } }) =>
       purchaseItemApi(id, body),
     onSuccess: () => {
@@ -940,7 +942,7 @@ const SharePage: React.FC<SharePageProps> = ({
         queryClient.invalidateQueries({ queryKey: ['share-item', selectedItemId] });
       }
     },
-  });
+  }); */
 
   const cancelApplyMutation = useMutation({
     mutationFn: ({ id, name }: { id: number; name: string }) => cancelApplyApi(id, name),
@@ -1213,9 +1215,9 @@ const SharePage: React.FC<SharePageProps> = ({
     setShowEditPasswordForm(false);
     setEditPassword('');
     setEditPasswordError(false);
-    setShowPurchaseForm(false);
-    setPurchaseName('');
-    setPurchaseMessage('');
+    // setShowPurchaseForm(false); // 임시 비활성화
+    // setPurchaseName(''); // 임시 비활성화
+    // setPurchaseMessage(''); // 임시 비활성화
     setShowCancelForm(false);
     setCancelNickname('');
     setSearchParams({});
@@ -1457,8 +1459,8 @@ const SharePage: React.FC<SharePageProps> = ({
     );
   };
 
-  // Purchase for sale (판매 전용)
-  const handlePurchase = () => {
+  // Purchase for sale (판매 전용) - 임시 비활성화
+  /* const handlePurchase = () => {
     if (!purchaseName.trim()) {
       alert('닉네임을 입력해주세요.');
       return;
@@ -1480,7 +1482,7 @@ const SharePage: React.FC<SharePageProps> = ({
         },
       }
     );
-  };
+  }; */
 
   // Cancel apply/purchase (신청 취소)
   const handleCancel = () => {
@@ -2084,7 +2086,6 @@ const SharePage: React.FC<SharePageProps> = ({
                   <button
                     onClick={() => {
                       setShowApplyForm(!showApplyForm);
-                      setShowPurchaseForm(false);
                       setShowCancelForm(false);
                       setShowCompleteForm(false);
                     }}
@@ -2093,8 +2094,8 @@ const SharePage: React.FC<SharePageProps> = ({
                     🙋 나눔 신청하기
                   </button>
                 )}
-                {/* 판매인 경우 구매 신청 버튼 */}
-                {!isShare && (
+                {/* 판매인 경우 구매 신청 버튼 - 임시 비활성화 (악용 방지) */}
+                {/* {!isShare && (
                   <button
                     onClick={() => {
                       setShowPurchaseForm(!showPurchaseForm);
@@ -2106,15 +2107,13 @@ const SharePage: React.FC<SharePageProps> = ({
                   >
                     🛒 구매 신청하기
                   </button>
-                )}
-                {/* 신청 취소 버튼 - 신청자가 있을 때만 표시 */}
-                {((isShare && selectedItem.applicants && selectedItem.applicants.length > 0) ||
-                  (!isShare && selectedItem.buyers && selectedItem.buyers.length > 0)) && (
+                )} */}
+                {/* 신청 취소 버튼 - 나눔 신청자가 있을 때만 표시 (판매는 임시 비활성화) */}
+                {isShare && selectedItem.applicants && selectedItem.applicants.length > 0 && (
                   <button
                     onClick={() => {
                       setShowCancelForm(!showCancelForm);
                       setShowApplyForm(false);
-                      setShowPurchaseForm(false);
                       setShowCompleteForm(false);
                     }}
                     className="px-6 py-3 bg-gray-500 hover:bg-gray-600 text-white font-bold rounded-lg transition-colors"
@@ -2126,7 +2125,6 @@ const SharePage: React.FC<SharePageProps> = ({
                   onClick={() => {
                     setShowCompleteForm(!showCompleteForm);
                     setShowApplyForm(false);
-                    setShowPurchaseForm(false);
                     setShowCancelForm(false);
                     // 나눔 완료 폼 열 때 상태 초기화
                     if (!showCompleteForm) {
@@ -2381,8 +2379,8 @@ const SharePage: React.FC<SharePageProps> = ({
           </div>
         )}
 
-        {/* Purchase Form (판매 전용) */}
-        {showPurchaseForm && !selectedItem.completed && !isShare && (
+        {/* Purchase Form (판매 전용) - 임시 비활성화 (악용 방지) */}
+        {/* {showPurchaseForm && !selectedItem.completed && !isShare && (
           <div className="bg-bg-secondary rounded-xl border border-green-500 p-6">
             <h3 className="text-lg font-bold mb-4 text-green-400">🛒 구매 신청</h3>
             <div className="space-y-4">
@@ -2419,7 +2417,7 @@ const SharePage: React.FC<SharePageProps> = ({
               </button>
             </div>
           </div>
-        )}
+        )} */}
 
         {/* Cancel Form (신청 취소) */}
         {showCancelForm && !selectedItem.completed && (
@@ -2676,8 +2674,8 @@ const SharePage: React.FC<SharePageProps> = ({
           </div>
         )}
 
-        {/* Buyers Display (판매 + 완료 폼 닫혀있을 때만) */}
-        {!showCompleteForm && !isShare && selectedItem.buyers && selectedItem.buyers.length > 0 && (
+        {/* Buyers Display - 임시 비활성화 (악용 방지) */}
+        {/* {!showCompleteForm && !isShare && selectedItem.buyers && selectedItem.buyers.length > 0 && (
           <div className="bg-bg-secondary rounded-xl border border-green-500/30 p-6">
             <h3 className="text-lg font-bold mb-4 text-green-400">
               🛒 구매 신청자 ({selectedItem.buyers.length}명)
@@ -2693,7 +2691,7 @@ const SharePage: React.FC<SharePageProps> = ({
               ))}
             </div>
           </div>
-        )}
+        )} */}
       </div>
     );
   };
