@@ -1367,10 +1367,17 @@ const MultiplayerPigRace = ({ onBack, initialMode, initialRoomCode }: Multiplaye
     const isFinished = room.status === 'finished';
     const isHost = isCurrentPlayerHost(room);
 
+    // 선택된 돼지 ID 목록 (관전자는 돼지를 선택하지 않았으므로 제외됨)
+    const selectedPigIds = new Set(
+      room.players.filter(p => p.selectedPig !== null).map(p => p.selectedPig!)
+    );
+
     // 게스트는 보간된 위치 사용, 호스트는 room.pigs 직접 사용
-    const displayPigs = (isRacing && !isHost && interpolatedPigs.length > 0)
+    // 선택된 돼지만 필터링하여 표시 (관전자의 돼지는 없음)
+    const allPigs = (isRacing && !isHost && interpolatedPigs.length > 0)
       ? interpolatedPigs
       : room.pigs;
+    const displayPigs = allPigs.filter(pig => selectedPigIds.has(pig.id));
 
     // 상태 텍스트 결정 (게스트는 guestRaceTime 사용)
     const displayTime = isHost ? raceTime : guestRaceTime;
@@ -1499,6 +1506,7 @@ const MultiplayerPigRace = ({ onBack, initialMode, initialRoomCode }: Multiplaye
           <div className="space-y-2">
             <h4 className="text-sm font-medium text-text-secondary">🏆 최종 순위</h4>
             {[...room.pigs]
+              .filter(pig => selectedPigIds.has(pig.id)) // 선택된 돼지만 순위에 표시
               .sort((a, b) => (a.rank || 999) - (b.rank || 999))
               .map((pig) => {
                 const owner = getPigOwner(room, pig.id);
