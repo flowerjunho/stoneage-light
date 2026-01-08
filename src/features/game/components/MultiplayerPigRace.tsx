@@ -16,18 +16,38 @@ import {
   type SSEConnection,
 } from '../services/gameApi';
 
-// 돼지 색상 정의 (프론트엔드에서만 사용)
+// 돼지 색상 정의 (프론트엔드에서만 사용) - 30개 고유 색상
 const PIG_COLORS = [
-  '#FFB6C1', // 연분홍
-  '#87CEEB', // 하늘색
-  '#98FB98', // 연두색
-  '#DDA0DD', // 자주색
-  '#F0E68C', // 카키
-  '#FFA07A', // 연어색
-  '#87CEFA', // 밝은하늘
-  '#FFB347', // 파스텔오렌지
-  '#77DD77', // 파스텔그린
-  '#FF6961', // 파스텔레드
+  '#FF6B6B', // 빨강
+  '#4ECDC4', // 청록
+  '#FFE66D', // 노랑
+  '#95E1D3', // 민트
+  '#F38181', // 코랄
+  '#AA96DA', // 라벤더
+  '#FCBAD3', // 핑크
+  '#A8D8EA', // 하늘
+  '#F9ED69', // 레몬
+  '#B8E994', // 라임
+  '#FF9F43', // 오렌지
+  '#6C5CE7', // 보라
+  '#74B9FF', // 파랑
+  '#FD79A8', // 로즈
+  '#00B894', // 에메랄드
+  '#E17055', // 테라코타
+  '#81ECEC', // 시안
+  '#FFEAA7', // 베이지
+  '#DFE6E9', // 실버
+  '#A29BFE', // 퍼플
+  '#55EFC4', // 아쿠아
+  '#FAB1A0', // 피치
+  '#74B9FF', // 스카이
+  '#FF7675', // 살몬
+  '#FDCB6E', // 골드
+  '#E84393', // 마젠타
+  '#00CEC9', // 틸
+  '#636E72', // 그레이
+  '#D63031', // 크림슨
+  '#0984E3', // 블루
 ];
 
 // 돼지 색상 가져오기
@@ -51,7 +71,7 @@ const MultiplayerPigRace = ({ onBack }: MultiplayerPigRaceProps) => {
   const [viewPhase, setViewPhase] = useState<ViewPhase>('menu');
   const [playerName, setPlayerName] = useState('');
   const [roomCodeInput, setRoomCodeInput] = useState('');
-  const [maxPlayers, setMaxPlayers] = useState(4);
+  const [maxPlayers, setMaxPlayers] = useState(10);
 
   // 게임 상태
   const [room, setRoom] = useState<GameRoom | null>(null);
@@ -841,14 +861,40 @@ const MultiplayerPigRace = ({ onBack }: MultiplayerPigRaceProps) => {
           >
             -
           </button>
-          <div className="flex-1 h-2 bg-bg-tertiary rounded-full overflow-hidden">
-            <div
-              className="h-full bg-pink-500 transition-all"
-              style={{ width: `${(maxPlayers / 10) * 100}%` }}
+          <div className="flex-1 relative">
+            <input
+              type="range"
+              min="2"
+              max="30"
+              value={maxPlayers}
+              onChange={(e) => setMaxPlayers(Number(e.target.value))}
+              className="w-full h-2 bg-bg-tertiary rounded-full appearance-none cursor-pointer
+                [&::-webkit-slider-thumb]:appearance-none
+                [&::-webkit-slider-thumb]:w-5
+                [&::-webkit-slider-thumb]:h-5
+                [&::-webkit-slider-thumb]:rounded-full
+                [&::-webkit-slider-thumb]:bg-pink-500
+                [&::-webkit-slider-thumb]:cursor-grab
+                [&::-webkit-slider-thumb]:active:cursor-grabbing
+                [&::-webkit-slider-thumb]:shadow-lg
+                [&::-webkit-slider-thumb]:hover:bg-pink-400
+                [&::-webkit-slider-thumb]:transition-colors
+                [&::-moz-range-thumb]:w-5
+                [&::-moz-range-thumb]:h-5
+                [&::-moz-range-thumb]:rounded-full
+                [&::-moz-range-thumb]:bg-pink-500
+                [&::-moz-range-thumb]:border-none
+                [&::-moz-range-thumb]:cursor-grab
+                [&::-moz-range-thumb]:active:cursor-grabbing
+                [&::-moz-range-thumb]:shadow-lg
+                [&::-moz-range-thumb]:hover:bg-pink-400"
+              style={{
+                background: `linear-gradient(to right, #EC4899 0%, #EC4899 ${((maxPlayers - 2) / 28) * 100}%, var(--bg-tertiary) ${((maxPlayers - 2) / 28) * 100}%, var(--bg-tertiary) 100%)`
+              }}
             />
           </div>
           <button
-            onClick={() => setMaxPlayers(Math.min(10, maxPlayers + 1))}
+            onClick={() => setMaxPlayers(Math.min(30, maxPlayers + 1))}
             className="w-10 h-10 rounded-lg bg-bg-tertiary hover:bg-bg-primary text-text-primary font-bold"
           >
             +
