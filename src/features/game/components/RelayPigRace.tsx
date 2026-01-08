@@ -503,7 +503,7 @@ const RelayPigRace = ({ onBack, initialMode, initialRoomCode, alreadyJoinedRoom,
     setIsRestarting(true);
 
     // 플레이어 수만큼 돼지 초기화 (관전자 포함 전체 인원)
-    const initialPigs: RelayPigState[] = room.players.map((_, idx) => ({
+    const initialPigs: PigState[] = room.players.map((_, idx) => ({
       id: idx,
       team: idx % 2 === 0 ? 'A' : 'B',
       position: 0,
@@ -965,7 +965,6 @@ const RelayPigRace = ({ onBack, initialMode, initialRoomCode, alreadyJoinedRoom,
     // 팀별 분류
     const teamAPlayers = room.players.filter(p => p.team === 'A' && p.selectedPig !== null);
     const teamBPlayers = room.players.filter(p => p.team === 'B' && p.selectedPig !== null);
-    const noTeamPlayers = room.players.filter(p => (p.team === null || p.selectedPig === null) && p.selectedPig !== null);
     const noPigPlayers = room.players.filter(p => p.selectedPig === null);
 
     const allReady = room.players.every(p => p.isReady || p.id === room.hostId);
