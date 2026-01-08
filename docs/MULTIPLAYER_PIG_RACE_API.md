@@ -507,7 +507,7 @@ function selectPig(roomCode, playerId, pigId) {
 
 ### 6. 준비 완료/해제
 
-플레이어의 준비 상태를 토글합니다.
+플레이어의 준비 상태를 토글합니다. **돼지를 선택하지 않은 플레이어도 준비할 수 있습니다 (관전 모드).**
 
 **POST** `/api/game/rooms/:roomCode/ready`
 
@@ -517,6 +517,15 @@ function selectPig(roomCode, playerId, pigId) {
   "playerId": "player_1704067200000_abc123def"
 }
 ```
+
+#### 관전 모드 설명
+
+돼지를 선택하지 않은 플레이어는 **관전자**로 게임에 참여합니다:
+- 관전자도 "준비 완료" 가능 (관전 준비)
+- 관전자는 레이스를 볼 수 있지만 돼지를 응원하지는 않음
+- 게임 시작 조건: **돼지를 선택한 참가자가 2명 이상** + 모든 플레이어(참가자+관전자) 준비 완료
+
+> ⚠️ **중요**: 서버에서 "먼저 돼지를 선택해주세요" 같은 검사를 하면 안 됩니다. 돼지 미선택자도 준비할 수 있어야 관전 모드가 동작합니다.
 
 #### 서버 구현 로직
 ```javascript
@@ -532,6 +541,8 @@ function toggleReady(roomCode, playerId) {
   // 2. 플레이어 찾기
   const player = room.players.find(p => p.id === playerId);
   if (!player) throw new NotFoundError('플레이어를 찾을 수 없습니다.');
+
+  // ⚠️ 돼지 선택 여부 검사 없음! 관전자도 준비 가능
 
   // 3. 방장은 자동 준비 (토글 불가)
   if (player.id === room.hostId) {

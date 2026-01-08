@@ -1130,9 +1130,19 @@ const MultiplayerPigRace = ({ onBack, initialMode, initialRoomCode }: Multiplaye
 
     const currentPlayer = getCurrentPlayer(room);
     const isHost = isCurrentPlayerHost(room);
+
+    // 참가자: 돼지를 선택한 플레이어 (방장 포함)
+    // 관전자: 돼지를 선택하지 않은 플레이어
+    const participants = room.players.filter(p => p.selectedPig !== null);
+    const spectators = room.players.filter(p => p.selectedPig === null);
+
+    // 방장을 제외한 모든 플레이어가 준비 완료해야 함
     const allReady = room.players.every(p => p.isReady || p.id === room.hostId);
+    // 돼지를 선택한 참가자가 2명 이상이어야 게임 시작 가능
+    const hasEnoughParticipants = participants.length >= 2;
+    // 방장도 돼지를 선택해야 함
     const hostHasSelectedPig = currentPlayer?.selectedPig !== null;
-    const canStart = isHost && allReady && room.players.length >= 2 && hostHasSelectedPig;
+    const canStart = isHost && allReady && hasEnoughParticipants && hostHasSelectedPig;
 
     return (
       <div className="space-y-6">
@@ -1179,11 +1189,12 @@ const MultiplayerPigRace = ({ onBack, initialMode, initialRoomCode }: Multiplaye
         {/* 플레이어 목록 */}
         <div>
           <h4 className="text-sm font-medium text-text-secondary mb-2">
-            참가자 ({room.players.length}/{room.maxPlayers})
+            참가자 ({participants.length}명) / 관전자 ({spectators.length}명)
           </h4>
           <div className="space-y-2">
             {room.players.map((player) => {
               const isPlayerHost = player.id === room.hostId;
+              const isSpectator = player.selectedPig === null;
               return (
                 <div
                   key={player.id}
@@ -1195,9 +1206,13 @@ const MultiplayerPigRace = ({ onBack, initialMode, initialRoomCode }: Multiplaye
                 >
                   <div className="flex items-center gap-2">
                     {isPlayerHost && <span>👑</span>}
+                    {isSpectator && !isPlayerHost && <span>👀</span>}
                     <span className="font-medium text-text-primary">{player.name}</span>
                     {player.id === getCurrentPlayerId() && (
                       <span className="text-xs text-accent">(나)</span>
+                    )}
+                    {isSpectator && (
+                      <span className="text-xs text-blue-400">[관전]</span>
                     )}
                   </div>
                   <div className="flex items-center gap-2">
@@ -1206,8 +1221,12 @@ const MultiplayerPigRace = ({ onBack, initialMode, initialRoomCode }: Multiplaye
                         방장
                       </span>
                     ) : player.isReady ? (
-                      <span className="text-xs px-2 py-1 bg-green-500/20 text-green-400 rounded">
-                        준비완료
+                      <span className={`text-xs px-2 py-1 rounded ${
+                        isSpectator
+                          ? 'bg-blue-500/20 text-blue-400'
+                          : 'bg-green-500/20 text-green-400'
+                      }`}>
+                        {isSpectator ? '관전 준비' : '준비완료'}
                       </span>
                     ) : (
                       <span className="text-xs px-2 py-1 bg-gray-500/20 text-gray-400 rounded">
@@ -1241,9 +1260,14 @@ const MultiplayerPigRace = ({ onBack, initialMode, initialRoomCode }: Multiplaye
         {/* 돼지 선택 (waiting 또는 selecting 상태일 때) */}
         {(room.status === 'waiting' || room.status === 'selecting') && (
           <div>
-            <h4 className="text-sm font-medium text-text-secondary mb-2">
-              🐷 내 돼지 선택
-            </h4>
+            <div className="flex items-center justify-between mb-2">
+              <h4 className="text-sm font-medium text-text-secondary">
+                🐷 내 돼지 선택
+              </h4>
+              <span className="text-xs text-blue-400">
+                💡 선택 안 하면 관전 모드
+              </span>
+            </div>
             <div className="grid grid-cols-5 gap-2">
               {room.pigs.map((pig) => {
                 const owner = getPigOwner(room, pig.id);
@@ -1299,8 +1323,8 @@ const MultiplayerPigRace = ({ onBack, initialMode, initialRoomCode }: Multiplaye
                   disabled={!canStart}
                   className="flex-1 py-3 bg-gradient-to-r from-pink-500 to-rose-500 hover:from-pink-400 hover:to-rose-400 text-white font-bold rounded-lg disabled:opacity-50"
                 >
-                  {room.players.length < 2
-                    ? '2명 이상 필요'
+                  {!hasEnoughParticipants
+                    ? '참가자 2명 이상 필요'
                     : !hostHasSelectedPig
                     ? '돼지 선택 필요'
                     : !allReady
@@ -1315,10 +1339,16 @@ const MultiplayerPigRace = ({ onBack, initialMode, initialRoomCode }: Multiplaye
                   className={`flex-1 py-3 font-bold rounded-lg ${
                     currentPlayer?.isReady
                       ? 'bg-gray-600 text-gray-300'
+                      : currentPlayer?.selectedPig === null
+                      ? 'bg-gradient-to-r from-blue-500 to-cyan-500 text-white'
                       : 'bg-gradient-to-r from-green-500 to-emerald-500 text-white'
                   }`}
                 >
-                  {currentPlayer?.isReady ? '준비 취소' : '준비 완료'}
+                  {currentPlayer?.isReady
+                    ? '준비 취소'
+                    : currentPlayer?.selectedPig === null
+                    ? '👀 관전 준비'
+                    : '준비 완료'}
                 </button>
               )}
             </div>
