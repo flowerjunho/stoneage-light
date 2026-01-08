@@ -257,6 +257,85 @@ const MultiplayerPigRace = ({ onBack }: MultiplayerPigRaceProps) => {
     setIsRefreshing(false);
   };
 
+  // 재경기 준비 모드로 전환 - 호스트만
+  const [isRestarting, setIsRestarting] = useState(false);
+  const handlePrepareRematch = async () => {
+    if (!room || !isCurrentPlayerHost(room) || isRestarting) return;
+
+    setIsRestarting(true);
+    console.log('🔄 재경기 준비 모드로 전환...');
+
+    // 돼지 위치 초기화 (선택은 유지)
+    const resetPigs = room.pigs.map(pig => ({
+      ...pig,
+      position: 0,
+      speed: 0,
+      status: 'normal' as const,
+      finishTime: null,
+      rank: null,
+    }));
+
+    // 서버에 상태 리셋 요청 - waiting 상태로 변경하여 준비 시스템 활성화
+    const response = await updateGameState(room.roomCode, {
+      status: 'waiting',
+      countdown: 3,
+      raceStartTime: null,
+      raceEndTime: null,
+      pigs: resetPigs,
+    });
+
+    if (response.success && response.data) {
+      console.log('✅ 재경기 대기 상태로 전환!');
+      setRoom(response.data);
+      setRaceTime(0);
+      setGuestRaceTime(0);
+    } else {
+      console.error('❌ 재경기 준비 실패:', response.error);
+      alert('재경기 준비에 실패했습니다.');
+    }
+
+    setIsRestarting(false);
+  };
+
+  // 재경기 시작 - 모두 준비되면 호스트가 시작
+  const handleStartRematch = async () => {
+    if (!room || !isCurrentPlayerHost(room) || isRestarting) return;
+
+    setIsRestarting(true);
+    console.log('🔄 재경기 시작...');
+
+    // 돼지 위치 초기화 (선택은 유지)
+    const resetPigs = room.pigs.map(pig => ({
+      ...pig,
+      position: 0,
+      speed: 0,
+      status: 'normal' as const,
+      finishTime: null,
+      rank: null,
+    }));
+
+    // 서버에 카운트다운 시작 요청
+    const response = await updateGameState(room.roomCode, {
+      status: 'countdown',
+      countdown: 3,
+      raceStartTime: null,
+      raceEndTime: null,
+      pigs: resetPigs,
+    });
+
+    if (response.success && response.data) {
+      console.log('✅ 재경기 시작!');
+      setRoom(response.data);
+      setRaceTime(0);
+      setGuestRaceTime(0);
+    } else {
+      console.error('❌ 재경기 시작 실패:', response.error);
+      alert('재경기 시작에 실패했습니다.');
+    }
+
+    setIsRestarting(false);
+  };
+
   // 돼지 선택
   const handleSelectPig = async (pigId: number) => {
     // waiting 또는 selecting 상태에서만 돼지 선택 가능
@@ -977,38 +1056,47 @@ const MultiplayerPigRace = ({ onBack }: MultiplayerPigRaceProps) => {
         )}
 
         {/* 버튼들 */}
-        <div className="flex gap-3">
-          <button
-            onClick={handleLeaveRoom}
-            className="flex-1 py-3 bg-bg-tertiary hover:bg-bg-primary text-text-primary font-medium rounded-lg"
-          >
-            나가기
-          </button>
-          {isHost ? (
-            <button
-              onClick={handleStartGame}
-              disabled={!canStart}
-              className="flex-1 py-3 bg-gradient-to-r from-pink-500 to-rose-500 hover:from-pink-400 hover:to-rose-400 text-white font-bold rounded-lg disabled:opacity-50"
-            >
-              {room.players.length < 2
-                ? '2명 이상 필요'
-                : !allReady
-                ? '모두 준비 대기'
-                : '게임 시작!'}
-            </button>
-          ) : (
-            <button
-              onClick={handleToggleReady}
-              className={`flex-1 py-3 font-bold rounded-lg ${
-                currentPlayer?.isReady
-                  ? 'bg-gray-600 text-gray-300'
-                  : 'bg-gradient-to-r from-green-500 to-emerald-500 text-white'
-              }`}
-            >
-              {currentPlayer?.isReady ? '준비 취소' : '준비 완료'}
-            </button>
-          )}
-        </div>
+        {(() => {
+          // 재경기 대기 상태인지 확인 (모든 플레이어가 돼지를 이미 선택한 상태)
+          const isRematchWaiting = room.players.every(p => p.selectedPig !== null);
+
+          return (
+            <div className="flex gap-3">
+              <button
+                onClick={handleLeaveRoom}
+                className="flex-1 py-3 bg-bg-tertiary hover:bg-bg-primary text-text-primary font-medium rounded-lg"
+              >
+                나가기
+              </button>
+              {isHost ? (
+                <button
+                  onClick={isRematchWaiting ? handleStartRematch : handleStartGame}
+                  disabled={!canStart}
+                  className="flex-1 py-3 bg-gradient-to-r from-pink-500 to-rose-500 hover:from-pink-400 hover:to-rose-400 text-white font-bold rounded-lg disabled:opacity-50"
+                >
+                  {room.players.length < 2
+                    ? '2명 이상 필요'
+                    : !allReady
+                    ? '모두 준비 대기'
+                    : isRematchWaiting
+                    ? '🔄 게임 시작!'
+                    : '게임 시작!'}
+                </button>
+              ) : (
+                <button
+                  onClick={handleToggleReady}
+                  className={`flex-1 py-3 font-bold rounded-lg ${
+                    currentPlayer?.isReady
+                      ? 'bg-gray-600 text-gray-300'
+                      : 'bg-gradient-to-r from-green-500 to-emerald-500 text-white'
+                  }`}
+                >
+                  {currentPlayer?.isReady ? '준비 취소' : '준비 완료'}
+                </button>
+              )}
+            </div>
+          );
+        })()}
       </div>
     );
   };
@@ -1198,12 +1286,30 @@ const MultiplayerPigRace = ({ onBack }: MultiplayerPigRaceProps) => {
 
         {/* 버튼 */}
         {isFinished && (
-          <button
-            onClick={handleLeaveRoom}
-            className="w-full py-3 bg-bg-tertiary hover:bg-bg-primary text-text-primary font-medium rounded-lg"
-          >
-            로비로 돌아가기
-          </button>
+          <div className="space-y-3">
+            {!isHost && (
+              <p className="text-center text-text-secondary text-sm">
+                ⏳ 방장이 재경기를 시작하면 로비로 이동합니다
+              </p>
+            )}
+            <div className="flex gap-3">
+              <button
+                onClick={handleLeaveRoom}
+                className="flex-1 py-3 bg-bg-tertiary hover:bg-bg-primary text-text-primary font-medium rounded-lg"
+              >
+                나가기
+              </button>
+              {isHost && (
+                <button
+                  onClick={handlePrepareRematch}
+                  disabled={isRestarting}
+                  className="flex-1 py-3 bg-gradient-to-r from-pink-500 to-rose-500 hover:from-pink-400 hover:to-rose-400 text-white font-bold rounded-lg disabled:opacity-50"
+                >
+                  {isRestarting ? '준비중...' : '🔄 한번 더!'}
+                </button>
+              )}
+            </div>
+          </div>
         )}
       </div>
     );
