@@ -1074,7 +1074,9 @@ const MultiplayerPigRace = ({ onBack, initialMode, initialRoomCode }: Multiplaye
             </button>
             <button
               onClick={() => {
-                const url = `${window.location.origin}/#/game?type=multi&code=${room.roomCode}`;
+                // HashRouter 기반 URL 생성 (GitHub Pages 등 서브 경로 지원)
+                const baseUrl = window.location.href.split('#')[0];
+                const url = `${baseUrl}#/game?type=multi&code=${room.roomCode}`;
                 navigator.clipboard.writeText(url);
                 alert('링크가 복사되었습니다!');
               }}
