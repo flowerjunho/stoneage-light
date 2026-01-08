@@ -234,9 +234,15 @@ export const getPlayerByPigId = (room: GameRoom, pigId: number): Player | undefi
 // ========== SSE (Server-Sent Events) ==========
 
 export interface SSEEvent {
-  event: 'room_update' | 'player_joined' | 'player_left' | 'pig_selected' | 'player_ready' | 'game_starting' | 'game_started' | 'race_update' | 'race_finished' | 'room_closed' | 'error' | 'connected' | 'heartbeat';
-  data: GameRoom | { message: string; playerId?: string; playerName?: string };
+  event: 'room_update' | 'player_joined' | 'player_left' | 'pig_selected' | 'player_ready' | 'game_starting' | 'game_started' | 'race_update' | 'race_finished' | 'room_closed' | 'error' | 'connected' | 'heartbeat' | 'host_changed';
+  data: GameRoom | { message: string; playerId?: string; playerName?: string } | HostChangedData;
   timestamp: number;
+}
+
+// host_changed 이벤트 데이터 타입
+export interface HostChangedData {
+  newHostId: string;
+  room: GameRoom;
 }
 
 export interface SSEConnection {
@@ -251,12 +257,14 @@ export interface SSEConnection {
  * @param roomCode - 방 코드
  * @param onUpdate - 방 상태 업데이트 콜백
  * @param onError - 에러 발생 시 콜백
+ * @param onHostChanged - 방장 변경 시 콜백 (게임 중 방장이 나가면 호출)
  * @returns SSE 연결 객체 (close 함수 포함)
  */
 export const subscribeToRoom = (
   roomCode: string,
   onUpdate: (room: GameRoom) => void,
-  onError?: (error: string) => void
+  onError?: (error: string) => void,
+  onHostChanged?: (data: HostChangedData) => void
 ): SSEConnection => {
   const playerId = getPlayerId();
   const url = `${API_BASE_URL}/api/game/rooms/${roomCode}/events?playerId=${playerId}`;
@@ -295,7 +303,7 @@ export const subscribeToRoom = (
   };
 
   // 개별 이벤트 타입 핸들러
-  // README 스펙: connected(초기), update(상태변경), ping(하트비트), room_deleted(삭제)
+  // README 스펙: connected(초기), update(상태변경), ping(하트비트), room_deleted(삭제), host_changed(방장변경)
   const eventTypes = [
     'connected',      // 연결 시 초기 상태
     'update',         // 상태 업데이트 (플레이어 입장/퇴장/준비/게임시작 등)
@@ -333,6 +341,25 @@ export const subscribeToRoom = (
         console.error(`[SSE] ${eventType} 파싱 오류:`, err);
       }
     });
+  });
+
+  // host_changed 이벤트 (게임 중 방장 변경) - 별도 처리
+  eventSource.addEventListener('host_changed', (event: MessageEvent) => {
+    console.log('[SSE] 🔄 host_changed 이벤트 수신!');
+    console.log('[SSE] raw data:', event.data);
+    try {
+      const data = JSON.parse(event.data) as HostChangedData;
+      console.log('[SSE] host_changed 파싱됨:', data);
+      console.log('[SSE] 새 방장 ID:', data.newHostId);
+
+      // onHostChanged 콜백 호출 (콜백에서 setRoom 처리하므로 onUpdate 중복 호출 안 함)
+      if (onHostChanged) {
+        console.log('[SSE] onHostChanged 콜백 호출');
+        onHostChanged(data);
+      }
+    } catch (err) {
+      console.error('[SSE] host_changed 파싱 오류:', err);
+    }
   });
 
   console.log('[SSE] 모든 이벤트 리스너 등록 완료');

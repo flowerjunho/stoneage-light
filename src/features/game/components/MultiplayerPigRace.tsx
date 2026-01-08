@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
-import type { GameRoom, PigState, Player } from '../services/gameApi';
+import type { GameRoom, PigState, Player, HostChangedData } from '../services/gameApi';
 import {
   createRoom,
   joinRoom,
@@ -80,7 +80,6 @@ const MultiplayerPigRace = ({ onBack, initialMode, initialRoomCode }: Multiplaye
   const [playerName, setPlayerName] = useState('');
   const [roomCodeInput, setRoomCodeInput] = useState(initialRoomCode || '');
   const [maxPlayers, setMaxPlayers] = useState(10);
-  const [autoJoinAttempted, setAutoJoinAttempted] = useState(false);
 
   // 게임 상태
   const [room, setRoom] = useState<GameRoom | null>(null);
@@ -95,6 +94,9 @@ const MultiplayerPigRace = ({ onBack, initialMode, initialRoomCode }: Multiplaye
 
   // 호스트가 레이싱 중인지 추적하는 ref (SSE 업데이트 무시용)
   const isHostRacingRef = useRef(false);
+
+  // 방장 인계 트리거 (게임 중 방장이 바뀌면 새 방장이 게임 루프 시작)
+  const [hostTakeoverTrigger, setHostTakeoverTrigger] = useState(0);
 
   // SSE 연결 시작
   const startSSE = useCallback((roomCode: string) => {
@@ -126,6 +128,31 @@ const MultiplayerPigRace = ({ onBack, initialMode, initialRoomCode }: Multiplaye
       },
       (errorMsg) => {
         console.error('[SSE] ❌ 에러:', errorMsg);
+      },
+      // host_changed 이벤트 처리 (게임 중 방장 변경)
+      (hostChangedData: HostChangedData) => {
+        const myPlayerId = getCurrentPlayerId();
+        console.log('[SSE] 🔄 방장 변경 이벤트!');
+        console.log('[SSE] - 새 방장 ID:', hostChangedData.newHostId);
+        console.log('[SSE] - 내 ID:', myPlayerId);
+        console.log('[SSE] - 현재 게임 상태:', hostChangedData.room.status);
+
+        // 먼저 room 상태 업데이트 (hostId가 변경됨)
+        setRoom(hostChangedData.room);
+
+        // 내가 새 방장인지 확인
+        if (hostChangedData.newHostId === myPlayerId) {
+          console.log('[SSE] 🎉 내가 새 방장이 되었습니다! 게임 루프를 인계받습니다.');
+
+          // 게임 중이면 트리거를 통해 useEffect 강제 실행
+          if (hostChangedData.room.status === 'countdown' || hostChangedData.room.status === 'racing') {
+            console.log('[SSE] 🏁 게임 진행 중 - 게임 루프 인계 트리거!');
+            // 트리거 값을 변경하여 useEffect 강제 재실행
+            setHostTakeoverTrigger(prev => prev + 1);
+          }
+        } else {
+          console.log('[SSE] 방장이 다른 사람으로 변경되었습니다:', hostChangedData.newHostId);
+        }
       }
     );
 
@@ -209,34 +236,8 @@ const MultiplayerPigRace = ({ onBack, initialMode, initialRoomCode }: Multiplaye
     }
   }, [initialRoomCode]);
 
-  // URL 방 코드로 자동 입장 시도
-  useEffect(() => {
-    const autoJoin = async () => {
-      if (initialRoomCode && playerName.trim() && !autoJoinAttempted && viewPhase === 'join') {
-        setAutoJoinAttempted(true);
-        setIsLoading(true);
-        setError(null);
-
-        console.log('🔗 URL 방 코드로 자동 입장 시도:', initialRoomCode);
-        const response = await joinRoom(initialRoomCode.toUpperCase(), playerName.trim());
-
-        if (response.success && response.data) {
-          console.log('✅ 자동 입장 성공:', response.data.roomCode);
-          setRoom(response.data);
-          setViewPhase('lobby');
-          startSSE(response.data.roomCode);
-          startPolling(response.data.roomCode);
-        } else {
-          console.error('❌ 자동 입장 실패:', response.error);
-          setError(response.error || '방 입장에 실패했습니다');
-        }
-
-        setIsLoading(false);
-      }
-    };
-
-    autoJoin();
-  }, [initialRoomCode, playerName, autoJoinAttempted, viewPhase, startSSE, startPolling]);
+  // URL 방 코드는 입력 필드에만 자동 설정되며, 입장은 버튼 클릭 시에만 수행
+  // (자동 입장 제거 - 사용자가 직접 입장하기 버튼을 눌러야 함)
 
   // 방 생성
   const handleCreateRoom = async () => {
@@ -465,10 +466,12 @@ const MultiplayerPigRace = ({ onBack, initialMode, initialRoomCode }: Multiplaye
   const statusDurationRef = useRef<Map<number, number>>(new Map());
 
   // 카운트다운 처리 (호스트만)
+  // room?.hostId 의존성 추가: 게임 중 방장이 변경되면 새 방장이 카운트다운 루프를 이어받음
   useEffect(() => {
     if (!room || room.status !== 'countdown' || !isCurrentPlayerHost(room)) return;
 
-    console.log('⏱️ 카운트다운 시작:', room.countdown);
+    console.log('⏱️ 카운트다운 시작 (방장):', room.countdown);
+    console.log('⏱️ 현재 방장:', room.hostId);
     const roomCode = room.roomCode;
 
     const countdownInterval = setInterval(async () => {
@@ -510,7 +513,8 @@ const MultiplayerPigRace = ({ onBack, initialMode, initialRoomCode }: Multiplaye
     }, 1000);
 
     return () => clearInterval(countdownInterval);
-  }, [room?.status, room?.roomCode]);
+    // hostTakeoverTrigger: 게임 중 방장이 바뀌면 새 방장이 카운트다운 루프 인계
+  }, [room?.status, room?.roomCode, room?.hostId, hostTakeoverTrigger]);
 
   // 돼지 상태를 ref로 관리 (클로저 문제 해결)
   const pigsRef = useRef<PigState[]>([]);
@@ -556,12 +560,25 @@ const MultiplayerPigRace = ({ onBack, initialMode, initialRoomCode }: Multiplaye
     const UPDATE_INTERVAL = 500; // 500ms마다 서버 업데이트 (SSE로 게스트에게 전파)
     let isAnimating = true;
 
-    startTimeRef.current = performance.now();
+    // 방장 인계 시: 서버의 raceStartTime 기준으로 경과 시간 계산
+    // 새로 시작하는 경우: 현재 시간 기준
+    const serverElapsed = room.raceStartTime ? Date.now() - room.raceStartTime : 0;
+    const isHostTakeover = serverElapsed > 500; // 500ms 이상 경과했으면 인계로 판단
 
-    // 초기 돼지 상태 설정
-    pigsRef.current = [...room.pigs];
+    if (isHostTakeover) {
+      console.log('🔄 방장 인계 - 서버 경과 시간:', serverElapsed, 'ms');
+      // 인계 시: 서버 경과 시간을 기준으로 startTimeRef 설정
+      startTimeRef.current = performance.now() - serverElapsed;
+      // 서버에서 받은 돼지 위치 유지
+      pigsRef.current = [...room.pigs];
+    } else {
+      console.log('🏁 새 레이스 시작');
+      startTimeRef.current = performance.now();
+      // 초기 돼지 상태 설정
+      pigsRef.current = [...room.pigs];
+    }
 
-    // 상태 지속시간 초기화
+    // 상태 지속시간 초기화 (인계 시에도 리셋 - 상태 효과는 새로 적용)
     room.pigs.forEach(pig => {
       statusDurationRef.current.set(pig.id, 0);
     });
@@ -714,7 +731,8 @@ const MultiplayerPigRace = ({ onBack, initialMode, initialRoomCode }: Multiplaye
         cancelAnimationFrame(animationRef.current);
       }
     };
-  }, [room?.status, room?.roomCode]);
+    // hostTakeoverTrigger: 게임 중 방장이 바뀌면 새 방장이 레이스 루프 인계
+  }, [room?.status, room?.roomCode, room?.hostId, hostTakeoverTrigger]);
 
   // 게스트용 보간 상태 (부드러운 애니메이션용)
   const [interpolatedPigs, setInterpolatedPigs] = useState<PigState[]>([]);
