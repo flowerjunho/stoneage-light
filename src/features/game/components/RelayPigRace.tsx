@@ -1502,7 +1502,7 @@ const RelayPigRace = ({ onBack, initialMode, initialRoomCode, alreadyJoinedRoom,
 
         {/* 레이스 트랙 - 모든 주자 표시 */}
         <div className="relative bg-gradient-to-b from-green-700 to-green-600 rounded-2xl overflow-hidden border-4 border-green-800"
-          style={{ height: `${Math.max(200, relayRunners.length * 35)}px` }}>
+          style={{ height: `${Math.max(200, 10 + teamARunners.length * 30 + 35 + teamBRunners.length * 30 + 50)}px` }}>
 
           {/* 출발선 */}
           <div className="absolute left-[5%] top-0 bottom-0 w-1 bg-white" />
