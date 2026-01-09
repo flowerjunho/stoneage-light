@@ -148,6 +148,9 @@ const RelayPigRace = ({ onBack, initialMode, initialRoomCode, alreadyJoinedRoom,
   const pollingIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const heartbeatIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
+  // BGM ref
+  const bgmRef = useRef<HTMLAudioElement | null>(null);
+
   // 채팅 상태
   const [chatMessages, setChatMessages] = useState<ChatMessage[]>([]);
   const [chatInput, setChatInput] = useState('');
@@ -443,6 +446,18 @@ const RelayPigRace = ({ onBack, initialMode, initialRoomCode, alreadyJoinedRoom,
 
   const handleToggleReady = async () => {
     if (!room) return;
+
+    // 모바일 오디오 unlock (게스트도 준비 버튼 클릭 시 unlock)
+    if (!bgmRef.current) {
+      bgmRef.current = new Audio('/bgm.mp3');
+      bgmRef.current.loop = true;
+      bgmRef.current.volume = 0.5;
+    }
+    bgmRef.current.play().then(() => {
+      bgmRef.current?.pause();
+      if (bgmRef.current) bgmRef.current.currentTime = 0;
+    }).catch(() => {});
+
     const response = await toggleReady(room.roomCode);
     if (response.success && response.data) setRoom(response.data);
     else alert(response.error || '준비 상태 변경에 실패했습니다');
@@ -451,6 +466,18 @@ const RelayPigRace = ({ onBack, initialMode, initialRoomCode, alreadyJoinedRoom,
   // 게임 시작 - 주자 순서 랜덤 배정
   const handleStartGame = async () => {
     if (!room || !isCurrentPlayerHost(room)) return;
+
+    // 모바일 오디오 unlock (사용자 상호작용 시점에 미리 준비)
+    if (!bgmRef.current) {
+      bgmRef.current = new Audio('/bgm.mp3');
+      bgmRef.current.loop = true;
+      bgmRef.current.volume = 0.5;
+    }
+    // 무음으로 한 번 재생하여 unlock
+    bgmRef.current.play().then(() => {
+      bgmRef.current?.pause();
+      if (bgmRef.current) bgmRef.current.currentTime = 0;
+    }).catch(() => {});
 
     // 팀별 플레이어 분류 (관전자 제외, 돼지 선택한 플레이어만)
     const teamAPlayers = room.players.filter(p => p.team === 'A' && p.selectedPig !== null && !p.isSpectator);
@@ -916,6 +943,36 @@ const RelayPigRace = ({ onBack, initialMode, initialRoomCode, alreadyJoinedRoom,
     }
   }, [room?.status, room?.players, room?.pigs]);
 
+  // BGM 재생/정지
+  useEffect(() => {
+    if (room?.status === 'racing') {
+      // 레이스 시작 시 BGM 재생
+      if (!bgmRef.current) {
+        bgmRef.current = new Audio('/bgm.mp3');
+        bgmRef.current.loop = true;
+        bgmRef.current.volume = 0.5;
+      }
+      bgmRef.current.currentTime = 0;
+      bgmRef.current.play().catch(() => {
+        // 자동 재생 실패 시 무시 (브라우저 정책)
+      });
+    } else if (room?.status === 'finished' || !room) {
+      // 레이스 종료 시 BGM 정지
+      if (bgmRef.current) {
+        bgmRef.current.pause();
+        bgmRef.current.currentTime = 0;
+      }
+    }
+
+    return () => {
+      // 컴포넌트 언마운트 시 BGM 정지
+      if (bgmRef.current) {
+        bgmRef.current.pause();
+        bgmRef.current.currentTime = 0;
+      }
+    };
+  }, [room?.status]);
+
   // 폴링 관리
   useEffect(() => {
     if (!room) return;
@@ -1193,22 +1250,47 @@ const RelayPigRace = ({ onBack, initialMode, initialRoomCode, alreadyJoinedRoom,
           </div>
         )}
 
+        {/* 팀 현황 요약 - 항상 표시 */}
+        {room.status === 'waiting' && (
+          <div className="bg-bg-tertiary rounded-xl p-3 border border-border">
+            <div className="flex items-center justify-between text-sm">
+              <div className="flex items-center gap-2">
+                <span className="text-xl">🔴</span>
+                <span className="font-bold text-red-400">A팀</span>
+                <span className="text-lg font-bold text-white">{teamAPlayers.length}명</span>
+              </div>
+              <div className={`px-3 py-1 rounded-full text-xs font-bold ${
+                teamAPlayers.length === teamBPlayers.length
+                  ? 'bg-green-500/20 text-green-400'
+                  : 'bg-yellow-500/20 text-yellow-400'
+              }`}>
+                {teamAPlayers.length === teamBPlayers.length ? '✓ 균형' : `${Math.abs(teamAPlayers.length - teamBPlayers.length)}명 차이`}
+              </div>
+              <div className="flex items-center gap-2">
+                <span className="text-lg font-bold text-white">{teamBPlayers.length}명</span>
+                <span className="font-bold text-blue-400">B팀</span>
+                <span className="text-xl">🔵</span>
+              </div>
+            </div>
+          </div>
+        )}
+
         {/* 팀 선택 */}
         {(room.status === 'waiting') && myPig !== null && !isPlayerReady && (
           <div>
             <h4 className="text-sm font-medium text-text-secondary mb-2">🏃 내 팀 선택</h4>
             <div className="grid grid-cols-2 gap-3">
               <button onClick={() => handleSelectTeam('A')}
-                className={`p-3 rounded-xl border-2 transition-all ${myTeam === 'A' ? 'border-red-500 bg-red-500/20' : 'border-border hover:border-red-500/50 bg-bg-tertiary'}`}>
-                <div className="text-xl mb-1">🔴</div>
-                <div className="font-bold text-red-400">A팀</div>
-                <div className="text-xs text-text-secondary">{teamAPlayers.length}명</div>
+                className={`p-4 rounded-xl border-2 transition-all ${myTeam === 'A' ? 'border-red-500 bg-red-500/20' : 'border-border hover:border-red-500/50 bg-bg-tertiary'}`}>
+                <div className="text-2xl mb-1">🔴</div>
+                <div className="font-bold text-red-400 text-lg">A팀</div>
+                <div className="text-sm text-text-secondary">{teamAPlayers.length}명</div>
               </button>
               <button onClick={() => handleSelectTeam('B')}
-                className={`p-3 rounded-xl border-2 transition-all ${myTeam === 'B' ? 'border-blue-500 bg-blue-500/20' : 'border-border hover:border-blue-500/50 bg-bg-tertiary'}`}>
-                <div className="text-xl mb-1">🔵</div>
-                <div className="font-bold text-blue-400">B팀</div>
-                <div className="text-xs text-text-secondary">{teamBPlayers.length}명</div>
+                className={`p-4 rounded-xl border-2 transition-all ${myTeam === 'B' ? 'border-blue-500 bg-blue-500/20' : 'border-border hover:border-blue-500/50 bg-bg-tertiary'}`}>
+                <div className="text-2xl mb-1">🔵</div>
+                <div className="font-bold text-blue-400 text-lg">B팀</div>
+                <div className="text-sm text-text-secondary">{teamBPlayers.length}명</div>
               </button>
             </div>
             <p className="text-xs text-text-secondary mt-2 text-center">💡 주자 순서는 게임 시작 시 랜덤 배정!</p>

@@ -191,6 +191,9 @@ const MultiplayerPigRace = ({ onBack, initialMode, initialRoomCode, onGoToRelay,
   const pollingIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const heartbeatIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
+  // BGM ref
+  const bgmRef = useRef<HTMLAudioElement | null>(null);
+
   // SSE 연결 정리
   const stopConnection = useCallback(() => {
     if (sseConnectionRef.current) {
@@ -650,6 +653,17 @@ const MultiplayerPigRace = ({ onBack, initialMode, initialRoomCode, onGoToRelay,
   const handleToggleReady = async () => {
     if (!room) return;
 
+    // 모바일 오디오 unlock (게스트도 준비 버튼 클릭 시 unlock)
+    if (!bgmRef.current) {
+      bgmRef.current = new Audio('/bgm.mp3');
+      bgmRef.current.loop = true;
+      bgmRef.current.volume = 0.5;
+    }
+    bgmRef.current.play().then(() => {
+      bgmRef.current?.pause();
+      if (bgmRef.current) bgmRef.current.currentTime = 0;
+    }).catch(() => {});
+
     const response = await toggleReady(room.roomCode);
     if (response.success && response.data) {
       setRoom(response.data);
@@ -663,6 +677,18 @@ const MultiplayerPigRace = ({ onBack, initialMode, initialRoomCode, onGoToRelay,
     if (!room || !isCurrentPlayerHost(room)) {
       return;
     }
+
+    // 모바일 오디오 unlock (사용자 상호작용 시점에 미리 준비)
+    if (!bgmRef.current) {
+      bgmRef.current = new Audio('/bgm.mp3');
+      bgmRef.current.loop = true;
+      bgmRef.current.volume = 0.5;
+    }
+    // 무음으로 한 번 재생하여 unlock
+    bgmRef.current.play().then(() => {
+      bgmRef.current?.pause();
+      if (bgmRef.current) bgmRef.current.currentTime = 0;
+    }).catch(() => {});
 
     const response = await startGame(room.roomCode);
 
@@ -1119,6 +1145,36 @@ const MultiplayerPigRace = ({ onBack, initialMode, initialRoomCode, onGoToRelay,
     } else if (room?.status === 'waiting' || room?.status === 'selecting') {
       setViewPhase('lobby');
     }
+  }, [room?.status]);
+
+  // BGM 재생/정지
+  useEffect(() => {
+    if (room?.status === 'racing') {
+      // 레이스 시작 시 BGM 재생
+      if (!bgmRef.current) {
+        bgmRef.current = new Audio('/bgm.mp3');
+        bgmRef.current.loop = true;
+        bgmRef.current.volume = 0.5;
+      }
+      bgmRef.current.currentTime = 0;
+      bgmRef.current.play().catch(() => {
+        // 자동 재생 실패 시 무시 (브라우저 정책)
+      });
+    } else if (room?.status === 'finished' || !room) {
+      // 레이스 종료 시 BGM 정지
+      if (bgmRef.current) {
+        bgmRef.current.pause();
+        bgmRef.current.currentTime = 0;
+      }
+    }
+
+    return () => {
+      // 컴포넌트 언마운트 시 BGM 정지
+      if (bgmRef.current) {
+        bgmRef.current.pause();
+        bgmRef.current.currentTime = 0;
+      }
+    };
   }, [room?.status]);
 
   // 상태에 따른 폴링 관리
