@@ -657,7 +657,7 @@ const MultiplayerPigRace = ({ onBack, initialMode, initialRoomCode, onGoToRelay,
     if (!bgmRef.current) {
       bgmRef.current = new Audio(`${import.meta.env.BASE_URL}bgm.mp3`);
       bgmRef.current.loop = true;
-      bgmRef.current.volume = 0.5;
+      bgmRef.current.volume = 0.2;
     }
     bgmRef.current.play().then(() => {
       bgmRef.current?.pause();
@@ -682,7 +682,7 @@ const MultiplayerPigRace = ({ onBack, initialMode, initialRoomCode, onGoToRelay,
     if (!bgmRef.current) {
       bgmRef.current = new Audio(`${import.meta.env.BASE_URL}bgm.mp3`);
       bgmRef.current.loop = true;
-      bgmRef.current.volume = 0.5;
+      bgmRef.current.volume = 0.1;
     }
     // 무음으로 한 번 재생하여 unlock
     bgmRef.current.play().then(() => {
@@ -1147,9 +1147,15 @@ const MultiplayerPigRace = ({ onBack, initialMode, initialRoomCode, onGoToRelay,
     }
   }, [room?.status]);
 
+  // BGM 페이드아웃 ref (cleanup용)
+  const fadeIntervalRef = useRef<NodeJS.Timeout | null>(null);
+
   // BGM 페이드아웃 함수
   const fadeOutBgm = (duration: number = 1500) => {
     if (!bgmRef.current) return;
+    // 이미 페이드아웃 중이면 무시
+    if (fadeIntervalRef.current) return;
+
     const audio = bgmRef.current;
     const startVolume = audio.volume;
     const steps = 30;
@@ -1157,14 +1163,17 @@ const MultiplayerPigRace = ({ onBack, initialMode, initialRoomCode, onGoToRelay,
     const volumeStep = startVolume / steps;
     let currentStep = 0;
 
-    const fadeInterval = setInterval(() => {
+    fadeIntervalRef.current = setInterval(() => {
       currentStep++;
       audio.volume = Math.max(0, startVolume - volumeStep * currentStep);
       if (currentStep >= steps) {
-        clearInterval(fadeInterval);
+        if (fadeIntervalRef.current) {
+          clearInterval(fadeIntervalRef.current);
+          fadeIntervalRef.current = null;
+        }
         audio.pause();
         audio.currentTime = 0;
-        audio.volume = 0.5; // 다음 재생을 위해 볼륨 복원
+        audio.volume = 0.2; // 다음 재생을 위해 볼륨 복원
       }
     }, stepTime);
   };
@@ -1172,29 +1181,39 @@ const MultiplayerPigRace = ({ onBack, initialMode, initialRoomCode, onGoToRelay,
   // BGM 재생/정지
   useEffect(() => {
     if (room?.status === 'racing') {
+      // 페이드아웃 중이면 취소
+      if (fadeIntervalRef.current) {
+        clearInterval(fadeIntervalRef.current);
+        fadeIntervalRef.current = null;
+      }
       // 레이스 시작 시 BGM 재생
       if (!bgmRef.current) {
         bgmRef.current = new Audio(`${import.meta.env.BASE_URL}bgm.mp3`);
         bgmRef.current.loop = true;
-        bgmRef.current.volume = 0.5;
       }
+      bgmRef.current.volume = 0.2;
       bgmRef.current.currentTime = 0;
       bgmRef.current.play().catch(() => {
         // 자동 재생 실패 시 무시 (브라우저 정책)
       });
-    } else if (room?.status === 'finished' || !room) {
+    } else if (room?.status === 'finished') {
       // 레이스 종료 시 BGM 페이드아웃
       fadeOutBgm(1500);
     }
+  }, [room?.status]);
 
+  // 컴포넌트 언마운트 시 BGM 정리
+  useEffect(() => {
     return () => {
-      // 컴포넌트 언마운트 시 BGM 즉시 정지
+      if (fadeIntervalRef.current) {
+        clearInterval(fadeIntervalRef.current);
+      }
       if (bgmRef.current) {
         bgmRef.current.pause();
         bgmRef.current.currentTime = 0;
       }
     };
-  }, [room?.status]);
+  }, []);
 
   // 상태에 따른 폴링 관리
   useEffect(() => {
