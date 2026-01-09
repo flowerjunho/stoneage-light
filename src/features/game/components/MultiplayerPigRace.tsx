@@ -161,6 +161,15 @@ const MultiplayerPigRace = ({ onBack, initialMode, initialRoomCode, onGoToRelay,
   const [raceTime, setRaceTime] = useState(0);
   const [retireCountdown, setRetireCountdown] = useState<number | null>(null); // 1등 골인 후 남은 시간 (초)
 
+  // 게임 결과 스냅샷 (플레이어 퇴장 시에도 결과 유지용)
+  interface ResultSnapshot {
+    pigs: PigState[];
+    players: Player[];
+    teamScore: TeamScoreState | null;
+    raceMode: RaceMode;
+  }
+  const [resultSnapshot, setResultSnapshot] = useState<ResultSnapshot | null>(null);
+
   // 호스트가 레이싱 중인지 추적하는 ref (SSE 업데이트 무시용)
   const isHostRacingRef = useRef(false);
 
@@ -218,6 +227,20 @@ const MultiplayerPigRace = ({ onBack, initialMode, initialRoomCode, onGoToRelay,
               }
             }
           }
+
+          // 게임이 종료되면 결과 스냅샷 저장 (게스트용 - SSE로 finished 받았을 때)
+          if (updatedRoom.status === 'finished' && prevRoom?.status !== 'finished') {
+            const effectiveRaceMode = updatedRoom.raceMode || currentRaceMode || 'individual';
+            const pigs = updatedRoom.pigs as PigState[];
+            const teamScore = effectiveRaceMode === 'team' ? calculateTeamScore(pigs, updatedRoom.players) : null;
+            setResultSnapshot({
+              pigs: [...pigs],
+              players: [...updatedRoom.players],
+              teamScore,
+              raceMode: effectiveRaceMode,
+            });
+          }
+
           return updatedRoom;
         });
 
@@ -261,7 +284,7 @@ const MultiplayerPigRace = ({ onBack, initialMode, initialRoomCode, onGoToRelay,
     );
 
     sseConnectionRef.current = connection;
-  }, [stopConnection, stopPolling, stopHeartbeat]);
+  }, [stopConnection, stopPolling, stopHeartbeat, currentRaceMode]);
 
   // 폴링 시작 (SSE 폴백용)
   // 게스트는 레이싱 중에도 폴링해서 돼지 위치 업데이트 받음
@@ -842,12 +865,25 @@ const MultiplayerPigRace = ({ onBack, initialMode, initialRoomCode, onGoToRelay,
           raceEndTime: Date.now(),
         });
 
-        setRoom(prev => prev ? {
-          ...prev,
-          status: 'finished' as const,
-          pigs: finalPigs,
-          raceEndTime: Date.now()
-        } : null);
+        setRoom(prev => {
+          if (!prev) return null;
+          const newRoom = {
+            ...prev,
+            status: 'finished' as const,
+            pigs: finalPigs,
+            raceEndTime: Date.now()
+          };
+          // 결과 스냅샷 저장 (플레이어 퇴장해도 결과 유지)
+          const effectiveRaceMode = prev.raceMode || currentRaceMode || 'individual';
+          const teamScore = effectiveRaceMode === 'team' ? calculateTeamScore(finalPigs, prev.players) : null;
+          setResultSnapshot({
+            pigs: [...finalPigs],
+            players: [...prev.players],
+            teamScore,
+            raceMode: effectiveRaceMode,
+          });
+          return newRoom;
+        });
         setRetireCountdown(null); // 카운트다운 초기화
         return;
       }
@@ -882,12 +918,25 @@ const MultiplayerPigRace = ({ onBack, initialMode, initialRoomCode, onGoToRelay,
           }
 
           // 로컬 상태를 finished로 확실히 업데이트
-          setRoom(prev => prev ? {
-            ...prev,
-            status: 'finished' as const,
-            pigs: updatedPigs,
-            raceEndTime: Date.now()
-          } : null);
+          setRoom(prev => {
+            if (!prev) return null;
+            const newRoom = {
+              ...prev,
+              status: 'finished' as const,
+              pigs: updatedPigs,
+              raceEndTime: Date.now()
+            };
+            // 결과 스냅샷 저장 (플레이어 퇴장해도 결과 유지)
+            const effectiveRaceMode = prev.raceMode || currentRaceMode || 'individual';
+            const teamScore = effectiveRaceMode === 'team' ? calculateTeamScore(updatedPigs, prev.players) : null;
+            setResultSnapshot({
+              pigs: [...updatedPigs],
+              players: [...prev.players],
+              teamScore,
+              raceMode: effectiveRaceMode,
+            });
+            return newRoom;
+          });
           setRetireCountdown(null); // 카운트다운 초기화
           return;
         }
@@ -906,7 +955,8 @@ const MultiplayerPigRace = ({ onBack, initialMode, initialRoomCode, onGoToRelay,
       }
     };
     // hostTakeoverTrigger: 게임 중 방장이 바뀌면 새 방장이 레이스 루프 인계
-  }, [room?.status, room?.roomCode, room?.hostId, hostTakeoverTrigger]);
+    // currentRaceMode: 스냅샷 저장 시 필요
+  }, [room?.status, room?.roomCode, room?.hostId, hostTakeoverTrigger, currentRaceMode]);
 
   // 게스트용 보간 상태 (부드러운 애니메이션용)
   const [interpolatedPigs, setInterpolatedPigs] = useState<PigState[]>([]);
@@ -1839,10 +1889,16 @@ const MultiplayerPigRace = ({ onBack, initialMode, initialRoomCode, onGoToRelay,
 
         {/* 순위 */}
         {isFinished && (() => {
-          // 서버가 raceMode를 반환하지 않는 경우 currentRaceMode 사용
-          const isTeamMode = (room.raceMode || currentRaceMode) === 'team';
-          const teamScore = isTeamMode ? calculateTeamScore(room.pigs as PigState[], room.players) : null;
+          // 스냅샷이 있으면 스냅샷 사용, 없으면 현재 room 데이터 사용
+          const snapshotPigs = resultSnapshot?.pigs || room.pigs as PigState[];
+          const snapshotPlayers = resultSnapshot?.players || room.players;
+          const snapshotTeamScore = resultSnapshot?.teamScore;
+          const isTeamMode = resultSnapshot?.raceMode === 'team' || (room.raceMode || currentRaceMode) === 'team';
+          // 스냅샷에 teamScore가 있으면 사용, 없으면 계산 (폴백)
+          const teamScore = snapshotTeamScore || (isTeamMode ? calculateTeamScore(snapshotPigs, snapshotPlayers) : null);
           const rankPoints: Record<number, number> = { 1: 10, 2: 8, 3: 6, 4: 5, 5: 4, 6: 3, 7: 2 };
+          // 스냅샷 플레이어에서 소유자 찾기
+          const getSnapshotPigOwner = (pigId: number): Player | undefined => snapshotPlayers.find(p => p.selectedPig === pigId);
 
           return (
             <div className="space-y-4">
@@ -1916,11 +1972,11 @@ const MultiplayerPigRace = ({ onBack, initialMode, initialRoomCode, onGoToRelay,
                 <h4 className="text-sm font-medium text-text-secondary">
                   {isTeamMode ? '📊 개인 순위 (획득 점수)' : '🏆 최종 순위'}
                 </h4>
-                {[...room.pigs]
+                {[...snapshotPigs]
                   .filter(pig => selectedPigIds.has(pig.id)) // 선택된 돼지만 순위에 표시
                   .sort((a, b) => (a.rank || 999) - (b.rank || 999))
                   .map((pig) => {
-                    const owner = getPigOwner(room, pig.id);
+                    const owner = getSnapshotPigOwner(pig.id);
                     const isMyPig = getCurrentPlayer(room)?.selectedPig === pig.id;
                     const isOriginal = getPigColor(pig.id) === 'original';
                     const points = pig.rank ? (rankPoints[pig.rank] || 1) : 0;
