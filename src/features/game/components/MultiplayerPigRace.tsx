@@ -148,6 +148,10 @@ const MultiplayerPigRace = ({ onBack, initialMode, initialRoomCode, onGoToRelay,
   const [roomCodeInput, setRoomCodeInput] = useState(initialRoomCode || '');
   const [maxPlayers, setMaxPlayers] = useState(10);
   const [raceMode, setRaceMode] = useState<RaceMode>('individual'); // 개인전/팀전 (방 생성 시 선택용)
+  const [showPasswordModal, setShowPasswordModal] = useState(false); // 비밀번호 입력 모달
+  const [passwordInput, setPasswordInput] = useState(''); // 비밀번호 입력값
+  const [passwordError, setPasswordError] = useState(''); // 비밀번호 오류
+  const [pendingAction, setPendingAction] = useState<'create' | 'relay' | null>(null); // 비밀번호 확인 후 실행할 액션
   const [currentRaceMode, setCurrentRaceMode] = useState<RaceMode | null>(null); // 현재 방의 실제 레이스 모드 (서버가 반환 안 할 경우 대비)
 
   // 게임 상태
@@ -1172,14 +1176,24 @@ const MultiplayerPigRace = ({ onBack, initialMode, initialRoomCode, onGoToRelay,
 
       <div className="space-y-3">
         <button
-          onClick={() => setViewPhase('create')}
+          onClick={() => {
+            setShowPasswordModal(true);
+            setPasswordInput('');
+            setPasswordError('');
+            setPendingAction('create');
+          }}
           className="w-full py-4 bg-gradient-to-r from-pink-500 to-rose-500 hover:from-pink-400 hover:to-rose-400 text-white font-bold rounded-xl transition-all text-lg"
         >
           🏠 방 만들기
         </button>
         {onGoToRelay && (
           <button
-            onClick={onGoToRelay}
+            onClick={() => {
+              setShowPasswordModal(true);
+              setPasswordInput('');
+              setPasswordError('');
+              setPendingAction('relay');
+            }}
             className="w-full py-4 bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-400 hover:to-orange-400 text-white font-bold rounded-xl transition-all text-lg"
           >
             🏃 릴레이 방 만들기
@@ -1192,6 +1206,77 @@ const MultiplayerPigRace = ({ onBack, initialMode, initialRoomCode, onGoToRelay,
           🚪 방 입장하기
         </button>
       </div>
+
+      {/* 비밀번호 입력 모달 */}
+      {showPasswordModal && (
+        <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-4">
+          <div className="bg-bg-secondary rounded-2xl p-6 max-w-sm w-full space-y-4 border border-border">
+            <h3 className="text-xl font-bold text-text-primary text-center">🔒 비밀번호 입력</h3>
+            <p className="text-sm text-text-secondary text-center">방을 만들려면 비밀번호를 입력하세요</p>
+
+            {passwordError && (
+              <div className="p-3 bg-red-500/20 border border-red-500 rounded-lg text-red-400 text-sm text-center">
+                {passwordError}
+              </div>
+            )}
+
+            <input
+              type="password"
+              value={passwordInput}
+              onChange={(e) => setPasswordInput(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter') {
+                  if (passwordInput === '5882') {
+                    setShowPasswordModal(false);
+                    if (pendingAction === 'relay' && onGoToRelay) {
+                      onGoToRelay();
+                    } else {
+                      setViewPhase('create');
+                    }
+                    setPendingAction(null);
+                  } else {
+                    setPasswordError('비밀번호가 올바르지 않습니다');
+                  }
+                }
+              }}
+              placeholder="비밀번호 4자리"
+              className="w-full px-4 py-3 bg-bg-tertiary border border-border rounded-lg text-text-primary text-center text-xl tracking-widest"
+              maxLength={10}
+              autoFocus
+            />
+
+            <div className="flex gap-3">
+              <button
+                onClick={() => {
+                  setShowPasswordModal(false);
+                  setPendingAction(null);
+                }}
+                className="flex-1 py-3 bg-bg-tertiary hover:bg-bg-primary text-text-primary font-medium rounded-lg"
+              >
+                취소
+              </button>
+              <button
+                onClick={() => {
+                  if (passwordInput === '5882') {
+                    setShowPasswordModal(false);
+                    if (pendingAction === 'relay' && onGoToRelay) {
+                      onGoToRelay();
+                    } else {
+                      setViewPhase('create');
+                    }
+                    setPendingAction(null);
+                  } else {
+                    setPasswordError('비밀번호가 올바르지 않습니다');
+                  }
+                }}
+                className="flex-1 py-3 bg-gradient-to-r from-pink-500 to-rose-500 hover:from-pink-400 hover:to-rose-400 text-white font-bold rounded-lg"
+              >
+                확인
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* 스킬 설명 */}
       <div className="mt-6 p-4 bg-bg-tertiary rounded-xl border border-border">
@@ -1258,8 +1343,8 @@ const MultiplayerPigRace = ({ onBack, initialMode, initialRoomCode, onGoToRelay,
           type="text"
           value={playerName}
           onChange={(e) => setPlayerName(e.target.value)}
-          placeholder="이름을 입력하세요"
-          className="w-full px-4 py-3 bg-bg-tertiary border border-border rounded-lg text-text-primary"
+          placeholder="꼭 디스코드 닉네임을 포함한 닉네임으로 입장해주세요"
+          className="w-full px-4 py-3 bg-bg-tertiary border border-border rounded-lg text-text-primary text-sm"
           maxLength={10}
         />
       </div>
@@ -1389,8 +1474,8 @@ const MultiplayerPigRace = ({ onBack, initialMode, initialRoomCode, onGoToRelay,
           type="text"
           value={playerName}
           onChange={(e) => setPlayerName(e.target.value)}
-          placeholder="이름을 입력하세요"
-          className="w-full px-4 py-3 bg-bg-tertiary border border-border rounded-lg text-text-primary"
+          placeholder="꼭 디스코드 닉네임을 포함한 닉네임으로 입장해주세요"
+          className="w-full px-4 py-3 bg-bg-tertiary border border-border rounded-lg text-text-primary text-sm"
           maxLength={10}
         />
       </div>
