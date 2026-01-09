@@ -599,12 +599,33 @@ const MultiplayerPigRace = ({ onBack, initialMode, initialRoomCode, onGoToRelay,
     }
   };
 
-  // 채팅 스크롤 자동 하단 이동
+  // 채팅 스크롤 자동 하단 이동 (메시지 추가, 화면 전환, 채팅창 열릴 때)
   useEffect(() => {
-    if (chatContainerRef.current) {
-      chatContainerRef.current.scrollTop = chatContainerRef.current.scrollHeight;
-    }
-  }, [chatMessages]);
+    // 화면 전환 시 DOM이 완전히 렌더링된 후 스크롤하도록 여러 번 시도
+    const scrollToBottom = () => {
+      if (chatContainerRef.current) {
+        chatContainerRef.current.scrollTop = chatContainerRef.current.scrollHeight;
+      }
+    };
+
+    // 즉시 한 번 시도
+    scrollToBottom();
+
+    // requestAnimationFrame으로 다음 프레임에서 시도
+    const rafId = requestAnimationFrame(() => {
+      scrollToBottom();
+    });
+
+    // 화면 전환 시 DOM 마운트 지연을 위해 추가 딜레이
+    const timer = setTimeout(() => {
+      scrollToBottom();
+    }, 100);
+
+    return () => {
+      cancelAnimationFrame(rafId);
+      clearTimeout(timer);
+    };
+  }, [chatMessages, viewPhase, isChatOpen, room?.status]);
 
   // 방 나갈 때 채팅 초기화
   useEffect(() => {
@@ -729,7 +750,7 @@ const MultiplayerPigRace = ({ onBack, initialMode, initialRoomCode, onGoToRelay,
       room.players.map(p => p.selectedPig).filter((id): id is number => id !== null)
     );
 
-    const RACE_DURATION = 20000;
+    const RACE_DURATION = 10000; // 2배속
     const FPS = 60;
     const FRAME_TIME = 1000 / FPS;
     // 리타이어 기준은 서버에서 받은 값 사용 (기본값: 10초)

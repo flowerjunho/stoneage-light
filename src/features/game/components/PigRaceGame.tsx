@@ -97,7 +97,7 @@ const PigRaceGame = ({ onBack }: PigRaceGameProps) => {
   useEffect(() => {
     if (phase !== 'racing') return;
 
-    const RACE_DURATION = 20000; // 1등이 약 20초에 골인
+    const RACE_DURATION = 10000; // 1등이 약 10초에 골인 (2배속)
     const FPS = 60;
     const FRAME_TIME = 1000 / FPS;
     let lastFrameTime = 0;
