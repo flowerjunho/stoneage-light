@@ -449,7 +449,7 @@ const RelayPigRace = ({ onBack, initialMode, initialRoomCode, alreadyJoinedRoom,
 
     // 모바일 오디오 unlock (게스트도 준비 버튼 클릭 시 unlock)
     if (!bgmRef.current) {
-      bgmRef.current = new Audio('/bgm.mp3');
+      bgmRef.current = new Audio(`${import.meta.env.BASE_URL}bgm.mp3`);
       bgmRef.current.loop = true;
       bgmRef.current.volume = 0.5;
     }
@@ -469,7 +469,7 @@ const RelayPigRace = ({ onBack, initialMode, initialRoomCode, alreadyJoinedRoom,
 
     // 모바일 오디오 unlock (사용자 상호작용 시점에 미리 준비)
     if (!bgmRef.current) {
-      bgmRef.current = new Audio('/bgm.mp3');
+      bgmRef.current = new Audio(`${import.meta.env.BASE_URL}bgm.mp3`);
       bgmRef.current.loop = true;
       bgmRef.current.volume = 0.5;
     }
@@ -943,12 +943,34 @@ const RelayPigRace = ({ onBack, initialMode, initialRoomCode, alreadyJoinedRoom,
     }
   }, [room?.status, room?.players, room?.pigs]);
 
+  // BGM 페이드아웃 함수
+  const fadeOutBgm = (duration: number = 1500) => {
+    if (!bgmRef.current) return;
+    const audio = bgmRef.current;
+    const startVolume = audio.volume;
+    const steps = 30;
+    const stepTime = duration / steps;
+    const volumeStep = startVolume / steps;
+    let currentStep = 0;
+
+    const fadeInterval = setInterval(() => {
+      currentStep++;
+      audio.volume = Math.max(0, startVolume - volumeStep * currentStep);
+      if (currentStep >= steps) {
+        clearInterval(fadeInterval);
+        audio.pause();
+        audio.currentTime = 0;
+        audio.volume = 0.5; // 다음 재생을 위해 볼륨 복원
+      }
+    }, stepTime);
+  };
+
   // BGM 재생/정지
   useEffect(() => {
     if (room?.status === 'racing') {
       // 레이스 시작 시 BGM 재생
       if (!bgmRef.current) {
-        bgmRef.current = new Audio('/bgm.mp3');
+        bgmRef.current = new Audio(`${import.meta.env.BASE_URL}bgm.mp3`);
         bgmRef.current.loop = true;
         bgmRef.current.volume = 0.5;
       }
@@ -957,15 +979,12 @@ const RelayPigRace = ({ onBack, initialMode, initialRoomCode, alreadyJoinedRoom,
         // 자동 재생 실패 시 무시 (브라우저 정책)
       });
     } else if (room?.status === 'finished' || !room) {
-      // 레이스 종료 시 BGM 정지
-      if (bgmRef.current) {
-        bgmRef.current.pause();
-        bgmRef.current.currentTime = 0;
-      }
+      // 레이스 종료 시 BGM 페이드아웃
+      fadeOutBgm(1500);
     }
 
     return () => {
-      // 컴포넌트 언마운트 시 BGM 정지
+      // 컴포넌트 언마운트 시 BGM 즉시 정지
       if (bgmRef.current) {
         bgmRef.current.pause();
         bgmRef.current.currentTime = 0;
