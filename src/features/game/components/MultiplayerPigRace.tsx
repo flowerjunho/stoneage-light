@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
-import type { GameRoom, PigState, Player, HostChangedData, KickedData, RaceMode, TeamScoreState } from '../services/gameApi';
+import type { GameRoom, PigState, Player, HostChangedData, KickedData, RaceMode, TeamScoreState, ChatMessage } from '../services/gameApi';
 import {
   createRoom,
   joinRoom,
@@ -16,6 +16,7 @@ import {
   subscribeToRoom,
   getRoomState,
   sendHeartbeat,
+  sendChatMessage,
   type SSEConnection,
 } from '../services/gameApi';
 
@@ -170,6 +171,12 @@ const MultiplayerPigRace = ({ onBack, initialMode, initialRoomCode, onGoToRelay,
   }
   const [resultSnapshot, setResultSnapshot] = useState<ResultSnapshot | null>(null);
 
+  // 채팅 상태
+  const [chatMessages, setChatMessages] = useState<ChatMessage[]>([]);
+  const [chatInput, setChatInput] = useState('');
+  const [isChatOpen, setIsChatOpen] = useState(true); // 기본 열림
+  const chatContainerRef = useRef<HTMLDivElement>(null);
+
   // 호스트가 레이싱 중인지 추적하는 ref (SSE 업데이트 무시용)
   const isHostRacingRef = useRef(false);
 
@@ -280,6 +287,17 @@ const MultiplayerPigRace = ({ onBack, initialMode, initialRoomCode, onGoToRelay,
         stopHeartbeat();
         setRoom(null);
         setViewPhase('menu');
+      },
+      // chat 이벤트 처리 (채팅 메시지)
+      (chatMessage: ChatMessage) => {
+        setChatMessages(prev => {
+          const newMessages = [...prev, chatMessage];
+          // 최대 100개 유지
+          if (newMessages.length > 100) {
+            return newMessages.slice(-100);
+          }
+          return newMessages;
+        });
       }
     );
 
@@ -566,6 +584,30 @@ const MultiplayerPigRace = ({ onBack, initialMode, initialRoomCode, onGoToRelay,
 
     setIsRestarting(false);
   };
+
+  // 채팅 메시지 전송
+  const handleSendChat = async () => {
+    if (!room || !chatInput.trim()) return;
+
+    const response = await sendChatMessage(room.roomCode, chatInput.trim());
+    if (response.success) {
+      setChatInput('');
+    }
+  };
+
+  // 채팅 스크롤 자동 하단 이동
+  useEffect(() => {
+    if (chatContainerRef.current) {
+      chatContainerRef.current.scrollTop = chatContainerRef.current.scrollHeight;
+    }
+  }, [chatMessages]);
+
+  // 방 나갈 때 채팅 초기화
+  useEffect(() => {
+    if (!room) {
+      setChatMessages([]);
+    }
+  }, [room]);
 
   // 돼지 선택 (서버에서 토글 처리 - 같은 돼지 클릭하면 서버가 자동 해제)
   const handleSelectPig = async (pigId: number) => {
@@ -1749,6 +1791,85 @@ const MultiplayerPigRace = ({ onBack, initialMode, initialRoomCode, onGoToRelay,
             </div>
           );
         })()}
+
+        {/* 채팅 */}
+        <div className="mt-4 border-t border-border pt-4">
+          <button
+            onClick={() => setIsChatOpen(!isChatOpen)}
+            className="w-full flex items-center justify-between p-3 bg-bg-tertiary rounded-lg hover:bg-bg-tertiary/80 transition-colors"
+          >
+            <span className="text-sm font-medium text-text-primary flex items-center gap-2">
+              💬 채팅
+              {chatMessages.length > 0 && (
+                <span className="bg-accent/20 text-accent text-xs px-2 py-0.5 rounded-full">
+                  {chatMessages.length}
+                </span>
+              )}
+            </span>
+            <span className="text-text-secondary">{isChatOpen ? '▲' : '▼'}</span>
+          </button>
+
+          {isChatOpen && (
+            <div className="mt-2 bg-bg-tertiary rounded-lg overflow-hidden">
+              {/* 메시지 목록 */}
+              <div
+                ref={chatContainerRef}
+                className="h-48 overflow-y-auto p-3 space-y-2"
+              >
+                {chatMessages.length === 0 ? (
+                  <div className="text-center text-text-secondary text-sm py-8">
+                    아직 메시지가 없습니다
+                  </div>
+                ) : (
+                  chatMessages.map((msg) => {
+                    const isMe = msg.playerId === getCurrentPlayerId();
+                    return (
+                      <div
+                        key={msg.id}
+                        className={`flex ${isMe ? 'justify-end' : 'justify-start'}`}
+                      >
+                        <div
+                          className={`max-w-[80%] rounded-lg px-3 py-2 ${
+                            isMe
+                              ? 'bg-accent text-white'
+                              : 'bg-bg-secondary text-text-primary'
+                          }`}
+                        >
+                          {!isMe && (
+                            <div className="text-xs text-text-secondary mb-1">
+                              {msg.playerName}
+                            </div>
+                          )}
+                          <div className="text-sm break-words">{msg.content}</div>
+                        </div>
+                      </div>
+                    );
+                  })
+                )}
+              </div>
+
+              {/* 입력 */}
+              <div className="p-3 border-t border-border flex gap-2">
+                <input
+                  type="text"
+                  value={chatInput}
+                  onChange={(e) => setChatInput(e.target.value)}
+                  onKeyPress={(e) => e.key === 'Enter' && handleSendChat()}
+                  placeholder="메시지를 입력하세요..."
+                  maxLength={200}
+                  className="flex-1 bg-bg-secondary border border-border rounded-lg px-3 py-2 text-sm text-text-primary placeholder-text-secondary focus:outline-none focus:ring-2 focus:ring-accent"
+                />
+                <button
+                  onClick={handleSendChat}
+                  disabled={!chatInput.trim()}
+                  className="px-4 py-2 bg-accent text-white rounded-lg font-medium text-sm disabled:opacity-50 disabled:cursor-not-allowed hover:bg-accent/90 transition-colors"
+                >
+                  전송
+                </button>
+              </div>
+            </div>
+          )}
+        </div>
       </div>
     );
   };

@@ -62,6 +62,15 @@ export interface TeamScoreState {
   firstPlaceTeam: 'A' | 'B' | null; // 1등 보유팀 (동점 시 타이브레이커용)
 }
 
+// 채팅 메시지
+export interface ChatMessage {
+  id: string;              // 메시지 고유 ID
+  playerId: string;        // 발신자 플레이어 ID
+  playerName: string;      // 발신자 닉네임
+  content: string;         // 메시지 내용
+  timestamp: number;       // 전송 시간 (Unix timestamp ms)
+}
+
 export interface GameRoom {
   roomCode: string;
   hostId: string;
@@ -354,8 +363,8 @@ export const getPlayerByPigId = (room: GameRoom, pigId: number): Player | undefi
 // ========== SSE (Server-Sent Events) ==========
 
 export interface SSEEvent {
-  event: 'room_update' | 'player_joined' | 'player_left' | 'pig_selected' | 'player_ready' | 'game_starting' | 'game_started' | 'race_update' | 'race_finished' | 'room_closed' | 'error' | 'connected' | 'heartbeat' | 'host_changed' | 'kicked';
-  data: GameRoom | { message: string; playerId?: string; playerName?: string } | HostChangedData | KickedData;
+  event: 'room_update' | 'player_joined' | 'player_left' | 'pig_selected' | 'player_ready' | 'game_starting' | 'game_started' | 'race_update' | 'race_finished' | 'room_closed' | 'error' | 'connected' | 'heartbeat' | 'host_changed' | 'kicked' | 'chat';
+  data: GameRoom | { message: string; playerId?: string; playerName?: string } | HostChangedData | KickedData | ChatMessage;
   timestamp: number;
 }
 
@@ -384,6 +393,7 @@ export interface SSEConnection {
  * @param onError - 에러 발생 시 콜백
  * @param onHostChanged - 방장 변경 시 콜백 (게임 중 방장이 나가면 호출)
  * @param onKicked - 강퇴당했을 때 콜백
+ * @param onChat - 채팅 메시지 수신 콜백
  * @returns SSE 연결 객체 (close 함수 포함)
  */
 export const subscribeToRoom = (
@@ -391,7 +401,8 @@ export const subscribeToRoom = (
   onUpdate: (room: GameRoom) => void,
   onError?: (error: string) => void,
   onHostChanged?: (data: HostChangedData) => void,
-  onKicked?: (data: KickedData) => void
+  onKicked?: (data: KickedData) => void,
+  onChat?: (message: ChatMessage) => void
 ): SSEConnection => {
   const playerId = getPlayerId();
   const url = `${API_BASE_URL}/api/game/rooms/${roomCode}/events?playerId=${playerId}`;
@@ -482,6 +493,18 @@ export const subscribeToRoom = (
     }
   });
 
+  // chat 이벤트 (채팅 메시지) - 별도 처리
+  eventSource.addEventListener('chat', (event: MessageEvent) => {
+    try {
+      const data = JSON.parse(event.data) as ChatMessage;
+      if (onChat) {
+        onChat(data);
+      }
+    } catch {
+      // 파싱 오류 무시
+    }
+  });
+
   // 에러 처리
   eventSource.onerror = () => {
     // 연결이 닫혔는지 확인
@@ -518,6 +541,26 @@ export const sendHeartbeat = async (
     method: 'POST',
     body: JSON.stringify({
       playerId: getPlayerId(),
+    }),
+  });
+};
+
+// ========== 채팅 API ==========
+
+/**
+ * 채팅 메시지 전송
+ * 대기실에서 플레이어 간 채팅 메시지를 전송합니다.
+ * 메시지는 서버 메모리에만 저장되며, 방 삭제 시 자동 소멸됩니다.
+ */
+export const sendChatMessage = async (
+  roomCode: string,
+  content: string
+): Promise<ApiResponse<ChatMessage>> => {
+  return apiCall<ChatMessage>(`/api/game/rooms/${roomCode}/chat`, {
+    method: 'POST',
+    body: JSON.stringify({
+      playerId: getPlayerId(),
+      content,
     }),
   });
 };

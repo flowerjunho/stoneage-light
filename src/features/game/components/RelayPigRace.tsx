@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
-import type { GameRoom, Player, PigState, RelayState, HostChangedData, KickedData } from '../services/gameApi';
+import type { GameRoom, Player, PigState, RelayState, HostChangedData, KickedData, ChatMessage } from '../services/gameApi';
 import {
   createRoom,
   joinRoom,
@@ -17,6 +17,7 @@ import {
   subscribeToRoom,
   getRoomState,
   sendHeartbeat,
+  sendChatMessage,
   type SSEConnection,
 } from '../services/gameApi';
 
@@ -143,6 +144,12 @@ const RelayPigRace = ({ onBack, initialMode, initialRoomCode, alreadyJoinedRoom,
   const pollingIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const heartbeatIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
+  // 채팅 상태
+  const [chatMessages, setChatMessages] = useState<ChatMessage[]>([]);
+  const [chatInput, setChatInput] = useState('');
+  const [isChatOpen, setIsChatOpen] = useState(true); // 기본 열림
+  const chatContainerRef = useRef<HTMLDivElement>(null);
+
   const stopConnection = useCallback(() => {
     if (sseConnectionRef.current) {
       sseConnectionRef.current.close();
@@ -200,6 +207,17 @@ const RelayPigRace = ({ onBack, initialMode, initialRoomCode, alreadyJoinedRoom,
         stopHeartbeat();
         setRoom(null);
         onBack(); // 천호 레이스 메뉴로 돌아가기
+      },
+      // chat 이벤트 처리 (채팅 메시지)
+      (chatMessage: ChatMessage) => {
+        setChatMessages(prev => {
+          const newMessages = [...prev, chatMessage];
+          // 최대 100개 유지
+          if (newMessages.length > 100) {
+            return newMessages.slice(-100);
+          }
+          return newMessages;
+        });
       }
     );
     sseConnectionRef.current = connection;
@@ -355,6 +373,30 @@ const RelayPigRace = ({ onBack, initialMode, initialRoomCode, alreadyJoinedRoom,
     setRoom(null);
     onBack(); // 천호 레이스 메뉴로 돌아가기
   };
+
+  // 채팅 메시지 전송
+  const handleSendChat = async () => {
+    if (!room || !chatInput.trim()) return;
+
+    const response = await sendChatMessage(room.roomCode, chatInput.trim());
+    if (response.success) {
+      setChatInput('');
+    }
+  };
+
+  // 채팅 스크롤 자동 하단 이동
+  useEffect(() => {
+    if (chatContainerRef.current) {
+      chatContainerRef.current.scrollTop = chatContainerRef.current.scrollHeight;
+    }
+  }, [chatMessages]);
+
+  // 방 나갈 때 채팅 초기화
+  useEffect(() => {
+    if (!room) {
+      setChatMessages([]);
+    }
+  }, [room]);
 
   // 돼지 선택 (기존과 동일)
   const handleSelectPig = async (pigId: number) => {
@@ -1162,6 +1204,85 @@ const RelayPigRace = ({ onBack, initialMode, initialRoomCode, alreadyJoinedRoom,
               className={`flex-1 py-3 font-bold rounded-lg ${isPlayerReady ? 'bg-gray-600 text-gray-300' : 'bg-gradient-to-r from-green-500 to-emerald-500 text-white'}`}>
               {isPlayerReady ? '준비 취소' : myPig === null ? '👀 관전 준비' : '준비 완료'}
             </button>
+          )}
+        </div>
+
+        {/* 채팅 */}
+        <div className="mt-4 border-t border-border pt-4">
+          <button
+            onClick={() => setIsChatOpen(!isChatOpen)}
+            className="w-full flex items-center justify-between p-3 bg-bg-tertiary rounded-lg hover:bg-bg-tertiary/80 transition-colors"
+          >
+            <span className="text-sm font-medium text-text-primary flex items-center gap-2">
+              💬 채팅
+              {chatMessages.length > 0 && (
+                <span className="bg-accent/20 text-accent text-xs px-2 py-0.5 rounded-full">
+                  {chatMessages.length}
+                </span>
+              )}
+            </span>
+            <span className="text-text-secondary">{isChatOpen ? '▲' : '▼'}</span>
+          </button>
+
+          {isChatOpen && (
+            <div className="mt-2 bg-bg-tertiary rounded-lg overflow-hidden">
+              {/* 메시지 목록 */}
+              <div
+                ref={chatContainerRef}
+                className="h-48 overflow-y-auto p-3 space-y-2"
+              >
+                {chatMessages.length === 0 ? (
+                  <div className="text-center text-text-secondary text-sm py-8">
+                    아직 메시지가 없습니다
+                  </div>
+                ) : (
+                  chatMessages.map((msg) => {
+                    const isMe = msg.playerId === getCurrentPlayerId();
+                    return (
+                      <div
+                        key={msg.id}
+                        className={`flex ${isMe ? 'justify-end' : 'justify-start'}`}
+                      >
+                        <div
+                          className={`max-w-[80%] rounded-lg px-3 py-2 ${
+                            isMe
+                              ? 'bg-accent text-white'
+                              : 'bg-bg-secondary text-text-primary'
+                          }`}
+                        >
+                          {!isMe && (
+                            <div className="text-xs text-text-secondary mb-1">
+                              {msg.playerName}
+                            </div>
+                          )}
+                          <div className="text-sm break-words">{msg.content}</div>
+                        </div>
+                      </div>
+                    );
+                  })
+                )}
+              </div>
+
+              {/* 입력 */}
+              <div className="p-3 border-t border-border flex gap-2">
+                <input
+                  type="text"
+                  value={chatInput}
+                  onChange={(e) => setChatInput(e.target.value)}
+                  onKeyPress={(e) => e.key === 'Enter' && handleSendChat()}
+                  placeholder="메시지를 입력하세요..."
+                  maxLength={200}
+                  className="flex-1 bg-bg-secondary border border-border rounded-lg px-3 py-2 text-sm text-text-primary placeholder-text-secondary focus:outline-none focus:ring-2 focus:ring-accent"
+                />
+                <button
+                  onClick={handleSendChat}
+                  disabled={!chatInput.trim()}
+                  className="px-4 py-2 bg-accent text-white rounded-lg font-medium text-sm disabled:opacity-50 disabled:cursor-not-allowed hover:bg-accent/90 transition-colors"
+                >
+                  전송
+                </button>
+              </div>
+            </div>
           )}
         </div>
       </div>
