@@ -5,6 +5,9 @@ const API_BASE_URL = import.meta.env.VITE_API_URL || 'https://api.example.com';
 // 게임 모드 타입
 export type GameMode = 'normal' | 'relay';
 
+// 레이스 모드 타입 (일반 모드 내에서 개인전/팀전 구분)
+export type RaceMode = 'individual' | 'team';
+
 // 타입 정의
 export interface Player {
   id: string;
@@ -52,10 +55,18 @@ export interface RelayState {
   teamB: TeamRelayState;
 }
 
+// 팀 점수 상태 (팀전용)
+export interface TeamScoreState {
+  teamA: number; // A팀 총점
+  teamB: number; // B팀 총점
+  firstPlaceTeam: 'A' | 'B' | null; // 1등 보유팀 (동점 시 타이브레이커용)
+}
+
 export interface GameRoom {
   roomCode: string;
   hostId: string;
   gameMode: GameMode; // 게임 모드
+  raceMode: RaceMode; // 레이스 모드 (개인전/팀전) - 일반 모드에서 사용
   status: 'waiting' | 'selecting' | 'countdown' | 'racing' | 'finished';
   players: Player[];
   pigs: PigState[] | RelayPigState[]; // 일반 모드 또는 릴레이 모드
@@ -64,6 +75,9 @@ export interface GameRoom {
   raceEndTime: number | null;
   countdown: number;
   relay: RelayState | null; // 릴레이 모드 전용 상태
+  teamScore: TeamScoreState | null; // 팀전 모드 전용 상태
+  firstPlaceFinishTime: number | null; // 1등 골인 시간 (Unix timestamp ms), 리타이어 카운트다운용
+  retireThreshold: number; // 리타이어 기준 시간 (밀리초), 서버에서 설정 (기본값: 15000)
   createdAt: number;
   updatedAt: number;
 }
@@ -117,7 +131,8 @@ const apiCall = async <T>(
 export const createRoom = async (
   playerName: string,
   maxPlayers: number = 6,
-  gameMode: GameMode = 'normal'
+  gameMode: GameMode = 'normal',
+  raceMode: RaceMode = 'individual'
 ): Promise<ApiResponse<GameRoom>> => {
   return apiCall<GameRoom>('/api/game/rooms', {
     method: 'POST',
@@ -126,6 +141,7 @@ export const createRoom = async (
       playerName,
       maxPlayers,
       gameMode,
+      raceMode,
     }),
   });
 };
@@ -226,6 +242,8 @@ export const updateGameState = async (
     raceEndTime?: number | null;
     pigs?: PigState[] | RelayPigState[];
     relay?: RelayState | null; // 릴레이 모드 상태
+    teamScore?: TeamScoreState | null; // 팀전 모드 점수
+    firstPlaceFinishTime?: number | null; // 1등 골인 시간 (리타이어 카운트다운용)
     resetPlayers?: boolean; // 재경기 시 플레이어 선택/준비 초기화
   }
 ): Promise<ApiResponse<GameRoom>> => {

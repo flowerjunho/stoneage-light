@@ -14,6 +14,7 @@
 | SSE Content-Type | `text/event-stream` |
 | 저장 방식 | JSON 파일 (`game-rooms/` 디렉토리) |
 | 게임 모드 | `normal` (일반 레이스), `relay` (릴레이 레이스) |
+| 레이스 모드 | `individual` (개인전), `team` (팀전) ⭐ NEW |
 
 ---
 
@@ -37,12 +38,68 @@
 - 먼저 결승선에 도달하는 돼지가 우승
 - 편도 레이스 (0 → 100)
 
-### 릴레이 모드 (relay) ⭐ NEW
+#### 레이스 모드 (raceMode) ⭐ NEW
+
+일반 모드(`gameMode: normal`)에서 개인전/팀전을 선택할 수 있습니다.
+
+| raceMode | 설명 |
+|----------|------|
+| `individual` | **개인전** (기본값) - 각자의 순위 경쟁, 먼저 도착하는 순서대로 순위 결정 |
+| `team` | **팀전** - A팀 vs B팀 점수 대결, 등수별 점수 합산으로 승패 결정 |
+
+**팀전 규칙:**
+- 플레이어는 A팀 또는 B팀을 선택해야 함 (기존 `selectTeam` API 사용)
+- 게임 시작 전 양 팀에 최소 1명씩 참가자가 있어야 함
+- **양 팀 인원수가 동일해야 게임 시작 가능** (관전자 제외)
+- 팀을 선택하지 않으면 준비 완료 불가
+- 완주 등수별 점수: 1등=10점, 2등=8점, 3등=6점, 4등=5점, 5등=4점, 6등=3점, 7등=2점, 8등이하=1점
+- 팀 총점이 높은 팀 승리 (동점 시 1등 보유팀 승리)
+
+#### 리타이어 규칙 ⭐ NEW
+
+1등이 골인한 후 **서버에서 설정한 시간(`retireThreshold`) 이내**에 결승선을 통과하지 못한 플레이어는 **리타이어(0점)** 처리됩니다.
+
+**리타이어 처리 흐름:**
+```
+1등 골인 → firstPlaceFinishTime 기록 → retireThreshold 기준 카운트다운 시작
+         → retireThreshold 경과 → 미완주자 전원 리타이어 (rank: null, 0점)
+         → 게임 종료 (status: finished)
+```
+
+**리타이어 판정:**
+| 조건 | 결과 |
+|------|------|
+| 1등 골인 후 retireThreshold 이내 완주 | 정상 순위 및 점수 부여 |
+| 1등 골인 후 retireThreshold 초과 | 리타이어 (rank: null, 0점) |
+
+**클라이언트 카운트다운 계산:**
+```typescript
+// 서버에서 받은 firstPlaceFinishTime 및 retireThreshold 사용 (하드코딩 금지!)
+const RETIRE_TIMEOUT = room.retireThreshold || 10000; // 서버 값 사용 (기본값: 10초)
+const now = Date.now();
+const elapsed = now - room.firstPlaceFinishTime;
+const remainingSec = Math.ceil((RETIRE_TIMEOUT - elapsed) / 1000);
+
+if (remainingSec > 0) {
+  // 카운트다운 UI 표시: remainingSec + "초"
+} else {
+  // 카운트다운 종료, 리타이어 처리 대기
+}
+```
+
+> **중요**:
+> - `firstPlaceFinishTime`: 1등이 골인하는 순간 서버에서 기록되며, SSE를 통해 모든 클라이언트에게 전파됩니다.
+> - `retireThreshold`: 서버에서 방 생성 시 설정하는 리타이어 기준 시간(ms). 클라이언트는 반드시 이 값을 사용해야 합니다.
+> - **클라이언트는 리타이어 시간을 하드코딩하지 말고 반드시 `room.retireThreshold` 값을 사용해야 합니다.**
+
+### 릴레이 모드 (relay)
 - 팀 대항전 (A팀 vs B팀)
 - 각 팀에 돼지 1마리씩 (총 2마리 고정)
 - **왕복 레이스**: 출발 → 결승선 → 출발점 복귀
 - 한 주자가 왕복 완료하면 다음 주자가 출발
 - 마지막 주자가 먼저 복귀하는 팀 승리
+
+> **참고**: 릴레이 모드에서는 `raceMode`가 무시됩니다. 릴레이 모드는 항상 팀 대항전입니다.
 
 **릴레이 레이스 흐름:**
 ```
@@ -130,6 +187,15 @@ interface TeamRelayState {
 }
 ```
 
+### TeamScoreState (팀전 점수 상태) ⭐ NEW
+
+```typescript
+interface TeamScoreState {
+  teamA: number;                 // A팀 총점
+  teamB: number;                 // B팀 총점
+}
+```
+
 ### GameRoom (게임 방)
 
 ```typescript
@@ -137,6 +203,7 @@ interface GameRoom {
   roomCode: string;              // 6자리 방 코드 (예: "A1B2C3")
   hostId: string;                // 방장 플레이어 ID
   gameMode: 'normal' | 'relay';  // ⭐ 게임 모드
+  raceMode: 'individual' | 'team'; // ⭐ NEW: 레이스 모드 (일반 모드에서 개인전/팀전 구분)
   status: GameStatus;            // 게임 상태
   players: Player[];             // 참가자 목록 (최대 30명)
   pigs: PigState[] | RelayPigState[]; // 돼지 상태
@@ -145,12 +212,34 @@ interface GameRoom {
   raceEndTime: number | null;    // 레이스 종료 시간
   countdown: number;             // 카운트다운 (3, 2, 1, 0)
   relay: RelayState | null;      // ⭐ 릴레이 모드 전용 상태 (일반 모드면 null)
+  teamScore: TeamScoreState | null; // ⭐ NEW: 팀전 모드 점수 (개인전이면 null)
+  firstPlaceFinishTime: number | null; // ⭐ NEW: 1등 골인 시간 (Unix timestamp ms), 리타이어 카운트다운용
+  retireThreshold: number;       // ⭐ NEW: 리타이어 기준 시간 (밀리초), 서버에서 설정 (기본값: 10000)
   createdAt: number;             // 방 생성 시간
   updatedAt: number;             // 마지막 업데이트 시간
 }
 
 type GameStatus = 'waiting' | 'selecting' | 'countdown' | 'racing' | 'finished';
+type RaceMode = 'individual' | 'team'; // ⭐ NEW
 ```
+
+**레이스 모드 설명:**
+| raceMode | 설명 |
+|----------|------|
+| `individual` | 개인전 - 각자의 순위 경쟁 (기본값) |
+| `team` | 팀전 - A팀 vs B팀 점수 대결 |
+
+**팀전 점수 계산:**
+| 등수 | 점수 |
+|------|------|
+| 1등 | 10점 |
+| 2등 | 8점 |
+| 3등 | 6점 |
+| 4등 | 5점 |
+| 5등 | 4점 |
+| 6등 | 3점 |
+| 7등 | 2점 |
+| 8등 이하 | 1점 |
 
 ### ApiResponse (API 응답)
 
@@ -180,7 +269,8 @@ POST /api/game/rooms
   "playerId": "player_1704067200000_abc123",
   "playerName": "닉네임",
   "maxPlayers": 6,
-  "gameMode": "normal"
+  "gameMode": "normal",
+  "raceMode": "individual"
 }
 ```
 
@@ -190,8 +280,11 @@ POST /api/game/rooms
 | playerName | string | O | 닉네임 (2-10자) |
 | maxPlayers | number | X | 최대 인원 (기본값: 6, 범위: 2-30) |
 | gameMode | string | X | 게임 모드: `normal` (기본값) 또는 `relay` |
+| raceMode | string | X | ⭐ **NEW** 레이스 모드: `individual` (기본값) 또는 `team` (일반 모드에서만 사용) |
 
-**Response 200 (일반 모드):**
+> **중요**: `raceMode`는 `gameMode`가 `normal`일 때만 유효합니다. `relay` 모드에서는 무시됩니다.
+
+**Response 200 (일반 모드 - 개인전):**
 ```json
 {
   "success": true,
@@ -199,6 +292,7 @@ POST /api/game/rooms
     "roomCode": "A1B2C3",
     "hostId": "player_1704067200000_abc123",
     "gameMode": "normal",
+    "raceMode": "individual",
     "status": "waiting",
     "players": [
       {
@@ -220,6 +314,31 @@ POST /api/game/rooms
     "raceEndTime": null,
     "countdown": 3,
     "relay": null,
+    "teamScore": null,
+    "createdAt": 1704067200000,
+    "updatedAt": 1704067200000
+  }
+}
+```
+
+**Response 200 (일반 모드 - 팀전):** ⭐ NEW
+```json
+{
+  "success": true,
+  "data": {
+    "roomCode": "A1B2C3",
+    "hostId": "player_1704067200000_abc123",
+    "gameMode": "normal",
+    "raceMode": "team",
+    "status": "waiting",
+    "players": [...],
+    "pigs": [...],
+    "maxPlayers": 6,
+    "raceStartTime": null,
+    "raceEndTime": null,
+    "countdown": 3,
+    "relay": null,
+    "teamScore": null,
     "createdAt": 1704067200000,
     "updatedAt": 1704067200000
   }
@@ -766,6 +885,7 @@ PUT /api/game/rooms/:roomCode/state
 | raceEndTime | number | X | 레이스 종료 시간 |
 | pigs | PigState[] | X | 돼지 상태 배열 |
 | relay | RelayState | X | 릴레이 모드 상태 |
+| firstPlaceFinishTime | number | X | ⭐ **NEW** 1등 골인 시간 (Unix timestamp ms), 리타이어 카운트다운용 |
 | resetPlayers | boolean | X | 재경기 시 플레이어 선택/준비 초기화 |
 
 **Response 200:**
@@ -1369,3 +1489,4 @@ function joinRoom(roomCode, playerId, playerName) {
 | v2.0 | 2024-01-08 | SSE 방식으로 전환, CORS 설정 추가, 완전한 서버 구현 예시 추가 |
 | v2.1 | 2025-01-08 | 돼지 선택 해제 기능 추가, 재경기 시 플레이어 초기화 옵션 추가, 게임 중 방장 변경 시 host_changed 이벤트 추가 |
 | v3.0 | 2025-01-09 | **릴레이 모드 추가**: 팀 대항전, 왕복 레이스, 주자 순서 일괄 배정 API 추가 |
+| v3.1 | 2025-01-09 | **팀전 모드 강화**: 팀 인원 균형 필수, 리타이어 규칙 추가 (1등 골인 후 10초), `firstPlaceFinishTime` 필드 추가, 동점 시 1등 보유팀 승리 |

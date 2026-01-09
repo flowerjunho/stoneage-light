@@ -1,10 +1,11 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
-import type { GameRoom, PigState, Player, HostChangedData, KickedData } from '../services/gameApi';
+import type { GameRoom, PigState, Player, HostChangedData, KickedData, RaceMode, TeamScoreState } from '../services/gameApi';
 import {
   createRoom,
   joinRoom,
   leaveRoom,
   selectPig,
+  selectTeam,
   toggleReady,
   startGame,
   updateGameState,
@@ -145,6 +146,8 @@ const MultiplayerPigRace = ({ onBack, initialMode, initialRoomCode, onGoToRelay,
   const [playerName, setPlayerName] = useState('');
   const [roomCodeInput, setRoomCodeInput] = useState(initialRoomCode || '');
   const [maxPlayers, setMaxPlayers] = useState(10);
+  const [raceMode, setRaceMode] = useState<RaceMode>('individual'); // 개인전/팀전 (방 생성 시 선택용)
+  const [currentRaceMode, setCurrentRaceMode] = useState<RaceMode | null>(null); // 현재 방의 실제 레이스 모드 (서버가 반환 안 할 경우 대비)
 
   // 게임 상태
   const [room, setRoom] = useState<GameRoom | null>(null);
@@ -156,6 +159,7 @@ const MultiplayerPigRace = ({ onBack, initialMode, initialRoomCode, onGoToRelay,
   const animationRef = useRef<number | null>(null);
   const startTimeRef = useRef<number>(0);
   const [raceTime, setRaceTime] = useState(0);
+  const [retireCountdown, setRetireCountdown] = useState<number | null>(null); // 1등 골인 후 남은 시간 (초)
 
   // 호스트가 레이싱 중인지 추적하는 ref (SSE 업데이트 무시용)
   const isHostRacingRef = useRef(false);
@@ -379,9 +383,11 @@ const MultiplayerPigRace = ({ onBack, initialMode, initialRoomCode, onGoToRelay,
     setIsLoading(true);
     setError(null);
 
-    const response = await createRoom(playerName.trim(), maxPlayers);
+    const response = await createRoom(playerName.trim(), maxPlayers, 'normal', raceMode);
 
     if (response.success && response.data) {
+      // 서버가 raceMode를 반환하지 않는 경우를 대비해 생성 시 설정한 값 저장
+      setCurrentRaceMode(response.data.raceMode || raceMode);
       setRoom(response.data);
       setViewPhase('lobby');
       startSSE(response.data.roomCode);
@@ -418,6 +424,10 @@ const MultiplayerPigRace = ({ onBack, initialMode, initialRoomCode, onGoToRelay,
         return;
       }
 
+      // 서버가 raceMode를 반환하지 않으면, 방에 팀이 설정된 플레이어가 있는지 확인하여 팀전 감지
+      const detectedRaceMode = response.data.raceMode ||
+        (response.data.players.some(p => p.team !== null) ? 'team' : 'individual');
+      setCurrentRaceMode(detectedRaceMode);
       setRoom(response.data);
       setViewPhase('lobby');
       startSSE(response.data.roomCode);
@@ -439,6 +449,7 @@ const MultiplayerPigRace = ({ onBack, initialMode, initialRoomCode, onGoToRelay,
     stopHeartbeat();
     await leaveRoom(room.roomCode);
     setRoom(null);
+    setCurrentRaceMode(null);
     setViewPhase('menu');
   };
 
@@ -652,10 +663,13 @@ const MultiplayerPigRace = ({ onBack, initialMode, initialRoomCode, onGoToRelay,
     const RACE_DURATION = 20000;
     const FPS = 60;
     const FRAME_TIME = 1000 / FPS;
+    // 리타이어 기준은 서버에서 받은 값 사용 (기본값: 10초)
+    const RETIRE_TIMEOUT = room.retireThreshold || 10000;
     let lastFrameTime = 0;
     let lastUpdateTime = 0;
     const UPDATE_INTERVAL = 500; // 500ms마다 서버 업데이트 (SSE로 게스트에게 전파)
     let isAnimating = true;
+    let firstPlaceFinishTime: number | null = null; // 1등 골인 시간 추적
 
     // 방장 인계 시: 서버의 raceStartTime 기준으로 경과 시간 계산
     // 새로 시작하는 경우: 현재 시간 기준
@@ -754,6 +768,18 @@ const MultiplayerPigRace = ({ onBack, initialMode, initialRoomCode, onGoToRelay,
           ).length;
           // 선택되지 않은 돼지는 순위 없음 (null)
           const rank = selectedPigIds.has(pig.id) ? finishedSelectedCount + 1 : null;
+
+          // 1등 골인 시간 기록 및 서버 전송
+          if (rank === 1) {
+            firstPlaceFinishTime = elapsed;
+            // 서버에서 받은 리타이어 기준으로 카운트다운 시작
+            setRetireCountdown(Math.ceil(RETIRE_TIMEOUT / 1000));
+            // 서버에 1등 골인 시간 즉시 전송 (게스트들이 카운트다운 표시할 수 있도록)
+            updateGameState(roomCodeRef.current, {
+              firstPlaceFinishTime: Date.now(),
+            });
+          }
+
           return {
             ...pig,
             position: 100,
@@ -777,6 +803,54 @@ const MultiplayerPigRace = ({ onBack, initialMode, initialRoomCode, onGoToRelay,
 
       // 로컬 상태 업데이트
       setRoom(prev => prev ? { ...prev, pigs: updatedPigs } : null);
+
+      // 1등 골인 후 카운트다운 업데이트 (초 단위)
+      if (firstPlaceFinishTime !== null) {
+        const remainingMs = RETIRE_TIMEOUT - (elapsed - firstPlaceFinishTime);
+        const remainingSec = Math.ceil(remainingMs / 1000);
+        setRetireCountdown(remainingSec > 0 ? remainingSec : 0);
+      }
+
+      // 1등 골인 후 리타이어 기준 시간 경과 체크 - 미완주자 리타이어 처리
+      if (firstPlaceFinishTime !== null && elapsed - firstPlaceFinishTime >= RETIRE_TIMEOUT) {
+        // 아직 완주하지 못한 돼지들을 리타이어 처리 (rank: null 유지, finishTime만 설정)
+        const finalPigs = updatedPigs.map(pig => {
+          if (pig.finishTime === null && selectedPigIds.has(pig.id)) {
+            return {
+              ...pig,
+              finishTime: elapsed, // 현재 시간으로 기록 (리타이어 시간)
+              rank: null, // rank는 null로 유지 (리타이어 표시용)
+              status: 'normal' as const,
+            };
+          }
+          return pig;
+        });
+
+        pigsRef.current = finalPigs;
+        isAnimating = false;
+        isHostRacingRef.current = false;
+
+        if (animationRef.current) {
+          cancelAnimationFrame(animationRef.current);
+          animationRef.current = null;
+        }
+
+        // 서버에 최종 상태 전송
+        await updateGameState(roomCodeRef.current, {
+          status: 'finished',
+          pigs: finalPigs,
+          raceEndTime: Date.now(),
+        });
+
+        setRoom(prev => prev ? {
+          ...prev,
+          status: 'finished' as const,
+          pigs: finalPigs,
+          raceEndTime: Date.now()
+        } : null);
+        setRetireCountdown(null); // 카운트다운 초기화
+        return;
+      }
 
       // 서버에 주기적으로 업데이트 전송
       if (currentTime - lastUpdateTime > UPDATE_INTERVAL) {
@@ -814,6 +888,7 @@ const MultiplayerPigRace = ({ onBack, initialMode, initialRoomCode, onGoToRelay,
             pigs: updatedPigs,
             raceEndTime: Date.now()
           } : null);
+          setRetireCountdown(null); // 카운트다운 초기화
           return;
         }
       }
@@ -862,10 +937,21 @@ const MultiplayerPigRace = ({ onBack, initialMode, initialRoomCode, onGoToRelay,
     setInterpolatedPigs(room.pigs);
     guestStartTimeRef.current = performance.now();
 
+    // 리타이어 기준은 서버에서 받은 값 사용 (기본값: 10초)
+    const RETIRE_TIMEOUT = room.retireThreshold || 10000;
+
     const interpolate = () => {
       // 게스트 레이스 시간 업데이트
       const elapsed = performance.now() - guestStartTimeRef.current;
       setGuestRaceTime(elapsed);
+
+      // 게스트용 리타이어 카운트다운 (서버에서 받은 firstPlaceFinishTime 및 retireThreshold 기반)
+      if (room.firstPlaceFinishTime) {
+        const now = Date.now();
+        const elapsedSinceFirst = now - room.firstPlaceFinishTime;
+        const remainingSec = Math.ceil((RETIRE_TIMEOUT - elapsedSinceFirst) / 1000);
+        setRetireCountdown(remainingSec > 0 ? remainingSec : 0);
+      }
 
       setInterpolatedPigs(prev => {
         const targets = targetPigsRef.current;
@@ -902,7 +988,7 @@ const MultiplayerPigRace = ({ onBack, initialMode, initialRoomCode, onGoToRelay,
         guestAnimationRef.current = null;
       }
     };
-  }, [room?.status, room?.roomCode]);
+  }, [room?.status, room?.roomCode, room?.firstPlaceFinishTime]);
 
   // 게임 상태 변경 감지
   useEffect(() => {
@@ -943,6 +1029,40 @@ const MultiplayerPigRace = ({ onBack, initialMode, initialRoomCode, onGoToRelay,
       case 'tired': return '😴';
       default: return '';
     }
+  };
+
+  // 팀전 점수 계산 (등수별 점수: 1등=10, 2등=8, 3등=6, 4등=5, 5등=4, 6등=3, 7등=2, 8등이하=1)
+  // 동점 시 타이브레이커: 1등 보유팀이 승리
+  const calculateTeamScore = (pigs: PigState[], players: Player[]): TeamScoreState => {
+    const rankPoints: Record<number, number> = {
+      1: 10, 2: 8, 3: 6, 4: 5, 5: 4, 6: 3, 7: 2
+    };
+
+    let teamAScore = 0;
+    let teamBScore = 0;
+    let firstPlaceTeam: 'A' | 'B' | null = null;
+
+    pigs.forEach(pig => {
+      if (pig.rank === null) return; // 완주하지 않은 돼지는 제외
+
+      const owner = players.find(p => p.selectedPig === pig.id);
+      if (!owner || !owner.team) return; // 팀이 없으면 제외
+
+      const points = rankPoints[pig.rank] || 1; // 8등 이하는 1점
+
+      // 1등 보유팀 추적 (타이브레이커용)
+      if (pig.rank === 1) {
+        firstPlaceTeam = owner.team;
+      }
+
+      if (owner.team === 'A') {
+        teamAScore += points;
+      } else {
+        teamBScore += points;
+      }
+    });
+
+    return { teamA: teamAScore, teamB: teamBScore, firstPlaceTeam };
   };
 
   // ========== 렌더링 ==========
@@ -1006,6 +1126,39 @@ const MultiplayerPigRace = ({ onBack, initialMode, initialRoomCode, onGoToRelay,
           className="w-full px-4 py-3 bg-bg-tertiary border border-border rounded-lg text-text-primary"
           maxLength={10}
         />
+      </div>
+
+      {/* 레이스 모드 선택 */}
+      <div>
+        <label className="block text-sm font-medium text-text-secondary mb-2">
+          레이스 모드
+        </label>
+        <div className="grid grid-cols-2 gap-3">
+          <button
+            onClick={() => setRaceMode('individual')}
+            className={`p-4 rounded-xl border-2 transition-all ${
+              raceMode === 'individual'
+                ? 'border-pink-500 bg-pink-500/20'
+                : 'border-border hover:border-pink-500/50 bg-bg-tertiary'
+            }`}
+          >
+            <div className="text-2xl mb-1">🏃</div>
+            <div className="font-bold text-text-primary">개인전</div>
+            <div className="text-xs text-text-secondary">각자의 순위 경쟁</div>
+          </button>
+          <button
+            onClick={() => setRaceMode('team')}
+            className={`p-4 rounded-xl border-2 transition-all ${
+              raceMode === 'team'
+                ? 'border-blue-500 bg-blue-500/20'
+                : 'border-border hover:border-blue-500/50 bg-bg-tertiary'
+            }`}
+          >
+            <div className="text-2xl mb-1">👥</div>
+            <div className="font-bold text-text-primary">팀전</div>
+            <div className="text-xs text-text-secondary">A팀 vs B팀 점수 대결</div>
+          </button>
+        </div>
       </div>
 
       <div>
@@ -1141,23 +1294,50 @@ const MultiplayerPigRace = ({ onBack, initialMode, initialRoomCode, onGoToRelay,
     </div>
   );
 
+  // 팀 선택 핸들러
+  const handleSelectTeam = async (team: 'A' | 'B') => {
+    if (!room) return;
+
+    const response = await selectTeam(room.roomCode, team);
+    if (response.success && response.data) {
+      setRoom(response.data);
+    }
+  };
+
   // 로비 화면
   const renderLobby = () => {
     if (!room) return null;
 
     const currentPlayer = getCurrentPlayer(room);
     const isHost = isCurrentPlayerHost(room);
+    // 서버가 raceMode를 반환하지 않는 경우 currentRaceMode 사용
+    const isTeamMode = (room.raceMode || currentRaceMode) === 'team';
 
     // 참가자: 돼지를 선택한 플레이어 (방장 포함)
     // 관전자: 돼지를 선택하지 않은 플레이어
     const participants = room.players.filter(p => p.selectedPig !== null);
     const spectators = room.players.filter(p => p.selectedPig === null);
 
+    // 팀전일 경우 팀별 분류 (관전자 제외)
+    const teamAPlayers = room.players.filter(p => p.team === 'A' && p.selectedPig !== null);
+    const teamBPlayers = room.players.filter(p => p.team === 'B' && p.selectedPig !== null);
+    const noTeamPlayers = room.players.filter(p => p.team === null && p.selectedPig !== null);
+    const spectatorPlayers = room.players.filter(p => p.selectedPig === null);
+
     // 방장을 제외한 모든 플레이어가 준비 완료해야 함
     const allReady = room.players.every(p => p.isReady || p.id === room.hostId);
     // 돼지를 선택한 참가자가 2명 이상이어야 게임 시작 가능 (방장도 관전 가능)
     const hasEnoughParticipants = participants.length >= 2;
-    const canStart = isHost && allReady && hasEnoughParticipants;
+    // 팀전일 경우: 양 팀에 각각 1명 이상 있어야 하고, 팀 인원수가 동일해야 함 (관전자 제외)
+    const teamAParticipants = teamAPlayers.filter(p => p.selectedPig !== null);
+    const teamBParticipants = teamBPlayers.filter(p => p.selectedPig !== null);
+    const hasValidTeams = !isTeamMode || (
+      teamAParticipants.length >= 1 &&
+      teamBParticipants.length >= 1 &&
+      teamAParticipants.length === teamBParticipants.length
+    );
+    const teamsBalanced = !isTeamMode || teamAParticipants.length === teamBParticipants.length;
+    const canStart = isHost && allReady && hasEnoughParticipants && hasValidTeams;
 
     return (
       <div className="space-y-6">
@@ -1201,10 +1381,97 @@ const MultiplayerPigRace = ({ onBack, initialMode, initialRoomCode, onGoToRelay,
           </div>
         </div>
 
+        {/* 팀전 모드 표시 및 팀 선택 */}
+        {isTeamMode && (
+          <div className={`p-4 rounded-xl border ${
+            !currentPlayer?.team && currentPlayer?.selectedPig !== null
+              ? 'bg-gradient-to-r from-red-500/20 to-blue-500/20 border-yellow-500 animate-pulse'
+              : 'bg-gradient-to-r from-red-500/10 to-blue-500/10 border-border'
+          }`}>
+            <h4 className="text-sm font-medium text-text-secondary mb-3 text-center">
+              {currentPlayer?.selectedPig === null
+                ? '👀 관전 모드 - 팀 선택 없이 관전합니다'
+                : !currentPlayer?.team
+                  ? '⚠️ 팀을 선택해야 준비할 수 있습니다!'
+                  : '👥 팀전 모드 - 팀을 선택하세요'}
+            </h4>
+            <div className="grid grid-cols-2 gap-3">
+              {/* A팀 */}
+              <button
+                onClick={() => handleSelectTeam('A')}
+                disabled={currentPlayer?.isReady || currentPlayer?.selectedPig === null}
+                className={`p-3 rounded-xl border-2 transition-all ${
+                  currentPlayer?.team === 'A'
+                    ? 'border-red-500 bg-red-500/20'
+                    : 'border-red-500/30 hover:border-red-500/60 bg-red-500/5'
+                } ${currentPlayer?.isReady || currentPlayer?.selectedPig === null ? 'opacity-50 cursor-not-allowed' : ''}`}
+              >
+                <div className="text-lg font-bold text-red-400 mb-1">🔴 A팀</div>
+                <div className="text-xs text-text-secondary">
+                  {teamAPlayers.length}명 참가
+                </div>
+                <div className="mt-2 space-y-1">
+                  {teamAPlayers.map(p => (
+                    <div key={p.id} className="text-xs text-red-300 truncate">
+                      {p.id === room.hostId && '👑'} {p.name}
+                    </div>
+                  ))}
+                </div>
+              </button>
+
+              {/* B팀 */}
+              <button
+                onClick={() => handleSelectTeam('B')}
+                disabled={currentPlayer?.isReady || currentPlayer?.selectedPig === null}
+                className={`p-3 rounded-xl border-2 transition-all ${
+                  currentPlayer?.team === 'B'
+                    ? 'border-blue-500 bg-blue-500/20'
+                    : 'border-blue-500/30 hover:border-blue-500/60 bg-blue-500/5'
+                } ${currentPlayer?.isReady || currentPlayer?.selectedPig === null ? 'opacity-50 cursor-not-allowed' : ''}`}
+              >
+                <div className="text-lg font-bold text-blue-400 mb-1">🔵 B팀</div>
+                <div className="text-xs text-text-secondary">
+                  {teamBPlayers.length}명 참가
+                </div>
+                <div className="mt-2 space-y-1">
+                  {teamBPlayers.map(p => (
+                    <div key={p.id} className="text-xs text-blue-300 truncate">
+                      {p.id === room.hostId && '👑'} {p.name}
+                    </div>
+                  ))}
+                </div>
+              </button>
+            </div>
+
+            {/* 관전 영역 */}
+            {spectatorPlayers.length > 0 && (
+              <div className="mt-3 p-3 rounded-xl border-2 border-gray-500/30 bg-gray-500/5">
+                <div className="text-sm font-bold text-gray-400 mb-1">👀 관전</div>
+                <div className="text-xs text-text-secondary mb-2">
+                  {spectatorPlayers.length}명 관전 중
+                </div>
+                <div className="space-y-1">
+                  {spectatorPlayers.map(p => (
+                    <div key={p.id} className="text-xs text-gray-300 truncate">
+                      {p.id === room.hostId && '👑'} {p.name}
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {noTeamPlayers.length > 0 && (
+              <div className="mt-3 text-center text-xs text-text-secondary">
+                팀 미선택: {noTeamPlayers.map(p => p.name).join(', ')}
+              </div>
+            )}
+          </div>
+        )}
+
         {/* 플레이어 목록 */}
         <div>
           <h4 className="text-sm font-medium text-text-secondary mb-2">
-            참가자 ({participants.length}명) / 관전자 ({spectators.length}명)
+            {isTeamMode ? '전체 참가자' : `참가자 (${participants.length}명) / 관전자 (${spectators.length}명)`}
           </h4>
           <div className="space-y-2">
             {room.players.map((player) => {
@@ -1222,6 +1489,11 @@ const MultiplayerPigRace = ({ onBack, initialMode, initialRoomCode, onGoToRelay,
                   <div className="flex items-center gap-2">
                     {isPlayerHost && <span>👑</span>}
                     {isSpectator && !isPlayerHost && <span>👀</span>}
+                    {isTeamMode && player.team && (
+                      <span className={player.team === 'A' ? 'text-red-400' : 'text-blue-400'}>
+                        {player.team === 'A' ? '🔴' : '🔵'}
+                      </span>
+                    )}
                     <span className="font-medium text-text-primary">{player.name}</span>
                     {player.id === getCurrentPlayerId() && (
                       <span className="text-xs text-accent">(나)</span>
@@ -1231,6 +1503,13 @@ const MultiplayerPigRace = ({ onBack, initialMode, initialRoomCode, onGoToRelay,
                     )}
                   </div>
                   <div className="flex items-center gap-2">
+                    {isTeamMode && player.team && (
+                      <span className={`text-xs px-2 py-1 rounded ${
+                        player.team === 'A' ? 'bg-red-500/20 text-red-400' : 'bg-blue-500/20 text-blue-400'
+                      }`}>
+                        {player.team}팀
+                      </span>
+                    )}
                     {isPlayerHost ? (
                       <span className="text-xs px-2 py-1 bg-yellow-500/20 text-yellow-400 rounded">
                         방장
@@ -1342,6 +1621,10 @@ const MultiplayerPigRace = ({ onBack, initialMode, initialRoomCode, onGoToRelay,
                 >
                   {!hasEnoughParticipants
                     ? '참가자 2명 이상 필요'
+                    : !hasValidTeams
+                    ? !teamsBalanced
+                      ? `팀 인원 불균형 (A:${teamAParticipants.length} vs B:${teamBParticipants.length})`
+                      : '양 팀에 참가자 필요'
                     : !allReady
                     ? '모두 준비 대기'
                     : isRematchWaiting
@@ -1351,15 +1634,18 @@ const MultiplayerPigRace = ({ onBack, initialMode, initialRoomCode, onGoToRelay,
               ) : (
                 <button
                   onClick={handleToggleReady}
+                  disabled={isTeamMode && !currentPlayer?.team && currentPlayer?.selectedPig !== null}
                   className={`flex-1 py-3 font-bold rounded-lg ${
                     currentPlayer?.isReady
                       ? 'bg-gray-600 text-gray-300'
                       : currentPlayer?.selectedPig === null
                       ? 'bg-gradient-to-r from-blue-500 to-cyan-500 text-white'
                       : 'bg-gradient-to-r from-green-500 to-emerald-500 text-white'
-                  }`}
+                  } disabled:opacity-50`}
                 >
-                  {currentPlayer?.isReady
+                  {isTeamMode && !currentPlayer?.team && currentPlayer?.selectedPig !== null
+                    ? '팀을 선택하세요'
+                    : currentPlayer?.isReady
                     ? '준비 취소'
                     : currentPlayer?.selectedPig === null
                     ? '👀 관전 준비'
@@ -1402,6 +1688,11 @@ const MultiplayerPigRace = ({ onBack, initialMode, initialRoomCode, onGoToRelay,
       return '🏁 레이스 종료!';
     };
 
+    // 팀전 모드 및 내 팀 정보
+    const isTeamModeGame = (room.raceMode || currentRaceMode) === 'team';
+    const currentPlayer = getCurrentPlayer(room);
+    const myTeam = currentPlayer?.team;
+
     return (
       <div className="space-y-4">
         {/* 카운트다운 오버레이 */}
@@ -1418,11 +1709,48 @@ const MultiplayerPigRace = ({ onBack, initialMode, initialRoomCode, onGoToRelay,
           </div>
         )}
 
+        {/* 1등 골인 후 리타이어 카운트다운 오버레이 - 서버에서 firstPlaceFinishTime 받았을 때만 표시 */}
+        {isRacing && room?.firstPlaceFinishTime && retireCountdown !== null && retireCountdown > 0 && (
+          <div className="fixed top-20 left-1/2 -translate-x-1/2 z-40">
+            <div className={`px-6 py-3 rounded-2xl shadow-lg ${
+              retireCountdown <= 3
+                ? 'bg-red-500/90 animate-pulse'
+                : 'bg-yellow-500/90'
+            }`}>
+              <div className="text-center">
+                <div className="text-sm font-medium text-white/80">
+                  ⏱️ 골인까지 남은 시간
+                </div>
+                <div className={`text-4xl font-bold text-white ${
+                  retireCountdown <= 3 ? 'animate-bounce' : ''
+                }`}>
+                  {retireCountdown}초
+                </div>
+                <div className="text-xs text-white/70 mt-1">
+                  시간 초과 시 리타이어 처리
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+
         {/* 상태 바 */}
         <div className="flex justify-between items-center text-sm">
-          <span className="text-text-secondary">
-            {getStatusText()}
-          </span>
+          <div className="flex items-center gap-3">
+            <span className="text-text-secondary">
+              {getStatusText()}
+            </span>
+            {/* 팀전 모드 - 내 팀 표시 */}
+            {isTeamModeGame && myTeam && (
+              <span className={`px-2 py-1 rounded-lg font-bold text-xs ${
+                myTeam === 'A'
+                  ? 'bg-red-500/30 text-red-400 border border-red-500/50'
+                  : 'bg-blue-500/30 text-blue-400 border border-blue-500/50'
+              }`}>
+                {myTeam === 'A' ? '🔴 A팀' : '🔵 B팀'}
+              </span>
+            )}
+          </div>
           <span className="text-text-secondary">
             방 코드: {room.roomCode}
           </span>
@@ -1455,6 +1783,8 @@ const MultiplayerPigRace = ({ onBack, initialMode, initialRoomCode, onGoToRelay,
             const statusEmoji = getStatusEmoji(pig.status);
             const pigColor = getPigColor(pig.id);
             const isOriginal = pigColor === 'original';
+            const isTeamModeRace = (room.raceMode || currentRaceMode) === 'team';
+            const ownerTeam = owner?.team;
 
             return (
               <div
@@ -1473,13 +1803,19 @@ const MultiplayerPigRace = ({ onBack, initialMode, initialRoomCode, onGoToRelay,
                       {statusEmoji}
                     </div>
                   )}
-                  {/* 이름 */}
+                  {/* 이름 + 팀 표시 */}
                   <div
-                    className={`text-[10px] font-bold whitespace-nowrap px-1.5 py-0.5 rounded-full mb-0.5 ${
+                    className={`flex items-center text-[10px] font-bold whitespace-nowrap px-1.5 py-0.5 rounded-full mb-0.5 ${
                       isMyPig ? 'ring-2 ring-white' : ''
                     } ${isOriginal ? 'border border-gray-500' : ''}`}
                     style={{ backgroundColor: getPigBgColor(pig.id), color: '#000' }}
                   >
+                    {/* 팀 표시 (팀전 모드) - 닉네임 왼쪽 */}
+                    {isTeamModeRace && ownerTeam && (
+                      <span className="mr-0.5 text-xs">
+                        {ownerTeam === 'A' ? '🔴' : '🔵'}
+                      </span>
+                    )}
                     {owner?.name || `돼지${pig.id + 1}`}
                     {pig.rank && <span className="ml-1">#{pig.rank}</span>}
                   </div>
@@ -1502,52 +1838,153 @@ const MultiplayerPigRace = ({ onBack, initialMode, initialRoomCode, onGoToRelay,
         </div>
 
         {/* 순위 */}
-        {isFinished && (
-          <div className="space-y-2">
-            <h4 className="text-sm font-medium text-text-secondary">🏆 최종 순위</h4>
-            {[...room.pigs]
-              .filter(pig => selectedPigIds.has(pig.id)) // 선택된 돼지만 순위에 표시
-              .sort((a, b) => (a.rank || 999) - (b.rank || 999))
-              .map((pig) => {
-                const owner = getPigOwner(room, pig.id);
-                const isMyPig = getCurrentPlayer(room)?.selectedPig === pig.id;
-                const isOriginal = getPigColor(pig.id) === 'original';
+        {isFinished && (() => {
+          // 서버가 raceMode를 반환하지 않는 경우 currentRaceMode 사용
+          const isTeamMode = (room.raceMode || currentRaceMode) === 'team';
+          const teamScore = isTeamMode ? calculateTeamScore(room.pigs as PigState[], room.players) : null;
+          const rankPoints: Record<number, number> = { 1: 10, 2: 8, 3: 6, 4: 5, 5: 4, 6: 3, 7: 2 };
+
+          return (
+            <div className="space-y-4">
+              {/* 팀전 결과 */}
+              {isTeamMode && teamScore && (() => {
+                // 승리팀 결정: 점수가 높은 팀 승리, 동점이면 1등 보유팀 승리
+                const isTied = teamScore.teamA === teamScore.teamB;
+                const teamAWins = teamScore.teamA > teamScore.teamB ||
+                  (isTied && teamScore.firstPlaceTeam === 'A');
+                const teamBWins = teamScore.teamB > teamScore.teamA ||
+                  (isTied && teamScore.firstPlaceTeam === 'B');
 
                 return (
-                  <div
-                    key={pig.id}
-                    className={`flex justify-between items-center p-3 rounded-xl ${
-                      pig.rank === 1
-                        ? 'bg-gradient-to-r from-yellow-500/20 to-orange-500/20 border-2 border-yellow-500'
-                        : isMyPig
-                        ? 'bg-accent/10 border border-accent'
-                        : 'bg-bg-tertiary'
-                    }`}
-                  >
-                    <div className="flex items-center gap-3">
-                      <span className="text-base font-bold w-8">
-                        {pig.rank === 1 && '🥇'}
-                        {pig.rank === 2 && '🥈'}
-                        {pig.rank === 3 && '🥉'}
-                        {pig.rank && pig.rank > 3 && `${pig.rank}등`}
-                      </span>
-                      <div
-                        className={`w-5 h-5 rounded-full ${isOriginal ? 'border-2 border-gray-400' : ''}`}
-                        style={{ backgroundColor: getPigBgColor(pig.id) }}
-                      />
-                      <span className={pig.rank === 1 ? 'text-yellow-400 font-bold' : 'text-text-primary'}>
-                        {owner?.name || `돼지${pig.id + 1}`}
-                        {isMyPig && ' (나)'}
-                      </span>
+                  <div className="p-4 rounded-xl bg-gradient-to-r from-red-500/10 via-purple-500/10 to-blue-500/10 border border-border">
+                    <h4 className="text-center text-sm font-medium text-text-secondary mb-3">👥 팀전 결과</h4>
+                    <div className="grid grid-cols-3 gap-4 items-center">
+                      {/* A팀 */}
+                      <div className={`text-center p-3 rounded-xl ${
+                        teamAWins ? 'bg-red-500/20 border-2 border-red-500' : 'bg-red-500/10'
+                      }`}>
+                        <div className="text-2xl mb-1">🔴</div>
+                        <div className="text-lg font-bold text-red-400">A팀</div>
+                        <div className="text-3xl font-bold text-red-300">{teamScore.teamA}점</div>
+                        {teamAWins ? (
+                          <div className="text-yellow-400 font-bold mt-1">
+                            🏆 승리!
+                            {isTied && <span className="text-xs block text-yellow-300">(1등 보유)</span>}
+                          </div>
+                        ) : (
+                          <div className="text-gray-400 font-bold mt-1">
+                            💀 패배
+                            {isTied && <span className="text-xs block text-gray-500">(1등 없음)</span>}
+                          </div>
+                        )}
+                      </div>
+
+                      {/* VS */}
+                      <div className="text-center">
+                        <div className="text-2xl font-bold text-text-secondary">VS</div>
+                        {isTied && (
+                          <div className="text-purple-400 font-bold text-sm mt-2">동점!</div>
+                        )}
+                      </div>
+
+                      {/* B팀 */}
+                      <div className={`text-center p-3 rounded-xl ${
+                        teamBWins ? 'bg-blue-500/20 border-2 border-blue-500' : 'bg-blue-500/10'
+                      }`}>
+                        <div className="text-2xl mb-1">🔵</div>
+                        <div className="text-lg font-bold text-blue-400">B팀</div>
+                        <div className="text-3xl font-bold text-blue-300">{teamScore.teamB}점</div>
+                        {teamBWins ? (
+                          <div className="text-yellow-400 font-bold mt-1">
+                            🏆 승리!
+                            {isTied && <span className="text-xs block text-yellow-300">(1등 보유)</span>}
+                          </div>
+                        ) : (
+                          <div className="text-gray-400 font-bold mt-1">
+                            💀 패배
+                            {isTied && <span className="text-xs block text-gray-500">(1등 없음)</span>}
+                          </div>
+                        )}
+                      </div>
                     </div>
-                    <span className="text-sm text-text-secondary">
-                      {pig.finishTime ? `${(pig.finishTime / 1000).toFixed(2)}초` : '-'}
-                    </span>
                   </div>
                 );
-              })}
-          </div>
-        )}
+              })()}
+
+              {/* 개인 순위 */}
+              <div className="space-y-2">
+                <h4 className="text-sm font-medium text-text-secondary">
+                  {isTeamMode ? '📊 개인 순위 (획득 점수)' : '🏆 최종 순위'}
+                </h4>
+                {[...room.pigs]
+                  .filter(pig => selectedPigIds.has(pig.id)) // 선택된 돼지만 순위에 표시
+                  .sort((a, b) => (a.rank || 999) - (b.rank || 999))
+                  .map((pig) => {
+                    const owner = getPigOwner(room, pig.id);
+                    const isMyPig = getCurrentPlayer(room)?.selectedPig === pig.id;
+                    const isOriginal = getPigColor(pig.id) === 'original';
+                    const points = pig.rank ? (rankPoints[pig.rank] || 1) : 0;
+                    const isRetired = pig.rank === null; // 리타이어 (제한 시간 내 미완주)
+
+                    return (
+                      <div
+                        key={pig.id}
+                        className={`flex justify-between items-center p-3 rounded-xl ${
+                          isRetired
+                            ? 'bg-gray-500/10 opacity-60'
+                            : pig.rank === 1
+                            ? 'bg-gradient-to-r from-yellow-500/20 to-orange-500/20 border-2 border-yellow-500'
+                            : isMyPig
+                            ? 'bg-accent/10 border border-accent'
+                            : 'bg-bg-tertiary'
+                        }`}
+                      >
+                        <div className="flex items-center gap-3">
+                          <span className="text-base font-bold w-8">
+                            {isRetired && '💨'}
+                            {pig.rank === 1 && '🥇'}
+                            {pig.rank === 2 && '🥈'}
+                            {pig.rank === 3 && '🥉'}
+                            {pig.rank && pig.rank > 3 && `${pig.rank}등`}
+                          </span>
+                          <div
+                            className={`w-5 h-5 rounded-full ${isOriginal ? 'border-2 border-gray-400' : ''}`}
+                            style={{ backgroundColor: getPigBgColor(pig.id) }}
+                          />
+                          {/* 팀전일 경우 팀 표시 */}
+                          {isTeamMode && owner?.team && (
+                            <span className={owner.team === 'A' ? 'text-red-400' : 'text-blue-400'}>
+                              {owner.team === 'A' ? '🔴' : '🔵'}
+                            </span>
+                          )}
+                          <span className={
+                            isRetired
+                              ? 'text-gray-400 line-through'
+                              : pig.rank === 1
+                              ? 'text-yellow-400 font-bold'
+                              : 'text-text-primary'
+                          }>
+                            {owner?.name || `돼지${pig.id + 1}`}
+                            {isMyPig && ' (나)'}
+                          </span>
+                        </div>
+                        <div className="flex items-center gap-3">
+                          {isTeamMode && (
+                            <span className={`text-sm font-bold ${isRetired ? 'text-gray-400' : 'text-accent'}`}>
+                              {isRetired ? '0점' : `+${points}점`}
+                            </span>
+                          )}
+                          <span className="text-sm text-text-secondary">
+                            {isRetired ? '리타이어' : pig.finishTime ? `${(pig.finishTime / 1000).toFixed(2)}초` : '-'}
+                          </span>
+                        </div>
+                      </div>
+                    );
+                  })}
+              </div>
+            </div>
+          );
+        })()}
 
         {/* 버튼 */}
         {isFinished && (
