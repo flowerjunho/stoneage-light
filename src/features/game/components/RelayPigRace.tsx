@@ -78,6 +78,7 @@ const getStatusEmoji = (status: PigState['status']) => {
     case 'boost': return '💨';
     case 'slip': return '🍌';
     case 'tired': return '😴';
+    case 'stumble': return '🔙'; // 비틀거림 - 뒤로 후진!
     default: return '';
   }
 };
@@ -650,6 +651,7 @@ const RelayPigRace = ({ onBack, initialMode, initialRoomCode, alreadyJoinedRoom,
         case 'boost': return 1.5;
         case 'slip': return 0.4;       // 살짝 미끄러짐
         case 'tired': return 0.6;      // 약간 지침
+        case 'stumble': return -0.6;   // 뒤로 후진! (음수 = 역방향)
         default: return 1.0;
       }
     };
@@ -709,6 +711,9 @@ const RelayPigRace = ({ onBack, initialMode, initialRoomCode, alreadyJoinedRoom,
           } else if (rand < 0.34) {
             newStatus = 'slip';
             duration = 8;   // 아주 짧은 미끄러짐
+          } else if (rand < 0.40) {
+            newStatus = 'stumble'; // 비틀거림 - 뒤로 후진!
+            duration = 8;   // 짧은 지속시간
           }
         }
 
@@ -723,13 +728,15 @@ const RelayPigRace = ({ onBack, initialMode, initialRoomCode, alreadyJoinedRoom,
         let newDirection = runner.direction;
 
         if (runner.direction === 'forward') {
-          newPosition = Math.min(100, runner.position + speed);
+          // 앞으로 이동 (stumble일 때 음수 속도 → 뒤로 이동하지만 0 미만은 제한)
+          newPosition = Math.max(0, Math.min(100, runner.position + speed));
           if (newPosition >= 100) {
             newDirection = 'backward';
             newPosition = 100;
           }
         } else if (runner.direction === 'backward') {
-          newPosition = Math.max(0, runner.position - speed);
+          // 뒤로 이동 (stumble일 때 음수 속도 → 앞으로 다시 이동하지만 100 초과는 제한)
+          newPosition = Math.max(0, Math.min(100, runner.position - speed));
           if (newPosition <= 0) {
             // 왕복 완료
             const team = runner.team === 'A' ? 'teamA' : 'teamB';
@@ -932,6 +939,37 @@ const RelayPigRace = ({ onBack, initialMode, initialRoomCode, alreadyJoinedRoom,
         <h2 className="text-2xl font-bold text-text-primary">릴레이 레이스</h2>
         <p className="text-text-secondary mt-2">팀을 나눠 왕복 릴레이!</p>
         <p className="text-sm text-accent mt-1">🔴 A팀 vs B팀 🔵</p>
+      </div>
+
+      {/* 스킬 설명 */}
+      <div className="bg-bg-tertiary rounded-xl p-4 space-y-2">
+        <h4 className="text-sm font-bold text-text-primary">🎮 레이스 스킬</h4>
+        <div className="grid grid-cols-2 gap-2 text-xs">
+          <div className="flex items-center gap-1.5">
+            <span>🔥</span>
+            <span className="text-text-secondary">터보 - 2.5배속!</span>
+          </div>
+          <div className="flex items-center gap-1.5">
+            <span>⚡</span>
+            <span className="text-text-secondary">슈퍼부스트 - 2배속</span>
+          </div>
+          <div className="flex items-center gap-1.5">
+            <span>💨</span>
+            <span className="text-text-secondary">부스트 - 1.5배속</span>
+          </div>
+          <div className="flex items-center gap-1.5">
+            <span>😴</span>
+            <span className="text-text-secondary">피곤 - 느려짐</span>
+          </div>
+          <div className="flex items-center gap-1.5">
+            <span>🍌</span>
+            <span className="text-text-secondary">미끄러짐 - 느려짐</span>
+          </div>
+          <div className="flex items-center gap-1.5">
+            <span>🔙</span>
+            <span className="text-text-secondary">비틀거림 - 뒤로 후진!</span>
+          </div>
+        </div>
       </div>
 
       <div className="space-y-3">

@@ -768,6 +768,7 @@ const MultiplayerPigRace = ({ onBack, initialMode, initialRoomCode, onGoToRelay,
         case 'boost': return 1.8;
         case 'slip': return 0.05;
         case 'tired': return 0.2;
+        case 'stumble': return -0.8; // 뒤로 후진! (음수 = 역방향)
         default: return 1.0;
       }
     };
@@ -819,6 +820,9 @@ const MultiplayerPigRace = ({ onBack, initialMode, initialRoomCode, onGoToRelay,
           } else if (rand < 0.25) {
             newStatus = 'slip';
             duration = 30;
+          } else if (rand < 0.30) {
+            newStatus = 'stumble'; // 비틀거림 - 뒤로 후진!
+            duration = 15; // 짧은 지속시간
           }
         }
 
@@ -828,7 +832,8 @@ const MultiplayerPigRace = ({ onBack, initialMode, initialRoomCode, onGoToRelay,
         const randomVariation = 0.85 + Math.random() * 0.3;
         const speed = baseSpeed * statusMultiplier * randomVariation;
 
-        const newPosition = Math.min(100, pig.position + speed);
+        // 위치 계산: 음수 속도(stumble)일 때 뒤로 이동, 0 미만은 0으로 제한
+        const newPosition = Math.max(0, Math.min(100, pig.position + speed));
 
         if (newPosition >= 100 && pig.finishTime === null) {
           // 선택된 돼지들 중에서만 순위 계산 (관전자 돼지 제외)
@@ -1123,6 +1128,7 @@ const MultiplayerPigRace = ({ onBack, initialMode, initialRoomCode, onGoToRelay,
       case 'boost': return '💨';
       case 'slip': return '💫';
       case 'tired': return '😴';
+      case 'stumble': return '🔙'; // 비틀거림 - 뒤로 후진!
       default: return '';
     }
   };
@@ -1312,11 +1318,18 @@ const MultiplayerPigRace = ({ onBack, initialMode, initialRoomCode, onGoToRelay,
               <div className="text-text-secondary">0.2배속 감속</div>
             </div>
           </div>
-          <div className="flex items-center gap-2 p-2 bg-bg-secondary rounded-lg col-span-2">
+          <div className="flex items-center gap-2 p-2 bg-bg-secondary rounded-lg">
             <span className="text-lg">💫</span>
             <div>
               <div className="font-bold text-pink-400">미끄러짐</div>
               <div className="text-text-secondary">거의 멈춤 (0.05배속)</div>
+            </div>
+          </div>
+          <div className="flex items-center gap-2 p-2 bg-bg-secondary rounded-lg">
+            <span className="text-lg">🔙</span>
+            <div>
+              <div className="font-bold text-red-400">비틀거림</div>
+              <div className="text-text-secondary">뒤로 후진!</div>
             </div>
           </div>
         </div>

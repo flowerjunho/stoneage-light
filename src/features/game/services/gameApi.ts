@@ -24,7 +24,7 @@ export interface PigState {
   id: number;
   position: number;
   speed: number;
-  status: 'normal' | 'turbo' | 'superBoost' | 'boost' | 'slip' | 'tired';
+  status: 'normal' | 'turbo' | 'superBoost' | 'boost' | 'slip' | 'tired' | 'stumble';
   finishTime: number | null;
   rank: number | null;
 }
@@ -35,7 +35,7 @@ export interface RelayPigState {
   team: 'A' | 'B';
   position: number; // 0-100
   speed: number;
-  status: 'normal' | 'turbo' | 'superBoost' | 'boost' | 'slip' | 'tired';
+  status: 'normal' | 'turbo' | 'superBoost' | 'boost' | 'slip' | 'tired' | 'stumble';
   direction: 'forward' | 'backward'; // 이동 방향
   finishTime: number | null; // 팀 최종 완주 시간
   rank: number | null; // 팀 순위
