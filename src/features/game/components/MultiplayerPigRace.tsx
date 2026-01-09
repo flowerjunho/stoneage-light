@@ -1150,6 +1150,50 @@ const MultiplayerPigRace = ({ onBack, initialMode, initialRoomCode, onGoToRelay,
           🚪 방 입장하기
         </button>
       </div>
+
+      {/* 스킬 설명 */}
+      <div className="mt-6 p-4 bg-bg-tertiary rounded-xl border border-border">
+        <h3 className="text-sm font-bold text-text-primary mb-3 flex items-center gap-2">
+          <span>⚡</span> 레이스 스킬
+        </h3>
+        <div className="grid grid-cols-2 gap-2 text-xs">
+          <div className="flex items-center gap-2 p-2 bg-bg-secondary rounded-lg">
+            <span className="text-lg">🔥</span>
+            <div>
+              <div className="font-bold text-orange-400">터보</div>
+              <div className="text-text-secondary">4배속 질주</div>
+            </div>
+          </div>
+          <div className="flex items-center gap-2 p-2 bg-bg-secondary rounded-lg">
+            <span className="text-lg">⚡</span>
+            <div>
+              <div className="font-bold text-yellow-400">슈퍼부스트</div>
+              <div className="text-text-secondary">2.5배속 가속</div>
+            </div>
+          </div>
+          <div className="flex items-center gap-2 p-2 bg-bg-secondary rounded-lg">
+            <span className="text-lg">💨</span>
+            <div>
+              <div className="font-bold text-cyan-400">부스트</div>
+              <div className="text-text-secondary">1.8배속 가속</div>
+            </div>
+          </div>
+          <div className="flex items-center gap-2 p-2 bg-bg-secondary rounded-lg">
+            <span className="text-lg">😴</span>
+            <div>
+              <div className="font-bold text-purple-400">피로</div>
+              <div className="text-text-secondary">0.2배속 감속</div>
+            </div>
+          </div>
+          <div className="flex items-center gap-2 p-2 bg-bg-secondary rounded-lg col-span-2">
+            <span className="text-lg">💫</span>
+            <div>
+              <div className="font-bold text-pink-400">미끄러짐</div>
+              <div className="text-text-secondary">거의 멈춤 (0.05배속)</div>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   );
 
