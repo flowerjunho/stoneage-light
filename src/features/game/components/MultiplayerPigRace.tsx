@@ -2305,6 +2305,85 @@ const MultiplayerPigRace = ({ onBack, initialMode, initialRoomCode, onGoToRelay,
           );
         })()}
 
+        {/* 레이스 중 채팅 */}
+        <div className="mt-4 border-t border-border pt-4">
+          <button
+            onClick={() => setIsChatOpen(!isChatOpen)}
+            className="w-full flex items-center justify-between p-2 bg-bg-tertiary rounded-lg hover:bg-bg-tertiary/80 transition-colors"
+          >
+            <span className="text-xs font-medium text-text-primary flex items-center gap-2">
+              💬 채팅
+              {chatMessages.length > 0 && (
+                <span className="bg-accent/20 text-accent text-xs px-1.5 py-0.5 rounded-full">
+                  {chatMessages.length}
+                </span>
+              )}
+            </span>
+            <span className="text-text-secondary text-xs">{isChatOpen ? '▲' : '▼'}</span>
+          </button>
+
+          {isChatOpen && (
+            <div className="mt-2 bg-bg-tertiary rounded-lg overflow-hidden">
+              {/* 메시지 목록 (레이스 중에는 높이 축소) */}
+              <div
+                ref={chatContainerRef}
+                className="h-32 overflow-y-auto p-2 space-y-1.5"
+              >
+                {chatMessages.length === 0 ? (
+                  <div className="text-center text-text-secondary text-xs py-4">
+                    아직 메시지가 없습니다
+                  </div>
+                ) : (
+                  chatMessages.map((msg) => {
+                    const isMe = msg.playerId === getCurrentPlayerId();
+                    return (
+                      <div
+                        key={msg.id}
+                        className={`flex ${isMe ? 'justify-end' : 'justify-start'}`}
+                      >
+                        <div
+                          className={`max-w-[80%] rounded-lg px-2 py-1 ${
+                            isMe
+                              ? 'bg-accent text-white'
+                              : 'bg-bg-secondary text-text-primary'
+                          }`}
+                        >
+                          {!isMe && (
+                            <div className="text-[10px] text-text-secondary mb-0.5">
+                              {msg.playerName}
+                            </div>
+                          )}
+                          <div className="text-xs break-words">{msg.content}</div>
+                        </div>
+                      </div>
+                    );
+                  })
+                )}
+              </div>
+
+              {/* 입력 */}
+              <div className="p-2 border-t border-border flex gap-2">
+                <input
+                  type="text"
+                  value={chatInput}
+                  onChange={(e) => setChatInput(e.target.value)}
+                  onKeyPress={(e) => e.key === 'Enter' && handleSendChat()}
+                  placeholder="메시지 입력..."
+                  maxLength={200}
+                  className="flex-1 bg-bg-secondary border border-border rounded-lg px-2 py-1.5 text-xs text-text-primary placeholder-text-secondary focus:outline-none focus:ring-2 focus:ring-accent"
+                />
+                <button
+                  onClick={handleSendChat}
+                  disabled={!chatInput.trim()}
+                  className="px-3 py-1.5 bg-accent text-white rounded-lg font-medium text-xs disabled:opacity-50 disabled:cursor-not-allowed hover:bg-accent/90 transition-colors"
+                >
+                  전송
+                </button>
+              </div>
+            </div>
+          )}
+        </div>
+
         {/* 버튼 */}
         {isFinished && (
           <div className="space-y-3">
