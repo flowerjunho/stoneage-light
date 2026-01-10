@@ -350,15 +350,15 @@ const MultiplayerPigRace = ({ onBack, initialMode, initialRoomCode, onGoToRelay,
         });
       } else {
         // 방을 찾을 수 없는 경우 (방이 삭제되었거나 서버 오류)
-        alert('방을 찾을 수 없습니다. 메뉴로 이동합니다.');
         stopConnection();
         stopPolling();
         stopHeartbeat();
         setRoom(null);
-        setViewPhase('menu');
+        // onBack을 호출하여 URL 파라미터도 정리하고 메뉴로 이동
+        onBack();
       }
     }, interval);
-  }, [stopConnection, stopPolling, stopHeartbeat]);
+  }, [stopConnection, stopPolling, stopHeartbeat, onBack]);
 
   // 하트비트 전송 (10초마다 - 서버에서 15초 동안 응답 없으면 제거)
   const startHeartbeat = useCallback((roomCode: string) => {
@@ -893,11 +893,14 @@ const MultiplayerPigRace = ({ onBack, initialMode, initialRoomCode, onGoToRelay,
           // 1등 골인 시간 기록 및 서버 전송
           if (rank === 1) {
             firstPlaceFinishTime = elapsed;
+            const firstPlaceTime = Date.now();
             // 서버에서 받은 리타이어 기준으로 카운트다운 시작
             setRetireCountdown(Math.ceil(RETIRE_TIMEOUT / 1000));
+            // 로컬 상태에도 firstPlaceFinishTime 업데이트 (UI 표시용)
+            setRoom(prev => prev ? { ...prev, firstPlaceFinishTime: firstPlaceTime } : null);
             // 서버에 1등 골인 시간 즉시 전송 (게스트들이 카운트다운 표시할 수 있도록)
             updateGameState(roomCodeRef.current, {
-              firstPlaceFinishTime: Date.now(),
+              firstPlaceFinishTime: firstPlaceTime,
             });
           }
 

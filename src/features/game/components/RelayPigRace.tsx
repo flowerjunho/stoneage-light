@@ -267,7 +267,6 @@ const RelayPigRace = ({ onBack, initialMode, initialRoomCode, alreadyJoinedRoom,
         });
       } else {
         // 방을 찾을 수 없는 경우 (방이 삭제되었거나 서버 오류)
-        alert('방을 찾을 수 없습니다. 메뉴로 이동합니다.');
         stopConnection();
         stopPolling();
         stopHeartbeat();

@@ -44,10 +44,15 @@ const GamePage = () => {
               setSelectedGame('multiplayer');
             }
           } else {
-            // 방을 찾지 못하면 천호 레이스로 (입장 시 에러 표시됨)
+            // 방을 찾지 못하면 URL에서 code 제거하고 천호 레이스 메뉴로
+            alert('방을 찾을 수 없습니다.');
+            setSearchParams({ type: 'multi' });
             setSelectedGame('multiplayer');
           }
         } catch {
+          // 에러 발생 시 URL에서 code 제거하고 천호 레이스 메뉴로
+          alert('방 정보를 가져오는데 실패했습니다.');
+          setSearchParams({ type: 'multi' });
           setSelectedGame('multiplayer');
         }
         setIsDetectingRoom(false);
