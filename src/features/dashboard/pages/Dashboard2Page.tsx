@@ -28,6 +28,7 @@ const Dashboard2Page: React.FC = () => {
   const [uploading, setUploading] = useState(false);
   const [newFolderName, setNewFolderName] = useState('');
   const [showFolderInput, setShowFolderInput] = useState(false);
+  const [hoveredFolder, setHoveredFolder] = useState<string | null>(null);
 
   // 모달 상태
   const [selectedImage, setSelectedImage] = useState<GalleryImage | null>(null);
@@ -147,7 +148,7 @@ const Dashboard2Page: React.FC = () => {
       const response = await fetch(`${serverUrl}/folders`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ folderName: newFolderName.trim() }),
+        body: JSON.stringify({ name: newFolderName.trim() }),
       });
 
       if (!response.ok) throw new Error('폴더 생성 실패');
@@ -158,6 +159,30 @@ const Dashboard2Page: React.FC = () => {
     } catch (err) {
       console.error('Error creating folder:', err);
       alert('폴더 생성에 실패했습니다.');
+    }
+  };
+
+  // 폴더 삭제
+  const deleteFolder = async (folderName: string) => {
+    if (!confirm(`"${folderName}" 폴더를 삭제하시겠습니까?\n(폴더 내 모든 이미지가 삭제됩니다)`)) {
+      return;
+    }
+
+    try {
+      const response = await fetch(`${serverUrl}/folders/${folderName}`, {
+        method: 'DELETE',
+      });
+
+      if (!response.ok) throw new Error('폴더 삭제 실패');
+
+      if (selectedFolder === folderName) {
+        setSelectedFolder(null);
+        setImages([]);
+      }
+      await fetchFolders();
+    } catch (err) {
+      alert('폴더 삭제 중 오류가 발생했습니다.');
+      console.error('Error deleting folder:', err);
     }
   };
 
@@ -438,17 +463,34 @@ const Dashboard2Page: React.FC = () => {
           <div className="flex items-center gap-3 mb-4 flex-wrap">
             <span className="text-sm text-text-secondary font-medium">폴더:</span>
             {folders.map(folder => (
-              <button
+              <div
                 key={folder}
-                onClick={() => handleFolderSelect(folder)}
-                className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${
-                  selectedFolder === folder
-                    ? 'bg-accent text-white shadow-lg'
-                    : 'bg-bg-secondary hover:bg-bg-tertiary border border-border'
-                }`}
+                className="relative group"
+                onMouseEnter={() => setHoveredFolder(folder)}
+                onMouseLeave={() => setHoveredFolder(null)}
               >
-                {folder}
-              </button>
+                <button
+                  onClick={() => handleFolderSelect(folder)}
+                  className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${
+                    selectedFolder === folder
+                      ? 'bg-accent text-white shadow-lg'
+                      : 'bg-bg-secondary hover:bg-bg-tertiary border border-border'
+                  }`}
+                >
+                  {folder}
+                </button>
+                {hoveredFolder === folder && (
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      deleteFolder(folder);
+                    }}
+                    className="absolute -top-2 -right-2 w-5 h-5 bg-red-500 hover:bg-red-600 text-white rounded-full text-xs flex items-center justify-center shadow-md"
+                  >
+                    ×
+                  </button>
+                )}
+              </div>
             ))}
 
             {showFolderInput ? (
