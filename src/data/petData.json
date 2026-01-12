@@ -7791,8 +7791,8 @@
       },
       "baseStats": {
         "attack": 12,
-        "defense": 8,
-        "agility": 7,
+        "defense": 7,
+        "agility": 9,
         "vitality": 57
       },
       "growthStats": {
