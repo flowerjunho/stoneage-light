@@ -3,6 +3,33 @@
   "totalCount": 454,
   "pets": [
     {
+      "id": "782",
+      "name": "샤우트(환)",
+      "source": "페트환생",
+      "imageLink": "https://www.hwansoo.top/data/file/pets/c965125eea9b7dfd60a27fb6462dfb2b_1eQFYqop_bc9e7f8fd44e8b8016e6b8bd6887590059bfab57.gif",
+      "elementStats": {
+        "earth": 5,
+        "water": 0,
+        "fire": 0,
+        "wind": 5
+      },
+      "baseStats": {
+        "attack": 11,
+        "defense": 12,
+        "agility": 4,
+        "vitality": 69
+      },
+      "growthStats": {
+        "attack": 2.159,
+        "defense": 2.286,
+        "agility": 0.781,
+        "vitality": 12.608
+      },
+      "rideable": "탑승가능",
+      "totalGrowth": "5.226",
+      "grade": "일반등급"
+    },
+    {
       "id": "781",
       "name": "테이루스(환)",
       "source": "페트환생",
