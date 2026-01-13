@@ -38,6 +38,7 @@ const ItemsPage: React.FC = () => {
   const [isLoadingMore, setIsLoadingMore] = useState(false);
   const [currentPage, setCurrentPage] = useState(0);
   const [hasMore, setHasMore] = useState(true);
+  const [showEnhanceModal, setShowEnhanceModal] = useState(false);
 
   const ITEMS_PER_PAGE = 50;
 
@@ -217,6 +218,21 @@ const ItemsPage: React.FC = () => {
 
       {/* 서브 탭 네비게이션 */}
       <div className="mb-6 px-4 md:px-0">
+        {/* 강화표 버튼 */}
+        <div className="flex justify-end mb-2">
+          <button
+            onClick={() => setShowEnhanceModal(true)}
+            className="flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium
+                       bg-gradient-to-r from-purple-500 to-pink-500 text-white
+                       rounded-lg shadow-md hover:shadow-lg hover:scale-105
+                       transition-all duration-200"
+          >
+            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+            </svg>
+            강화 정보
+          </button>
+        </div>
         <div className="relative flex bg-bg-secondary rounded-2xl p-1.5 border border-border">
           {/* 슬라이딩 배경 인디케이터 */}
           <div
@@ -457,6 +473,144 @@ const ItemsPage: React.FC = () => {
               </div>
             </div>
           )}
+        </div>
+      )}
+
+      {/* 강화표 모달 */}
+      {showEnhanceModal && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center p-4"
+          onClick={() => setShowEnhanceModal(false)}
+        >
+          {/* 배경 오버레이 */}
+          <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" />
+
+          {/* 모달 컨텐츠 */}
+          <div
+            className="relative w-full max-w-2xl max-h-[80vh] bg-bg-primary rounded-2xl shadow-2xl
+                       border border-border overflow-hidden animate-fade-in"
+            onClick={e => e.stopPropagation()}
+          >
+            {/* 모달 헤더 */}
+            <div className="flex items-center justify-between px-6 py-4 border-b border-border
+                            bg-gradient-to-r from-purple-500/10 to-pink-500/10">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-purple-500 to-pink-500
+                                flex items-center justify-center shadow-lg">
+                  <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+                  </svg>
+                </div>
+                <div>
+                  <h2 className="text-lg font-bold text-text-primary">강화 정보</h2>
+                  <p className="text-xs text-text-muted">아이템 강화 확률 및 정보</p>
+                </div>
+              </div>
+              <button
+                onClick={() => setShowEnhanceModal(false)}
+                className="w-10 h-10 rounded-xl bg-bg-secondary hover:bg-bg-tertiary
+                           flex items-center justify-center transition-colors"
+              >
+                <svg className="w-5 h-5 text-text-secondary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+            </div>
+
+            {/* 모달 본문 */}
+            <div className="p-4 overflow-y-auto max-h-[calc(80vh-80px)]">
+              {/* 무기 강화표 */}
+              <div className="mb-6">
+                <h3 className="text-base font-bold text-cyan-500 mb-2">+ 강화 정보</h3>
+
+                {/* 무기 테이블 */}
+                <div className="overflow-x-auto mb-4">
+                  <table className="w-full text-sm border-collapse">
+                    <thead>
+                      <tr className="bg-purple-500 text-white">
+                        <th className="border border-purple-400 px-2 py-1.5 text-center">대상</th>
+                        <th className="border border-purple-400 px-2 py-1.5 text-center">강화 수치</th>
+                        <th className="border border-purple-400 px-2 py-1.5 text-center">능력치</th>
+                        <th className="border border-purple-400 px-2 py-1.5 text-center">성공률</th>
+                        <th className="border border-purple-400 px-2 py-1.5 text-center">파괴 유무</th>
+                        <th className="border border-purple-400 px-2 py-1.5 text-center">필요개수</th>
+                        <th className="border border-purple-400 px-2 py-1.5 text-center">수급처</th>
+                      </tr>
+                    </thead>
+                    <tbody className="bg-bg-secondary">
+                      {/* 무기 데이터 */}
+                      {[
+                        { level: '+1', stat: '공+1', rate: '100%', destroy: false, count: '1개' },
+                        { level: '+2', stat: '공+1', rate: '90%', destroy: false, count: '1개' },
+                        { level: '+3', stat: '공+1,관통 +10', rate: '80%', destroy: false, count: '1개' },
+                        { level: '+4', stat: '공+1', rate: '70%', destroy: false, count: '1개' },
+                        { level: '+5', stat: '공+1', rate: '60%', destroy: true, count: '2개' },
+                        { level: '+6', stat: '공2,명중 +3', rate: '50%', destroy: true, count: '2개' },
+                        { level: '+7', stat: '공+1', rate: '30%', destroy: true, count: '2개' },
+                        { level: '+8', stat: '공+1', rate: '20%', destroy: true, count: '2개' },
+                        { level: '+9', stat: '공+2,관통 +5', rate: '10%', destroy: true, count: '2개', highlight: true },
+                        { level: '+10', stat: '공+3,명중+5', rate: '5%', destroy: true, count: '2개', highlight: true },
+                      ].map((row, idx) => (
+                        <tr key={`weapon-${idx}`} className={idx % 2 === 0 ? 'bg-bg-primary' : 'bg-bg-secondary'}>
+                          {idx === 0 && (
+                            <td rowSpan={10} className="border border-border px-2 py-1.5 text-center font-medium text-text-primary">
+                              무기
+                            </td>
+                          )}
+                          <td className={`border border-border px-2 py-1.5 text-center ${row.highlight ? 'text-red-500 font-medium' : 'text-text-primary'}`}>
+                            {row.level}
+                          </td>
+                          <td className="border border-border px-2 py-1.5 text-center text-text-secondary">{row.stat}</td>
+                          <td className="border border-border px-2 py-1.5 text-center text-text-secondary">{row.rate}</td>
+                          <td className={`border border-border px-2 py-1.5 text-center font-medium ${row.destroy ? 'text-yellow-500' : 'text-cyan-500'}`}>
+                            {row.destroy ? 'Y' : 'N'}
+                          </td>
+                          <td className="border border-border px-2 py-1.5 text-center text-red-500">{row.count}</td>
+                          {idx === 0 && (
+                            <td rowSpan={20} className="border border-border px-2 py-1.5 text-center text-red-500">
+                              스톤 상점
+                            </td>
+                          )}
+                        </tr>
+                      ))}
+
+                      {/* 방어구 데이터 */}
+                      {[
+                        { level: '+1', stat: '방+1', rate: '100%', destroy: false, count: '1개' },
+                        { level: '+2', stat: '방+1', rate: '90%', destroy: false, count: '1개' },
+                        { level: '+3', stat: '방+2,쉴드+10', rate: '80%', destroy: false, count: '1개' },
+                        { level: '+4', stat: '방+1', rate: '70%', destroy: false, count: '1개' },
+                        { level: '+5', stat: '방+1', rate: '60%', destroy: true, count: '2개' },
+                        { level: '+6', stat: '방+2,내구력+10', rate: '50%', destroy: true, count: '2개' },
+                        { level: '+7', stat: '방+1', rate: '30%', destroy: true, count: '2개' },
+                        { level: '+8', stat: '방+2,쉴드+5', rate: '20%', destroy: true, count: '2개' },
+                        { level: '+9', stat: '방+2', rate: '10%', destroy: true, count: '2개', highlight: true },
+                        { level: '+10', stat: '방+3,내구력+10', rate: '5%', destroy: true, count: '2개', highlight: true },
+                      ].map((row, idx) => (
+                        <tr key={`armor-${idx}`} className={idx % 2 === 0 ? 'bg-bg-primary' : 'bg-bg-secondary'}>
+                          {idx === 0 && (
+                            <td rowSpan={10} className="border border-border px-2 py-1.5 text-center font-medium text-text-primary">
+                              방어구
+                            </td>
+                          )}
+                          <td className={`border border-border px-2 py-1.5 text-center ${row.highlight ? 'text-red-500 font-medium' : 'text-text-primary'}`}>
+                            {row.level}
+                          </td>
+                          <td className="border border-border px-2 py-1.5 text-center text-text-secondary">{row.stat}</td>
+                          <td className="border border-border px-2 py-1.5 text-center text-text-secondary">{row.rate}</td>
+                          <td className={`border border-border px-2 py-1.5 text-center font-medium ${row.destroy ? 'text-yellow-500' : 'text-cyan-500'}`}>
+                            {row.destroy ? 'Y' : 'N'}
+                          </td>
+                          <td className="border border-border px-2 py-1.5 text-center text-red-500">{row.count}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+
+              </div>
+            </div>
+          </div>
         </div>
       )}
     </div>
