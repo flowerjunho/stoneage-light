@@ -1,4 +1,6 @@
 import React, { useRef, useState, useEffect, useCallback } from 'react';
+import { cn } from '@/lib/utils';
+import { ChevronLeft, ChevronRight } from 'lucide-react';
 
 interface CharacterTabsProps {
   characters: string[];
@@ -41,7 +43,6 @@ const CharacterTabs: React.FC<CharacterTabsProps> = ({
     const scrollWidth = element.scrollWidth;
     const clientWidth = element.clientWidth;
 
-    // 스크롤 여유 공간 (10px 정도의 여유를 둠)
     const scrollTolerance = 10;
 
     setCanScrollLeft(scrollLeft > scrollTolerance);
@@ -75,30 +76,31 @@ const CharacterTabs: React.FC<CharacterTabsProps> = ({
   };
 
   return (
-    <div className="max-w-6xl mx-auto px-4 iphone16:px-3 mb-6">
-      <div className="border-b border-border-secondary">
+    <div className="max-w-6xl mx-auto px-4 iphone16:px-3 mb-6 animate-slide-up">
+      {/* 서브탭: 심플한 언더라인 스타일 (메인 탭과 차별화) */}
+      <div className="relative border-b border-border/30">
         <div className="relative">
           {/* 왼쪽 스크롤 버튼 - PC에서만 표시 */}
           {isPC && canScrollLeft && (
             <button
               onClick={scrollLeft}
-              className="absolute left-0 top-0 z-10 h-full bg-gradient-to-r from-bg-primary to-transparent pl-2 pr-4 flex items-center hover:from-bg-secondary transition-all duration-200"
+              className={cn(
+                'absolute left-0 top-0 z-10 h-full',
+                'bg-gradient-to-r from-bg-primary via-bg-primary/90 to-transparent',
+                'pl-0 pr-4 flex items-center',
+                'transition-all duration-300 opacity-0 animate-fadeIn'
+              )}
+              style={{ animationFillMode: 'forwards' }}
               aria-label="Scroll left"
             >
-              <div className="w-8 h-8 rounded-full bg-bg-secondary border border-border-primary shadow-md flex items-center justify-center hover:bg-bg-tertiary hover:border-accent/30 transition-colors">
-                <svg
-                  className="w-4 h-4 text-text-primary"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M15 19l-7-7 7-7"
-                  />
-                </svg>
+              <div className={cn(
+                'w-7 h-7 rounded-full',
+                'bg-bg-secondary/80 border border-border/50',
+                'flex items-center justify-center',
+                'hover:border-accent/50 hover:bg-accent/10',
+                'active:scale-95 transition-all duration-200'
+              )}>
+                <ChevronLeft className="w-4 h-4 text-text-secondary" />
               </div>
             </button>
           )}
@@ -107,23 +109,23 @@ const CharacterTabs: React.FC<CharacterTabsProps> = ({
           {isPC && canScrollRight && (
             <button
               onClick={scrollRight}
-              className="absolute right-0 top-0 z-10 h-full bg-gradient-to-l from-bg-primary to-transparent pr-2 pl-4 flex items-center hover:from-bg-secondary transition-all duration-200"
+              className={cn(
+                'absolute right-0 top-0 z-10 h-full',
+                'bg-gradient-to-l from-bg-primary via-bg-primary/90 to-transparent',
+                'pr-0 pl-4 flex items-center',
+                'transition-all duration-300 opacity-0 animate-fadeIn'
+              )}
+              style={{ animationFillMode: 'forwards' }}
               aria-label="Scroll right"
             >
-              <div className="w-8 h-8 rounded-full bg-bg-secondary border border-border-primary shadow-md flex items-center justify-center hover:bg-bg-tertiary hover:border-accent/30 transition-colors">
-                <svg
-                  className="w-4 h-4 text-text-primary"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M9 5l7 7-7 7"
-                  />
-                </svg>
+              <div className={cn(
+                'w-7 h-7 rounded-full',
+                'bg-bg-secondary/80 border border-border/50',
+                'flex items-center justify-center',
+                'hover:border-accent/50 hover:bg-accent/10',
+                'active:scale-95 transition-all duration-200'
+              )}>
+                <ChevronRight className="w-4 h-4 text-text-secondary" />
               </div>
             </button>
           )}
@@ -131,32 +133,65 @@ const CharacterTabs: React.FC<CharacterTabsProps> = ({
           <div
             ref={scrollRef}
             className="flex overflow-x-auto scrollbar-hide scroll-smooth"
-            style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
           >
             {/* 전체 보기 탭 */}
             <button
               onClick={() => onCharacterSelect(null)}
-              className={`flex-shrink-0 px-4 py-3 text-sm font-medium border-b-2 transition-colors duration-200 whitespace-nowrap iphone16:px-3 iphone16:py-2 iphone16:text-xs ${
+              className={cn(
+                'group relative flex-shrink-0 px-4 py-3 text-sm font-medium whitespace-nowrap',
+                'transition-all duration-300 ease-out',
+                'opacity-0 animate-stagger-fade',
+                'iphone16:px-3 iphone16:py-2.5 iphone16:text-xs',
                 selectedCharacter === null
-                  ? 'border-accent text-accent'
-                  : 'border-transparent text-text-secondary hover:text-text-primary hover:border-text-muted'
-              }`}
+                  ? 'text-accent'
+                  : 'text-text-muted hover:text-text-primary'
+              )}
+              style={{ animationDelay: '0ms', animationFillMode: 'forwards' }}
             >
-              전체
+              {/* 언더라인 인디케이터 */}
+              <span
+                className={cn(
+                  'absolute bottom-0 left-0 right-0 h-0.5',
+                  'bg-gradient-to-r from-accent to-amber-500',
+                  'transition-all duration-300 ease-out origin-left',
+                  selectedCharacter === null
+                    ? 'scale-x-100 opacity-100'
+                    : 'scale-x-0 opacity-0 group-hover:scale-x-100 group-hover:opacity-30'
+                )}
+              />
+
+              <span className="relative z-10">전체</span>
             </button>
 
             {/* 캐릭터별 탭들 */}
-            {characters.map(character => (
+            {characters.map((character, index) => (
               <button
                 key={character}
                 onClick={() => onCharacterSelect(character)}
-                className={`flex-shrink-0 px-4 py-3 text-sm font-medium border-b-2 transition-colors duration-200 whitespace-nowrap iphone16:px-3 iphone16:py-2 iphone16:text-xs ${
+                className={cn(
+                  'group relative flex-shrink-0 px-4 py-3 text-sm font-medium whitespace-nowrap',
+                  'transition-all duration-300 ease-out',
+                  'opacity-0 animate-stagger-fade',
+                  'iphone16:px-3 iphone16:py-2.5 iphone16:text-xs',
                   selectedCharacter === character
-                    ? 'border-accent text-accent'
-                    : 'border-transparent text-text-secondary hover:text-text-primary hover:border-text-muted'
-                }`}
+                    ? 'text-accent'
+                    : 'text-text-muted hover:text-text-primary'
+                )}
+                style={{ animationDelay: `${(index + 1) * 25}ms`, animationFillMode: 'forwards' }}
               >
-                {character}
+                {/* 언더라인 인디케이터 */}
+                <span
+                  className={cn(
+                    'absolute bottom-0 left-0 right-0 h-0.5',
+                    'bg-gradient-to-r from-accent to-amber-500',
+                    'transition-all duration-300 ease-out origin-left',
+                    selectedCharacter === character
+                      ? 'scale-x-100 opacity-100'
+                      : 'scale-x-0 opacity-0 group-hover:scale-x-100 group-hover:opacity-30'
+                  )}
+                />
+
+                <span className="relative z-10">{character}</span>
               </button>
             ))}
           </div>
