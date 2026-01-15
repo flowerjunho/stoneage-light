@@ -8,6 +8,8 @@ import {
   ListMusic,
   X,
   Loader2,
+  Volume2,
+  VolumeX,
 } from 'lucide-react';
 import { useMusicPlayer } from '@/contexts/MusicPlayerContext';
 import { getCoverUrl } from '@/services/musicApi';
@@ -23,15 +25,24 @@ const MusicPlayer: React.FC = () => {
     duration,
     isLoading,
     isPlayerVisible,
+    volume,
+    isMuted,
     toggle,
     next,
     previous,
     seek,
     play,
     hidePlayer,
+    showPlayer,
+    setVolume,
+    toggleMute,
   } = useMusicPlayer();
 
   const [showPlaylist, setShowPlaylist] = useState(false);
+  const [showVolume, setShowVolume] = useState(false);
+  const volumeRef = useRef<HTMLDivElement>(null);
+  const volumeBtnRef = useRef<HTMLButtonElement>(null);
+  const playlistBtnRef = useRef<HTMLButtonElement>(null);
   const [isDragging, setIsDragging] = useState(false);
   const progressRef = useRef<HTMLDivElement>(null);
   const playlistRef = useRef<HTMLDivElement>(null);
@@ -87,28 +98,65 @@ const MusicPlayer: React.FC = () => {
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [currentTrack, toggle, seek, currentTime, duration]);
 
-  // 플레이리스트 외부 클릭 시 닫기
+  // 플레이리스트/볼륨 외부 클릭 시 닫기
   useEffect(() => {
+    if (!showPlaylist && !showVolume) return;
+
     const handleClickOutside = (e: MouseEvent) => {
-      if (playlistRef.current && !playlistRef.current.contains(e.target as Node)) {
-        setShowPlaylist(false);
+      const target = e.target as Node;
+
+      // 볼륨 버튼/팝업 외부 클릭 시 닫기
+      if (showVolume) {
+        if (!volumeBtnRef.current?.contains(target) && !volumeRef.current?.contains(target)) {
+          setShowVolume(false);
+        }
+      }
+
+      // 재생목록 버튼/팝업 외부 클릭 시 닫기
+      if (showPlaylist) {
+        if (!playlistBtnRef.current?.contains(target) && !playlistRef.current?.contains(target)) {
+          setShowPlaylist(false);
+        }
       }
     };
 
-    if (showPlaylist) {
-      document.addEventListener('mousedown', handleClickOutside);
-      return () => document.removeEventListener('mousedown', handleClickOutside);
-    }
-  }, [showPlaylist]);
+    document.addEventListener('click', handleClickOutside);
+    return () => document.removeEventListener('click', handleClickOutside);
+  }, [showPlaylist, showVolume]);
 
-  if (!isPlayerVisible || !currentTrack) return null;
+  // 트랙이 없으면 아무것도 렌더링하지 않음
+  if (!currentTrack) return null;
 
   const progress = duration > 0 ? (currentTime / duration) * 100 : 0;
+
+  // 플레이어가 숨겨져 있으면 FAB 버튼만 표시
+  if (!isPlayerVisible) {
+    return (
+      <Button
+        onClick={showPlayer}
+        size="icon"
+        className={cn(
+          'fixed z-50 w-12 h-12 rounded-full',
+          'bg-gradient-to-r from-purple-500 to-pink-500',
+          'shadow-lg shadow-purple-500/30 hover:shadow-xl hover:shadow-purple-500/50',
+          'hover:scale-110 active:scale-95 transition-all duration-300',
+          'left-6 lg:left-[calc(50%-32rem-60px)] xl:left-[calc(50%-30rem-60px)]',
+          'bottom-6 iphone16:bottom-4 iphone16:left-4 iphone16:w-10 iphone16:h-10'
+        )}
+        aria-label="음악 플레이어 열기"
+      >
+        <Music className="w-6 h-6 iphone16:w-5 iphone16:h-5 text-white" />
+        {isPlaying && (
+          <span className="absolute -top-1 -right-1 w-3 h-3 bg-green-500 rounded-full animate-pulse" />
+        )}
+      </Button>
+    );
+  }
 
   return (
     <>
       {/* Main Player */}
-      <div className="fixed left-0 right-0 bottom-0 z-50">
+      <div className="fixed left-0 right-0 bottom-0 z-[70]">
         <div className="bg-bg-secondary/95 backdrop-blur-2xl border-t border-white/10 shadow-[0_-4px_30px_rgba(0,0,0,0.3)]">
           {/* Progress Bar */}
           <div
@@ -203,11 +251,36 @@ const MusicPlayer: React.FC = () => {
                   <SkipForward className="w-4 h-4" />
                 </Button>
 
-                {/* Playlist toggle */}
+                {/* Volume toggle */}
                 <Button
+                  ref={volumeBtnRef}
                   variant="ghost"
                   size="icon"
-                  onClick={() => setShowPlaylist(!showPlaylist)}
+                  onClick={() => {
+                    setShowVolume(prev => !prev);
+                    setShowPlaylist(false);
+                  }}
+                  className={cn(
+                    'w-8 h-8 rounded-full',
+                    showVolume && 'bg-accent/20 text-accent'
+                  )}
+                >
+                  {isMuted || volume === 0 ? (
+                    <VolumeX className="w-4 h-4" />
+                  ) : (
+                    <Volume2 className="w-4 h-4" />
+                  )}
+                </Button>
+
+                {/* Playlist toggle */}
+                <Button
+                  ref={playlistBtnRef}
+                  variant="ghost"
+                  size="icon"
+                  onClick={() => {
+                    setShowPlaylist(prev => !prev);
+                    setShowVolume(false);
+                  }}
                   className={cn(
                     'w-8 h-8 rounded-full',
                     showPlaylist && 'bg-accent/20 text-accent'
@@ -230,11 +303,56 @@ const MusicPlayer: React.FC = () => {
           </div>
         </div>
 
+        {/* Volume Popup */}
+        {showVolume && (
+          <div
+            ref={volumeRef}
+            className="absolute bottom-full right-2 md:right-4 mb-2 w-48 z-[70]
+                       bg-bg-secondary/95 backdrop-blur-2xl border border-white/10
+                       rounded-xl shadow-2xl overflow-hidden p-3"
+          >
+            <div className="flex items-center gap-3">
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={toggleMute}
+                className="w-8 h-8 rounded-full flex-shrink-0"
+              >
+                {isMuted || volume === 0 ? (
+                  <VolumeX className="w-4 h-4" />
+                ) : (
+                  <Volume2 className="w-4 h-4" />
+                )}
+              </Button>
+              <div className="flex-1">
+                <input
+                  type="range"
+                  min="0"
+                  max="1"
+                  step="0.01"
+                  value={isMuted ? 0 : volume}
+                  onChange={(e) => setVolume(parseFloat(e.target.value))}
+                  className="w-full h-1.5 bg-white/20 rounded-full appearance-none cursor-pointer
+                             [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-3
+                             [&::-webkit-slider-thumb]:h-3 [&::-webkit-slider-thumb]:rounded-full
+                             [&::-webkit-slider-thumb]:bg-accent [&::-webkit-slider-thumb]:cursor-pointer
+                             [&::-moz-range-thumb]:w-3 [&::-moz-range-thumb]:h-3
+                             [&::-moz-range-thumb]:rounded-full [&::-moz-range-thumb]:bg-accent
+                             [&::-moz-range-thumb]:border-0 [&::-moz-range-thumb]:cursor-pointer"
+                />
+              </div>
+              <span className="text-xs text-text-muted w-8 text-right">
+                {Math.round((isMuted ? 0 : volume) * 100)}%
+              </span>
+            </div>
+          </div>
+        )}
+
         {/* Playlist Popup */}
         {showPlaylist && (
           <div
             ref={playlistRef}
-            className="absolute bottom-full right-2 md:right-4 mb-2 w-64 max-h-64
+            className="absolute bottom-full right-2 md:right-4 mb-2 w-64 max-h-64 z-[70]
                        bg-bg-secondary/95 backdrop-blur-2xl border border-white/10
                        rounded-xl shadow-2xl overflow-hidden"
           >
