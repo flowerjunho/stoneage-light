@@ -1,8 +1,8 @@
-import { useRef, useLayoutEffect } from 'react';
+import { useRef, useLayoutEffect, useState, useCallback, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import {
   Bell, Heart, Users, Package, PlayCircle, Calculator,
-  Lightbulb, ClipboardCheck, Map, MessageSquare
+  Lightbulb, ClipboardCheck, Map, MessageSquare, ChevronLeft, ChevronRight
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
@@ -30,10 +30,51 @@ const TabNavigation = () => {
   const location = useLocation();
   const navRef = useRef<HTMLElement>(null);
   const activeTabRef = useRef<HTMLAnchorElement>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
+  const [showLeftArrow, setShowLeftArrow] = useState(false);
+  const [showRightArrow, setShowRightArrow] = useState(false);
+  const [isHovering, setIsHovering] = useState(false);
 
   const isActive = (path: string) => {
     return location.pathname === path || (location.pathname === '/' && path === '/pets');
   };
+
+  // 스크롤 상태 체크
+  const checkScrollState = useCallback(() => {
+    const nav = navRef.current;
+    if (!nav) return;
+
+    const { scrollLeft, scrollWidth, clientWidth } = nav;
+    setShowLeftArrow(scrollLeft > 5);
+    setShowRightArrow(scrollLeft < scrollWidth - clientWidth - 5);
+  }, []);
+
+  // 스크롤 이벤트 리스너
+  useEffect(() => {
+    const nav = navRef.current;
+    if (!nav) return;
+
+    checkScrollState();
+    nav.addEventListener('scroll', checkScrollState, { passive: true });
+    window.addEventListener('resize', checkScrollState);
+
+    return () => {
+      nav.removeEventListener('scroll', checkScrollState);
+      window.removeEventListener('resize', checkScrollState);
+    };
+  }, [checkScrollState]);
+
+  // 스크롤 함수
+  const scroll = useCallback((direction: 'left' | 'right') => {
+    const nav = navRef.current;
+    if (!nav) return;
+
+    const scrollAmount = 200;
+    nav.scrollBy({
+      left: direction === 'left' ? -scrollAmount : scrollAmount,
+      behavior: 'smooth'
+    });
+  }, []);
 
   useLayoutEffect(() => {
     const nav = navRef.current;
@@ -52,9 +93,68 @@ const TabNavigation = () => {
     <div className="sticky top-0 z-30 w-full pt-2 animate-slide-down">
       <div className="max-w-6xl mx-auto px-3 md:px-4">
         {/* 모바일: backdrop-blur 제거, PC: 유지 */}
-        <div className="relative bg-bg-secondary/95 md:bg-gradient-to-b md:from-bg-secondary/90 md:to-bg-secondary/70 md:backdrop-blur-xl rounded-2xl border border-white/10 shadow-xl shadow-black/20 overflow-hidden">
+        <div
+          ref={containerRef}
+          className="group/nav relative bg-bg-secondary/95 md:bg-gradient-to-b md:from-bg-secondary/90 md:to-bg-secondary/70 md:backdrop-blur-xl rounded-2xl border border-white/10 shadow-xl shadow-black/20 overflow-hidden"
+          onMouseEnter={() => setIsHovering(true)}
+          onMouseLeave={() => setIsHovering(false)}
+        >
           {/* 상단 하이라이트 - PC에서만 애니메이션 */}
           <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-white/30 to-transparent md:animate-aurora" />
+
+          {/* 왼쪽 스크롤 버튼 - PC에서 호버 시에만 */}
+          <button
+            onClick={() => scroll('left')}
+            className={cn(
+              'hidden md:flex absolute left-0 top-1/2 -translate-y-1/2 z-20',
+              'w-8 h-8 items-center justify-center',
+              'bg-bg-secondary/90 backdrop-blur-sm border border-white/10 rounded-full',
+              'text-text-muted hover:text-text-primary hover:bg-bg-elevated',
+              'shadow-lg transition-all duration-200',
+              'opacity-0 pointer-events-none',
+              isHovering && showLeftArrow && 'opacity-100 pointer-events-auto'
+            )}
+            aria-label="왼쪽으로 스크롤"
+          >
+            <ChevronLeft className="w-4 h-4" />
+          </button>
+
+          {/* 오른쪽 스크롤 버튼 - PC에서 호버 시에만 */}
+          <button
+            onClick={() => scroll('right')}
+            className={cn(
+              'hidden md:flex absolute right-0 top-1/2 -translate-y-1/2 z-20',
+              'w-8 h-8 items-center justify-center',
+              'bg-bg-secondary/90 backdrop-blur-sm border border-white/10 rounded-full',
+              'text-text-muted hover:text-text-primary hover:bg-bg-elevated',
+              'shadow-lg transition-all duration-200',
+              'opacity-0 pointer-events-none',
+              isHovering && showRightArrow && 'opacity-100 pointer-events-auto'
+            )}
+            aria-label="오른쪽으로 스크롤"
+          >
+            <ChevronRight className="w-4 h-4" />
+          </button>
+
+          {/* 왼쪽 페이드 그라데이션 */}
+          <div
+            className={cn(
+              'hidden md:block absolute left-0 top-0 bottom-0 w-8 z-10 pointer-events-none',
+              'bg-gradient-to-r from-bg-secondary/95 to-transparent',
+              'transition-opacity duration-200',
+              showLeftArrow ? 'opacity-100' : 'opacity-0'
+            )}
+          />
+
+          {/* 오른쪽 페이드 그라데이션 */}
+          <div
+            className={cn(
+              'hidden md:block absolute right-0 top-0 bottom-0 w-8 z-10 pointer-events-none',
+              'bg-gradient-to-l from-bg-secondary/95 to-transparent',
+              'transition-opacity duration-200',
+              showRightArrow ? 'opacity-100' : 'opacity-0'
+            )}
+          />
 
           <nav ref={navRef} className="relative flex overflow-x-auto scrollbar-hide px-2 py-2 will-change-scroll">
             {tabs.map((tab, index) => {

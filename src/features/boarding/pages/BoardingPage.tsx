@@ -628,7 +628,7 @@ const BoardingPage: React.FC = () => {
 
   return (
     <>
-      <div className="max-w-6xl mx-auto px-4 iphone16:px-3 py-6">
+      <div className="max-w-6xl mx-auto px-4 iphone16:px-3 pt-6 pb-3">
         <SearchBar
           searchTerm={searchTerm}
           onSearchChange={handleSearchChange}

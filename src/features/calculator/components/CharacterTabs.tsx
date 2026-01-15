@@ -76,7 +76,7 @@ const CharacterTabs: React.FC<CharacterTabsProps> = ({
   };
 
   return (
-    <div className="max-w-6xl mx-auto px-4 iphone16:px-3 mb-6 animate-slide-up">
+    <div className="max-w-6xl mx-auto px-4 iphone16:px-3 mb-4 animate-slide-up">
       {/* 서브탭: 심플한 언더라인 스타일 (메인 탭과 차별화) */}
       <div className="relative border-b border-border/30">
         <div className="relative">
