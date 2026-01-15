@@ -56,8 +56,8 @@ const PageShareButton = () => {
           "right-6 lg:right-[calc(50%-32rem-60px)] xl:right-[calc(50%-30rem-60px)]",
           "iphone16:right-4 iphone16:w-10 iphone16:h-10",
           isScrollToTopVisible
-            ? "bottom-20 iphone16:bottom-16"
-            : "bottom-6 iphone16:bottom-4"
+            ? "bottom-36 iphone16:bottom-32"
+            : "bottom-20 iphone16:bottom-16"
         )}
         aria-label="페이지 링크 복사"
       >
@@ -70,7 +70,7 @@ const PageShareButton = () => {
           "fixed z-[60] animate-fade-in-up",
           "right-6 lg:right-[calc(50%-32rem-60px)] xl:right-[calc(50%-30rem-60px)]",
           "iphone16:right-4",
-          "bottom-24 iphone16:bottom-20"
+          "bottom-40 iphone16:bottom-36"
         )}>
           <Card
             variant="glass"
