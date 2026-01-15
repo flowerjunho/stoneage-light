@@ -1,9 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
+import { Bell, Info, Megaphone, FileText, Calendar, Eye, ChevronRight, Search, AlertTriangle } from 'lucide-react';
 import patchnotesData from '@/data/patchnotes.json';
 import noticesData from '@/data/notices.json';
 import { matchesConsonantSearch } from '@/shared/utils/searchUtils';
 import SearchBar from '@/shared/components/ui/SearchBar';
+import { Button } from '@/components/ui/button';
+import { Card } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
+import { cn } from '@/lib/utils';
 
 interface NoticeItem {
   id: number;
@@ -91,37 +96,81 @@ const NoticePage: React.FC = () => {
   const currentData = activeTab === 'patchnotes' ? filteredPatchnotes : filteredNotices;
   const currentCount = activeTab === 'patchnotes' ? patchnotes.length : notices.length;
 
+  const renderNoticeList = (items: NoticeItem[], type: 'announcement' | 'patchnotes') => (
+    <div className="space-y-3">
+      {items.length > 0 ? (
+        items.map(item => (
+          <Card
+            key={item.id}
+            onClick={() => handleItemClick(item.id, type)}
+            className="group p-4 cursor-pointer transition-all duration-300
+                     hover:border-accent/50 hover:shadow-card hover:-translate-y-0.5 active:scale-[0.99]"
+          >
+            <div className="flex items-center justify-between">
+              <div className="flex-1">
+                <h3 className="text-text-primary font-semibold group-hover:text-accent transition-colors duration-200 line-clamp-2 mb-2">
+                  {item.title}
+                </h3>
+                <div className="flex items-center gap-3 text-xs text-text-muted">
+                  <div className="flex items-center gap-1.5">
+                    <Calendar className="h-3.5 w-3.5" />
+                    {item.date}
+                  </div>
+                  <div className="flex items-center gap-1.5">
+                    <Eye className="h-3.5 w-3.5" />
+                    상세 보기
+                  </div>
+                </div>
+              </div>
+              <div className="ml-4 flex-shrink-0">
+                <div className="w-10 h-10 bg-accent/10 group-hover:bg-accent group-hover:shadow-glow
+                              rounded-xl flex items-center justify-center transition-all duration-300">
+                  <ChevronRight className="h-4 w-4 text-accent group-hover:text-text-inverse transition-colors" />
+                </div>
+              </div>
+            </div>
+          </Card>
+        ))
+      ) : (
+        <div className="text-center py-16 animate-fade-in">
+          <div className="w-20 h-20 mx-auto mb-4 rounded-full bg-bg-secondary border border-border
+                        flex items-center justify-center">
+            <Search className="w-10 h-10 text-text-muted" />
+          </div>
+          <h3 className="text-xl font-bold text-text-primary mb-2">검색 결과가 없습니다</h3>
+          <p className="text-text-secondary">다른 키워드로 검색해보세요</p>
+        </div>
+      )}
+    </div>
+  );
+
   return (
     <div className="max-w-6xl mx-auto px-4 py-6 iphone16:px-3">
       {/* 헤더 */}
       <div className="mb-6">
         <div className="text-center space-y-4">
-          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-accent/10 border border-accent/20">
-            <svg className="w-5 h-5 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
-            </svg>
-            <span className="text-sm font-medium text-accent">{currentTabInfo.description}</span>
-          </div>
+          <Badge variant="outline" className="gap-2 px-4 py-2">
+            <Bell className="w-4 h-4" />
+            {currentTabInfo.description}
+          </Badge>
 
           {/* 정보성 알림 박스 */}
-          <div className="bg-bg-secondary rounded-2xl p-4 border border-border space-y-3">
+          <Card className="p-4 space-y-3">
             <div className="flex items-center gap-3 p-3 bg-bg-tertiary rounded-xl">
               <div className="w-8 h-8 rounded-lg bg-accent/10 flex items-center justify-center shrink-0">
-                <svg className="w-4 h-4 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                </svg>
+                <Info className="w-4 h-4 text-accent" />
               </div>
               <p className="text-sm text-text-secondary text-left">
                 공지사항은 <span className="font-medium text-text-primary">{currentTabInfo.source}</span>의 정보입니다.
               </p>
             </div>
-          </div>
+          </Card>
         </div>
       </div>
 
       {/* 탭 선택 */}
       <div className="mb-6 px-4 md:px-0">
-        <div className="relative flex bg-bg-secondary rounded-2xl p-1.5 border border-border">
+        <Card className="relative p-1.5">
           {/* 슬라이딩 배경 인디케이터 */}
           <div
             className="absolute top-1.5 h-[calc(100%-12px)] rounded-xl bg-accent shadow-glow
@@ -131,31 +180,29 @@ const NoticePage: React.FC = () => {
               width: 'calc(50% - 8px)',
             }}
           />
-          <button
+          <Button
+            variant="ghost"
             onClick={() => handleTabChange('announcement')}
-            className={`relative z-10 flex-1 flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl
-                       text-sm font-medium transition-colors duration-300 ${
-                         activeTab === 'announcement' ? 'text-text-inverse' : 'text-text-secondary hover:text-text-primary'
-                       }`}
+            className={cn(
+              "relative z-10 flex-1 w-1/2 gap-2 rounded-xl transition-colors duration-300",
+              activeTab === 'announcement' ? 'text-text-inverse hover:bg-transparent' : 'text-text-secondary hover:text-text-primary'
+            )}
           >
-            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5.882V19.24a1.76 1.76 0 01-3.417.592l-2.147-6.15M18 13a3 3 0 100-6M5.436 13.683A4.001 4.001 0 017 6h1.832c4.1 0 7.625-1.234 9.168-3v14c-1.543-1.766-5.067-3-9.168-3H7a3.988 3.988 0 01-1.564-.317z" />
-            </svg>
+            <Megaphone className="w-4 h-4" />
             공지
-          </button>
-          <button
+          </Button>
+          <Button
+            variant="ghost"
             onClick={() => handleTabChange('patchnotes')}
-            className={`relative z-10 flex-1 flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl
-                       text-sm font-medium transition-colors duration-300 ${
-                         activeTab === 'patchnotes' ? 'text-text-inverse' : 'text-text-secondary hover:text-text-primary'
-                       }`}
+            className={cn(
+              "relative z-10 flex-1 w-1/2 gap-2 rounded-xl transition-colors duration-300",
+              activeTab === 'patchnotes' ? 'text-text-inverse hover:bg-transparent' : 'text-text-secondary hover:text-text-primary'
+            )}
           >
-            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-            </svg>
+            <FileText className="w-4 h-4" />
             패치노트
-          </button>
-        </div>
+          </Button>
+        </Card>
       </div>
 
       {/* 검색 바 */}
@@ -178,7 +225,7 @@ const NoticePage: React.FC = () => {
 
       {/* 통계 정보 */}
       <div className="mb-6">
-        <div className="bg-bg-secondary rounded-2xl p-4 border border-border">
+        <Card className="p-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 rounded-xl bg-accent/10 flex items-center justify-center">
@@ -199,7 +246,7 @@ const NoticePage: React.FC = () => {
               </div>
             )}
           </div>
-        </div>
+        </Card>
       </div>
 
       {/* 공지 탭 콘텐츠 */}
@@ -217,76 +264,13 @@ const NoticePage: React.FC = () => {
             <div className="text-center py-16 animate-fade-in">
               <div className="w-20 h-20 mx-auto mb-4 rounded-full bg-bg-secondary border border-border
                             flex items-center justify-center">
-                <svg className="w-10 h-10 text-text-muted" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
-                </svg>
+                <AlertTriangle className="w-10 h-10 text-text-muted" />
               </div>
               <h3 className="text-xl font-bold text-text-primary mb-2">준비 중입니다</h3>
               <p className="text-text-secondary">공지사항 데이터를 준비하고 있습니다.</p>
             </div>
           ) : (
-            <div className="space-y-3">
-              {filteredNotices.length > 0 ? (
-                filteredNotices.map(notice => {
-                  return (
-                    <div
-                      key={notice.id}
-                      onClick={() => handleItemClick(notice.id, 'announcement')}
-                      className="group bg-bg-secondary hover:bg-bg-tertiary border border-border
-                               hover:border-accent/50 rounded-2xl p-4 cursor-pointer
-                               transition-all duration-300 hover:shadow-card hover:-translate-y-0.5 active:scale-[0.99]"
-                    >
-                      <div className="flex items-center justify-between">
-                        <div className="flex-1">
-                          <h3 className="text-text-primary font-semibold group-hover:text-accent transition-colors duration-200 line-clamp-2 mb-2">
-                            {notice.title}
-                          </h3>
-                          <div className="flex items-center gap-3 text-xs text-text-muted">
-                            <div className="flex items-center gap-1.5">
-                              <svg className="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                              </svg>
-                              {notice.date}
-                            </div>
-                            <div className="flex items-center gap-1.5">
-                              <svg className="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-                              </svg>
-                              상세 보기
-                            </div>
-                          </div>
-                        </div>
-                        <div className="ml-4 flex-shrink-0">
-                          <div className="w-10 h-10 bg-accent/10 group-hover:bg-accent group-hover:shadow-glow
-                                        rounded-xl flex items-center justify-center transition-all duration-300">
-                            <svg
-                              className="h-4 w-4 text-accent group-hover:text-text-inverse transition-colors"
-                              fill="none"
-                              stroke="currentColor"
-                              viewBox="0 0 24 24"
-                            >
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                            </svg>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  );
-                })
-              ) : (
-                <div className="text-center py-16 animate-fade-in">
-                  <div className="w-20 h-20 mx-auto mb-4 rounded-full bg-bg-secondary border border-border
-                                flex items-center justify-center">
-                    <svg className="w-10 h-10 text-text-muted" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                    </svg>
-                  </div>
-                  <h3 className="text-xl font-bold text-text-primary mb-2">검색 결과가 없습니다</h3>
-                  <p className="text-text-secondary">다른 키워드로 검색해보세요</p>
-                </div>
-              )}
-            </div>
+            renderNoticeList(filteredNotices, 'announcement')
           )}
         </>
       )}
@@ -306,88 +290,23 @@ const NoticePage: React.FC = () => {
             <div className="text-center py-16 animate-fade-in">
               <div className="w-20 h-20 mx-auto mb-4 rounded-full bg-bg-secondary border border-border
                             flex items-center justify-center">
-                <svg className="w-10 h-10 text-text-muted" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
-                </svg>
+                <AlertTriangle className="w-10 h-10 text-text-muted" />
               </div>
               <h3 className="text-xl font-bold text-text-primary mb-2">준비 중입니다</h3>
               <p className="text-text-secondary">패치노트 데이터를 준비하고 있습니다.</p>
             </div>
           ) : (
-            <div className="space-y-3">
-              {filteredPatchnotes.length > 0 ? (
-                filteredPatchnotes.map(note => {
-                  return (
-                    <div
-                      key={note.id}
-                      onClick={() => handleItemClick(note.id, 'patchnotes')}
-                      className="group bg-bg-secondary hover:bg-bg-tertiary border border-border
-                               hover:border-accent/50 rounded-2xl p-4 cursor-pointer
-                               transition-all duration-300 hover:shadow-card hover:-translate-y-0.5 active:scale-[0.99]"
-                    >
-                      <div className="flex items-center justify-between">
-                        <div className="flex-1">
-                          <h3 className="text-text-primary font-semibold group-hover:text-accent transition-colors duration-200 line-clamp-2 mb-2">
-                            {note.title}
-                          </h3>
-                          <div className="flex items-center gap-3 text-xs text-text-muted">
-                            <div className="flex items-center gap-1.5">
-                              <svg className="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                              </svg>
-                              {note.date}
-                            </div>
-                            <div className="flex items-center gap-1.5">
-                              <svg className="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-                              </svg>
-                              상세 보기
-                            </div>
-                          </div>
-                        </div>
-                        <div className="ml-4 flex-shrink-0">
-                          <div className="w-10 h-10 bg-accent/10 group-hover:bg-accent group-hover:shadow-glow
-                                        rounded-xl flex items-center justify-center transition-all duration-300">
-                            <svg
-                              className="h-4 w-4 text-accent group-hover:text-text-inverse transition-colors"
-                              fill="none"
-                              stroke="currentColor"
-                              viewBox="0 0 24 24"
-                            >
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                            </svg>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  );
-                })
-              ) : (
-                <div className="text-center py-16 animate-fade-in">
-                  <div className="w-20 h-20 mx-auto mb-4 rounded-full bg-bg-secondary border border-border
-                                flex items-center justify-center">
-                    <svg className="w-10 h-10 text-text-muted" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                    </svg>
-                  </div>
-                  <h3 className="text-xl font-bold text-text-primary mb-2">검색 결과가 없습니다</h3>
-                  <p className="text-text-secondary">다른 키워드로 검색해보세요</p>
-                </div>
-              )}
-            </div>
+            renderNoticeList(filteredPatchnotes, 'patchnotes')
           )}
         </>
       )}
 
       {/* 푸터 정보 */}
       <div className="mt-8">
-        <div className="bg-bg-secondary rounded-2xl p-6 border border-border">
+        <Card className="p-6">
           <div className="flex items-center gap-2 mb-4">
             <div className="w-8 h-8 rounded-lg bg-accent/10 flex items-center justify-center">
-              <svg className="w-4 h-4 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-              </svg>
+              <Info className="w-4 h-4 text-accent" />
             </div>
             <h3 className="text-base font-semibold text-text-primary">이용 안내</h3>
           </div>
@@ -405,7 +324,7 @@ const NoticePage: React.FC = () => {
               <span>문의사항은 게시판을 이용해 주세요</span>
             </div>
           </div>
-        </div>
+        </Card>
       </div>
     </div>
   );

@@ -1,6 +1,10 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
+import { Home, AlertTriangle, Info, Shield, Swords } from 'lucide-react';
 import ThemeToggle from '@/shared/components/layout/ThemeToggle';
+import { Button } from '@/components/ui/button';
+import { Card } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
 
 const RadontaPage: React.FC = () => {
   const navigate = useNavigate();
@@ -292,147 +296,147 @@ const RadontaPage: React.FC = () => {
     <div className="w-full min-h-screen bg-bg-primary text-text-primary p-3 md:p-4">
       <div className="max-w-7xl mx-auto">
         {/* 헤더 */}
-        <div className="flex items-center justify-between mb-4">
-          <button
+        <div className="flex items-center justify-between mb-6">
+          <Button
+            variant="outline"
+            size="icon"
             onClick={() => navigate('/?tab=pet')}
-            className="flex items-center gap-2 px-3 py-2 bg-bg-secondary hover:bg-bg-tertiary border border-border rounded-lg transition-colors"
             aria-label="홈으로 가기"
           >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              className="h-5 w-5"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"
-              />
-            </svg>
-          </button>
+            <Home className="h-5 w-5" />
+          </Button>
           <ThemeToggle />
         </div>
 
         {/* 타이틀 */}
-        <div className="text-center mb-4">
-          <h1 className="text-3xl md:text-4xl font-bold mb-2 text-text-primary">라돈타 공략</h1>
-          <div className="w-20 h-0.5 bg-accent mx-auto rounded-full"></div>
+        <div className="text-center mb-6">
+          <Badge variant="outline" className="gap-2 px-4 py-2 mb-4">
+            <Swords className="w-4 h-4" />
+            라돈타 공략
+          </Badge>
+          <h1 className="text-3xl md:text-4xl font-bold text-text-primary">층별 전략 가이드</h1>
         </div>
 
         {/* 기본 수칙 */}
-        <div className="bg-bg-secondary rounded-lg p-4 md:p-5 mb-4 border border-border shadow-lg">
-          <h2 className="text-lg md:text-xl font-bold mb-3 text-text-primary flex items-center gap-2">
-            <span>📌</span> 기본 수칙
-          </h2>
-          <ul className="space-y-2 text-sm md:text-base">
-            <li className="flex items-start gap-2">
-              <span className="text-accent font-bold">•</span>
+        <Card className="p-4 md:p-5 mb-6">
+          <div className="flex items-center gap-2 mb-4">
+            <div className="w-8 h-8 rounded-lg bg-accent/10 flex items-center justify-center">
+              <Info className="w-4 h-4 text-accent" />
+            </div>
+            <h2 className="text-lg md:text-xl font-bold text-text-primary">기본 수칙</h2>
+          </div>
+          <div className="space-y-2.5 text-sm md:text-base">
+            <div className="flex items-start gap-2">
+              <span className="w-1.5 h-1.5 rounded-full bg-accent mt-2 shrink-0" />
               <span className="text-text-secondary">
                 우리팀 오로라는 지양한다 (펫 교체 시 무지개를 써야하기 때문)
               </span>
-            </li>
-            <li className="flex items-start gap-2">
-              <span className="text-accent font-bold">•</span>
+            </div>
+            <div className="flex items-start gap-2">
+              <span className="w-1.5 h-1.5 rounded-full bg-accent mt-2 shrink-0" />
               <span className="text-text-secondary">캐릭터 지속 10, 수속 10 필수</span>
-            </li>
-            <li className="flex items-start gap-2">
-              <span className="text-accent font-bold">•</span>
+            </div>
+            <div className="flex items-start gap-2">
+              <span className="w-1.5 h-1.5 rounded-full bg-accent mt-2 shrink-0" />
               <span className="text-text-secondary">
                 완캐 충견 + 활은 어중간한 완캐는 하지 말 것
               </span>
-            </li>
-            <li className="flex items-start gap-2">
-              <span className="text-accent font-bold">•</span>
+            </div>
+            <div className="flex items-start gap-2">
+              <span className="w-1.5 h-1.5 rounded-full bg-accent mt-2 shrink-0" />
               <span className="text-text-secondary">완500미만은 펫 배3이 더 효과적</span>
-            </li>
-            <li className="flex items-start gap-2">
-              <span className="text-accent font-bold">•</span>
+            </div>
+            <div className="flex items-start gap-2">
+              <span className="w-1.5 h-1.5 rounded-full bg-accent mt-2 shrink-0" />
               <span className="text-text-secondary">보스만 남았을 시 창첸 올일공 다굴</span>
-            </li>
-            <li className="flex items-start gap-2">
-              <span className="text-accent font-bold">•</span>
+            </div>
+            <div className="flex items-start gap-2">
+              <span className="w-1.5 h-1.5 rounded-full bg-accent mt-2 shrink-0" />
               <span className="text-text-secondary">
                 순캐 탑펫: 돌북이 & 카타 & 바우트 & 고르돈
               </span>
-            </li>
-            <li className="flex items-start gap-2">
-              <span className="text-accent font-bold">•</span>
+            </div>
+            <div className="flex items-start gap-2">
+              <span className="w-1.5 h-1.5 rounded-full bg-accent mt-2 shrink-0" />
               <span className="text-text-secondary">
                 완캐는 바우트 탑승 (탱펫 탈 것) - 탑순은 주술에 영향이 가지 않으므로 탱펫을 탑승하여
                 방어구를 증진
               </span>
-            </li>
-            <li className="flex items-start gap-2">
-              <span className="text-accent font-bold">•</span>
+            </div>
+            <div className="flex items-start gap-2">
+              <span className="w-1.5 h-1.5 rounded-full bg-accent mt-2 shrink-0" />
               <span className="text-text-secondary">우대는 1남았을때 무조건 우대 덮어쓰기</span>
-            </li>
-            <li className="flex items-start gap-2">
-              <span className="text-accent font-bold">•</span>
+            </div>
+            <div className="flex items-start gap-2">
+              <span className="w-1.5 h-1.5 rounded-full bg-accent mt-2 shrink-0" />
               <span className="text-text-secondary">
                 70층부터 선 뺏길 가능성 큼, 피100%라도 메인힐은 힐 계속 쓸 것
               </span>
-            </li>
-            <li className="flex items-start gap-2">
-              <span className="text-red-500 font-bold">⚠</span>
+            </div>
+            <div className="flex items-start gap-2 p-2 bg-red-500/5 rounded-lg border border-red-500/20">
+              <AlertTriangle className="w-4 h-4 text-red-500 mt-0.5 shrink-0" />
               <span className="text-red-500">
                 상대 펫 속성은 틀릴 가능성이 있음 - 수정 필요 시 연락바람 ( 박준순 / 준순 )
               </span>
-            </li>
-          </ul>
-        </div>
+            </div>
+          </div>
+        </Card>
 
         {/* 층별 공략 */}
-        <div className="space-y-3 mb-6">
+        <div className="space-y-4 mb-8">
           {floors.map(floor => (
-            <div
+            <Card
               key={floor.floor}
-              className="bg-bg-secondary rounded-lg p-3 md:p-4 border border-border shadow-lg hover:shadow-xl transition-all"
+              className="p-3 md:p-4 hover:shadow-card transition-all"
             >
               <div className="flex flex-col md:flex-row md:items-center gap-2 md:gap-3 mb-3 pb-3 border-b border-border">
-                <div className="bg-accent text-white font-bold text-lg md:text-xl px-3 md:px-4 py-1.5 md:py-2 rounded-lg shadow-md">
+                <Badge className="w-fit text-lg md:text-xl px-3 md:px-4 py-1.5 md:py-2 shadow-glow">
                   {floor.floor}층
-                </div>
+                </Badge>
                 <div className="flex-1 grid grid-cols-1 md:grid-cols-3 gap-2 text-xs md:text-sm">
-                  <div className="bg-bg-tertiary px-2 py-1.5 rounded border border-border flex items-center">
+                  <div className="bg-bg-tertiary px-2 py-1.5 rounded-lg border border-border flex items-center">
                     <span className="text-text-secondary">셋팅:</span>{' '}
                     <span className="font-bold text-text-primary ml-1">{floor.setup}</span>
                   </div>
-                  <div className="bg-bg-tertiary px-2 py-1.5 rounded border border-border flex items-center">
+                  <div className="bg-bg-tertiary px-2 py-1.5 rounded-lg border border-border flex items-center">
                     <span className="text-text-secondary">우대:</span>{' '}
                     <span className="font-bold text-text-primary ml-1">{floor.support}</span>
                   </div>
-                  <div className="bg-bg-tertiary px-2 py-1.5 rounded border border-border flex items-center">
+                  <div className="bg-bg-tertiary px-2 py-1.5 rounded-lg border border-border flex items-center">
                     <span className="text-text-secondary">무지개:</span>{' '}
                     <span className="font-bold text-text-primary ml-1">{floor.rainbow}</span>
                   </div>
                 </div>
               </div>
 
-              <div className="mb-2 bg-red-500/10 border border-red-500/30 rounded p-2">
-                <span className="font-bold text-red-500 text-xs md:text-sm">보스:</span>{' '}
-                <span className="text-text-secondary text-xs md:text-sm">{floor.boss}</span>
+              <div className="mb-2 bg-red-500/5 border border-red-500/20 rounded-lg p-2.5 flex items-start gap-2">
+                <Shield className="w-4 h-4 text-red-500 mt-0.5 shrink-0" />
+                <div>
+                  <span className="font-bold text-red-500 text-xs md:text-sm">보스:</span>{' '}
+                  <span className="text-text-secondary text-xs md:text-sm">{floor.boss}</span>
+                </div>
               </div>
 
               {floor.note && (
-                <div className="mb-2 bg-yellow-500/10 border border-yellow-500/30 rounded p-2">
-                  <span className="font-bold text-yellow-600 text-xs md:text-sm">⚠️ 주의:</span>{' '}
-                  <span className="text-text-secondary text-xs md:text-sm">{floor.note}</span>
+                <div className="mb-2 bg-yellow-500/5 border border-yellow-500/20 rounded-lg p-2.5 flex items-start gap-2">
+                  <AlertTriangle className="w-4 h-4 text-yellow-600 mt-0.5 shrink-0" />
+                  <div>
+                    <span className="font-bold text-yellow-600 text-xs md:text-sm">주의:</span>{' '}
+                    <span className="text-text-secondary text-xs md:text-sm">{floor.note}</span>
+                  </div>
                 </div>
               )}
 
               <div className="grid md:grid-cols-2 gap-3">
-                <div className="bg-bg-tertiary rounded p-3 border border-border">
-                  <h4 className="font-bold text-green-500 mb-2 text-sm md:text-base">기본</h4>
+                <div className="bg-emerald-500/5 rounded-xl p-3 border border-emerald-500/20">
+                  <h4 className="font-bold text-emerald-500 mb-2 text-sm md:text-base">기본</h4>
                   <ul className="space-y-1.5">
                     {floor.basic.map((pet, idx) => (
                       <li
                         key={idx}
                         className="text-xs md:text-sm text-text-secondary flex items-center gap-2"
                       >
-                        <span className="bg-green-500 text-white font-bold rounded-full w-5 h-5 flex items-center justify-center text-xs flex-shrink-0">
+                        <span className="bg-emerald-500 text-white font-bold rounded-full w-5 h-5 flex items-center justify-center text-xs flex-shrink-0">
                           {idx + 1}
                         </span>
                         {pet}
@@ -441,7 +445,7 @@ const RadontaPage: React.FC = () => {
                   </ul>
                 </div>
 
-                <div className="bg-bg-tertiary rounded p-3 border border-border">
+                <div className="bg-blue-500/5 rounded-xl p-3 border border-blue-500/20">
                   <h4 className="font-bold text-blue-500 mb-2 text-sm md:text-base">오로라</h4>
                   <ul className="space-y-1.5">
                     {floor.aurora.map((pet, idx) => (
@@ -458,62 +462,71 @@ const RadontaPage: React.FC = () => {
                   </ul>
                 </div>
               </div>
-            </div>
+            </Card>
           ))}
         </div>
 
         {/* 정령왕 공략 */}
-        <div className="space-y-3">
-          <h2 className="text-xl md:text-2xl font-bold text-center mb-3 text-text-primary">
-            정령왕 공략
-          </h2>
+        <div className="space-y-4">
+          <div className="text-center mb-4">
+            <Badge variant="outline" className="gap-2 px-4 py-2">
+              <Swords className="w-4 h-4" />
+              정령왕 공략
+            </Badge>
+          </div>
           {spiritKingStrategies.map((strategy, idx) => (
-            <div
+            <Card
               key={idx}
-              className="bg-bg-secondary rounded-lg p-3 md:p-4 border border-border shadow-lg"
+              className="p-3 md:p-4"
             >
               <div className="flex items-center gap-4 mb-3 pb-3 border-b border-border">
                 <h3 className="text-lg md:text-xl font-bold text-text-primary">{strategy.title}</h3>
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-3 gap-2 mb-2 text-xs md:text-sm">
-                <div className="bg-bg-tertiary px-2 py-1.5 rounded border border-border flex items-center">
+                <div className="bg-bg-tertiary px-2 py-1.5 rounded-lg border border-border flex items-center">
                   <span className="text-text-secondary">셋팅:</span>{' '}
                   <span className="font-bold text-text-primary ml-1">{strategy.setup}</span>
                 </div>
-                <div className="bg-bg-tertiary px-2 py-1.5 rounded border border-border flex items-center">
+                <div className="bg-bg-tertiary px-2 py-1.5 rounded-lg border border-border flex items-center">
                   <span className="text-text-secondary">우대:</span>{' '}
                   <span className="font-bold text-text-primary ml-1">{strategy.support}</span>
                 </div>
-                <div className="bg-bg-tertiary px-2 py-1.5 rounded border border-border flex items-center">
+                <div className="bg-bg-tertiary px-2 py-1.5 rounded-lg border border-border flex items-center">
                   <span className="text-text-secondary">무지개:</span>{' '}
                   <span className="font-bold text-text-primary ml-1">{strategy.rainbow}</span>
                 </div>
               </div>
 
-              <div className="mb-2 bg-red-500/10 border border-red-500/30 rounded p-2">
-                <span className="font-bold text-red-500 text-xs md:text-sm">보스:</span>{' '}
-                <span className="text-text-secondary text-xs md:text-sm">{strategy.boss}</span>
+              <div className="mb-2 bg-red-500/5 border border-red-500/20 rounded-lg p-2.5 flex items-start gap-2">
+                <Shield className="w-4 h-4 text-red-500 mt-0.5 shrink-0" />
+                <div>
+                  <span className="font-bold text-red-500 text-xs md:text-sm">보스:</span>{' '}
+                  <span className="text-text-secondary text-xs md:text-sm">{strategy.boss}</span>
+                </div>
               </div>
 
               {strategy.note && (
-                <div className="mb-2 bg-yellow-500/10 border border-yellow-500/30 rounded p-2">
-                  <span className="font-bold text-yellow-600 text-xs md:text-sm">⚠️ 주의:</span>{' '}
-                  <span className="text-text-secondary text-xs md:text-sm">{strategy.note}</span>
+                <div className="mb-2 bg-yellow-500/5 border border-yellow-500/20 rounded-lg p-2.5 flex items-start gap-2">
+                  <AlertTriangle className="w-4 h-4 text-yellow-600 mt-0.5 shrink-0" />
+                  <div>
+                    <span className="font-bold text-yellow-600 text-xs md:text-sm">주의:</span>{' '}
+                    <span className="text-text-secondary text-xs md:text-sm">{strategy.note}</span>
+                  </div>
                 </div>
               )}
 
               <div className="grid md:grid-cols-2 gap-3">
-                <div className="bg-bg-tertiary rounded p-3 border border-border">
-                  <h4 className="font-bold text-green-500 mb-2 text-sm md:text-base">기본</h4>
+                <div className="bg-emerald-500/5 rounded-xl p-3 border border-emerald-500/20">
+                  <h4 className="font-bold text-emerald-500 mb-2 text-sm md:text-base">기본</h4>
                   <ul className="space-y-1.5">
-                    {strategy.basic.map((pet, idx) => (
+                    {strategy.basic.map((pet, petIdx) => (
                       <li
-                        key={idx}
+                        key={petIdx}
                         className="text-xs md:text-sm text-text-secondary flex items-center gap-2"
                       >
-                        <span className="bg-green-500 text-white font-bold rounded-full w-5 h-5 flex items-center justify-center text-xs flex-shrink-0">
-                          {idx + 1}
+                        <span className="bg-emerald-500 text-white font-bold rounded-full w-5 h-5 flex items-center justify-center text-xs flex-shrink-0">
+                          {petIdx + 1}
                         </span>
                         {pet}
                       </li>
@@ -521,16 +534,16 @@ const RadontaPage: React.FC = () => {
                   </ul>
                 </div>
 
-                <div className="bg-bg-tertiary rounded p-3 border border-border">
+                <div className="bg-blue-500/5 rounded-xl p-3 border border-blue-500/20">
                   <h4 className="font-bold text-blue-500 mb-2 text-sm md:text-base">오로라</h4>
                   <ul className="space-y-1.5">
-                    {strategy.aurora.map((pet, idx) => (
+                    {strategy.aurora.map((pet, petIdx) => (
                       <li
-                        key={idx}
+                        key={petIdx}
                         className="text-xs md:text-sm text-text-secondary flex items-center gap-2"
                       >
                         <span className="bg-blue-500 text-white font-bold rounded-full w-5 h-5 flex items-center justify-center text-xs flex-shrink-0">
-                          {idx + 1}
+                          {petIdx + 1}
                         </span>
                         {pet}
                       </li>
@@ -538,7 +551,7 @@ const RadontaPage: React.FC = () => {
                   </ul>
                 </div>
               </div>
-            </div>
+            </Card>
           ))}
         </div>
       </div>

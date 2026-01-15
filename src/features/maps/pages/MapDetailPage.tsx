@@ -1,7 +1,11 @@
 import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import { useParams, useNavigate, useSearchParams } from 'react-router-dom';
+import { ArrowLeft, Map, X, ZoomIn, ZoomOut, RotateCcw, AlertCircle, Loader2, Info } from 'lucide-react';
 import mapsData from '@/data/pooyasMaps.json';
 import '@/styles/quest-content.css';
+import { Button } from '@/components/ui/button';
+import { Card } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
 
 interface MapData {
   idx: number;
@@ -126,10 +130,13 @@ const MapDetailPage: React.FC = () => {
 
   if (isLoading) {
     return (
-      <div className="max-w-4xl mx-auto px-4 py-8 iphone16:px-3">
-        <div className="text-center py-12">
-          <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-accent"></div>
-          <p className="mt-4 text-text-secondary">지도 정보를 불러오는 중...</p>
+      <div className="max-w-4xl mx-auto px-4 py-6 iphone16:px-3">
+        <div className="text-center py-16">
+          <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-bg-secondary border border-border
+                        flex items-center justify-center">
+            <Loader2 className="w-8 h-8 text-accent animate-spin" />
+          </div>
+          <p className="text-text-secondary">지도 정보를 불러오는 중...</p>
         </div>
       </div>
     );
@@ -137,89 +144,87 @@ const MapDetailPage: React.FC = () => {
 
   if (!map) {
     return (
-      <div className="max-w-4xl mx-auto px-4 py-8 iphone16:px-3">
-        <div className="text-center py-12">
-          <div className="text-6xl mb-4">❌</div>
+      <div className="max-w-4xl mx-auto px-4 py-6 iphone16:px-3">
+        <div className="text-center py-16 animate-fade-in">
+          <div className="w-20 h-20 mx-auto mb-4 rounded-full bg-bg-secondary border border-border
+                        flex items-center justify-center">
+            <AlertCircle className="w-10 h-10 text-text-muted" />
+          </div>
           <h3 className="text-xl font-bold text-text-primary mb-2">
             지도를 찾을 수 없습니다
           </h3>
           <p className="text-text-secondary mb-6">
             요청하신 지도가 존재하지 않습니다
           </p>
-          <button
-            onClick={handleGoBack}
-            className="bg-accent hover:bg-accent/80 text-white px-6 py-3 rounded-xl font-medium transition-colors duration-200"
-          >
+          <Button onClick={handleGoBack} className="shadow-glow">
+            <Map className="w-4 h-4 mr-2" />
             지도 목록으로 돌아가기
-          </button>
+          </Button>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="max-w-4xl mx-auto px-4 py-8 iphone16:px-3">
+    <div className="max-w-4xl mx-auto px-4 py-6 iphone16:px-3">
       {/* 헤더 */}
       <div className="mb-6">
-        <div className="flex items-center gap-4 mb-4">
-          <button
-            onClick={handleGoBack}
-            className="flex items-center gap-2 text-text-secondary hover:text-accent transition-colors duration-200 group"
-          >
-            <svg
-              className="h-5 w-5 transform group-hover:-translate-x-1 transition-transform duration-200"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M15 19l-7-7 7-7"
-              />
-            </svg>
-            <span className="font-medium">지도 목록</span>
-          </button>
-        </div>
+        <Button
+          variant="ghost"
+          size="sm"
+          onClick={handleGoBack}
+          className="mb-4 gap-2 text-text-secondary hover:text-accent group"
+        >
+          <ArrowLeft className="h-4 w-4 transition-transform group-hover:-translate-x-1" />
+          지도 목록
+        </Button>
 
-        <div className="flex items-center gap-2 mb-2">
-          <span className="text-xs px-2 py-0.5 bg-accent/10 text-accent rounded-full">
-            {map.category}
-          </span>
-        </div>
+        <Badge variant="outline" className="mb-3 text-xs bg-accent/5 text-accent border-accent/20">
+          {map.category}
+        </Badge>
 
-        <h1 className="text-2xl md:text-3xl font-bold text-text-primary mb-4">
+        <h1 className="text-2xl md:text-3xl font-bold text-text-primary mb-2">
           {map.title}
         </h1>
       </div>
 
       {/* 컨텐츠 */}
-      <div className="bg-bg-secondary rounded-xl border border-border">
+      <Card className="overflow-hidden">
         <div className="p-6">
           {renderHtmlContent(map.content)}
         </div>
-      </div>
+      </Card>
 
       {/* 푸터 정보 */}
-      <div className="mt-8 text-center">
-        <div className="bg-bg-secondary rounded-xl p-6 border border-border">
-          <h3 className="text-lg font-bold text-text-primary mb-4">💡 도움말</h3>
-          <div className="space-y-2 text-sm text-text-secondary">
-            <p>• 지도 이미지를 클릭하면 확대해서 볼 수 있습니다</p>
-            <p>• 지도 정보는 뿌야의 스톤에이지에서 제공됩니다</p>
+      <div className="mt-8">
+        <Card className="p-6">
+          <div className="flex items-center gap-2 mb-4">
+            <div className="w-8 h-8 rounded-lg bg-accent/10 flex items-center justify-center">
+              <Info className="w-4 h-4 text-accent" />
+            </div>
+            <h3 className="text-base font-semibold text-text-primary">도움말</h3>
           </div>
-        </div>
+          <div className="space-y-2.5 text-sm text-text-secondary">
+            <div className="flex items-start gap-2">
+              <span className="w-1.5 h-1.5 rounded-full bg-accent mt-1.5 shrink-0" />
+              <span>지도 이미지를 클릭하면 확대해서 볼 수 있습니다</span>
+            </div>
+            <div className="flex items-start gap-2">
+              <span className="w-1.5 h-1.5 rounded-full bg-accent mt-1.5 shrink-0" />
+              <span>지도 정보는 뿌야의 스톤에이지에서 제공됩니다</span>
+            </div>
+          </div>
+        </Card>
       </div>
 
       {/* 이미지 확대 모달 */}
       {modalImage && (
         <div
-          className="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center z-50 p-4 backdrop-blur-sm"
+          className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-4 backdrop-blur-sm animate-fade-in"
           onClick={closeModal}
         >
-          <div
-            className="bg-bg-primary rounded-lg max-w-4xl w-full max-h-[80vh] overflow-hidden border-2 border-border shadow-2xl shadow-black/50"
+          <Card
+            className="max-w-4xl w-full max-h-[80vh] overflow-hidden shadow-2xl"
             onClick={(e) => e.stopPropagation()}
           >
             {/* 모달 헤더 */}
@@ -227,26 +232,15 @@ const MapDetailPage: React.FC = () => {
               <h2 className="text-lg font-bold text-text-primary">
                 {map?.title}
               </h2>
-              <button
+              <Button
+                variant="ghost"
+                size="icon"
                 onClick={closeModal}
-                className="p-2 hover:bg-bg-tertiary rounded-md transition-colors"
+                className="h-8 w-8"
                 aria-label="모달 닫기"
               >
-                <svg
-                  width="20"
-                  height="20"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  className="text-text-secondary hover:text-text-primary"
-                >
-                  <line x1="18" y1="6" x2="6" y2="18" />
-                  <line x1="6" y1="6" x2="18" y2="18" />
-                </svg>
-              </button>
+                <X className="h-4 w-4" />
+              </Button>
             </div>
 
             {/* 모달 내용 */}
@@ -262,43 +256,42 @@ const MapDetailPage: React.FC = () => {
 
               {/* 확대/축소 버튼 */}
               <div className="absolute bottom-4 right-4 flex flex-col gap-2">
-                <button
+                <Button
+                  variant="outline"
+                  size="icon"
                   onClick={handleZoomIn}
                   disabled={zoomLevel >= 3}
-                  className="w-10 h-10 bg-bg-secondary hover:bg-bg-tertiary border border-border rounded-lg flex items-center justify-center text-text-primary transition-colors disabled:opacity-50 disabled:cursor-not-allowed shadow-lg"
+                  className="h-10 w-10 shadow-lg"
                   aria-label="확대"
                 >
-                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                    <line x1="12" y1="5" x2="12" y2="19" />
-                    <line x1="5" y1="12" x2="19" y2="12" />
-                  </svg>
-                </button>
-                <button
+                  <ZoomIn className="h-4 w-4" />
+                </Button>
+                <Button
+                  variant="outline"
+                  size="icon"
                   onClick={handleZoomReset}
                   disabled={zoomLevel === 1}
-                  className="w-10 h-10 bg-bg-secondary hover:bg-bg-tertiary border border-border rounded-lg flex items-center justify-center text-text-primary transition-colors disabled:opacity-50 disabled:cursor-not-allowed shadow-lg"
+                  className="h-10 w-10 shadow-lg"
                   aria-label="원래 크기"
                 >
-                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                    <path d="M3 12h4l2-9 4 18 2-9h6" />
-                  </svg>
-                </button>
-                <button
+                  <RotateCcw className="h-4 w-4" />
+                </Button>
+                <Button
+                  variant="outline"
+                  size="icon"
                   onClick={handleZoomOut}
                   disabled={zoomLevel <= 0.5}
-                  className="w-10 h-10 bg-bg-secondary hover:bg-bg-tertiary border border-border rounded-lg flex items-center justify-center text-text-primary transition-colors disabled:opacity-50 disabled:cursor-not-allowed shadow-lg"
+                  className="h-10 w-10 shadow-lg"
                   aria-label="축소"
                 >
-                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                    <line x1="5" y1="12" x2="19" y2="12" />
-                  </svg>
-                </button>
-                <div className="text-xs text-text-secondary text-center bg-bg-secondary/80 rounded px-1">
+                  <ZoomOut className="h-4 w-4" />
+                </Button>
+                <Badge variant="secondary" className="text-xs justify-center">
                   {Math.round(zoomLevel * 100)}%
-                </div>
+                </Badge>
               </div>
             </div>
-          </div>
+          </Card>
         </div>
       )}
     </div>

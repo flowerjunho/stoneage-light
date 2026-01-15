@@ -1,4 +1,8 @@
 import React, { useState, useRef, useEffect } from 'react';
+import { Search, X } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
+import { cn } from '@/lib/utils';
 
 interface SearchBarProps {
   searchTerm: string;
@@ -14,10 +18,8 @@ const SearchBar: React.FC<SearchBarProps> = ({
   const [isFocused, setIsFocused] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
 
-  // "/" 키 눌렀을 때 검색창 포커스
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      // 이미 입력 필드에 포커스가 있으면 무시
       const activeElement = document.activeElement;
       const isInputFocused = activeElement instanceof HTMLInputElement ||
                             activeElement instanceof HTMLTextAreaElement ||
@@ -25,7 +27,6 @@ const SearchBar: React.FC<SearchBarProps> = ({
 
       if (isInputFocused) return;
 
-      // "/" 키 누르면 검색창 포커스
       if (e.key === '/') {
         e.preventDefault();
         inputRef.current?.focus();
@@ -44,37 +45,24 @@ const SearchBar: React.FC<SearchBarProps> = ({
   return (
     <div className="w-full max-w-2xl mx-auto mb-6 md:mb-8 px-4 md:px-0">
       <div
-        className={`
-          group relative flex items-center
-          bg-bg-secondary rounded-2xl
-          border-2 transition-all duration-300 ease-out
-          ${
-            isFocused
-              ? 'border-accent shadow-glow'
-              : 'border-border hover:border-border-light'
-          }
-        `}
+        className={cn(
+          "group relative flex items-center",
+          "bg-bg-secondary rounded-2xl",
+          "border-2 transition-all duration-300 ease-out",
+          isFocused
+            ? "border-accent shadow-glow"
+            : "border-border hover:border-border-light"
+        )}
       >
         {/* Search Icon */}
         <div
-          className={`
-            flex items-center justify-center w-12 h-12 md:w-14 md:h-14
-            transition-colors duration-300
-            ${isFocused ? 'text-accent' : 'text-text-muted'}
-          `}
+          className={cn(
+            "flex items-center justify-center w-12 h-12 md:w-14 md:h-14",
+            "transition-colors duration-300",
+            isFocused ? "text-accent" : "text-text-muted"
+          )}
         >
-          <svg
-            className="w-5 h-5 md:w-6 md:h-6"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          >
-            <circle cx="11" cy="11" r="8" />
-            <path d="M21 21l-4.35-4.35" />
-          </svg>
+          <Search className="w-5 h-5 md:w-6 md:h-6" />
         </div>
 
         {/* Input */}
@@ -86,39 +74,25 @@ const SearchBar: React.FC<SearchBarProps> = ({
           onChange={e => onSearchChange(e.target.value)}
           onFocus={() => setIsFocused(true)}
           onBlur={() => setIsFocused(false)}
-          className="
-            flex-1 bg-transparent border-none outline-none
-            py-3.5 md:py-4 pr-4 text-base md:text-lg
-            text-text-primary placeholder-text-muted
-            font-body
-          "
+          className={cn(
+            "flex-1 bg-transparent border-none outline-none",
+            "py-3.5 md:py-4 pr-4 text-base md:text-lg",
+            "text-text-primary placeholder-text-muted",
+            "font-body"
+          )}
         />
 
         {/* Clear Button */}
         {searchTerm && (
-          <button
+          <Button
+            variant="ghost"
+            size="icon"
             onClick={handleClear}
-            className="
-              flex items-center justify-center
-              w-10 h-10 mr-2 rounded-xl
-              text-text-muted hover:text-text-primary
-              hover:bg-bg-tertiary active:scale-95
-              transition-all duration-200
-            "
+            className="w-10 h-10 mr-2 rounded-xl hover:bg-bg-tertiary"
             aria-label="검색어 지우기"
           >
-            <svg
-              className="w-4 h-4"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            >
-              <path d="M18 6L6 18M6 6l12 12" />
-            </svg>
-          </button>
+            <X className="w-4 h-4" />
+          </Button>
         )}
 
         {/* Keyboard shortcut hint (desktop only) */}
@@ -134,24 +108,20 @@ const SearchBar: React.FC<SearchBarProps> = ({
       {/* Search Tips */}
       {isFocused && !searchTerm && (
         <div className="mt-3 px-2 animate-fade-in">
-          <div className="flex flex-wrap gap-2">
+          <div className="flex flex-wrap gap-2 items-center">
             <span className="text-xs text-text-muted">추천 검색:</span>
             {['ㅇㄱㄹㅎ', 'ㅌㅍㄴㄹ', 'ㅍㄹㅁ'].map(term => (
-              <button
+              <Badge
                 key={term}
+                variant="accent"
+                className="cursor-pointer hover:bg-accent hover:text-text-inverse transition-colors duration-200"
                 onMouseDown={e => {
                   e.preventDefault();
                   onSearchChange(term);
                 }}
-                className="
-                  px-2 py-0.5 text-xs font-medium
-                  text-accent bg-accent-soft rounded-md
-                  hover:bg-accent hover:text-text-inverse
-                  transition-colors duration-200
-                "
               >
                 {term}
-              </button>
+              </Badge>
             ))}
           </div>
         </div>

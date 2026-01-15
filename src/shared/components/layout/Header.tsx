@@ -1,20 +1,23 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
+import { ChevronRight } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { cn } from '@/lib/utils';
 import ThemeToggle from '@/shared/components/layout/ThemeToggle';
 
 const Header: React.FC = () => {
   const [showTooltip, setShowTooltip] = useState(false);
   const [tooltipTimeoutId, setTooltipTimeoutId] = useState<NodeJS.Timeout | null>(null);
-  const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
+  const [scrolled, setScrolled] = useState(false);
 
-  // 마우스 추적 (히어로 섹션 효과)
-  const handleMouseMove = (e: React.MouseEvent<HTMLElement>) => {
-    const rect = e.currentTarget.getBoundingClientRect();
-    setMousePosition({
-      x: ((e.clientX - rect.left) / rect.width) * 100,
-      y: ((e.clientY - rect.top) / rect.height) * 100,
-    });
-  };
+  // Scroll detection for header blur effect
+  useEffect(() => {
+    const handleScroll = () => {
+      setScrolled(window.scrollY > 20);
+    };
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
 
   const handleInfoClick = () => {
     if (tooltipTimeoutId) {
@@ -37,297 +40,235 @@ const Header: React.FC = () => {
 
   return (
     <>
-      {/* Navigation Bar - 스크롤 시 고정되지 않음 */}
-      <nav className="py-3">
+      {/* Minimal Navigation Bar */}
+      <nav
+        className={cn(
+          'fixed top-0 left-0 right-0 z-50 transition-all duration-500',
+          scrolled
+            ? 'py-2 bg-bg-primary/80 backdrop-blur-2xl border-b border-white/5'
+            : 'py-4 bg-transparent'
+        )}
+      >
         <div className="max-w-6xl mx-auto px-4 md:px-6">
-          <div className="relative overflow-hidden rounded-2xl bg-bg-secondary/50 backdrop-blur-sm border border-border">
-            <div className="relative flex items-center justify-between px-4 py-3 md:px-6 md:py-4">
-              {/* Logo */}
-              <Link
-                to="/"
-                className="group flex items-center gap-3 transition-transform duration-300 hover:scale-105"
-              >
-                {/* Animated Logo Mark */}
-                <div className="relative">
-                  {/* Glow ring */}
-                  <div
-                    className="absolute inset-0 rounded-xl bg-gradient-to-r from-accent via-amber-400 to-accent
-                                opacity-0 group-hover:opacity-70 blur-lg transition-opacity duration-500
-                                animate-pulse-glow"
-                  />
-                  <div
-                    className="relative w-10 h-10 md:w-12 md:h-12 rounded-xl
-                                bg-gradient-to-br from-accent via-amber-500 to-accent-hover
-                                flex items-center justify-center
-                                shadow-lg group-hover:shadow-[0_0_30px_var(--accent-glow)]
-                                transition-all duration-500 group-hover:scale-110 group-hover:rotate-3"
-                  >
-                    {/* Shine effect */}
-                    <div
-                      className="absolute inset-0 rounded-xl bg-gradient-to-tr from-white/30 to-transparent
-                                  opacity-0 group-hover:opacity-100 transition-opacity duration-300"
-                    />
-                    <svg
-                      viewBox="0 0 24 24"
-                      className="relative w-6 h-6 md:w-7 md:h-7 text-bg-primary"
-                      fill="currentColor"
-                    >
-                      <path d="M12 2L2 7l10 5 10-5-10-5z" />
-                      <path d="M2 17l10 5 10-5" opacity="0.7" />
-                      <path d="M2 12l10 5 10-5" opacity="0.5" />
-                    </svg>
-                  </div>
-                </div>
-
-                {/* Title */}
-                <div className="flex flex-col">
-                  <span
-                    className="font-display text-base md:text-xl font-black tracking-widest
-                               bg-gradient-to-r from-accent via-amber-400 to-accent bg-clip-text text-transparent
-                               group-hover:text-glow-strong transition-all duration-300"
-                  >
-                    STONEAGE
-                  </span>
-                  <span className="text-[10px] md:text-xs text-text-muted font-medium tracking-[0.2em] uppercase">
-                    Light Guide
-                  </span>
-                </div>
-              </Link>
-
-              {/* Right Section */}
-              <div className="flex items-center gap-3 md:gap-4">
-                {/* Live indicator */}
+          <div className="flex items-center justify-between">
+            {/* Minimal Logo */}
+            <Link
+              to="/"
+              className="group flex items-center gap-2.5 transition-all duration-300"
+            >
+              {/* 고인돌 아이콘 */}
+              <div className="relative">
                 <div
-                  className="hidden md:flex items-center gap-2 px-4 py-2 rounded-full
-                              bg-accent/10 border border-accent/30
-                              hover:bg-accent/20 hover:border-accent/50
-                              transition-all duration-300 cursor-default"
+                  className="absolute inset-0 rounded-lg bg-accent/40 blur-lg opacity-0
+                             group-hover:opacity-100 transition-opacity duration-500"
+                />
+                <div
+                  className={cn(
+                    'relative w-8 h-8 flex items-center justify-center',
+                    'transition-all duration-300 group-hover:scale-110'
+                  )}
                 >
-                  <span className="relative flex h-2.5 w-2.5">
-                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-accent-tertiary opacity-75" />
-                    <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-accent-tertiary" />
-                  </span>
-                  <span className="text-xs font-semibold text-text-primary">환수강림 라이트</span>
+                  {/* 고인돌 SVG */}
+                  <svg
+                    viewBox="0 0 32 32"
+                    className="w-8 h-8"
+                    fill="none"
+                  >
+                    {/* 받침돌 2개 */}
+                    <path
+                      d="M6 28 L10 18 L12 28 Z"
+                      className="fill-text-muted group-hover:fill-amber-600 transition-colors duration-300"
+                    />
+                    <path
+                      d="M20 28 L22 18 L26 28 Z"
+                      className="fill-text-muted group-hover:fill-amber-600 transition-colors duration-300"
+                    />
+                    {/* 윗돌 */}
+                    <path
+                      d="M4 19 C4 16 8 14 16 14 C24 14 28 16 28 19 C28 21 24 22 16 22 C8 22 4 21 4 19 Z"
+                      className="fill-accent group-hover:fill-amber-400 transition-colors duration-300"
+                    />
+                    {/* 윗돌 하이라이트 */}
+                    <path
+                      d="M8 17 C10 16 14 15.5 16 15.5 C18 15.5 20 16 20 16.5"
+                      className="stroke-white/30 stroke-[1.5]"
+                      strokeLinecap="round"
+                    />
+                  </svg>
                 </div>
-
-                {/* Theme Toggle */}
-                <ThemeToggle />
               </div>
+
+              {/* 타이틀 */}
+              <span
+                className={cn(
+                  'text-sm font-bold',
+                  'text-text-primary transition-all duration-300',
+                  'group-hover:text-accent'
+                )}
+              >
+                스톤에이지 환수강림 라이트
+              </span>
+            </Link>
+
+            {/* Right Section */}
+            <div className="flex items-center gap-2">
+              {/* Theme Toggle */}
+              <ThemeToggle />
             </div>
           </div>
         </div>
       </nav>
 
-      {/* Hero Section - Immersive */}
-      <header className="relative w-full overflow-hidden" onMouseMove={handleMouseMove}>
-        {/* Animated Background */}
-        <div className="absolute inset-0 bg-bg-secondary">
-          {/* Gradient Mesh */}
+      {/* Spacer for fixed nav */}
+      <div className="h-14 md:h-16" />
+
+      {/* Hero Section - Clean & Modern */}
+      <header className="relative w-full overflow-hidden">
+        {/* Aurora Background */}
+        <div className="absolute inset-0">
+          {/* Gradient Orbs */}
+          <div className="absolute top-0 left-1/4 w-96 h-96 bg-accent/20 rounded-full blur-[100px] animate-morph-blob" />
           <div
-            className="absolute inset-0 opacity-60"
-            style={{
-              background: `
-                radial-gradient(circle at ${mousePosition.x}% ${mousePosition.y}%, var(--accent-glow) 0%, transparent 50%),
-                radial-gradient(circle at 80% 20%, rgba(244, 63, 94, 0.15) 0%, transparent 40%),
-                radial-gradient(circle at 20% 80%, rgba(59, 130, 246, 0.15) 0%, transparent 40%)
-              `,
-              transition: 'background 0.3s ease',
-            }}
+            className="absolute bottom-0 right-1/4 w-80 h-80 bg-neon-purple/20 rounded-full blur-[100px] animate-morph-blob"
+            style={{ animationDelay: '-4s' }}
+          />
+          <div
+            className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px]
+                       bg-gradient-to-r from-accent/10 via-neon-blue/10 to-neon-purple/10
+                       rounded-full blur-[120px] animate-breathe"
           />
 
-          {/* Grid pattern */}
+          {/* Subtle Grid */}
           <div
-            className="absolute inset-0 opacity-[0.03]"
+            className="absolute inset-0 opacity-[0.02]"
             style={{
               backgroundImage: `
-                linear-gradient(var(--border) 1px, transparent 1px),
-                linear-gradient(90deg, var(--border) 1px, transparent 1px)
+                linear-gradient(var(--accent) 1px, transparent 1px),
+                linear-gradient(90deg, var(--accent) 1px, transparent 1px)
               `,
-              backgroundSize: '50px 50px',
+              backgroundSize: '60px 60px',
             }}
           />
-
-          {/* Floating particles */}
-          <div className="absolute inset-0 overflow-hidden">
-            {[...Array(6)].map((_, i) => (
-              <div
-                key={i}
-                className="absolute rounded-full bg-accent/20 animate-float"
-                style={{
-                  width: `${20 + i * 10}px`,
-                  height: `${20 + i * 10}px`,
-                  left: `${10 + i * 15}%`,
-                  top: `${20 + (i % 3) * 20}%`,
-                  animationDelay: `${i * 0.5}s`,
-                  animationDuration: `${4 + i}s`,
-                }}
-              />
-            ))}
-          </div>
         </div>
 
-        {/* Main Content */}
+        {/* Content */}
         <div className="relative max-w-6xl mx-auto px-4 md:px-6 py-8 md:py-12">
-          {/* Hero Card */}
-          <div
-            className="relative rounded-3xl overflow-hidden
-                        bg-gradient-to-br from-bg-tertiary/50 to-bg-primary/80
-                        border border-border backdrop-blur-sm
-                        shadow-2xl"
-          >
-            {/* Image with overlay */}
-            <div className="relative h-72 md:h-96 lg:h-[28rem]">
-              <img
-                src={`${import.meta.env.BASE_URL}sa_1.png`}
-                alt="StoneAge Light"
-                className="w-full h-full object-cover"
-              />
-
-              {/* Multi-layer gradient overlay */}
-              <div className="absolute inset-0 bg-gradient-to-t from-bg-primary via-bg-primary/60 to-transparent" />
-              <div className="absolute inset-0 bg-gradient-to-r from-bg-primary/50 via-transparent to-bg-primary/50" />
-
-              {/* Scan line effect */}
+          <div className="flex flex-col lg:flex-row items-center gap-6 lg:gap-10">
+            {/* Left: Text Content */}
+            <div className="flex-1 text-center lg:text-left">
+              {/* 서브 타이틀 */}
               <div
-                className="absolute inset-0 pointer-events-none opacity-[0.02]"
-                style={{
-                  background:
-                    'repeating-linear-gradient(0deg, transparent, transparent 2px, var(--text-primary) 2px, var(--text-primary) 4px)',
-                }}
-              />
-
-              {/* Vignette */}
-              <div
-                className="absolute inset-0"
-                style={{
-                  background:
-                    'radial-gradient(ellipse at center, transparent 0%, var(--bg-primary) 100%)',
-                  opacity: 0.4,
-                }}
-              />
-            </div>
-
-            {/* Content */}
-            <div className="absolute inset-0 flex flex-col justify-end p-6 md:p-10 lg:p-12">
-              {/* Badges */}
-              <div className="flex flex-wrap items-center gap-2 md:gap-3 mb-4 md:mb-6">
-                <span
-                  className="px-3 py-1.5 md:px-4 md:py-2 rounded-full
-                             text-[10px] md:text-xs font-bold uppercase tracking-wider
-                             bg-gradient-to-r from-accent to-amber-500 text-bg-primary
-                             shadow-lg shadow-accent/30"
-                >
-                  Official Guide
-                </span>
-                <span
-                  className="px-3 py-1.5 md:px-4 md:py-2 rounded-full
-                             text-[10px] md:text-xs font-medium
-                             bg-bg-elevated/60 backdrop-blur-sm text-text-secondary
-                             border border-border"
-                >
-                  by 형명가
+                className="inline-flex items-center gap-2 mb-3 animate-slide-down opacity-0"
+                style={{ animationDelay: '0.1s', animationFillMode: 'forwards' }}
+              >
+                <span className="text-xs font-medium text-text-muted tracking-wider">
+                  환수강림 라이트
                 </span>
               </div>
 
               {/* Title */}
-              <h1 className="mb-4 md:mb-6">
+              <h1 className="mb-4">
                 <span
-                  className="block font-display text-4xl md:text-6xl lg:text-7xl font-black tracking-tight
-                             bg-gradient-to-r from-white via-accent to-white bg-clip-text text-transparent
-                             [text-shadow:0_0_60px_var(--accent-glow)]
-                             animate-gradient bg-[length:200%_auto]"
+                  className="block text-3xl md:text-5xl lg:text-6xl font-black tracking-tight
+                             animate-slide-up opacity-0"
+                  style={{ animationDelay: '0.2s', animationFillMode: 'forwards' }}
                 >
-                  STONEAGE
+                  <span className="text-text-primary">STONE</span>
+                  <span className="text-accent">AGE</span>
                 </span>
                 <span
-                  className="block font-display text-3xl md:text-5xl lg:text-6xl font-black tracking-tight
-                             text-accent [text-shadow:0_0_40px_var(--accent-glow)]"
+                  className="block text-xl md:text-3xl lg:text-4xl font-bold text-text-secondary mt-1
+                             animate-slide-up opacity-0"
+                  style={{ animationDelay: '0.3s', animationFillMode: 'forwards' }}
                 >
                   LIGHT
                 </span>
               </h1>
 
               {/* Description */}
-              <p className="text-sm md:text-lg text-text-secondary max-w-xl leading-relaxed mb-6 md:mb-8">
-                환수강림 라이트 <span className="text-accent font-semibold">페트</span>,{' '}
+              <p
+                className="text-sm md:text-base text-text-secondary max-w-md mx-auto lg:mx-0 mb-6
+                           animate-slide-up opacity-0"
+                style={{ animationDelay: '0.4s', animationFillMode: 'forwards' }}
+              >
+                <span className="text-accent font-semibold">페트</span>,{' '}
                 <span className="text-neon-blue font-semibold">아이템</span>,{' '}
-                <span className="text-accent-tertiary font-semibold">퀘스트</span> 정보를 한눈에
+                <span className="text-emerald-400 font-semibold">퀘스트</span>,{' '}
+                <span className="text-purple-400 font-semibold">계산기</span> 등 모든 정보를 한눈에
               </p>
 
-              {/* Contact & Actions */}
-              <div className="flex flex-wrap items-center gap-3 md:gap-4">
-                {/* Contact Button */}
-                <button
+              {/* CTA Section */}
+              <div
+                className="flex flex-wrap items-center justify-center lg:justify-start gap-4
+                           animate-slide-up opacity-0"
+                style={{ animationDelay: '0.5s', animationFillMode: 'forwards' }}
+              >
+                <Button
+                  variant="glass"
                   onClick={handleInfoClick}
-                  className="group relative flex items-center gap-3 px-4 py-2.5 md:px-5 md:py-3
-                             rounded-xl overflow-hidden
-                             bg-bg-elevated/60 backdrop-blur-sm
-                             border border-border hover:border-accent/50
-                             transition-all duration-300 hover:scale-[1.02]"
+                  className="group gap-3 px-5 py-3 rounded-2xl"
                 >
-                  {/* Hover glow */}
-                  <div
-                    className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300"
-                    style={{
-                      background:
-                        'radial-gradient(circle at center, var(--accent-soft) 0%, transparent 70%)',
-                    }}
-                  />
-
                   <img
                     src={`${import.meta.env.BASE_URL}images/pet.png`}
                     alt="왕/킹"
-                    className="relative w-7 h-7 md:w-8 md:h-8 rounded-full
-                               ring-2 ring-accent/40 group-hover:ring-accent
-                               transition-all duration-300"
+                    className="w-8 h-8 rounded-full ring-2 ring-accent/30
+                               transition-all duration-300 group-hover:ring-accent group-hover:scale-110"
                   />
-                  <span className="relative text-sm md:text-base text-text-primary font-medium">
-                    문의: <span className="text-accent">왕/킹</span>
+                  <span className="text-sm">
+                    문의: <span className="text-accent font-semibold">왕/킹</span>
                   </span>
-                  <svg
-                    className="relative w-4 h-4 text-accent opacity-0 -translate-x-2
+                  <ChevronRight
+                    className="w-4 h-4 text-accent opacity-0 -translate-x-2
                                group-hover:opacity-100 group-hover:translate-x-0
                                transition-all duration-300"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M9 5l7 7-7 7"
-                    />
-                  </svg>
-                </button>
+                  />
+                </Button>
 
                 {/* Tooltip */}
                 {showTooltip && (
                   <div
-                    className="animate-scale-in px-4 py-3 rounded-xl
-                                bg-bg-primary/95 backdrop-blur-lg
-                                border border-accent/30 shadow-xl shadow-accent/10
-                                text-sm text-text-secondary max-w-xs"
+                    className="animate-elastic-in px-4 py-3 rounded-xl
+                               bg-bg-secondary/90 backdrop-blur-xl border border-accent/20
+                               shadow-xl shadow-accent/10 text-sm text-text-secondary max-w-xs"
                   >
-                    <span className="text-accent font-semibold">📌 안내:</span> 정보는 공홈 기준으로
+                    <span className="text-accent font-semibold">안내:</span> 정보는 공홈 기준으로
                     작성되었으며, 실제 게임과 차이가 있을 수 있습니다.
                   </div>
                 )}
               </div>
             </div>
 
-            {/* Decorative corner accents */}
-            <div className="absolute top-4 right-4 w-20 h-20 md:w-32 md:h-32">
-              <div className="absolute inset-0 rounded-full bg-accent/20 blur-3xl animate-glow" />
-            </div>
-            <div className="absolute top-1/2 left-4 w-12 h-12 md:w-20 md:h-20">
+            {/* Right: Image with effects */}
+            <div
+              className="relative flex-1 max-w-xs lg:max-w-sm animate-slide-left opacity-0"
+              style={{ animationDelay: '0.3s', animationFillMode: 'forwards' }}
+            >
+              {/* Glow behind image */}
               <div
-                className="absolute inset-0 rounded-full bg-neon-blue/20 blur-2xl animate-float"
-                style={{ animationDelay: '1s' }}
+                className="absolute inset-0 bg-gradient-to-br from-accent/30 to-neon-purple/30
+                           rounded-2xl blur-2xl opacity-50 animate-breathe"
               />
+
+              {/* Main Image Container */}
+              <div
+                className="relative rounded-2xl overflow-hidden border border-white/10
+                           shadow-xl shadow-black/30 transition-transform duration-500 hover:scale-[1.02]"
+              >
+                <img
+                  src={`${import.meta.env.BASE_URL}sa_1.png`}
+                  alt="StoneAge Light"
+                  className="w-full h-auto"
+                />
+
+                {/* Gradient Overlay */}
+                <div className="absolute inset-0 bg-gradient-to-t from-bg-primary/60 via-transparent to-transparent" />
+              </div>
             </div>
           </div>
         </div>
+
+        {/* Bottom Gradient Fade */}
+        <div className="absolute bottom-0 left-0 right-0 h-16 bg-gradient-to-t from-bg-primary to-transparent" />
       </header>
     </>
   );

@@ -1,4 +1,9 @@
 import React, { useState, useRef, useEffect } from 'react';
+import { ArrowUpDown, ChevronUp, ChevronDown, RotateCcw } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Card } from '@/components/ui/card';
+import { Separator } from '@/components/ui/separator';
+import { cn } from '@/lib/utils';
 
 export type SortOption =
   | 'default'
@@ -37,7 +42,6 @@ const SortDropdown: React.FC<SortDropdownProps> = ({ currentSort, onSortChange }
   const [selectedOrder, setSelectedOrder] = useState<OrderType | null>(null);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
-  // 현재 정렬 옵션에서 카테고리, 스탯, 순서 파싱
   useEffect(() => {
     if (currentSort === 'default') {
       setSelectedCategory(null);
@@ -50,7 +54,7 @@ const SortDropdown: React.FC<SortDropdownProps> = ({ currentSort, onSortChange }
 
     if (statPart === 'totalGrowth') {
       setSelectedCategory('totalGrowth');
-      setSelectedStat(null); // totalGrowth는 스탯 선택 불필요
+      setSelectedStat(null);
       setSelectedOrder(order);
     } else if (statPart.endsWith('Growth')) {
       setSelectedCategory('growth');
@@ -63,7 +67,6 @@ const SortDropdown: React.FC<SortDropdownProps> = ({ currentSort, onSortChange }
     }
   }, [currentSort]);
 
-  // 드롭다운 외부 클릭 감지
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
@@ -80,7 +83,6 @@ const SortDropdown: React.FC<SortDropdownProps> = ({ currentSort, onSortChange }
     };
   }, [isOpen]);
 
-  // 현재 선택 레이블 생성
   const getCurrentLabel = () => {
     if (currentSort === 'default' || !selectedCategory || !selectedOrder) return '정렬';
 
@@ -97,9 +99,7 @@ const SortDropdown: React.FC<SortDropdownProps> = ({ currentSort, onSortChange }
     return `${orderIcon} ${categoryLabels[selectedCategory]} ${statLabels[selectedStat]}`;
   };
 
-  // 선택 적용
   const handleApply = () => {
-    // 필수 값이 선택되지 않은 경우 리턴
     if (!selectedCategory || !selectedOrder) return;
     if (selectedCategory !== 'totalGrowth' && !selectedStat) return;
 
@@ -117,185 +117,162 @@ const SortDropdown: React.FC<SortDropdownProps> = ({ currentSort, onSortChange }
     setIsOpen(false);
   };
 
-  // 초기화
   const handleReset = () => {
     onSortChange('default');
     setIsOpen(false);
   };
 
+  const OptionButton = ({
+    isSelected,
+    onClick,
+    children,
+    className,
+  }: {
+    isSelected: boolean;
+    onClick: () => void;
+    children: React.ReactNode;
+    className?: string;
+  }) => (
+    <Button
+      variant={isSelected ? 'default' : 'secondary'}
+      size="sm"
+      onClick={onClick}
+      className={cn(
+        "transition-all",
+        isSelected && "shadow-sm",
+        className
+      )}
+    >
+      {children}
+    </Button>
+  );
+
   return (
     <div className="relative" ref={dropdownRef}>
-      {/* 정렬 버튼 */}
-      <button
+      <Button
+        variant="secondary"
+        size="sm"
         onClick={() => setIsOpen(!isOpen)}
-        className="flex items-center gap-1.5 px-3 py-1.5 bg-bg-secondary border border-border rounded-lg
-                   text-text-primary text-sm font-medium hover:bg-bg-tertiary transition-colors
-                   focus:outline-none focus:ring-2 focus:ring-accent/50"
+        className="gap-1.5"
       >
-        <svg
-          className="w-4 h-4 text-text-secondary"
-          fill="none"
-          stroke="currentColor"
-          viewBox="0 0 24 24"
-        >
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth={2}
-            d="M3 4h13M3 8h9m-9 4h6m4 0l4-4m0 0l4 4m-4-4v12"
-          />
-        </svg>
+        <ArrowUpDown className="w-4 h-4 text-text-secondary" />
         <span className="whitespace-nowrap">{getCurrentLabel()}</span>
-      </button>
+      </Button>
 
-      {/* 드롭다운 메뉴 */}
       {isOpen && (
-        <div
-          className="absolute right-0 mt-2 w-72 bg-bg-secondary border border-border rounded-lg shadow-xl z-50 p-4"
+        <Card
+          variant="elevated"
+          className="absolute right-0 mt-2 w-72 z-50 p-4"
         >
-          {/* Step 1: 카테고리 선택 */}
+          {/* Step 1: Category */}
           <div className="mb-4">
             <label className="block text-xs font-semibold text-text-secondary mb-2">
               1. 카테고리
             </label>
             <div className="grid grid-cols-3 gap-2">
-              <button
+              <OptionButton
+                isSelected={selectedCategory === 'base'}
                 onClick={() => setSelectedCategory('base')}
-                className={`px-3 py-2 text-sm rounded-md transition-all ${
-                  selectedCategory === 'base'
-                    ? 'bg-accent text-white font-medium shadow-sm'
-                    : 'bg-bg-tertiary text-text-primary hover:bg-bg-tertiary/70'
-                }`}
               >
                 초기치
-              </button>
-              <button
+              </OptionButton>
+              <OptionButton
+                isSelected={selectedCategory === 'growth'}
                 onClick={() => setSelectedCategory('growth')}
-                className={`px-3 py-2 text-sm rounded-md transition-all ${
-                  selectedCategory === 'growth'
-                    ? 'bg-accent text-white font-medium shadow-sm'
-                    : 'bg-bg-tertiary text-text-primary hover:bg-bg-tertiary/70'
-                }`}
               >
                 성장률
-              </button>
-              <button
+              </OptionButton>
+              <OptionButton
+                isSelected={selectedCategory === 'totalGrowth'}
                 onClick={() => setSelectedCategory('totalGrowth')}
-                className={`px-3 py-2 text-sm rounded-md transition-all ${
-                  selectedCategory === 'totalGrowth'
-                    ? 'bg-accent text-white font-medium shadow-sm'
-                    : 'bg-bg-tertiary text-text-primary hover:bg-bg-tertiary/70'
-                }`}
               >
                 총성장률
-              </button>
+              </OptionButton>
             </div>
           </div>
 
-          {/* Step 2: 스탯 선택 (총성장률이 아닐 때만) */}
+          {/* Step 2: Stats (not for totalGrowth) */}
           {selectedCategory !== 'totalGrowth' && (
             <div className="mb-4">
               <label className="block text-xs font-semibold text-text-secondary mb-2">
                 2. 능력치
               </label>
               <div className="grid grid-cols-2 gap-2">
-                <button
+                <OptionButton
+                  isSelected={selectedStat === 'attack'}
                   onClick={() => setSelectedStat('attack')}
-                  className={`px-3 py-2 text-sm rounded-md transition-all ${
-                    selectedStat === 'attack'
-                      ? 'bg-accent text-white font-medium shadow-sm'
-                      : 'bg-bg-tertiary text-text-primary hover:bg-bg-tertiary/70'
-                  }`}
                 >
                   공격력
-                </button>
-                <button
+                </OptionButton>
+                <OptionButton
+                  isSelected={selectedStat === 'defense'}
                   onClick={() => setSelectedStat('defense')}
-                  className={`px-3 py-2 text-sm rounded-md transition-all ${
-                    selectedStat === 'defense'
-                      ? 'bg-accent text-white font-medium shadow-sm'
-                      : 'bg-bg-tertiary text-text-primary hover:bg-bg-tertiary/70'
-                  }`}
                 >
                   방어력
-                </button>
-                <button
+                </OptionButton>
+                <OptionButton
+                  isSelected={selectedStat === 'agility'}
                   onClick={() => setSelectedStat('agility')}
-                  className={`px-3 py-2 text-sm rounded-md transition-all ${
-                    selectedStat === 'agility'
-                      ? 'bg-accent text-white font-medium shadow-sm'
-                      : 'bg-bg-tertiary text-text-primary hover:bg-bg-tertiary/70'
-                  }`}
                 >
                   순발력
-                </button>
-                <button
+                </OptionButton>
+                <OptionButton
+                  isSelected={selectedStat === 'vitality'}
                   onClick={() => setSelectedStat('vitality')}
-                  className={`px-3 py-2 text-sm rounded-md transition-all ${
-                    selectedStat === 'vitality'
-                      ? 'bg-accent text-white font-medium shadow-sm'
-                      : 'bg-bg-tertiary text-text-primary hover:bg-bg-tertiary/70'
-                  }`}
                 >
                   내구력
-                </button>
+                </OptionButton>
               </div>
             </div>
           )}
 
-          {/* Step 3: 정렬 순서 */}
+          {/* Step 3: Sort Order */}
           <div className="mb-4">
             <label className="block text-xs font-semibold text-text-secondary mb-2">
               {selectedCategory === 'totalGrowth' ? '2. 정렬 순서' : '3. 정렬 순서'}
             </label>
             <div className="grid grid-cols-2 gap-2">
-              <button
+              <OptionButton
+                isSelected={selectedOrder === 'asc'}
                 onClick={() => setSelectedOrder('asc')}
-                className={`px-3 py-2 text-sm rounded-md transition-all flex items-center justify-center gap-2 ${
-                  selectedOrder === 'asc'
-                    ? 'bg-accent text-white font-medium shadow-sm'
-                    : 'bg-bg-tertiary text-text-primary hover:bg-bg-tertiary/70'
-                }`}
+                className="gap-2"
               >
-                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 15l7-7 7 7" />
-                </svg>
+                <ChevronUp className="w-4 h-4" />
                 오름차순
-              </button>
-              <button
+              </OptionButton>
+              <OptionButton
+                isSelected={selectedOrder === 'desc'}
                 onClick={() => setSelectedOrder('desc')}
-                className={`px-3 py-2 text-sm rounded-md transition-all flex items-center justify-center gap-2 ${
-                  selectedOrder === 'desc'
-                    ? 'bg-accent text-white font-medium shadow-sm'
-                    : 'bg-bg-tertiary text-text-primary hover:bg-bg-tertiary/70'
-                }`}
+                className="gap-2"
               >
-                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                </svg>
+                <ChevronDown className="w-4 h-4" />
                 내림차순
-              </button>
+              </OptionButton>
             </div>
           </div>
 
-          {/* 버튼 그룹 */}
-          <div className="flex gap-2 pt-3 border-t border-border">
-            <button
+          <Separator className="my-3" />
+
+          {/* Button Group */}
+          <div className="flex gap-2">
+            <Button
+              variant="secondary"
+              size="sm"
               onClick={handleReset}
-              className="flex-1 px-4 py-2 text-sm bg-bg-tertiary text-text-secondary rounded-md
-                       hover:bg-bg-tertiary/70 transition-colors font-medium"
+              className="flex-1 gap-1"
             >
+              <RotateCcw className="w-3 h-3" />
               초기화
-            </button>
-            <button
+            </Button>
+            <Button
+              size="sm"
               onClick={handleApply}
-              className="flex-1 px-4 py-2 text-sm bg-accent text-white rounded-md
-                       hover:bg-accent/90 transition-colors font-medium shadow-sm"
+              className="flex-1"
             >
               적용
-            </button>
+            </Button>
           </div>
-        </div>
+        </Card>
       )}
     </div>
   );

@@ -1,9 +1,14 @@
 import React, { useState, useCallback, useEffect, useMemo } from 'react';
 import { useSearchParams } from 'react-router-dom';
+import { Lightbulb, ChevronDown, AlertTriangle, Info, Swords, Castle, Calendar } from 'lucide-react';
 import iceCastleData from '@/data/ice_castle.json';
 import weeklyRaidData from '@/data/weekly_raid.json';
 import rightItemsData from '@/data/right_items.json';
 import MyTipBoard from '../components/MyTipBoard';
+import { Button } from '@/components/ui/button';
+import { Card } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
+import { cn } from '@/lib/utils';
 
 type MainTab = 'mytip' | 'raid';
 type RaidSubTab = 'radonta' | 'ice-castle' | 'weekly';
@@ -297,225 +302,231 @@ const spiritKingStrategies = [
 // 라돈타 컨텐츠 컴포넌트
 const RadontaContent: React.FC = () => {
   return (
-    <div className="space-y-4">
+    <div className="space-y-6">
       {/* 타이틀 */}
-      <h2 className="text-xl font-bold text-text-primary text-center mb-6">라돈타 공략</h2>
+      <div className="text-center">
+        <Badge variant="outline" className="gap-2 px-4 py-2 text-base">
+          <Swords className="w-4 h-4" />
+          라돈타 공략
+        </Badge>
+      </div>
 
       {/* 기본 수칙 */}
-      <div className="bg-bg-secondary rounded-lg p-4 border border-border">
-        <h3 className="text-base font-bold mb-3 text-text-primary flex items-center gap-2">
-          <span>📌</span> 기본 수칙
-        </h3>
-        <ul className="space-y-2 text-sm">
-          <li className="flex items-start gap-2">
-            <span className="text-accent font-bold">•</span>
-            <span className="text-text-secondary">
-              우리팀 오로라는 지양한다 (펫 교체 시 무지개를 써야하기 때문)
-            </span>
-          </li>
-          <li className="flex items-start gap-2">
-            <span className="text-accent font-bold">•</span>
-            <span className="text-text-secondary">캐릭터 지속 10, 수속 10 필수</span>
-          </li>
-          <li className="flex items-start gap-2">
-            <span className="text-accent font-bold">•</span>
-            <span className="text-text-secondary">
-              완캐 충견 + 활은 어중간한 완캐는 하지 말 것
-            </span>
-          </li>
-          <li className="flex items-start gap-2">
-            <span className="text-accent font-bold">•</span>
-            <span className="text-text-secondary">완500미만은 펫 배3이 더 효과적</span>
-          </li>
-          <li className="flex items-start gap-2">
-            <span className="text-accent font-bold">•</span>
-            <span className="text-text-secondary">보스만 남았을 시 창첸 올일공 다굴</span>
-          </li>
-          <li className="flex items-start gap-2">
-            <span className="text-accent font-bold">•</span>
-            <span className="text-text-secondary">
-              순캐 탑펫: 돌북이 & 카타 & 바우트 & 고르돈
-            </span>
-          </li>
-          <li className="flex items-start gap-2">
-            <span className="text-accent font-bold">•</span>
-            <span className="text-text-secondary">
-              완캐는 바우트 탑승 (탱펫 탈 것) - 탑순은 주술에 영향이 가지 않으므로 탱펫을 탑승하여
-              방어구를 증진
-            </span>
-          </li>
-          <li className="flex items-start gap-2">
-            <span className="text-accent font-bold">•</span>
-            <span className="text-text-secondary">우대는 1남았을때 무조건 우대 덮어쓰기</span>
-          </li>
-          <li className="flex items-start gap-2">
-            <span className="text-accent font-bold">•</span>
-            <span className="text-text-secondary">
-              70층부터 선 뺏길 가능성 큼, 피100%라도 메인힐은 힐 계속 쓸 것
-            </span>
-          </li>
-          <li className="flex items-start gap-2">
-            <span className="text-red-500 font-bold">⚠</span>
-            <span className="text-red-500">
+      <Card className="p-5">
+        <div className="flex items-center gap-3 mb-4">
+          <div className="w-10 h-10 rounded-xl bg-accent/10 flex items-center justify-center">
+            <Info className="w-5 h-5 text-accent" />
+          </div>
+          <h3 className="text-lg font-bold text-text-primary">기본 수칙</h3>
+        </div>
+        <ul className="space-y-3">
+          {[
+            '우리팀 오로라는 지양한다 (펫 교체 시 무지개를 써야하기 때문)',
+            '캐릭터 지속 10, 수속 10 필수',
+            '완캐 충견 + 활은 어중간한 완캐는 하지 말 것',
+            '완500미만은 펫 배3이 더 효과적',
+            '보스만 남았을 시 창첸 올일공 다굴',
+            '순캐 탑펫: 돌북이 & 카타 & 바우트 & 고르돈',
+            '완캐는 바우트 탑승 (탱펫 탈 것) - 탑순은 주술에 영향이 가지 않으므로 탱펫을 탑승하여 방어구를 증진',
+            '우대는 1남았을때 무조건 우대 덮어쓰기',
+            '70층부터 선 뺏길 가능성 큼, 피100%라도 메인힐은 힐 계속 쓸 것',
+          ].map((tip, idx) => (
+            <li key={idx} className="flex items-start gap-3">
+              <span className="w-6 h-6 rounded-lg bg-accent/10 flex items-center justify-center flex-shrink-0 mt-0.5">
+                <span className="text-accent text-xs font-bold">{idx + 1}</span>
+              </span>
+              <span className="text-sm text-text-secondary">{tip}</span>
+            </li>
+          ))}
+          <li className="flex items-start gap-3 p-3 bg-red-500/5 rounded-xl border border-red-500/20">
+            <AlertTriangle className="w-5 h-5 text-red-500 flex-shrink-0 mt-0.5" />
+            <span className="text-sm text-red-500">
               상대 펫 속성은 틀릴 가능성이 있음 - 수정 필요 시 연락바람 ( 박준순 / 준순 )
             </span>
           </li>
         </ul>
-      </div>
+      </Card>
 
       {/* 층별 공략 */}
-      <div className="space-y-3">
+      <div className="space-y-4">
         {radontaFloors.map(floor => (
-          <div
-            key={floor.floor}
-            className="bg-bg-secondary rounded-lg p-3 border border-border"
-          >
-            <div className="flex flex-col md:flex-row md:items-center gap-2 md:gap-3 mb-3 pb-3 border-b border-border">
-              <div className="bg-accent text-white font-bold text-base px-3 py-1.5 rounded-lg">
-                {floor.floor}층
-              </div>
-              <div className="flex-1 grid grid-cols-1 md:grid-cols-3 gap-2 text-xs">
-                <div className="bg-bg-tertiary px-2 py-1.5 rounded border border-border flex items-center">
-                  <span className="text-text-secondary">셋팅:</span>{' '}
-                  <span className="font-bold text-text-primary ml-1">{floor.setup}</span>
-                </div>
-                <div className="bg-bg-tertiary px-2 py-1.5 rounded border border-border flex items-center">
-                  <span className="text-text-secondary">우대:</span>{' '}
-                  <span className="font-bold text-text-primary ml-1">{floor.support}</span>
-                </div>
-                <div className="bg-bg-tertiary px-2 py-1.5 rounded border border-border flex items-center">
-                  <span className="text-text-secondary">무지개:</span>{' '}
-                  <span className="font-bold text-text-primary ml-1">{floor.rainbow}</span>
+          <Card key={floor.floor} className="overflow-hidden">
+            {/* 층 헤더 */}
+            <div className="p-4 border-b border-border bg-gradient-to-r from-accent/5 to-transparent">
+              <div className="flex flex-col md:flex-row md:items-center gap-3">
+                <Badge className="w-fit text-base px-4 py-1.5 bg-accent text-white">
+                  {floor.floor}층
+                </Badge>
+                <div className="flex-1 grid grid-cols-1 md:grid-cols-3 gap-2">
+                  <div className="flex items-center gap-2 px-3 py-2 bg-bg-secondary rounded-lg">
+                    <span className="text-xs text-text-muted">셋팅</span>
+                    <span className="text-sm font-semibold text-text-primary">{floor.setup}</span>
+                  </div>
+                  <div className="flex items-center gap-2 px-3 py-2 bg-bg-secondary rounded-lg">
+                    <span className="text-xs text-text-muted">우대</span>
+                    <span className="text-sm font-semibold text-text-primary">{floor.support}</span>
+                  </div>
+                  <div className="flex items-center gap-2 px-3 py-2 bg-bg-secondary rounded-lg">
+                    <span className="text-xs text-text-muted">무지개</span>
+                    <span className="text-sm font-semibold text-text-primary">{floor.rainbow}</span>
+                  </div>
                 </div>
               </div>
             </div>
 
-            <div className="mb-2 bg-red-500/10 border border-red-500/30 rounded p-2">
-              <span className="font-bold text-red-500 text-xs">보스:</span>{' '}
-              <span className="text-text-secondary text-xs">{floor.boss}</span>
+            <div className="p-4 space-y-4">
+              {/* 보스 정보 */}
+              <div className="flex items-start gap-3 p-3 bg-red-500/5 rounded-xl border border-red-500/20">
+                <Swords className="w-4 h-4 text-red-500 flex-shrink-0 mt-0.5" />
+                <div>
+                  <span className="text-xs font-semibold text-red-500 block mb-1">보스</span>
+                  <span className="text-sm text-text-secondary">{floor.boss}</span>
+                </div>
+              </div>
+
+              {/* 주의사항 */}
+              {floor.note && (
+                <div className="flex items-start gap-3 p-3 bg-amber-500/5 rounded-xl border border-amber-500/20">
+                  <AlertTriangle className="w-4 h-4 text-amber-500 flex-shrink-0 mt-0.5" />
+                  <div>
+                    <span className="text-xs font-semibold text-amber-500 block mb-1">주의</span>
+                    <span className="text-sm text-text-secondary">{floor.note}</span>
+                  </div>
+                </div>
+              )}
+
+              {/* 기본/오로라 펫 */}
+              <div className="grid md:grid-cols-2 gap-4">
+                <div className="p-4 bg-emerald-500/5 rounded-xl border border-emerald-500/20">
+                  <h4 className="text-sm font-bold text-emerald-500 mb-3 flex items-center gap-2">
+                    <span className="w-2 h-2 rounded-full bg-emerald-500" />
+                    기본
+                  </h4>
+                  <ul className="space-y-2">
+                    {floor.basic.map((pet, idx) => (
+                      <li key={idx} className="flex items-center gap-2 text-sm text-text-secondary">
+                        <span className="w-5 h-5 rounded-full bg-emerald-500 text-white flex items-center justify-center text-xs font-bold flex-shrink-0">
+                          {idx + 1}
+                        </span>
+                        {pet}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+
+                <div className="p-4 bg-blue-500/5 rounded-xl border border-blue-500/20">
+                  <h4 className="text-sm font-bold text-blue-500 mb-3 flex items-center gap-2">
+                    <span className="w-2 h-2 rounded-full bg-blue-500" />
+                    오로라
+                  </h4>
+                  <ul className="space-y-2">
+                    {floor.aurora.map((pet, idx) => (
+                      <li key={idx} className="flex items-center gap-2 text-sm text-text-secondary">
+                        <span className="w-5 h-5 rounded-full bg-blue-500 text-white flex items-center justify-center text-xs font-bold flex-shrink-0">
+                          {idx + 1}
+                        </span>
+                        {pet}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              </div>
             </div>
-
-            {floor.note && (
-              <div className="mb-2 bg-yellow-500/10 border border-yellow-500/30 rounded p-2">
-                <span className="font-bold text-yellow-600 text-xs">⚠️ 주의:</span>{' '}
-                <span className="text-text-secondary text-xs">{floor.note}</span>
-              </div>
-            )}
-
-            <div className="grid md:grid-cols-2 gap-3">
-              <div className="bg-bg-tertiary rounded p-3 border border-border">
-                <h4 className="font-bold text-green-500 mb-2 text-sm">기본</h4>
-                <ul className="space-y-1.5">
-                  {floor.basic.map((pet, idx) => (
-                    <li
-                      key={idx}
-                      className="text-xs text-text-secondary flex items-center gap-2"
-                    >
-                      <span className="bg-green-500 text-white font-bold rounded-full w-5 h-5 flex items-center justify-center text-xs flex-shrink-0">
-                        {idx + 1}
-                      </span>
-                      {pet}
-                    </li>
-                  ))}
-                </ul>
-              </div>
-
-              <div className="bg-bg-tertiary rounded p-3 border border-border">
-                <h4 className="font-bold text-blue-500 mb-2 text-sm">오로라</h4>
-                <ul className="space-y-1.5">
-                  {floor.aurora.map((pet, idx) => (
-                    <li
-                      key={idx}
-                      className="text-xs text-text-secondary flex items-center gap-2"
-                    >
-                      <span className="bg-blue-500 text-white font-bold rounded-full w-5 h-5 flex items-center justify-center text-xs flex-shrink-0">
-                        {idx + 1}
-                      </span>
-                      {pet}
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            </div>
-          </div>
+          </Card>
         ))}
       </div>
 
       {/* 정령왕 공략 */}
-      <div className="space-y-3 mt-6">
-        <h3 className="text-lg font-bold text-center text-text-primary">정령왕 공략</h3>
+      <div className="space-y-4 mt-8">
+        <div className="text-center">
+          <Badge variant="outline" className="gap-2 px-4 py-2 text-base">
+            <Castle className="w-4 h-4" />
+            정령왕 공략
+          </Badge>
+        </div>
+
         {spiritKingStrategies.map((strategy, idx) => (
-          <div
-            key={idx}
-            className="bg-bg-secondary rounded-lg p-3 border border-border"
-          >
-            <div className="flex items-center gap-4 mb-3 pb-3 border-b border-border">
-              <h4 className="text-base font-bold text-text-primary">{strategy.title}</h4>
+          <Card key={idx} className="overflow-hidden">
+            {/* 전략 헤더 */}
+            <div className="p-4 border-b border-border bg-gradient-to-r from-purple-500/5 to-transparent">
+              <h4 className="text-lg font-bold text-text-primary">{strategy.title}</h4>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-2 mb-2 text-xs">
-              <div className="bg-bg-tertiary px-2 py-1.5 rounded border border-border flex items-center">
-                <span className="text-text-secondary">셋팅:</span>{' '}
-                <span className="font-bold text-text-primary ml-1">{strategy.setup}</span>
+            <div className="p-4 space-y-4">
+              {/* 설정 정보 */}
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-2">
+                <div className="flex items-center gap-2 px-3 py-2 bg-bg-secondary rounded-lg">
+                  <span className="text-xs text-text-muted">셋팅</span>
+                  <span className="text-sm font-semibold text-text-primary">{strategy.setup}</span>
+                </div>
+                <div className="flex items-center gap-2 px-3 py-2 bg-bg-secondary rounded-lg">
+                  <span className="text-xs text-text-muted">우대</span>
+                  <span className="text-sm font-semibold text-text-primary">{strategy.support}</span>
+                </div>
+                <div className="flex items-center gap-2 px-3 py-2 bg-bg-secondary rounded-lg">
+                  <span className="text-xs text-text-muted">무지개</span>
+                  <span className="text-sm font-semibold text-text-primary">{strategy.rainbow}</span>
+                </div>
               </div>
-              <div className="bg-bg-tertiary px-2 py-1.5 rounded border border-border flex items-center">
-                <span className="text-text-secondary">우대:</span>{' '}
-                <span className="font-bold text-text-primary ml-1">{strategy.support}</span>
+
+              {/* 보스 정보 */}
+              <div className="flex items-start gap-3 p-3 bg-red-500/5 rounded-xl border border-red-500/20">
+                <Swords className="w-4 h-4 text-red-500 flex-shrink-0 mt-0.5" />
+                <div>
+                  <span className="text-xs font-semibold text-red-500 block mb-1">보스</span>
+                  <span className="text-sm text-text-secondary">{strategy.boss}</span>
+                </div>
               </div>
-              <div className="bg-bg-tertiary px-2 py-1.5 rounded border border-border flex items-center">
-                <span className="text-text-secondary">무지개:</span>{' '}
-                <span className="font-bold text-text-primary ml-1">{strategy.rainbow}</span>
+
+              {/* 주의사항 */}
+              {strategy.note && (
+                <div className="flex items-start gap-3 p-3 bg-amber-500/5 rounded-xl border border-amber-500/20">
+                  <AlertTriangle className="w-4 h-4 text-amber-500 flex-shrink-0 mt-0.5" />
+                  <div>
+                    <span className="text-xs font-semibold text-amber-500 block mb-1">주의</span>
+                    <span className="text-sm text-text-secondary">{strategy.note}</span>
+                  </div>
+                </div>
+              )}
+
+              {/* 기본/오로라 펫 */}
+              <div className="grid md:grid-cols-2 gap-4">
+                <div className="p-4 bg-emerald-500/5 rounded-xl border border-emerald-500/20">
+                  <h5 className="text-sm font-bold text-emerald-500 mb-3 flex items-center gap-2">
+                    <span className="w-2 h-2 rounded-full bg-emerald-500" />
+                    기본
+                  </h5>
+                  <ul className="space-y-2">
+                    {strategy.basic.map((pet, petIdx) => (
+                      <li key={petIdx} className="flex items-center gap-2 text-sm text-text-secondary">
+                        <span className="w-5 h-5 rounded-full bg-emerald-500 text-white flex items-center justify-center text-xs font-bold flex-shrink-0">
+                          {petIdx + 1}
+                        </span>
+                        {pet}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+
+                <div className="p-4 bg-blue-500/5 rounded-xl border border-blue-500/20">
+                  <h5 className="text-sm font-bold text-blue-500 mb-3 flex items-center gap-2">
+                    <span className="w-2 h-2 rounded-full bg-blue-500" />
+                    오로라
+                  </h5>
+                  <ul className="space-y-2">
+                    {strategy.aurora.map((pet, petIdx) => (
+                      <li key={petIdx} className="flex items-center gap-2 text-sm text-text-secondary">
+                        <span className="w-5 h-5 rounded-full bg-blue-500 text-white flex items-center justify-center text-xs font-bold flex-shrink-0">
+                          {petIdx + 1}
+                        </span>
+                        {pet}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
               </div>
             </div>
-
-            <div className="mb-2 bg-red-500/10 border border-red-500/30 rounded p-2">
-              <span className="font-bold text-red-500 text-xs">보스:</span>{' '}
-              <span className="text-text-secondary text-xs">{strategy.boss}</span>
-            </div>
-
-            {strategy.note && (
-              <div className="mb-2 bg-yellow-500/10 border border-yellow-500/30 rounded p-2">
-                <span className="font-bold text-yellow-600 text-xs">⚠️ 주의:</span>{' '}
-                <span className="text-text-secondary text-xs">{strategy.note}</span>
-              </div>
-            )}
-
-            <div className="grid md:grid-cols-2 gap-3">
-              <div className="bg-bg-tertiary rounded p-3 border border-border">
-                <h5 className="font-bold text-green-500 mb-2 text-sm">기본</h5>
-                <ul className="space-y-1.5">
-                  {strategy.basic.map((pet, petIdx) => (
-                    <li
-                      key={petIdx}
-                      className="text-xs text-text-secondary flex items-center gap-2"
-                    >
-                      <span className="bg-green-500 text-white font-bold rounded-full w-5 h-5 flex items-center justify-center text-xs flex-shrink-0">
-                        {petIdx + 1}
-                      </span>
-                      {pet}
-                    </li>
-                  ))}
-                </ul>
-              </div>
-
-              <div className="bg-bg-tertiary rounded p-3 border border-border">
-                <h5 className="font-bold text-blue-500 mb-2 text-sm">오로라</h5>
-                <ul className="space-y-1.5">
-                  {strategy.aurora.map((pet, petIdx) => (
-                    <li
-                      key={petIdx}
-                      className="text-xs text-text-secondary flex items-center gap-2"
-                    >
-                      <span className="bg-blue-500 text-white font-bold rounded-full w-5 h-5 flex items-center justify-center text-xs flex-shrink-0">
-                        {petIdx + 1}
-                      </span>
-                      {pet}
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            </div>
-          </div>
+          </Card>
         ))}
       </div>
     </div>
@@ -608,110 +619,143 @@ const TipPage: React.FC = () => {
   }, []);
 
   return (
-    <div className="max-w-6xl mx-auto px-4 py-8 iphone16:px-3">
+    <div className="max-w-6xl mx-auto px-4 py-6 iphone16:px-3">
       {/* 헤더 */}
-      <div className="mb-8">
-        <div className="text-center text-text-secondary space-y-4">
-          <p className="text-base md:text-lg">스톤에이지 공략 팁</p>
+      <div className="mb-6">
+        <div className="text-center space-y-4">
+          <Badge variant="outline" className="gap-2 px-4 py-2">
+            <Lightbulb className="w-4 h-4" />
+            스톤에이지 공략 팁
+          </Badge>
 
           {/* 정보성 알림 박스 */}
-          <div className="bg-bg-secondary border-l-4 border-accent rounded-r-lg p-4 space-y-2">
-            <div className="flex items-center gap-3">
-              <div className="text-accent text-lg flex-shrink-0">💡</div>
-              <div className="text-left">
-                <p className="text-sm font-medium text-text-primary">
-                  게임 플레이에 유용한 공략과 팁을 제공합니다.
-                </p>
+          <Card className="p-4">
+            <div className="flex items-center gap-3 p-3 bg-bg-tertiary rounded-xl">
+              <div className="w-8 h-8 rounded-lg bg-accent/10 flex items-center justify-center shrink-0">
+                <Lightbulb className="w-4 h-4 text-accent" />
               </div>
+              <p className="text-sm text-text-secondary text-left">
+                게임 플레이에 유용한 <span className="font-medium text-text-primary">공략과 팁</span>을 제공합니다.
+              </p>
             </div>
-          </div>
+          </Card>
         </div>
       </div>
 
       {/* 메인 탭 (나만의 팁 + 레이드) */}
-      <div className="mb-4">
-        <div className="flex space-x-1 bg-bg-secondary rounded-lg p-1">
-          <button
+      <div className="mb-6 px-4 md:px-0">
+        <Card className="relative p-1.5">
+          {/* 슬라이딩 배경 인디케이터 */}
+          <div
+            className="absolute top-1.5 h-[calc(100%-12px)] rounded-xl bg-accent shadow-glow
+                       transition-all duration-300 ease-out-expo pointer-events-none"
+            style={{
+              left: mainTab === 'mytip' ? '6px' : 'calc(50% + 2px)',
+              width: 'calc(50% - 8px)',
+            }}
+          />
+          <Button
+            variant="ghost"
             onClick={() => handleMainTabChange('mytip')}
-            className={`flex-1 py-2 px-4 rounded-md text-sm font-medium transition-colors duration-200 ${
-              mainTab === 'mytip'
-                ? 'bg-accent text-white'
-                : 'text-text-secondary hover:text-text-primary hover:bg-bg-tertiary'
-            }`}
+            className={cn(
+              "relative z-10 flex-1 w-1/2 gap-2 rounded-xl transition-colors duration-300",
+              mainTab === 'mytip' ? 'text-text-inverse hover:bg-transparent' : 'text-text-secondary hover:text-text-primary'
+            )}
           >
+            <Lightbulb className="w-4 h-4" />
             나만의 팁
-            <span className="ml-1 px-1.5 py-0.5 text-[10px] font-bold bg-yellow-500 text-black rounded-full">
+            <Badge className="ml-1 px-1.5 py-0 text-[10px] bg-amber-500 text-black hover:bg-amber-500">
               BETA
-            </span>
-          </button>
-          <button
+            </Badge>
+          </Button>
+          <Button
+            variant="ghost"
             onClick={() => handleMainTabChange('raid')}
-            className={`flex-1 py-2 px-4 rounded-md text-sm font-medium transition-colors duration-200 ${
-              mainTab === 'raid'
-                ? 'bg-accent text-white'
-                : 'text-text-secondary hover:text-text-primary hover:bg-bg-tertiary'
-            }`}
+            className={cn(
+              "relative z-10 flex-1 w-1/2 gap-2 rounded-xl transition-colors duration-300",
+              mainTab === 'raid' ? 'text-text-inverse hover:bg-transparent' : 'text-text-secondary hover:text-text-primary'
+            )}
           >
+            <Swords className="w-4 h-4" />
             레이드
-          </button>
-        </div>
-        {/* 나만의 팁 안내 문구 */}
+          </Button>
+        </Card>
+
+        {/* 안내 문구 */}
         {mainTab === 'mytip' && (
-          <div className="flex items-center gap-2 mt-2 text-xs text-yellow-500">
-            <span>⚠️</span>
-            <span>서버가 불안정 할 수 있습니다. 서버 접속이 안될경우 왕/킹에게 문의 주세요.</span>
-          </div>
+          <Card className="mt-3 p-3 border-amber-500/30 bg-amber-500/5">
+            <div className="flex items-center gap-2 text-xs text-amber-500">
+              <AlertTriangle className="w-4 h-4 flex-shrink-0" />
+              <span>서버가 불안정 할 수 있습니다. 서버 접속이 안될경우 왕/킹에게 문의 주세요.</span>
+            </div>
+          </Card>
         )}
-        {/* 레이드 안내 문구 */}
         {mainTab === 'raid' && (
-          <div className="flex items-center gap-2 mt-2 text-xs text-yellow-500">
-            <span>⚠️</span>
-            <span>레이드의 경우 파티마다 공략방법이 다를 수 있습니다.</span>
-          </div>
+          <Card className="mt-3 p-3 border-amber-500/30 bg-amber-500/5">
+            <div className="flex items-center gap-2 text-xs text-amber-500">
+              <AlertTriangle className="w-4 h-4 flex-shrink-0" />
+              <span>레이드의 경우 파티마다 공략방법이 다를 수 있습니다.</span>
+            </div>
+          </Card>
         )}
       </div>
 
       {/* 레이드 서브탭 */}
       {mainTab === 'raid' && (
         <div className="mb-6">
-          <div className="flex space-x-1 bg-bg-tertiary rounded-lg p-1">
-            <button
+          <Card className="relative p-1.5">
+            {/* 슬라이딩 배경 인디케이터 */}
+            <div
+              className="absolute top-1.5 h-[calc(100%-12px)] rounded-xl bg-blue-500 shadow-glow
+                         transition-all duration-300 ease-out-expo pointer-events-none"
+              style={{
+                left: raidSubTab === 'radonta' ? '6px' : raidSubTab === 'ice-castle' ? 'calc(33.33% + 2px)' : 'calc(66.66% + 2px)',
+                width: 'calc(33.33% - 8px)',
+              }}
+            />
+            <Button
+              variant="ghost"
               onClick={() => handleRaidSubTabChange('radonta')}
-              className={`flex-1 py-2 px-4 rounded-md text-sm font-medium transition-colors duration-200 ${
-                raidSubTab === 'radonta'
-                  ? 'bg-blue-500 text-white'
-                  : 'text-text-secondary hover:text-text-primary hover:bg-bg-secondary'
-              }`}
+              className={cn(
+                "relative z-10 flex-1 w-1/3 gap-2 rounded-xl transition-colors duration-300",
+                raidSubTab === 'radonta' ? 'text-white hover:bg-transparent' : 'text-text-secondary hover:text-text-primary'
+              )}
             >
+              <Swords className="w-4 h-4" />
               라돈타
-            </button>
-            <button
+            </Button>
+            <Button
+              variant="ghost"
               onClick={() => handleRaidSubTabChange('ice-castle')}
-              className={`flex-1 py-2 px-4 rounded-md text-sm font-medium transition-colors duration-200 ${
-                raidSubTab === 'ice-castle'
-                  ? 'bg-blue-500 text-white'
-                  : 'text-text-secondary hover:text-text-primary hover:bg-bg-secondary'
-              }`}
+              className={cn(
+                "relative z-10 flex-1 w-1/3 gap-2 rounded-xl transition-colors duration-300",
+                raidSubTab === 'ice-castle' ? 'text-white hover:bg-transparent' : 'text-text-secondary hover:text-text-primary'
+              )}
             >
+              <Castle className="w-4 h-4" />
               얼음성
-            </button>
-            <button
+            </Button>
+            <Button
+              variant="ghost"
               onClick={() => handleRaidSubTabChange('weekly')}
-              className={`flex-1 py-2 px-4 rounded-md text-sm font-medium transition-colors duration-200 ${
-                raidSubTab === 'weekly'
-                  ? 'bg-blue-500 text-white'
-                  : 'text-text-secondary hover:text-text-primary hover:bg-bg-secondary'
-              }`}
+              className={cn(
+                "relative z-10 flex-1 w-1/3 gap-2 rounded-xl transition-colors duration-300",
+                raidSubTab === 'weekly' ? 'text-white hover:bg-transparent' : 'text-text-secondary hover:text-text-primary'
+              )}
             >
+              <Calendar className="w-4 h-4" />
               주간
-            </button>
-          </div>
+            </Button>
+          </Card>
+
           {/* 주간 레이드 공통 정보 */}
           {raidSubTab === 'weekly' && (
-            <div className="flex items-center gap-2 mt-2 text-xs text-blue-400">
-              <span>ℹ️</span>
-              <span>주간 레이드 공통정보: {weeklyRaidData.commonInfo}</span>
-            </div>
+            <Card className="mt-3 p-3 border-blue-500/30 bg-blue-500/5">
+              <div className="flex items-center gap-2 text-xs text-blue-400">
+                <Info className="w-4 h-4 flex-shrink-0" />
+                <span>주간 레이드 공통정보: {weeklyRaidData.commonInfo}</span>
+              </div>
+            </Card>
           )}
         </div>
       )}
@@ -729,49 +773,46 @@ const TipPage: React.FC = () => {
       {/* 얼음성 공략 컨텐츠 */}
       {mainTab === 'raid' && raidSubTab === 'ice-castle' && (
         <div className="space-y-6">
-          <h2 className="text-xl font-bold text-text-primary text-center mb-6">
-            {iceCastleData.title}
-          </h2>
+          <div className="text-center">
+            <Badge variant="outline" className="gap-2 px-4 py-2 text-base">
+              <Castle className="w-4 h-4" />
+              {iceCastleData.title}
+            </Badge>
+          </div>
 
           {iceCastleData.bosses.map((boss) => {
             const isExpanded = expandedBossId === boss.id;
             return (
-              <div
-                key={boss.id}
-                className="bg-bg-secondary border border-border rounded-xl overflow-hidden"
-              >
+              <Card key={boss.id} className="overflow-hidden">
                 {/* 보스 헤더 (클릭 가능) */}
                 <button
                   onClick={() => toggleBoss(boss.id)}
-                  className="w-full p-4 flex items-center justify-between gap-2 hover:bg-bg-tertiary/50 transition-colors"
+                  className="w-full p-4 flex items-center justify-between gap-2 hover:bg-bg-tertiary/30 transition-colors"
                 >
                   <div className="flex items-center gap-3 flex-wrap">
                     <h3 className="text-lg font-bold text-text-primary">
                       {boss.name}
                     </h3>
                     <div className="flex items-center gap-2">
-                      <span className="px-2 py-0.5 bg-bg-tertiary rounded-full text-xs text-text-secondary">
+                      <Badge variant="outline" className="text-xs">
                         {boss.room}
-                      </span>
-                      <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${
+                      </Badge>
+                      <Badge className={cn(
+                        "text-xs",
                         boss.attribute === '수속성'
-                          ? 'bg-blue-500/20 text-blue-400'
-                          : 'bg-green-500/20 text-green-400'
-                      }`}>
+                          ? 'bg-blue-500/20 text-blue-400 hover:bg-blue-500/30'
+                          : 'bg-emerald-500/20 text-emerald-400 hover:bg-emerald-500/30'
+                      )}>
                         {boss.attribute}
-                      </span>
+                      </Badge>
                     </div>
                   </div>
-                  <svg
-                    className={`w-5 h-5 text-text-secondary transition-transform duration-200 flex-shrink-0 ${
-                      isExpanded ? 'rotate-180' : ''
-                    }`}
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                  </svg>
+                  <ChevronDown
+                    className={cn(
+                      "w-5 h-5 text-text-secondary transition-transform duration-200 flex-shrink-0",
+                      isExpanded && "rotate-180"
+                    )}
+                  />
                 </button>
 
                 {/* 보스 상세 정보 (펼쳐질 때만 표시) */}
@@ -779,36 +820,39 @@ const TipPage: React.FC = () => {
                   <div className="px-4 pb-4 space-y-4 border-t border-border">
                     {/* 준비물 */}
                     <div className="pt-4">
-                      <h4 className="text-sm font-medium text-text-secondary mb-2">준비물</h4>
+                      <h4 className="text-sm font-semibold text-text-primary mb-3 flex items-center gap-2">
+                        <span className="w-1.5 h-1.5 rounded-full bg-accent" />
+                        준비물
+                      </h4>
                       <div className="flex flex-wrap gap-2">
                         {boss.preparation.map((item, idx) => (
-                          <span
-                            key={idx}
-                            className="px-3 py-1 bg-bg-tertiary border border-border rounded-lg text-sm text-text-primary"
-                          >
+                          <Badge key={idx} variant="outline" className="px-3 py-1.5">
                             {item}
-                          </span>
+                          </Badge>
                         ))}
                       </div>
                     </div>
 
                     {/* 페트 */}
                     <div>
-                      <h4 className="text-sm font-medium text-text-secondary mb-2">페트</h4>
-                      <span className="px-3 py-1 bg-accent/20 text-accent rounded-lg text-sm font-medium">
+                      <h4 className="text-sm font-semibold text-text-primary mb-3 flex items-center gap-2">
+                        <span className="w-1.5 h-1.5 rounded-full bg-accent" />
+                        페트
+                      </h4>
+                      <Badge className="bg-accent/20 text-accent hover:bg-accent/30 px-3 py-1.5">
                         {boss.pet}
-                      </span>
+                      </Badge>
                     </div>
 
                     {/* 공략 */}
                     <div>
-                      <h4 className="text-sm font-medium text-text-secondary mb-2">공략</h4>
-                      <ol className="space-y-2">
+                      <h4 className="text-sm font-semibold text-text-primary mb-3 flex items-center gap-2">
+                        <span className="w-1.5 h-1.5 rounded-full bg-accent" />
+                        공략
+                      </h4>
+                      <ol className="space-y-3">
                         {boss.strategy.map((step, idx) => (
-                          <li
-                            key={idx}
-                            className="flex items-start gap-3 text-sm text-text-primary"
-                          >
+                          <li key={idx} className="flex items-start gap-3 text-sm text-text-secondary">
                             <span className="flex-shrink-0 w-6 h-6 bg-accent rounded-full flex items-center justify-center text-white text-xs font-bold">
                               {idx + 1}
                             </span>
@@ -820,65 +864,72 @@ const TipPage: React.FC = () => {
 
                     {/* 기타 */}
                     {boss.etc && (
-                      <div className="text-sm text-text-muted italic">
-                        💬 {boss.etc}
-                      </div>
+                      <Card className="p-3 bg-bg-tertiary border-none">
+                        <div className="flex items-start gap-2 text-sm text-text-muted">
+                          <Info className="w-4 h-4 flex-shrink-0 mt-0.5" />
+                          {boss.etc}
+                        </div>
+                      </Card>
                     )}
 
                     {/* 보상 */}
                     <div>
-                      <h4 className="text-sm font-medium text-text-secondary mb-3">보상</h4>
-                      <div className="overflow-x-auto">
-                        <table className="w-full text-sm">
-                          <thead>
-                            <tr className="border-b border-border">
-                              <th className="text-left py-2 px-2 text-text-secondary font-medium w-16">이미지</th>
-                              <th className="text-left py-2 px-2 text-text-secondary font-medium">아이템</th>
-                              <th className="text-left py-2 px-2 text-text-secondary font-medium hidden sm:table-cell">설명</th>
-                            </tr>
-                          </thead>
-                          <tbody>
-                            {boss.rewards.map((reward, idx) => {
-                              const itemInfo = itemsMap.get(reward.itemId);
-                              return (
-                                <tr key={idx} className="border-b border-border/50 hover:bg-bg-tertiary/50 transition-colors">
-                                  <td className="py-2 px-2">
-                                    <div className="w-12 h-12 bg-bg-tertiary rounded-lg overflow-hidden flex items-center justify-center">
-                                      {itemInfo?.imageUrl ? (
-                                        <img
-                                          src={getImageUrl(itemInfo.imageUrl)}
-                                          alt={reward.name}
-                                          className="w-full h-full object-contain"
-                                          onError={e => {
-                                            const target = e.target as HTMLImageElement;
-                                            target.style.display = 'none';
-                                          }}
-                                        />
-                                      ) : (
-                                        <span className="text-text-muted text-xs">-</span>
-                                      )}
-                                    </div>
-                                  </td>
-                                  <td className="py-2 px-2">
-                                    <div className="font-medium text-text-primary">{reward.name}</div>
-                                    {/* 모바일에서 설명 표시 */}
-                                    <div className="sm:hidden text-xs text-text-muted mt-1 line-clamp-2">
+                      <h4 className="text-sm font-semibold text-text-primary mb-3 flex items-center gap-2">
+                        <span className="w-1.5 h-1.5 rounded-full bg-accent" />
+                        보상
+                      </h4>
+                      <Card className="overflow-hidden">
+                        <div className="overflow-x-auto">
+                          <table className="w-full text-sm">
+                            <thead>
+                              <tr className="border-b border-border bg-bg-tertiary/50">
+                                <th className="text-left py-3 px-3 text-text-muted font-medium w-16">이미지</th>
+                                <th className="text-left py-3 px-3 text-text-muted font-medium">아이템</th>
+                                <th className="text-left py-3 px-3 text-text-muted font-medium hidden sm:table-cell">설명</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              {boss.rewards.map((reward, idx) => {
+                                const itemInfo = itemsMap.get(reward.itemId);
+                                return (
+                                  <tr key={idx} className="border-b border-border/50 hover:bg-bg-tertiary/30 transition-colors">
+                                    <td className="py-3 px-3">
+                                      <div className="w-12 h-12 bg-bg-secondary rounded-lg overflow-hidden flex items-center justify-center border border-border">
+                                        {itemInfo?.imageUrl ? (
+                                          <img
+                                            src={getImageUrl(itemInfo.imageUrl)}
+                                            alt={reward.name}
+                                            className="w-full h-full object-contain"
+                                            onError={e => {
+                                              const target = e.target as HTMLImageElement;
+                                              target.style.display = 'none';
+                                            }}
+                                          />
+                                        ) : (
+                                          <span className="text-text-muted text-xs">-</span>
+                                        )}
+                                      </div>
+                                    </td>
+                                    <td className="py-3 px-3">
+                                      <div className="font-medium text-text-primary">{reward.name}</div>
+                                      <div className="sm:hidden text-xs text-text-muted mt-1 line-clamp-2">
+                                        {itemInfo?.description || '-'}
+                                      </div>
+                                    </td>
+                                    <td className="py-3 px-3 text-text-secondary hidden sm:table-cell">
                                       {itemInfo?.description || '-'}
-                                    </div>
-                                  </td>
-                                  <td className="py-2 px-2 text-text-secondary hidden sm:table-cell">
-                                    {itemInfo?.description || '-'}
-                                  </td>
-                                </tr>
-                              );
-                            })}
-                          </tbody>
-                        </table>
-                      </div>
+                                    </td>
+                                  </tr>
+                                );
+                              })}
+                            </tbody>
+                          </table>
+                        </div>
+                      </Card>
                     </div>
                   </div>
                 )}
-              </div>
+              </Card>
             );
           })}
         </div>
@@ -887,44 +938,41 @@ const TipPage: React.FC = () => {
       {/* 주간 레이드 공략 컨텐츠 */}
       {mainTab === 'raid' && raidSubTab === 'weekly' && (
         <div className="space-y-6">
-          <h2 className="text-xl font-bold text-text-primary text-center mb-6">
-            {weeklyRaidData.title}
-          </h2>
+          <div className="text-center">
+            <Badge variant="outline" className="gap-2 px-4 py-2 text-base">
+              <Calendar className="w-4 h-4" />
+              {weeklyRaidData.title}
+            </Badge>
+          </div>
 
           {weeklyRaidData.bosses.map((boss) => {
             const isExpanded = expandedBossId === boss.id;
             return (
-              <div
-                key={boss.id}
-                className="bg-bg-secondary border border-border rounded-xl overflow-hidden"
-              >
+              <Card key={boss.id} className="overflow-hidden">
                 {/* 보스 헤더 (클릭 가능) */}
                 <button
                   onClick={() => toggleBoss(boss.id)}
-                  className="w-full p-4 flex items-center justify-between gap-2 hover:bg-bg-tertiary/50 transition-colors"
+                  className="w-full p-4 flex items-center justify-between gap-2 hover:bg-bg-tertiary/30 transition-colors"
                 >
                   <div className="flex items-center gap-3 flex-wrap">
                     <h3 className="text-lg font-bold text-text-primary">
                       {boss.name}
                     </h3>
-                    <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${
+                    <Badge className={cn(
+                      "text-xs",
                       boss.attribute === '수속성'
-                        ? 'bg-blue-500/20 text-blue-400'
-                        : 'bg-green-500/20 text-green-400'
-                    }`}>
+                        ? 'bg-blue-500/20 text-blue-400 hover:bg-blue-500/30'
+                        : 'bg-emerald-500/20 text-emerald-400 hover:bg-emerald-500/30'
+                    )}>
                       {boss.attribute}
-                    </span>
+                    </Badge>
                   </div>
-                  <svg
-                    className={`w-5 h-5 text-text-secondary transition-transform duration-200 flex-shrink-0 ${
-                      isExpanded ? 'rotate-180' : ''
-                    }`}
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                  </svg>
+                  <ChevronDown
+                    className={cn(
+                      "w-5 h-5 text-text-secondary transition-transform duration-200 flex-shrink-0",
+                      isExpanded && "rotate-180"
+                    )}
+                  />
                 </button>
 
                 {/* 보스 상세 정보 (펼쳐질 때만 표시) */}
@@ -932,36 +980,39 @@ const TipPage: React.FC = () => {
                   <div className="px-4 pb-4 space-y-4 border-t border-border">
                     {/* 준비물 */}
                     <div className="pt-4">
-                      <h4 className="text-sm font-medium text-text-secondary mb-2">준비물</h4>
+                      <h4 className="text-sm font-semibold text-text-primary mb-3 flex items-center gap-2">
+                        <span className="w-1.5 h-1.5 rounded-full bg-accent" />
+                        준비물
+                      </h4>
                       <div className="flex flex-wrap gap-2">
                         {boss.preparation.map((item, idx) => (
-                          <span
-                            key={idx}
-                            className="px-3 py-1 bg-bg-tertiary border border-border rounded-lg text-sm text-text-primary"
-                          >
+                          <Badge key={idx} variant="outline" className="px-3 py-1.5">
                             {item}
-                          </span>
+                          </Badge>
                         ))}
                       </div>
                     </div>
 
                     {/* 페트 */}
                     <div>
-                      <h4 className="text-sm font-medium text-text-secondary mb-2">페트</h4>
-                      <span className="px-3 py-1 bg-accent/20 text-accent rounded-lg text-sm font-medium">
+                      <h4 className="text-sm font-semibold text-text-primary mb-3 flex items-center gap-2">
+                        <span className="w-1.5 h-1.5 rounded-full bg-accent" />
+                        페트
+                      </h4>
+                      <Badge className="bg-accent/20 text-accent hover:bg-accent/30 px-3 py-1.5">
                         {boss.pet}
-                      </span>
+                      </Badge>
                     </div>
 
                     {/* 공략 */}
                     <div>
-                      <h4 className="text-sm font-medium text-text-secondary mb-2">공략</h4>
-                      <ol className="space-y-2">
+                      <h4 className="text-sm font-semibold text-text-primary mb-3 flex items-center gap-2">
+                        <span className="w-1.5 h-1.5 rounded-full bg-accent" />
+                        공략
+                      </h4>
+                      <ol className="space-y-3">
                         {boss.strategy.map((step, idx) => (
-                          <li
-                            key={idx}
-                            className="flex items-start gap-3 text-sm text-text-primary"
-                          >
+                          <li key={idx} className="flex items-start gap-3 text-sm text-text-secondary">
                             <span className="flex-shrink-0 w-6 h-6 bg-accent rounded-full flex items-center justify-center text-white text-xs font-bold">
                               {idx + 1}
                             </span>
@@ -973,65 +1024,72 @@ const TipPage: React.FC = () => {
 
                     {/* 기타 */}
                     {boss.etc && (
-                      <div className="text-sm text-text-muted italic">
-                        💬 {boss.etc}
-                      </div>
+                      <Card className="p-3 bg-bg-tertiary border-none">
+                        <div className="flex items-start gap-2 text-sm text-text-muted">
+                          <Info className="w-4 h-4 flex-shrink-0 mt-0.5" />
+                          {boss.etc}
+                        </div>
+                      </Card>
                     )}
 
                     {/* 보상 */}
                     <div>
-                      <h4 className="text-sm font-medium text-text-secondary mb-3">보상</h4>
-                      <div className="overflow-x-auto">
-                        <table className="w-full text-sm">
-                          <thead>
-                            <tr className="border-b border-border">
-                              <th className="text-left py-2 px-2 text-text-secondary font-medium w-16">이미지</th>
-                              <th className="text-left py-2 px-2 text-text-secondary font-medium">아이템</th>
-                              <th className="text-left py-2 px-2 text-text-secondary font-medium hidden sm:table-cell">설명</th>
-                            </tr>
-                          </thead>
-                          <tbody>
-                            {boss.rewards.map((reward, idx) => {
-                              const itemInfo = itemsMap.get(reward.itemId);
-                              return (
-                                <tr key={idx} className="border-b border-border/50 hover:bg-bg-tertiary/50 transition-colors">
-                                  <td className="py-2 px-2">
-                                    <div className="w-12 h-12 bg-bg-tertiary rounded-lg overflow-hidden flex items-center justify-center">
-                                      {itemInfo?.imageUrl ? (
-                                        <img
-                                          src={getImageUrl(itemInfo.imageUrl)}
-                                          alt={reward.name}
-                                          className="w-full h-full object-contain"
-                                          onError={e => {
-                                            const target = e.target as HTMLImageElement;
-                                            target.style.display = 'none';
-                                          }}
-                                        />
-                                      ) : (
-                                        <span className="text-text-muted text-xs">-</span>
-                                      )}
-                                    </div>
-                                  </td>
-                                  <td className="py-2 px-2">
-                                    <div className="font-medium text-text-primary">{reward.name}</div>
-                                    {/* 모바일에서 설명 표시 */}
-                                    <div className="sm:hidden text-xs text-text-muted mt-1 line-clamp-2">
+                      <h4 className="text-sm font-semibold text-text-primary mb-3 flex items-center gap-2">
+                        <span className="w-1.5 h-1.5 rounded-full bg-accent" />
+                        보상
+                      </h4>
+                      <Card className="overflow-hidden">
+                        <div className="overflow-x-auto">
+                          <table className="w-full text-sm">
+                            <thead>
+                              <tr className="border-b border-border bg-bg-tertiary/50">
+                                <th className="text-left py-3 px-3 text-text-muted font-medium w-16">이미지</th>
+                                <th className="text-left py-3 px-3 text-text-muted font-medium">아이템</th>
+                                <th className="text-left py-3 px-3 text-text-muted font-medium hidden sm:table-cell">설명</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              {boss.rewards.map((reward, idx) => {
+                                const itemInfo = itemsMap.get(reward.itemId);
+                                return (
+                                  <tr key={idx} className="border-b border-border/50 hover:bg-bg-tertiary/30 transition-colors">
+                                    <td className="py-3 px-3">
+                                      <div className="w-12 h-12 bg-bg-secondary rounded-lg overflow-hidden flex items-center justify-center border border-border">
+                                        {itemInfo?.imageUrl ? (
+                                          <img
+                                            src={getImageUrl(itemInfo.imageUrl)}
+                                            alt={reward.name}
+                                            className="w-full h-full object-contain"
+                                            onError={e => {
+                                              const target = e.target as HTMLImageElement;
+                                              target.style.display = 'none';
+                                            }}
+                                          />
+                                        ) : (
+                                          <span className="text-text-muted text-xs">-</span>
+                                        )}
+                                      </div>
+                                    </td>
+                                    <td className="py-3 px-3">
+                                      <div className="font-medium text-text-primary">{reward.name}</div>
+                                      <div className="sm:hidden text-xs text-text-muted mt-1 line-clamp-2">
+                                        {itemInfo?.description || '-'}
+                                      </div>
+                                    </td>
+                                    <td className="py-3 px-3 text-text-secondary hidden sm:table-cell">
                                       {itemInfo?.description || '-'}
-                                    </div>
-                                  </td>
-                                  <td className="py-2 px-2 text-text-secondary hidden sm:table-cell">
-                                    {itemInfo?.description || '-'}
-                                  </td>
-                                </tr>
-                              );
-                            })}
-                          </tbody>
-                        </table>
-                      </div>
+                                    </td>
+                                  </tr>
+                                );
+                              })}
+                            </tbody>
+                          </table>
+                        </div>
+                      </Card>
                     </div>
                   </div>
                 )}
-              </div>
+              </Card>
             );
           })}
         </div>

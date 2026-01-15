@@ -1,10 +1,12 @@
 import { useState, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
+import { Gamepad2, Search } from 'lucide-react';
 import LadderGame from '../components/LadderGame';
 import PigRaceGame from '../components/PigRaceGame';
 import MultiplayerPigRace from '../components/MultiplayerPigRace';
 import RelayPigRace from '../components/RelayPigRace';
 import { getRoomState, type GameRoom } from '../services/gameApi';
+import { Card } from '@/components/ui/card';
 
 type GameType = 'ladder' | 'pigrace' | 'multiplayer' | 'relay' | null;
 type MultiplayerMode = 'menu' | 'room' | 'input' | null;
@@ -197,7 +199,10 @@ const GamePage = () => {
     return (
       <div className="min-h-screen pt-2 pb-20 flex items-center justify-center">
         <div className="text-center">
-          <div className="text-4xl animate-bounce mb-4">🔍</div>
+          <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-bg-secondary border border-border
+                        flex items-center justify-center">
+            <Search className="w-8 h-8 text-accent animate-pulse" />
+          </div>
           <p className="text-text-secondary">방 정보 확인 중...</p>
         </div>
       </div>
@@ -211,7 +216,8 @@ const GamePage = () => {
         {!selectedGame && (
           <div className="mb-6">
             <h1 className="text-2xl md:text-3xl font-bold text-text-primary flex items-center gap-2">
-              🎮 미니게임
+              <Gamepad2 className="w-8 h-8" />
+              미니게임
             </h1>
             <p className="text-text-secondary mt-1">스톤에이지 테마의 미니게임을 즐겨보세요!</p>
           </div>
@@ -221,9 +227,9 @@ const GamePage = () => {
         {selectedGame ? (
           renderSelectedGame()
         ) : (
-          <div className="bg-bg-secondary rounded-2xl border border-border p-6">
+          <Card className="p-6">
             {renderGameList()}
-          </div>
+          </Card>
         )}
       </div>
     </div>
