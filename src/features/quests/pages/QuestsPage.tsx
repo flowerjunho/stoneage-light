@@ -129,21 +129,21 @@ const QuestsPage: React.FC = () => {
 
       {/* 탭 선택 */}
       <div className="mb-6 px-4 md:px-0">
-        <Card className="relative p-1.5">
-          {/* 슬라이딩 배경 인디케이터 */}
+        <Card className="relative p-1.5 overflow-hidden">
+          {/* 슬라이딩 배경 인디케이터 - GPU 가속 사용 */}
           <div
-            className="absolute top-1.5 h-[calc(100%-12px)] rounded-xl bg-accent shadow-glow
-                       transition-all duration-300 ease-out-expo pointer-events-none"
-            style={{
-              left: activeTab === 'hwansoo' ? '6px' : 'calc(50% + 2px)',
-              width: 'calc(50% - 8px)',
-            }}
+            className={cn(
+              "absolute top-1.5 left-1.5 h-[calc(100%-12px)] w-[calc(50%-6px)] rounded-xl",
+              "bg-accent shadow-glow pointer-events-none",
+              "transition-transform duration-300 ease-out will-change-transform",
+              activeTab === 'pooyas' && "translate-x-[calc(100%+6px)]"
+            )}
           />
           <Button
             variant="ghost"
             onClick={() => handleTabChange('hwansoo')}
             className={cn(
-              "relative z-10 flex-1 w-1/2 gap-2 rounded-xl transition-colors duration-300",
+              "relative z-10 flex-1 w-1/2 gap-2 rounded-xl transition-colors duration-200",
               activeTab === 'hwansoo' ? 'text-text-inverse hover:bg-transparent' : 'text-text-secondary hover:text-text-primary'
             )}
           >
@@ -154,7 +154,7 @@ const QuestsPage: React.FC = () => {
             variant="ghost"
             onClick={() => handleTabChange('pooyas')}
             className={cn(
-              "relative z-10 flex-1 w-1/2 gap-2 rounded-xl transition-colors duration-300",
+              "relative z-10 flex-1 w-1/2 gap-2 rounded-xl transition-colors duration-200",
               activeTab === 'pooyas' ? 'text-text-inverse hover:bg-transparent' : 'text-text-secondary hover:text-text-primary'
             )}
           >
