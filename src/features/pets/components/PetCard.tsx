@@ -521,7 +521,34 @@ const PetCard: React.FC<PetCardProps> = ({ pet }) => {
 
       await drawPetCard(ctx, scale);
 
-      // Canvas를 Blob으로 변환
+      // ClipboardItem에 Promise를 직접 전달하여 사용자 제스처 컨텍스트 유지
+      // Safari 및 일부 브라우저에서 async 작업 후 클립보드 접근이 차단되는 문제 해결
+      if (navigator.clipboard?.write && typeof ClipboardItem !== 'undefined') {
+        try {
+          // Promise를 직접 전달하는 방식으로 클립보드 복사 (사용자 제스처 유지)
+          const clipboardItem = new ClipboardItem({
+            'image/png': new Promise((resolve, reject) => {
+              canvas.toBlob(
+                (blob) => {
+                  if (blob) resolve(blob);
+                  else reject(new Error('Failed to create blob'));
+                },
+                'image/png',
+                1.0
+              );
+            })
+          });
+
+          await navigator.clipboard.write([clipboardItem]);
+          showToastMessage('이미지가 클립보드에 복사되었습니다');
+          setIsCapturing(false);
+          return;
+        } catch (clipboardError) {
+          console.warn('Clipboard write failed, falling back to download:', clipboardError);
+        }
+      }
+
+      // 클립보드 복사 실패 시 다운로드로 폴백
       const blob = await new Promise<Blob>((resolve, reject) => {
         canvas.toBlob(
           (blob) => {
@@ -533,34 +560,15 @@ const PetCard: React.FC<PetCardProps> = ({ pet }) => {
         );
       });
 
-      // 모바일/데스크탑 상관없이 클립보드 복사 먼저 시도
-      let clipboardSuccess = false;
-
-      if (navigator.clipboard?.write) {
-        try {
-          await navigator.clipboard.write([
-            new ClipboardItem({ 'image/png': blob })
-          ]);
-          clipboardSuccess = true;
-          showToastMessage('이미지가 클립보드에 복사되었습니다');
-        } catch {
-          // 클립보드 복사 실패 - 폴백으로 진행
-          clipboardSuccess = false;
-        }
-      }
-
-      // 클립보드 복사 실패 시 다운로드로 폴백
-      if (!clipboardSuccess) {
-        const url = URL.createObjectURL(blob);
-        const link = document.createElement('a');
-        link.href = url;
-        link.download = `${pet.name}_펫정보.png`;
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-        URL.revokeObjectURL(url);
-        showToastMessage('이미지가 다운로드되었습니다');
-      }
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = `${pet.name}_펫정보.png`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url);
+      showToastMessage('이미지가 다운로드되었습니다');
     } catch (error) {
       console.error('Image capture failed:', error);
       showToastMessage('이미지 캡처에 실패했습니다');
