@@ -697,8 +697,8 @@ const BoardingPage: React.FC = () => {
                       variant="glass"
                       className={cn(
                         "p-4 iphone16:p-3 cursor-pointer transition-all duration-300",
-                        "hover:border-accent/50 hover:shadow-card hover:-translate-y-0.5",
-                        isSpecial && "border-yellow-500/30 bg-yellow-500/5"
+                        "border border-border/50 hover:border-accent/50 hover:shadow-card hover:-translate-y-0.5",
+                        isSpecial ? "border-yellow-500/50 bg-yellow-500/5" : "bg-bg-secondary/50"
                       )}
                       onClick={() => handlePetClick(pet, character)}
                     >
@@ -710,18 +710,21 @@ const BoardingPage: React.FC = () => {
                             </div>
                           )}
                           {petImage ? (
-                            <img
-                              src={petImage}
-                              alt={pet}
-                              className="w-24 h-24 md:w-28 md:h-28 lg:w-32 lg:h-32 xl:w-36 xl:h-36 iphone16:w-20 iphone16:h-20 object-contain rounded-lg"
-                              loading="lazy"
-                              onError={e => {
-                                e.currentTarget.style.display = 'none';
-                              }}
-                            />
+                            <div className="w-24 h-24 md:w-28 md:h-28 lg:w-32 lg:h-32 xl:w-36 xl:h-36 iphone16:w-20 iphone16:h-20
+                                          flex items-center justify-center">
+                              <img
+                                src={petImage}
+                                alt={pet}
+                                className="w-full h-full object-contain"
+                                loading="lazy"
+                                onError={e => {
+                                  e.currentTarget.style.display = 'none';
+                                }}
+                              />
+                            </div>
                           ) : (
                             <div className="w-24 h-24 md:w-28 md:h-28 lg:w-32 lg:h-32 xl:w-36 xl:h-36 iphone16:w-20 iphone16:h-20
-                                          bg-bg-tertiary rounded-lg flex items-center justify-center">
+                                          flex items-center justify-center">
                               <PawPrint className="w-8 h-8 text-text-muted" />
                             </div>
                           )}
