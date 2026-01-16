@@ -1,8 +1,18 @@
 import { useRef, useLayoutEffect, useState, useCallback, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import {
-  Bell, Heart, Users, Package, PlayCircle, Calculator,
-  Lightbulb, ClipboardCheck, Map, MessageSquare, ChevronLeft, ChevronRight
+  Bell,
+  Heart,
+  Users,
+  Package,
+  PlayCircle,
+  Calculator,
+  Lightbulb,
+  ClipboardCheck,
+  Map,
+  MessageSquare,
+  ChevronLeft,
+  ChevronRight,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
@@ -16,7 +26,12 @@ interface Tab {
 const tabs: Tab[] = [
   { path: '/notice', label: '공지', icon: <Bell className="w-4 h-4" /> },
   { path: '/pets', label: '페트', icon: <Heart className="w-4 h-4" /> },
-  { path: '/boarding', label: '캐릭/탑승', mobileLabel: '탑승', icon: <Users className="w-4 h-4" /> },
+  {
+    path: '/boarding',
+    label: '캐릭/탑승',
+    mobileLabel: '탑승',
+    icon: <Users className="w-4 h-4" />,
+  },
   { path: '/items', label: '아이템', icon: <Package className="w-4 h-4" /> },
   { path: '/game', label: '게임', icon: <PlayCircle className="w-4 h-4" /> },
   { path: '/calculator', label: '계산기', icon: <Calculator className="w-4 h-4" /> },
@@ -72,7 +87,7 @@ const TabNavigation = () => {
     const scrollAmount = 200;
     nav.scrollBy({
       left: direction === 'left' ? -scrollAmount : scrollAmount,
-      behavior: 'smooth'
+      behavior: 'smooth',
     });
   }, []);
 
@@ -95,12 +110,10 @@ const TabNavigation = () => {
         {/* 탭 컨테이너 */}
         <div
           ref={containerRef}
-          className="group/nav relative rounded-2xl border border-white/10 shadow-xl shadow-black/20 overflow-hidden"
+          className="group/nav relative rounded-2xl border border-white/10 shadow-xl shadow-black/20 overflow-hidden bg-bg-secondary/5 backdrop-blur-sm"
           onMouseEnter={() => setIsHovering(true)}
           onMouseLeave={() => setIsHovering(false)}
         >
-          {/* 블러 배경 레이어 */}
-          <div className="absolute inset-0 bg-bg-secondary/80 backdrop-blur-md" />
           {/* 상단 하이라이트 - PC에서만 애니메이션 */}
           <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-white/30 to-transparent md:animate-aurora z-10" />
 
@@ -158,7 +171,10 @@ const TabNavigation = () => {
             )}
           />
 
-          <nav ref={navRef} className="relative flex overflow-x-auto scrollbar-hide px-2 py-2 will-change-scroll">
+          <nav
+            ref={navRef}
+            className="relative flex overflow-x-auto scrollbar-hide px-2 py-2 will-change-scroll"
+          >
             {tabs.map((tab, index) => {
               const active = isActive(tab.path);
               return (
@@ -171,9 +187,7 @@ const TabNavigation = () => {
                     // 모바일: transform/opacity만 트랜지션, PC: all
                     'transition-[transform,opacity,color] md:transition-all duration-200 md:duration-300 ease-out',
                     'opacity-0 animate-stagger-fade',
-                    active
-                      ? 'text-white'
-                      : 'text-text-muted hover:text-text-primary'
+                    active ? 'text-white' : 'text-text-muted hover:text-text-primary'
                   )}
                   style={{ animationDelay: `${index * 30}ms`, animationFillMode: 'forwards' }}
                 >
@@ -194,26 +208,29 @@ const TabNavigation = () => {
                   )}
 
                   {/* 아이콘 - 모바일에서는 간단한 트랜지션 */}
-                  <span className={cn(
-                    'relative z-10 transition-transform duration-200 ease-out',
-                    active
-                      ? 'scale-110 md:drop-shadow-[0_0_8px_rgba(251,191,36,0.5)]'
-                      : 'group-hover:scale-110 md:group-hover:text-accent'
-                  )}>
+                  <span
+                    className={cn(
+                      'relative z-10 transition-transform duration-200 ease-out',
+                      active
+                        ? 'scale-110 md:drop-shadow-[0_0_8px_rgba(251,191,36,0.5)]'
+                        : 'group-hover:scale-110 md:group-hover:text-accent'
+                    )}
+                  >
                     {tab.icon}
                   </span>
 
                   {/* 라벨 */}
-                  <span className={cn(
-                    'relative z-10 hidden md:inline transition-colors duration-200',
-                    active && 'font-semibold'
-                  )}>
+                  <span
+                    className={cn(
+                      'relative z-10 hidden md:inline transition-colors duration-200',
+                      active && 'font-semibold'
+                    )}
+                  >
                     {tab.label}
                   </span>
-                  <span className={cn(
-                    'relative z-10 md:hidden text-xs',
-                    active && 'font-semibold'
-                  )}>
+                  <span
+                    className={cn('relative z-10 md:hidden text-xs', active && 'font-semibold')}
+                  >
                     {tab.mobileLabel || tab.label}
                   </span>
 
