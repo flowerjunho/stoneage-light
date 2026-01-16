@@ -10,6 +10,7 @@ import {
   Loader2,
   Volume2,
   VolumeX,
+  GripVertical,
 } from 'lucide-react';
 import { useMusicPlayer } from '@/contexts/MusicPlayerContext';
 import { getCoverUrl } from '@/services/musicApi';
@@ -36,10 +37,13 @@ const MusicPlayer: React.FC = () => {
     showPlayer,
     setVolume,
     toggleMute,
+    reorderPlaylist,
   } = useMusicPlayer();
 
   const [showPlaylist, setShowPlaylist] = useState(false);
   const [showVolume, setShowVolume] = useState(false);
+  const [draggedIndex, setDraggedIndex] = useState<number | null>(null);
+  const [dragOverIndex, setDragOverIndex] = useState<number | null>(null);
   const volumeRef = useRef<HTMLDivElement>(null);
   const volumeBtnRef = useRef<HTMLButtonElement>(null);
   const playlistBtnRef = useRef<HTMLButtonElement>(null);
@@ -352,47 +356,77 @@ const MusicPlayer: React.FC = () => {
         {showPlaylist && (
           <div
             ref={playlistRef}
-            className="absolute bottom-full right-2 md:right-4 mb-2 w-64 max-h-64 z-[70]
+            className="absolute bottom-full right-2 md:right-4 mb-2 w-72 max-h-72 z-[70]
                        bg-bg-secondary/95 backdrop-blur-2xl border border-white/10
                        rounded-xl shadow-2xl overflow-hidden"
           >
             <div className="px-3 py-2 border-b border-white/10">
               <h4 className="text-xs font-semibold text-text-primary">
                 재생목록 ({playlist.length}곡)
+                <span className="hidden md:inline text-text-muted font-normal ml-2">드래그로 순서 변경</span>
               </h4>
             </div>
-            <div className="overflow-y-auto max-h-52">
+            <div className="overflow-y-auto max-h-60">
               {playlist.map((track, index) => (
-                <button
+                <div
                   key={track.id}
-                  onClick={() => {
-                    play(track);
-                    setShowPlaylist(false);
+                  draggable
+                  onDragStart={() => setDraggedIndex(index)}
+                  onDragOver={(e) => {
+                    e.preventDefault();
+                    setDragOverIndex(index);
+                  }}
+                  onDragLeave={() => setDragOverIndex(null)}
+                  onDrop={() => {
+                    if (draggedIndex !== null && draggedIndex !== index) {
+                      reorderPlaylist(draggedIndex, index);
+                    }
+                    setDraggedIndex(null);
+                    setDragOverIndex(null);
+                  }}
+                  onDragEnd={() => {
+                    setDraggedIndex(null);
+                    setDragOverIndex(null);
                   }}
                   className={cn(
-                    'w-full flex items-center gap-2 px-3 py-1.5 text-left',
-                    'transition-colors hover:bg-white/5',
-                    track.id === currentTrack?.id && 'bg-accent/10'
+                    'flex items-center gap-1 px-2 py-1.5',
+                    'transition-all duration-150',
+                    track.id === currentTrack?.id && 'bg-accent/10',
+                    draggedIndex === index && 'opacity-50',
+                    dragOverIndex === index && draggedIndex !== index && 'bg-accent/20 border-t-2 border-accent'
                   )}
                 >
-                  <span className="w-4 text-center text-[10px] text-text-muted">
+                  {/* 드래그 핸들 */}
+                  <div className="cursor-grab active:cursor-grabbing p-1 text-text-muted hover:text-text-primary">
+                    <GripVertical className="w-3 h-3" />
+                  </div>
+
+                  {/* 트랙 번호 */}
+                  <span className="w-4 text-center text-[10px] text-text-muted flex-shrink-0">
                     {track.id === currentTrack?.id && isPlaying ? (
                       <span className="inline-block w-1.5 h-1.5 bg-accent rounded-full animate-pulse" />
                     ) : (
                       index + 1
                     )}
                   </span>
-                  <p
+
+                  {/* 트랙 정보 (클릭하여 재생) */}
+                  <button
+                    onClick={() => {
+                      play(track);
+                      setShowPlaylist(false);
+                    }}
                     className={cn(
-                      'flex-1 text-xs truncate',
+                      'flex-1 text-left text-xs truncate py-0.5',
+                      'transition-colors hover:text-accent',
                       track.id === currentTrack?.id
                         ? 'text-accent font-semibold'
                         : 'text-text-primary'
                     )}
                   >
                     {track.title}{track.artist ? ` - ${track.artist}` : ''}
-                  </p>
-                </button>
+                  </button>
+                </div>
               ))}
             </div>
           </div>

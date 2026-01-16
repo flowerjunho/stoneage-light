@@ -16,6 +16,8 @@ import { getStreamUrl, incrementPlayCount, getTracks } from '@/services/musicApi
 
 type RepeatMode = 'none' | 'all' | 'one';
 
+const PLAYLIST_ORDER_KEY = 'MUSIC_PLAYLIST_ORDER';
+
 interface MusicPlayerContextType {
   // State
   currentTrack: Track | null;
@@ -45,6 +47,7 @@ interface MusicPlayerContextType {
   toggleShuffle: () => void;
   showPlayer: () => void;
   hidePlayer: () => void;
+  reorderPlaylist: (fromIndex: number, toIndex: number) => void;
 }
 
 // ============================================
@@ -155,12 +158,34 @@ export const MusicPlayerProvider: React.FC<MusicPlayerProviderProps> = ({
     queryFn: () => getTracks({ limit: 100 }),
   });
 
-  // 트랙 데이터가 로드되면 플레이리스트 설정
+  // 트랙 데이터가 로드되면 플레이리스트 설정 (로컬스토리지 순서 적용)
   useEffect(() => {
     if (tracksData?.items && tracksData.items.length > 0 && playlist.length === 0) {
-      setPlaylist(tracksData.items);
-      setOriginalPlaylist(tracksData.items);
-      setCurrentTrack(tracksData.items[0]);
+      const tracks = tracksData.items;
+
+      // 로컬스토리지에서 저장된 순서 불러오기
+      const savedOrder = localStorage.getItem(PLAYLIST_ORDER_KEY);
+      let orderedTracks = tracks;
+
+      if (savedOrder) {
+        try {
+          const orderIds: string[] = JSON.parse(savedOrder);
+          // 저장된 순서대로 정렬, 새로운 트랙은 끝에 추가
+          const orderedById = new Map(orderIds.map((id, index) => [id, index]));
+          orderedTracks = [...tracks].sort((a, b) => {
+            const aOrder = orderedById.get(a.id) ?? Infinity;
+            const bOrder = orderedById.get(b.id) ?? Infinity;
+            return aOrder - bOrder;
+          });
+        } catch {
+          // 파싱 실패 시 원본 순서 사용
+          orderedTracks = tracks;
+        }
+      }
+
+      setPlaylist(orderedTracks);
+      setOriginalPlaylist(orderedTracks);
+      setCurrentTrack(orderedTracks[0]);
       setIsPlayerVisible(true);
     }
   }, [tracksData, playlist.length]);
@@ -360,6 +385,28 @@ export const MusicPlayerProvider: React.FC<MusicPlayerProviderProps> = ({
     setIsPlayerVisible(false);
   }, []);
 
+  const reorderPlaylist = useCallback((fromIndex: number, toIndex: number) => {
+    setPlaylist((prev) => {
+      const newPlaylist = [...prev];
+      const [removed] = newPlaylist.splice(fromIndex, 1);
+      newPlaylist.splice(toIndex, 0, removed);
+
+      // 로컬스토리지에 순서 저장
+      const orderIds = newPlaylist.map((track) => track.id);
+      localStorage.setItem(PLAYLIST_ORDER_KEY, JSON.stringify(orderIds));
+
+      return newPlaylist;
+    });
+
+    // originalPlaylist도 업데이트 (셔플 해제 시 적용되도록)
+    setOriginalPlaylist((prev) => {
+      const newPlaylist = [...prev];
+      const [removed] = newPlaylist.splice(fromIndex, 1);
+      newPlaylist.splice(toIndex, 0, removed);
+      return newPlaylist;
+    });
+  }, []);
+
   // ============================================
   // Context Value
   // ============================================
@@ -390,6 +437,7 @@ export const MusicPlayerProvider: React.FC<MusicPlayerProviderProps> = ({
     toggleShuffle,
     showPlayer,
     hidePlayer,
+    reorderPlaylist,
   };
 
   return (

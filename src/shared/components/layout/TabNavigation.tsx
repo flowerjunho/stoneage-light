@@ -92,15 +92,17 @@ const TabNavigation = () => {
   return (
     <div className="sticky top-0 z-30 w-full pt-2 animate-slide-down">
       <div className="max-w-6xl mx-auto px-3 md:px-4">
-        {/* 모바일: backdrop-blur 제거, PC: 유지 */}
+        {/* 탭 컨테이너 */}
         <div
           ref={containerRef}
-          className="group/nav relative bg-bg-secondary/95 md:bg-gradient-to-b md:from-bg-secondary/90 md:to-bg-secondary/70 md:backdrop-blur-xl rounded-2xl border border-white/10 shadow-xl shadow-black/20 overflow-hidden"
+          className="group/nav relative rounded-2xl border border-white/10 shadow-xl shadow-black/20 overflow-hidden"
           onMouseEnter={() => setIsHovering(true)}
           onMouseLeave={() => setIsHovering(false)}
         >
+          {/* 블러 배경 레이어 */}
+          <div className="absolute inset-0 bg-bg-secondary/80 backdrop-blur-md" />
           {/* 상단 하이라이트 - PC에서만 애니메이션 */}
-          <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-white/30 to-transparent md:animate-aurora" />
+          <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-white/30 to-transparent md:animate-aurora z-10" />
 
           {/* 왼쪽 스크롤 버튼 - PC에서 호버 시에만 */}
           <button
@@ -140,7 +142,7 @@ const TabNavigation = () => {
           <div
             className={cn(
               'hidden md:block absolute left-0 top-0 bottom-0 w-8 z-10 pointer-events-none',
-              'bg-gradient-to-r from-bg-secondary/95 to-transparent',
+              'bg-gradient-to-r from-bg-secondary/80 to-transparent',
               'transition-opacity duration-200',
               showLeftArrow ? 'opacity-100' : 'opacity-0'
             )}
@@ -150,7 +152,7 @@ const TabNavigation = () => {
           <div
             className={cn(
               'hidden md:block absolute right-0 top-0 bottom-0 w-8 z-10 pointer-events-none',
-              'bg-gradient-to-l from-bg-secondary/95 to-transparent',
+              'bg-gradient-to-l from-bg-secondary/80 to-transparent',
               'transition-opacity duration-200',
               showRightArrow ? 'opacity-100' : 'opacity-0'
             )}

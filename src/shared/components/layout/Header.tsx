@@ -8,16 +8,6 @@ import ThemeToggle from '@/shared/components/layout/ThemeToggle';
 const Header: React.FC = () => {
   const [showTooltip, setShowTooltip] = useState(false);
   const [tooltipTimeoutId, setTooltipTimeoutId] = useState<NodeJS.Timeout | null>(null);
-  const [scrolled, setScrolled] = useState(false);
-
-  // Scroll detection for header blur effect
-  useEffect(() => {
-    const handleScroll = () => {
-      setScrolled(window.scrollY > 20);
-    };
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
 
   const handleInfoClick = () => {
     if (tooltipTimeoutId) {
@@ -40,14 +30,9 @@ const Header: React.FC = () => {
 
   return (
     <>
-      {/* Minimal Navigation Bar */}
+      {/* Minimal Navigation Bar - 스크롤 시 탭에 덮임 */}
       <nav
-        className={cn(
-          'fixed top-0 left-0 right-0 z-50 transition-all duration-500',
-          scrolled
-            ? 'py-2 bg-bg-primary/80 backdrop-blur-2xl border-b border-white/5'
-            : 'py-4 bg-transparent'
-        )}
+        className="py-4 bg-transparent"
       >
         <div className="max-w-6xl mx-auto px-4 md:px-6">
           <div className="flex items-center justify-between">
@@ -119,8 +104,6 @@ const Header: React.FC = () => {
         </div>
       </nav>
 
-      {/* Spacer for fixed nav */}
-      <div className="h-14 md:h-16" />
 
       {/* Hero Section - Clean & Modern */}
       <header className="relative w-full overflow-hidden">
