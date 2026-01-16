@@ -161,7 +161,7 @@ const MusicPlayer: React.FC = () => {
     <>
       {/* Main Player */}
       <div className="fixed left-0 right-0 bottom-0 z-[70]">
-        <div className="bg-bg-secondary/95 backdrop-blur-2xl border-t border-white/10 shadow-[0_-4px_30px_rgba(0,0,0,0.3)]">
+        <div className="bg-bg-secondary/70 backdrop-blur-2xl border-t border-white/10 shadow-[0_-4px_30px_rgba(0,0,0,0.3),inset_0_1px_1px_rgba(255,255,255,0.1)]">
           {/* Progress Bar */}
           <div
             ref={progressRef}
@@ -312,8 +312,8 @@ const MusicPlayer: React.FC = () => {
           <div
             ref={volumeRef}
             className="absolute bottom-full right-2 md:right-4 mb-2 w-48 z-[70]
-                       bg-bg-secondary/95 backdrop-blur-2xl border border-white/10
-                       rounded-xl shadow-2xl overflow-hidden p-3"
+                       bg-bg-secondary/70 backdrop-blur-2xl border border-white/10
+                       rounded-xl shadow-[0_25px_50px_-12px_rgba(0,0,0,0.5),inset_0_1px_1px_rgba(255,255,255,0.1)] overflow-hidden p-3"
           >
             <div className="flex items-center gap-3">
               <Button
@@ -357,8 +357,8 @@ const MusicPlayer: React.FC = () => {
           <div
             ref={playlistRef}
             className="absolute bottom-full right-2 md:right-4 mb-2 w-72 max-h-72 z-[70]
-                       bg-bg-secondary/95 backdrop-blur-2xl border border-white/10
-                       rounded-xl shadow-2xl overflow-hidden"
+                       bg-bg-secondary/70 backdrop-blur-2xl border border-white/10
+                       rounded-xl shadow-[0_25px_50px_-12px_rgba(0,0,0,0.5),inset_0_1px_1px_rgba(255,255,255,0.1)] overflow-hidden"
           >
             <div className="px-3 py-2 border-b border-white/10">
               <h4 className="text-xs font-semibold text-text-primary">

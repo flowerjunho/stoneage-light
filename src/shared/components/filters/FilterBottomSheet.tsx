@@ -70,24 +70,26 @@ const FilterBottomSheet = ({
   return (
     <div className="fixed inset-0 z-50 flex items-end justify-center">
       {/* 배경 오버레이 */}
-      <div className="absolute inset-0 bg-black/50 backdrop-blur-sm" onClick={onClose} />
+      <div className="absolute inset-0 bg-black/60 backdrop-blur-md" onClick={onClose} />
 
       {/* 바텀시트 */}
       <div
         className={`
-        relative w-full max-w-4xl bg-bg-primary
-        rounded-t-2xl shadow-2xl transform transition-all duration-300 ease-out
+        relative w-full max-w-4xl bg-bg-secondary/80 backdrop-blur-2xl
+        border-t border-x border-white/10
+        rounded-t-2xl shadow-[0_-10px_40px_-10px_rgba(0,0,0,0.5),inset_0_1px_1px_rgba(255,255,255,0.1)]
+        transform transition-all duration-300 ease-out
         max-h-[85vh] overflow-hidden flex flex-col
         ${isOpen ? 'translate-y-0' : 'translate-y-full'}
       `}
       >
         {/* 드래그 핸들 */}
-        <div className="flex justify-center py-3 bg-bg-primary">
-          <div className="w-12 h-1 bg-text-secondary/30 rounded-full" />
+        <div className="flex justify-center py-3">
+          <div className="w-12 h-1 bg-white/30 rounded-full" />
         </div>
 
         {/* 헤더 */}
-        <div className="flex items-center justify-between px-4 py-3 border-b border-border-primary">
+        <div className="flex items-center justify-between px-4 py-3 border-b border-white/10">
           <div className="flex items-center gap-3">
             <div className="w-8 h-8 bg-accent rounded-lg flex items-center justify-center">
               <svg
@@ -118,9 +120,9 @@ const FilterBottomSheet = ({
         </div>
 
         {/* 스크롤 가능한 콘텐츠 */}
-        <div className="flex-1 overflow-y-auto bg-bg-primary py-2">
+        <div className="flex-1 overflow-y-auto py-2">
           {/* 즐겨찾기 필터 */}
-          <div className="border-b border-border-primary pb-4 mb-4">
+          <div className="border-b border-white/10 pb-4 mb-4">
             <FavoriteFilter
               onFilterChange={onFavoriteFilterChange}
               initialValue={showFavoritesOnly}
@@ -128,7 +130,7 @@ const FilterBottomSheet = ({
           </div>
 
           {/* 속성 필터 */}
-          <div className="border-b border-border-primary pb-4 mb-4">
+          <div className="border-b border-white/10 pb-4 mb-4">
             <div className="mb-4 px-4">
               <span className="text-text-secondary text-sm font-medium">속성 필터:</span>
             </div>
@@ -142,7 +144,7 @@ const FilterBottomSheet = ({
           </div>
 
           {/* 등급 필터 */}
-          <div className="border-b border-border-primary pb-4 mb-4">
+          <div className="border-b border-white/10 pb-4 mb-4">
             <div className="mb-4 px-4">
               <span className="text-text-secondary text-sm font-medium">페트 등급:</span>
             </div>
@@ -162,19 +164,20 @@ const FilterBottomSheet = ({
         </div>
 
         {/* 하단 버튼 */}
-        <div className="flex gap-3 p-4 border-t border-border-primary bg-bg-primary">
+        <div className="flex gap-3 p-4 border-t border-white/10">
           <button
             onClick={handleResetFilters}
-            className="flex-1 py-3 px-4 bg-bg-secondary text-text-secondary rounded-lg
-                     hover:bg-bg-tertiary hover:text-text-primary border border-border-primary
-                     transition-all duration-200 font-medium"
+            className="flex-1 py-3 px-4 bg-white/10 text-text-secondary rounded-xl
+                     hover:bg-white/20 hover:text-text-primary border border-white/10
+                     transition-all duration-200 font-medium backdrop-blur-sm"
           >
             전체 초기화
           </button>
           <button
             onClick={onClose}
-            className="flex-1 py-3 px-4 bg-accent text-white rounded-lg
-                     hover:bg-accent/90 transition-all duration-200 font-medium"
+            className="flex-1 py-3 px-4 bg-accent text-white rounded-xl
+                     hover:bg-accent/90 transition-all duration-200 font-medium
+                     shadow-lg shadow-accent/30"
           >
             닫기
           </button>

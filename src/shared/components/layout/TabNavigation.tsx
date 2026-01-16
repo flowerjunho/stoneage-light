@@ -110,7 +110,7 @@ const TabNavigation = () => {
         {/* 탭 컨테이너 */}
         <div
           ref={containerRef}
-          className="group/nav relative rounded-2xl border border-white/10 shadow-xl shadow-black/20 overflow-hidden bg-bg-secondary/5 backdrop-blur-sm"
+          className="group/nav relative rounded-2xl border border-white/10 shadow-xl shadow-black/20 overflow-hidden bg-bg-secondary/70 backdrop-blur-xl"
           onMouseEnter={() => setIsHovering(true)}
           onMouseLeave={() => setIsHovering(false)}
         >

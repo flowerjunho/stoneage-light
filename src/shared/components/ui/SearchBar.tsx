@@ -47,11 +47,12 @@ const SearchBar: React.FC<SearchBarProps> = ({
       <div
         className={cn(
           "group relative flex items-center",
-          "bg-bg-secondary rounded-2xl",
+          "bg-bg-secondary/80 backdrop-blur-xl rounded-2xl",
           "border-2 transition-all duration-300 ease-out",
+          "shadow-[inset_0_1px_1px_rgba(255,255,255,0.08)]",
           isFocused
             ? "border-accent shadow-glow"
-            : "border-border hover:border-border-light"
+            : "border-white/10 hover:border-white/20"
         )}
       >
         {/* Search Icon */}

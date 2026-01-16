@@ -1,15 +1,26 @@
 /** @type {import('tailwindcss').Config} */
+
+// CSS 변수를 opacity modifier와 함께 사용할 수 있도록 하는 헬퍼 함수
+const withOpacity = (variableName) => {
+  return ({ opacityValue }) => {
+    if (opacityValue !== undefined) {
+      return `rgba(var(${variableName}), ${opacityValue})`;
+    }
+    return `rgb(var(${variableName}))`;
+  };
+};
+
 export default {
   content: ['./index.html', './src/**/*.{js,ts,jsx,tsx}'],
   darkMode: 'class',
   theme: {
     extend: {
       colors: {
-        // Core backgrounds
-        'bg-primary': 'var(--bg-primary)',
-        'bg-secondary': 'var(--bg-secondary)',
-        'bg-tertiary': 'var(--bg-tertiary)',
-        'bg-elevated': 'var(--bg-elevated)',
+        // Core backgrounds - opacity modifier 지원
+        'bg-primary': withOpacity('--bg-primary-rgb'),
+        'bg-secondary': withOpacity('--bg-secondary-rgb'),
+        'bg-tertiary': withOpacity('--bg-tertiary-rgb'),
+        'bg-elevated': withOpacity('--bg-elevated-rgb'),
 
         // Text hierarchy
         'text-primary': 'var(--text-primary)',
@@ -17,8 +28,8 @@ export default {
         'text-muted': 'var(--text-muted)',
         'text-inverse': 'var(--text-inverse)',
 
-        // Accent colors
-        accent: 'var(--accent)',
+        // Accent colors - opacity modifier 지원
+        accent: withOpacity('--accent-rgb'),
         'accent-hover': 'var(--accent-hover)',
         'accent-soft': 'var(--accent-soft)',
         'accent-glow': 'var(--accent-glow)',

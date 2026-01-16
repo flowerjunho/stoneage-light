@@ -74,9 +74,9 @@ const PWAUpdatePrompt = () => {
 
   return (
     <div className="fixed bottom-4 left-4 right-4 md:left-auto md:right-4 md:w-96 z-[9999] animate-slide-up">
-      <div className="bg-bg-secondary border border-accent rounded-lg shadow-2xl p-4">
+      <div className="bg-bg-secondary/80 backdrop-blur-2xl border border-accent/50 rounded-xl shadow-[0_25px_50px_-12px_rgba(0,0,0,0.5),inset_0_1px_1px_rgba(255,255,255,0.1)] p-4">
         <div className="flex items-start gap-3">
-          <div className="flex-shrink-0 w-10 h-10 bg-accent/20 rounded-full flex items-center justify-center">
+          <div className="flex-shrink-0 w-10 h-10 bg-accent/30 backdrop-blur-sm rounded-full flex items-center justify-center shadow-lg shadow-accent/20">
             <span className="text-xl">🔄</span>
           </div>
           <div className="flex-1 min-w-0">
@@ -89,13 +89,13 @@ const PWAUpdatePrompt = () => {
             <div className="flex gap-2">
               <button
                 onClick={handleUpdate}
-                className="flex-1 px-3 py-1.5 bg-accent text-white text-xs font-bold rounded-lg hover:bg-accent/90 transition-colors"
+                className="flex-1 px-3 py-1.5 bg-accent text-white text-xs font-bold rounded-lg hover:bg-accent/90 transition-colors shadow-lg shadow-accent/30"
               >
                 지금 업데이트
               </button>
               <button
                 onClick={handleClose}
-                className="px-3 py-1.5 bg-bg-tertiary text-text-secondary text-xs rounded-lg hover:bg-bg-tertiary/80 transition-colors"
+                className="px-3 py-1.5 bg-white/10 text-text-secondary text-xs rounded-lg hover:bg-white/20 transition-colors border border-white/10"
               >
                 취소
               </button>
@@ -103,7 +103,7 @@ const PWAUpdatePrompt = () => {
           </div>
         </div>
         {/* 프로그레스 바 */}
-        <div className="mt-3 h-1 bg-bg-tertiary rounded-full overflow-hidden">
+        <div className="mt-3 h-1 bg-white/10 rounded-full overflow-hidden">
           <div
             className="h-full bg-accent transition-all duration-1000 ease-linear"
             style={{ width: `${(countdown / AUTO_UPDATE_SECONDS) * 100}%` }}

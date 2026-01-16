@@ -44,6 +44,13 @@
   --bg-tertiary: #16161f;
   --bg-elevated: #1f1f2e;
 
+  /* RGB versions for Tailwind opacity modifier support */
+  --bg-primary-rgb: 5, 5, 10;
+  --bg-secondary-rgb: 13, 13, 21;
+  --bg-tertiary-rgb: 22, 22, 31;
+  --bg-elevated-rgb: 31, 31, 46;
+  --accent-rgb: 251, 191, 36;
+
   /* Text hierarchy */
   --text-primary: #ffffff;
   --text-secondary: #9ca3af;
@@ -116,6 +123,13 @@
   --bg-secondary: #faf6f0;
   --bg-tertiary: #f3ebe0;
   --bg-elevated: #ffffff;
+
+  /* RGB versions for Tailwind opacity modifier support */
+  --bg-primary-rgb: 254, 252, 249;
+  --bg-secondary-rgb: 250, 246, 240;
+  --bg-tertiary-rgb: 243, 235, 224;
+  --bg-elevated-rgb: 255, 255, 255;
+  --accent-rgb: 217, 119, 6;
 
   /* Text hierarchy */
   --text-primary: #1a1612;
