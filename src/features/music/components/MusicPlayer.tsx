@@ -95,12 +95,55 @@ const MusicPlayer: React.FC = () => {
             seek(Math.min(duration, currentTime + 10));
           }
           break;
+        // 미디어 키 지원
+        case 'MediaTrackPrevious':
+          e.preventDefault();
+          previous();
+          break;
+        case 'MediaTrackNext':
+          e.preventDefault();
+          next();
+          break;
+        case 'MediaPlayPause':
+          e.preventDefault();
+          toggle();
+          break;
       }
     };
 
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [currentTrack, toggle, seek, currentTime, duration]);
+  }, [currentTrack, toggle, seek, currentTime, duration, previous, next]);
+
+  // Media Session API - 브라우저/OS 미디어 컨트롤 지원
+  useEffect(() => {
+    if (!('mediaSession' in navigator) || !currentTrack) return;
+
+    navigator.mediaSession.metadata = new MediaMetadata({
+      title: currentTrack.title,
+      artist: currentTrack.artist || '알 수 없는 아티스트',
+      album: 'StoneAge Light',
+      artwork: currentTrack.coverUrl
+        ? [{ src: getCoverUrl(currentTrack.coverUrl), sizes: '512x512', type: 'image/jpeg' }]
+        : [],
+    });
+
+    navigator.mediaSession.setActionHandler('play', () => toggle());
+    navigator.mediaSession.setActionHandler('pause', () => toggle());
+    navigator.mediaSession.setActionHandler('previoustrack', () => previous());
+    navigator.mediaSession.setActionHandler('nexttrack', () => next());
+    navigator.mediaSession.setActionHandler('seekbackward', () => seek(Math.max(0, currentTime - 10)));
+    navigator.mediaSession.setActionHandler('seekforward', () => seek(Math.min(duration, currentTime + 10)));
+
+    return () => {
+      navigator.mediaSession.setActionHandler('play', null);
+      navigator.mediaSession.setActionHandler('pause', null);
+      navigator.mediaSession.setActionHandler('previoustrack', null);
+      navigator.mediaSession.setActionHandler('nexttrack', null);
+      navigator.mediaSession.setActionHandler('seekbackward', null);
+      navigator.mediaSession.setActionHandler('seekforward', null);
+    };
+  }, [currentTrack, toggle, previous, next, seek, currentTime, duration]);
 
   // 플레이리스트/볼륨 외부 클릭 시 닫기
   useEffect(() => {
