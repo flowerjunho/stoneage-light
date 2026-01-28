@@ -94,7 +94,6 @@ export const MusicPlayerProvider: React.FC<MusicPlayerProviderProps> = ({
   const nextRef = useRef<() => void>(() => {});
   const previousRef = useRef<() => void>(() => {});
   const toggleRef = useRef<() => void>(() => {});
-  const seekRef = useRef<(time: number) => void>(() => {});
 
   useEffect(() => {
     repeatModeRef.current = repeatMode;
@@ -109,23 +108,19 @@ export const MusicPlayerProvider: React.FC<MusicPlayerProviderProps> = ({
   }, [currentTrack]);
 
   // MediaSession 핸들러 설정 (iOS 잠금화면 이전/다음 버튼 노출)
+  // 주의: iOS에서 seekbackward/seekforward를 등록하면 이전/다음 버튼이
+  // seek 버튼으로 대체되므로 등록하지 않음
   const setupMediaSessionHandlers = useCallback(() => {
     if (!('mediaSession' in navigator)) return;
 
-    navigator.mediaSession.setActionHandler('play', () => toggleRef.current());
-    navigator.mediaSession.setActionHandler('pause', () => toggleRef.current());
-    navigator.mediaSession.setActionHandler('previoustrack', () => previousRef.current());
-    navigator.mediaSession.setActionHandler('nexttrack', () => nextRef.current());
-    navigator.mediaSession.setActionHandler('seekbackward', () => {
-      if (audioRef.current) {
-        seekRef.current(Math.max(0, audioRef.current.currentTime - 10));
-      }
-    });
-    navigator.mediaSession.setActionHandler('seekforward', () => {
-      if (audioRef.current) {
-        seekRef.current(Math.min(audioRef.current.duration || 0, audioRef.current.currentTime + 10));
-      }
-    });
+    try {
+      navigator.mediaSession.setActionHandler('play', () => toggleRef.current());
+      navigator.mediaSession.setActionHandler('pause', () => toggleRef.current());
+      navigator.mediaSession.setActionHandler('previoustrack', () => previousRef.current());
+      navigator.mediaSession.setActionHandler('nexttrack', () => nextRef.current());
+    } catch (e) {
+      console.warn('MediaSession 핸들러 등록 실패:', e);
+    }
   }, []);
 
   // Initialize audio element
@@ -357,7 +352,6 @@ export const MusicPlayerProvider: React.FC<MusicPlayerProviderProps> = ({
   useEffect(() => { nextRef.current = next; }, [next]);
   useEffect(() => { previousRef.current = previous; }, [previous]);
   useEffect(() => { toggleRef.current = toggle; }, [toggle]);
-  useEffect(() => { seekRef.current = seek; }, [seek]);
 
   // MediaSession 메타데이터 업데이트 (트랙 변경 시)
   useEffect(() => {
