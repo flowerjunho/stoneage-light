@@ -51,6 +51,23 @@ const MusicPlayer: React.FC = () => {
   const progressRef = useRef<HTMLDivElement>(null);
   const playlistRef = useRef<HTMLDivElement>(null);
 
+  // Stable refs for action handlers (iOS Safari MediaSession 호환)
+  const toggleRef = useRef(toggle);
+  const nextRef = useRef(next);
+  const previousRef = useRef(previous);
+  const seekRef = useRef(seek);
+  const currentTimeRef = useRef(currentTime);
+  const durationRef = useRef(duration);
+  const currentTrackRef = useRef(currentTrack);
+
+  useEffect(() => { toggleRef.current = toggle; }, [toggle]);
+  useEffect(() => { nextRef.current = next; }, [next]);
+  useEffect(() => { previousRef.current = previous; }, [previous]);
+  useEffect(() => { seekRef.current = seek; }, [seek]);
+  useEffect(() => { currentTimeRef.current = currentTime; }, [currentTime]);
+  useEffect(() => { durationRef.current = duration; }, [duration]);
+  useEffect(() => { currentTrackRef.current = currentTrack; }, [currentTrack]);
+
   // Progress bar 클릭/드래그 처리
   const handleProgressClick = (e: React.MouseEvent<HTMLDivElement>) => {
     if (!progressRef.current || duration === 0) return;
@@ -66,7 +83,7 @@ const MusicPlayer: React.FC = () => {
     seek(percent * duration);
   };
 
-  // 키보드 단축키
+  // 키보드 단축키 (ref 기반으로 한 번만 등록)
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (
@@ -78,44 +95,66 @@ const MusicPlayer: React.FC = () => {
 
       switch (e.code) {
         case 'Space':
-          if (currentTrack) {
+          if (currentTrackRef.current) {
             e.preventDefault();
-            toggle();
+            toggleRef.current();
           }
           break;
         case 'ArrowLeft':
-          if (e.shiftKey && currentTrack) {
+          if (e.shiftKey && currentTrackRef.current) {
             e.preventDefault();
-            seek(Math.max(0, currentTime - 10));
+            seekRef.current(Math.max(0, currentTimeRef.current - 10));
           }
           break;
         case 'ArrowRight':
-          if (e.shiftKey && currentTrack) {
+          if (e.shiftKey && currentTrackRef.current) {
             e.preventDefault();
-            seek(Math.min(duration, currentTime + 10));
+            seekRef.current(Math.min(durationRef.current, currentTimeRef.current + 10));
           }
           break;
         // 미디어 키 지원
         case 'MediaTrackPrevious':
           e.preventDefault();
-          previous();
+          previousRef.current();
           break;
         case 'MediaTrackNext':
           e.preventDefault();
-          next();
+          nextRef.current();
           break;
         case 'MediaPlayPause':
           e.preventDefault();
-          toggle();
+          toggleRef.current();
           break;
       }
     };
 
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [currentTrack, toggle, seek, currentTime, duration, previous, next]);
+  }, []);
 
   // Media Session API - 브라우저/OS 미디어 컨트롤 지원
+  // 핸들러는 한 번만 등록하고 ref로 최신 함수 참조 (iOS Safari 호환)
+  useEffect(() => {
+    if (!('mediaSession' in navigator)) return;
+
+    navigator.mediaSession.setActionHandler('play', () => toggleRef.current());
+    navigator.mediaSession.setActionHandler('pause', () => toggleRef.current());
+    navigator.mediaSession.setActionHandler('previoustrack', () => previousRef.current());
+    navigator.mediaSession.setActionHandler('nexttrack', () => nextRef.current());
+    navigator.mediaSession.setActionHandler('seekbackward', () => seekRef.current(Math.max(0, currentTimeRef.current - 10)));
+    navigator.mediaSession.setActionHandler('seekforward', () => seekRef.current(Math.min(durationRef.current, currentTimeRef.current + 10)));
+
+    return () => {
+      navigator.mediaSession.setActionHandler('play', null);
+      navigator.mediaSession.setActionHandler('pause', null);
+      navigator.mediaSession.setActionHandler('previoustrack', null);
+      navigator.mediaSession.setActionHandler('nexttrack', null);
+      navigator.mediaSession.setActionHandler('seekbackward', null);
+      navigator.mediaSession.setActionHandler('seekforward', null);
+    };
+  }, []);
+
+  // Media Session 메타데이터 업데이트 (트랙 변경 시에만)
   useEffect(() => {
     if (!('mediaSession' in navigator) || !currentTrack) return;
 
@@ -127,23 +166,7 @@ const MusicPlayer: React.FC = () => {
         ? [{ src: getCoverUrl(currentTrack.coverUrl), sizes: '512x512', type: 'image/jpeg' }]
         : [],
     });
-
-    navigator.mediaSession.setActionHandler('play', () => toggle());
-    navigator.mediaSession.setActionHandler('pause', () => toggle());
-    navigator.mediaSession.setActionHandler('previoustrack', () => previous());
-    navigator.mediaSession.setActionHandler('nexttrack', () => next());
-    navigator.mediaSession.setActionHandler('seekbackward', () => seek(Math.max(0, currentTime - 10)));
-    navigator.mediaSession.setActionHandler('seekforward', () => seek(Math.min(duration, currentTime + 10)));
-
-    return () => {
-      navigator.mediaSession.setActionHandler('play', null);
-      navigator.mediaSession.setActionHandler('pause', null);
-      navigator.mediaSession.setActionHandler('previoustrack', null);
-      navigator.mediaSession.setActionHandler('nexttrack', null);
-      navigator.mediaSession.setActionHandler('seekbackward', null);
-      navigator.mediaSession.setActionHandler('seekforward', null);
-    };
-  }, [currentTrack, toggle, previous, next, seek, currentTime, duration]);
+  }, [currentTrack]);
 
   // 플레이리스트/볼륨 외부 클릭 시 닫기
   useEffect(() => {
