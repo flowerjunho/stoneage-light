@@ -8,7 +8,7 @@ import React, {
 } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import type { Track } from '@/services/musicApi';
-import { getStreamUrl, incrementPlayCount, getTracks } from '@/services/musicApi';
+import { getStreamUrl, getCoverUrl, incrementPlayCount, getTracks } from '@/services/musicApi';
 
 // ============================================
 // Types
@@ -90,6 +90,11 @@ export const MusicPlayerProvider: React.FC<MusicPlayerProviderProps> = ({
   // Refs for callbacks to avoid stale closures
   const repeatModeRef = useRef(repeatMode);
   const playlistRef = useRef(playlist);
+  const currentTrackRef = useRef(currentTrack);
+  const nextRef = useRef<() => void>(() => {});
+  const previousRef = useRef<() => void>(() => {});
+  const toggleRef = useRef<() => void>(() => {});
+  const seekRef = useRef<(time: number) => void>(() => {});
 
   useEffect(() => {
     repeatModeRef.current = repeatMode;
@@ -98,6 +103,30 @@ export const MusicPlayerProvider: React.FC<MusicPlayerProviderProps> = ({
   useEffect(() => {
     playlistRef.current = playlist;
   }, [playlist]);
+
+  useEffect(() => {
+    currentTrackRef.current = currentTrack;
+  }, [currentTrack]);
+
+  // MediaSession 핸들러 설정 (iOS 잠금화면 이전/다음 버튼 노출)
+  const setupMediaSessionHandlers = useCallback(() => {
+    if (!('mediaSession' in navigator)) return;
+
+    navigator.mediaSession.setActionHandler('play', () => toggleRef.current());
+    navigator.mediaSession.setActionHandler('pause', () => toggleRef.current());
+    navigator.mediaSession.setActionHandler('previoustrack', () => previousRef.current());
+    navigator.mediaSession.setActionHandler('nexttrack', () => nextRef.current());
+    navigator.mediaSession.setActionHandler('seekbackward', () => {
+      if (audioRef.current) {
+        seekRef.current(Math.max(0, audioRef.current.currentTime - 10));
+      }
+    });
+    navigator.mediaSession.setActionHandler('seekforward', () => {
+      if (audioRef.current) {
+        seekRef.current(Math.min(audioRef.current.duration || 0, audioRef.current.currentTime + 10));
+      }
+    });
+  }, []);
 
   // Initialize audio element
   useEffect(() => {
@@ -113,7 +142,12 @@ export const MusicPlayerProvider: React.FC<MusicPlayerProviderProps> = ({
       setDuration(audio.duration);
       setIsLoading(false);
     };
-    const handlePlay = () => setIsPlaying(true);
+    const handlePlay = () => {
+      setIsPlaying(true);
+      // iOS Safari: play 이벤트 시점에 MediaSession 핸들러를 (재)등록해야
+      // 잠금화면/컨트롤센터에 이전/다음 버튼이 노출됨
+      setupMediaSessionHandlers();
+    };
     const handlePause = () => setIsPlaying(false);
     const handleWaiting = () => setIsLoading(true);
     const handleCanPlay = () => setIsLoading(false);
@@ -318,6 +352,29 @@ export const MusicPlayerProvider: React.FC<MusicPlayerProviderProps> = ({
       audioRef.current.currentTime = time;
     }
   }, []);
+
+  // Refs 갱신 - MediaSession 핸들러가 항상 최신 함수를 참조하도록
+  useEffect(() => { nextRef.current = next; }, [next]);
+  useEffect(() => { previousRef.current = previous; }, [previous]);
+  useEffect(() => { toggleRef.current = toggle; }, [toggle]);
+  useEffect(() => { seekRef.current = seek; }, [seek]);
+
+  // MediaSession 메타데이터 업데이트 (트랙 변경 시)
+  useEffect(() => {
+    if (!('mediaSession' in navigator) || !currentTrack) return;
+
+    navigator.mediaSession.metadata = new MediaMetadata({
+      title: currentTrack.title,
+      artist: currentTrack.artist || '알 수 없는 아티스트',
+      album: 'StoneAge Light',
+      artwork: currentTrack.coverUrl
+        ? [{ src: getCoverUrl(currentTrack.coverUrl), sizes: '512x512', type: 'image/jpeg' }]
+        : [],
+    });
+
+    // 트랙 변경 시에도 핸들러 재설정 (iOS 안정성)
+    setupMediaSessionHandlers();
+  }, [currentTrack, setupMediaSessionHandlers]);
 
   const setVolume = useCallback((vol: number) => {
     setVolumeState(Math.max(0, Math.min(1, vol)));
