@@ -106,7 +106,7 @@ const AppContent: React.FC = () => {
           <Route path="/" element={<Navigate to="/pets" replace />} />
           <Route path="/notice" element={<NoticePage />} />
           <Route path="/notice/:type/:noteId" element={<PatchNoteDetailPage />} />
-          <Route path="/market" element={<SharePage tribe="all" requireAuth={false} title="🏪 거래소" />} />
+          <Route path="/market" element={<Navigate to="/pets" replace />} />
           <Route path="/auction" element={<SharePage tribe="all" requireAuth={false} title="🏪 거래소" defaultTab="auction" />} />
           <Route path="/pets" element={<PetsPage />} />
           <Route path="/boarding" element={<BoardingPage />} />
