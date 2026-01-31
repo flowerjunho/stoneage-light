@@ -1,6 +1,6 @@
 {
   "lastUpdated": "2025-09-18T03:55:09.699Z",
-  "totalCount": 454,
+  "totalCount": 614,
   "pets": [
     {
       "id": "782",
@@ -14553,6 +14553,2031 @@
       },
       "rideable": "탑승불가",
       "totalGrowth": "4.390",
+      "grade": "일반등급"
+    },
+    {
+      "id": "783",
+      "name": "몽돌",
+      "source": "오픈기념홍보보상",
+      "imageLink": "",
+      "elementStats": {
+        "earth": 0,
+        "water": 0,
+        "fire": 2,
+        "wind": 8
+      },
+      "baseStats": {
+        "attack": 11,
+        "defense": 5,
+        "agility": 8,
+        "vitality": 51
+      },
+      "growthStats": {
+        "attack": 2.174,
+        "defense": 1.112,
+        "agility": 1.616,
+        "vitality": 10.233
+      },
+      "rideable": "탑승불가",
+      "totalGrowth": "4.901",
+      "grade": "일반등급"
+    },
+    {
+      "id": "784",
+      "name": "주니무미",
+      "source": "인어의 은신처 보상",
+      "imageLink": "",
+      "elementStats": {
+        "earth": 0,
+        "water": 0,
+        "fire": 9,
+        "wind": 1
+      },
+      "baseStats": {
+        "attack": 11,
+        "defense": 5,
+        "agility": 7,
+        "vitality": 48
+      },
+      "growthStats": {
+        "attack": 2.294,
+        "defense": 1.184,
+        "agility": 1.602,
+        "vitality": 9.984
+      },
+      "rideable": "탑승불가",
+      "totalGrowth": "5.081",
+      "grade": "일반등급"
+    },
+    {
+      "id": "785",
+      "name": "프라피",
+      "source": "필드포획(선행퀘클리어)",
+      "imageLink": "",
+      "elementStats": {
+        "earth": 2,
+        "water": 0,
+        "fire": 0,
+        "wind": 8
+      },
+      "baseStats": {
+        "attack": 9,
+        "defense": 5,
+        "agility": 9,
+        "vitality": 48
+      },
+      "growthStats": {
+        "attack": 1.966,
+        "defense": 1.212,
+        "agility": 1.849,
+        "vitality": 9.934
+      },
+      "rideable": "탑승불가",
+      "totalGrowth": "5.026",
+      "grade": "일반등급"
+    },
+    {
+      "id": "786",
+      "name": "황금복덩이",
+      "source": "추석 황금 복주머니 확률보상",
+      "imageLink": "",
+      "elementStats": {
+        "earth": 0,
+        "water": 0,
+        "fire": 0,
+        "wind": 10
+      },
+      "baseStats": {
+        "attack": 10,
+        "defense": 6,
+        "agility": 10,
+        "vitality": 54
+      },
+      "growthStats": {
+        "attack": 1.858,
+        "defense": 1.219,
+        "agility": 1.963,
+        "vitality": 9.911
+      },
+      "rideable": "탑승불가",
+      "totalGrowth": "5.041",
+      "grade": "2등급"
+    },
+    {
+      "id": "787",
+      "name": "킹우리",
+      "source": "페트합성",
+      "imageLink": "",
+      "elementStats": {
+        "earth": 0,
+        "water": 2,
+        "fire": 8,
+        "wind": 0
+      },
+      "baseStats": {
+        "attack": 12,
+        "defense": 6,
+        "agility": 9,
+        "vitality": 59
+      },
+      "growthStats": {
+        "attack": 2.331,
+        "defense": 1.224,
+        "agility": 1.68,
+        "vitality": 10.81
+      },
+      "rideable": "탑승불가",
+      "totalGrowth": "5.235",
+      "grade": "일반등급"
+    },
+    {
+      "id": "788",
+      "name": "쿠팡",
+      "source": "흑운모 상점",
+      "imageLink": "",
+      "elementStats": {
+        "earth": 0,
+        "water": 5,
+        "fire": 5,
+        "wind": 0
+      },
+      "baseStats": {
+        "attack": 10,
+        "defense": 6,
+        "agility": 8,
+        "vitality": 50
+      },
+      "growthStats": {
+        "attack": 2.13,
+        "defense": 1.236,
+        "agility": 1.727,
+        "vitality": 9.959
+      },
+      "rideable": "탑승불가",
+      "totalGrowth": "5.093",
+      "grade": "일반등급"
+    },
+    {
+      "id": "789",
+      "name": "각수",
+      "source": "페트합성(돌연변이)",
+      "imageLink": "",
+      "elementStats": {
+        "earth": 2,
+        "water": 0,
+        "fire": 0,
+        "wind": 8
+      },
+      "baseStats": {
+        "attack": 11,
+        "defense": 6,
+        "agility": 9,
+        "vitality": 52
+      },
+      "growthStats": {
+        "attack": 2.267,
+        "defense": 1.245,
+        "agility": 1.727,
+        "vitality": 9.911
+      },
+      "rideable": "탑승불가",
+      "totalGrowth": "5.24",
+      "grade": "일반등급"
+    },
+    {
+      "id": "790",
+      "name": "한복밍코",
+      "source": "추석 송편 상점",
+      "imageLink": "",
+      "elementStats": {
+        "earth": 0,
+        "water": 5,
+        "fire": 5,
+        "wind": 0
+      },
+      "baseStats": {
+        "attack": 10,
+        "defense": 6,
+        "agility": 8,
+        "vitality": 51
+      },
+      "growthStats": {
+        "attack": 2.133,
+        "defense": 1.255,
+        "agility": 1.616,
+        "vitality": 10.131
+      },
+      "rideable": "탑승불가",
+      "totalGrowth": "5.004",
+      "grade": "일반등급"
+    },
+    {
+      "id": "791",
+      "name": "모사크",
+      "source": "3차 홍보 보상",
+      "imageLink": "",
+      "elementStats": {
+        "earth": 0,
+        "water": 10,
+        "fire": 0,
+        "wind": 0
+      },
+      "baseStats": {
+        "attack": 11,
+        "defense": 7,
+        "agility": 5,
+        "vitality": 53
+      },
+      "growthStats": {
+        "attack": 2.331,
+        "defense": 1.48,
+        "agility": 1.112,
+        "vitality": 10.526
+      },
+      "rideable": "탑승불가",
+      "totalGrowth": "4.923",
+      "grade": "일반등급"
+    },
+    {
+      "id": "792",
+      "name": "루파루파",
+      "source": "흑운모 상점",
+      "imageLink": "",
+      "elementStats": {
+        "earth": 0,
+        "water": 8,
+        "fire": 2,
+        "wind": 0
+      },
+      "baseStats": {
+        "attack": 12,
+        "defense": 8,
+        "agility": 6,
+        "vitality": 54
+      },
+      "growthStats": {
+        "attack": 2.286,
+        "defense": 1.52,
+        "agility": 1.254,
+        "vitality": 10.29
+      },
+      "rideable": "탑승불가",
+      "totalGrowth": "5.06",
+      "grade": "일반등급"
+    },
+    {
+      "id": "793",
+      "name": "모가",
+      "source": "페트합성",
+      "imageLink": "",
+      "elementStats": {
+        "earth": 0,
+        "water": 1,
+        "fire": 9,
+        "wind": 0
+      },
+      "baseStats": {
+        "attack": 12,
+        "defense": 6,
+        "agility": 8,
+        "vitality": 53
+      },
+      "growthStats": {
+        "attack": 2.272,
+        "defense": 1.293,
+        "agility": 1.632,
+        "vitality": 10.053
+      },
+      "rideable": "탑승불가",
+      "totalGrowth": "5.197",
+      "grade": "일반등급"
+    },
+    {
+      "id": "794",
+      "name": "우리스타",
+      "source": "페트합성",
+      "imageLink": "",
+      "elementStats": {
+        "earth": 0,
+        "water": 5,
+        "fire": 5,
+        "wind": 0
+      },
+      "baseStats": {
+        "attack": 10,
+        "defense": 6,
+        "agility": 7,
+        "vitality": 48
+      },
+      "growthStats": {
+        "attack": 2.234,
+        "defense": 1.297,
+        "agility": 1.632,
+        "vitality": 10.385
+      },
+      "rideable": "탑승불가",
+      "totalGrowth": "5.164",
+      "grade": "일반등급"
+    },
+    {
+      "id": "795",
+      "name": "킹꼬미",
+      "source": "페트합성",
+      "imageLink": "",
+      "elementStats": {
+        "earth": 0,
+        "water": 0,
+        "fire": 10,
+        "wind": 0
+      },
+      "baseStats": {
+        "attack": 11,
+        "defense": 6,
+        "agility": 8,
+        "vitality": 52
+      },
+      "growthStats": {
+        "attack": 2.324,
+        "defense": 1.302,
+        "agility": 1.632,
+        "vitality": 10.29
+      },
+      "rideable": "탑승불가",
+      "totalGrowth": "5.259",
+      "grade": "일반등급"
+    },
+    {
+      "id": "796",
+      "name": "한복메이",
+      "source": "추석 송편 상점",
+      "imageLink": "",
+      "elementStats": {
+        "earth": 4,
+        "water": 0,
+        "fire": 0,
+        "wind": 6
+      },
+      "baseStats": {
+        "attack": 10,
+        "defense": 6,
+        "agility": 8,
+        "vitality": 49
+      },
+      "growthStats": {
+        "attack": 2.085,
+        "defense": 1.319,
+        "agility": 1.68,
+        "vitality": 9.77
+      },
+      "rideable": "탑승불가",
+      "totalGrowth": "5.083",
+      "grade": "일반등급"
+    },
+    {
+      "id": "797",
+      "name": "고르",
+      "source": "페트진화(변종)",
+      "imageLink": "",
+      "elementStats": {
+        "earth": 0,
+        "water": 0,
+        "fire": 9,
+        "wind": 1
+      },
+      "baseStats": {
+        "attack": 9,
+        "defense": 5,
+        "agility": 7,
+        "vitality": 42
+      },
+      "growthStats": {
+        "attack": 2.175,
+        "defense": 1.323,
+        "agility": 1.68,
+        "vitality": 9.675
+      },
+      "rideable": "탑승불가",
+      "totalGrowth": "5.178",
+      "grade": "일반등급"
+    },
+    {
+      "id": "798",
+      "name": "보르비스",
+      "source": "하이하모진입이벤트",
+      "imageLink": "",
+      "elementStats": {
+        "earth": 3,
+        "water": 7,
+        "fire": 0,
+        "wind": 0
+      },
+      "baseStats": {
+        "attack": 10,
+        "defense": 6,
+        "agility": 7,
+        "vitality": 52
+      },
+      "growthStats": {
+        "attack": 2.05,
+        "defense": 1.326,
+        "agility": 1.538,
+        "vitality": 10.337
+      },
+      "rideable": "탑승불가",
+      "totalGrowth": "4.913",
+      "grade": "일반등급"
+    },
+    {
+      "id": "799",
+      "name": "파르곤(환)",
+      "source": "페트환생",
+      "imageLink": "",
+      "elementStats": {
+        "earth": 0,
+        "water": 9,
+        "fire": 1,
+        "wind": 0
+      },
+      "baseStats": {
+        "attack": 12,
+        "defense": 8,
+        "agility": 7,
+        "vitality": 61
+      },
+      "growthStats": {
+        "attack": 2.267,
+        "defense": 1.586,
+        "agility": 1.348,
+        "vitality": 11.142
+      },
+      "rideable": "탑승가능",
+      "totalGrowth": "5.202",
+      "grade": "일반등급"
+    },
+    {
+      "id": "800",
+      "name": "쿠아",
+      "source": "흑운모 상점",
+      "imageLink": "",
+      "elementStats": {
+        "earth": 5,
+        "water": 0,
+        "fire": 0,
+        "wind": 5
+      },
+      "baseStats": {
+        "attack": 11,
+        "defense": 6,
+        "agility": 7,
+        "vitality": 52
+      },
+      "growthStats": {
+        "attack": 2.187,
+        "defense": 1.335,
+        "agility": 1.538,
+        "vitality": 10.29
+      },
+      "rideable": "탑승불가",
+      "totalGrowth": "5.06",
+      "grade": "일반등급"
+    },
+    {
+      "id": "801",
+      "name": "베모티스",
+      "source": "필드포획(통발필요)",
+      "imageLink": "",
+      "elementStats": {
+        "earth": 0,
+        "water": 0,
+        "fire": 2,
+        "wind": 8
+      },
+      "baseStats": {
+        "attack": 12,
+        "defense": 7,
+        "agility": 7,
+        "vitality": 56
+      },
+      "growthStats": {
+        "attack": 2.229,
+        "defense": 1.335,
+        "agility": 1.443,
+        "vitality": 10.243
+      },
+      "rideable": "탑승불가",
+      "totalGrowth": "5.008",
+      "grade": "일반등급"
+    },
+    {
+      "id": "802",
+      "name": "백호(환)",
+      "source": "페트환생",
+      "imageLink": "",
+      "elementStats": {
+        "earth": 0,
+        "water": 10,
+        "fire": 0,
+        "wind": 0
+      },
+      "baseStats": {
+        "attack": 11,
+        "defense": 6,
+        "agility": 8,
+        "vitality": 55
+      },
+      "growthStats": {
+        "attack": 2.251,
+        "defense": 1.314,
+        "agility": 1.68,
+        "vitality": 11
+      },
+      "rideable": "탑승가능",
+      "totalGrowth": "5.244",
+      "grade": "일반등급"
+    },
+    {
+      "id": "803",
+      "name": "노가",
+      "source": "페트합성",
+      "imageLink": "",
+      "elementStats": {
+        "earth": 0,
+        "water": 0,
+        "fire": 0,
+        "wind": 10
+      },
+      "baseStats": {
+        "attack": 11,
+        "defense": 7,
+        "agility": 9,
+        "vitality": 54
+      },
+      "growthStats": {
+        "attack": 2.192,
+        "defense": 1.34,
+        "agility": 1.727,
+        "vitality": 10.29
+      },
+      "rideable": "탑승불가",
+      "totalGrowth": "5.259",
+      "grade": "일반등급"
+    },
+    {
+      "id": "804",
+      "name": "미니스",
+      "source": "필드포획",
+      "imageLink": "",
+      "elementStats": {
+        "earth": 0,
+        "water": 5,
+        "fire": 5,
+        "wind": 0
+      },
+      "baseStats": {
+        "attack": 10,
+        "defense": 6,
+        "agility": 7,
+        "vitality": 50
+      },
+      "growthStats": {
+        "attack": 2.084,
+        "defense": 1.345,
+        "agility": 1.564,
+        "vitality": 9.925
+      },
+      "rideable": "탑승불가",
+      "totalGrowth": "4.993",
+      "grade": "일반등급"
+    },
+    {
+      "id": "805",
+      "name": "바이겔",
+      "source": "흑운모 상점",
+      "imageLink": "",
+      "elementStats": {
+        "earth": 0,
+        "water": 8,
+        "fire": 2,
+        "wind": 0
+      },
+      "baseStats": {
+        "attack": 11,
+        "defense": 7,
+        "agility": 7,
+        "vitality": 56
+      },
+      "growthStats": {
+        "attack": 2.239,
+        "defense": 1.345,
+        "agility": 1.443,
+        "vitality": 10.621
+      },
+      "rideable": "탑승불가",
+      "totalGrowth": "5.027",
+      "grade": "일반등급"
+    },
+    {
+      "id": "806",
+      "name": "기라노",
+      "source": "홍보 보상",
+      "imageLink": "",
+      "elementStats": {
+        "earth": 0,
+        "water": 0,
+        "fire": 9,
+        "wind": 1
+      },
+      "baseStats": {
+        "attack": 12,
+        "defense": 7,
+        "agility": 6,
+        "vitality": 56
+      },
+      "growthStats": {
+        "attack": 2.322,
+        "defense": 1.385,
+        "agility": 1.206,
+        "vitality": 10.337
+      },
+      "rideable": "탑승불가",
+      "totalGrowth": "4.913",
+      "grade": "일반등급"
+    },
+    {
+      "id": "807",
+      "name": "발로스",
+      "source": "필드포획",
+      "imageLink": "",
+      "elementStats": {
+        "earth": 8,
+        "water": 2,
+        "fire": 0,
+        "wind": 0
+      },
+      "baseStats": {
+        "attack": 9,
+        "defense": 6,
+        "agility": 7,
+        "vitality": 47
+      },
+      "growthStats": {
+        "attack": 2.043,
+        "defense": 1.404,
+        "agility": 1.49,
+        "vitality": 9.817
+      },
+      "rideable": "탑승불가",
+      "totalGrowth": "4.937",
+      "grade": "일반등급"
+    },
+    {
+      "id": "808",
+      "name": "노리노스",
+      "source": "심해의생물 퀘스트",
+      "imageLink": "",
+      "elementStats": {
+        "earth": 0,
+        "water": 0,
+        "fire": 5,
+        "wind": 5
+      },
+      "baseStats": {
+        "attack": 10,
+        "defense": 7,
+        "agility": 8,
+        "vitality": 57
+      },
+      "growthStats": {
+        "attack": 1.969,
+        "defense": 1.416,
+        "agility": 1.632,
+        "vitality": 10.432
+      },
+      "rideable": "탑승불가",
+      "totalGrowth": "5.017",
+      "grade": "일반등급"
+    },
+    {
+      "id": "809",
+      "name": "우바",
+      "source": "오픈기념홍보보상",
+      "imageLink": "",
+      "elementStats": {
+        "earth": 8,
+        "water": 0,
+        "fire": 0,
+        "wind": 2
+      },
+      "baseStats": {
+        "attack": 11,
+        "defense": 7,
+        "agility": 6,
+        "vitality": 56
+      },
+      "growthStats": {
+        "attack": 2.14,
+        "defense": 1.416,
+        "agility": 1.254,
+        "vitality": 10.243
+      },
+      "rideable": "탑승불가",
+      "totalGrowth": "4.809",
+      "grade": "일반등급"
+    },
+    {
+      "id": "810",
+      "name": "핑꼬비",
+      "source": "페트합성",
+      "imageLink": "",
+      "elementStats": {
+        "earth": 0,
+        "water": 4,
+        "fire": 6,
+        "wind": 0
+      },
+      "baseStats": {
+        "attack": 10,
+        "defense": 7,
+        "agility": 8,
+        "vitality": 51
+      },
+      "growthStats": {
+        "attack": 2.102,
+        "defense": 1.42,
+        "agility": 1.632,
+        "vitality": 10.195
+      },
+      "rideable": "탑승불가",
+      "totalGrowth": "5.154",
+      "grade": "일반등급"
+    },
+    {
+      "id": "811",
+      "name": "레이론",
+      "source": "호피도 필드 포획",
+      "imageLink": "",
+      "elementStats": {
+        "earth": 7,
+        "water": 3,
+        "fire": 0,
+        "wind": 0
+      },
+      "baseStats": {
+        "attack": 11,
+        "defense": 7,
+        "agility": 7,
+        "vitality": 54
+      },
+      "growthStats": {
+        "attack": 2.144,
+        "defense": 1.42,
+        "agility": 1.443,
+        "vitality": 10.243
+      },
+      "rideable": "탑승불가",
+      "totalGrowth": "5.008",
+      "grade": "일반등급"
+    },
+    {
+      "id": "812",
+      "name": "가우",
+      "source": "스톤 주머니2",
+      "imageLink": "",
+      "elementStats": {
+        "earth": 0,
+        "water": 5,
+        "fire": 5,
+        "wind": 0
+      },
+      "baseStats": {
+        "attack": 11,
+        "defense": 7,
+        "agility": 7,
+        "vitality": 60
+      },
+      "growthStats": {
+        "attack": 2.13,
+        "defense": 1.449,
+        "agility": 1.443,
+        "vitality": 11.52
+      },
+      "rideable": "탑승불가",
+      "totalGrowth": "5.022",
+      "grade": "1등급"
+    },
+    {
+      "id": "813",
+      "name": "루가",
+      "source": "페트합성",
+      "imageLink": "",
+      "elementStats": {
+        "earth": 0,
+        "water": 9,
+        "fire": 1,
+        "wind": 0
+      },
+      "baseStats": {
+        "attack": 12,
+        "defense": 8,
+        "agility": 7,
+        "vitality": 58
+      },
+      "growthStats": {
+        "attack": 2.215,
+        "defense": 1.619,
+        "agility": 1.443,
+        "vitality": 10.668
+      },
+      "rideable": "탑승불가",
+      "totalGrowth": "5.277",
+      "grade": "일반등급"
+    },
+    {
+      "id": "814",
+      "name": "얀기로(진)",
+      "source": "페트진화",
+      "imageLink": "",
+      "elementStats": {
+        "earth": 0,
+        "water": 3,
+        "fire": 7,
+        "wind": 0
+      },
+      "baseStats": {
+        "attack": 13,
+        "defense": 8,
+        "agility": 7,
+        "vitality": 62
+      },
+      "growthStats": {
+        "attack": 2.345,
+        "defense": 1.494,
+        "agility": 1.301,
+        "vitality": 10.905
+      },
+      "rideable": "탑승불가",
+      "totalGrowth": "5.14",
+      "grade": "일반등급"
+    },
+    {
+      "id": "815",
+      "name": "타이판",
+      "source": "호피도 필드 포획",
+      "imageLink": "",
+      "elementStats": {
+        "earth": 0,
+        "water": 8,
+        "fire": 2,
+        "wind": 0
+      },
+      "baseStats": {
+        "attack": 10,
+        "defense": 7,
+        "agility": 5,
+        "vitality": 50
+      },
+      "growthStats": {
+        "attack": 2.18,
+        "defense": 1.559,
+        "agility": 1.208,
+        "vitality": 10.427
+      },
+      "rideable": "탑승불가",
+      "totalGrowth": "4.947",
+      "grade": "일반등급"
+    },
+    {
+      "id": "816",
+      "name": "디사크",
+      "source": "3차 홍보 보상",
+      "imageLink": "",
+      "elementStats": {
+        "earth": 5,
+        "water": 0,
+        "fire": 0,
+        "wind": 5
+      },
+      "baseStats": {
+        "attack": 11,
+        "defense": 7,
+        "agility": 5,
+        "vitality": 52
+      },
+      "growthStats": {
+        "attack": 2.331,
+        "defense": 1.522,
+        "agility": 1.112,
+        "vitality": 10.385
+      },
+      "rideable": "탑승불가",
+      "totalGrowth": "4.965",
+      "grade": "일반등급"
+    },
+    {
+      "id": "817",
+      "name": "지룡",
+      "source": "전투 상점(30P)",
+      "imageLink": "",
+      "elementStats": {
+        "earth": 8,
+        "water": 2,
+        "fire": 0,
+        "wind": 0
+      },
+      "baseStats": {
+        "attack": 12,
+        "defense": 8,
+        "agility": 6,
+        "vitality": 57
+      },
+      "growthStats": {
+        "attack": 2.291,
+        "defense": 1.525,
+        "agility": 1.254,
+        "vitality": 10.479
+      },
+      "rideable": "탑승불가",
+      "totalGrowth": "5.069",
+      "grade": "일반등급"
+    },
+    {
+      "id": "818",
+      "name": "크라블",
+      "source": "필드포획",
+      "imageLink": "",
+      "elementStats": {
+        "earth": 0,
+        "water": 0,
+        "fire": 4,
+        "wind": 6
+      },
+      "baseStats": {
+        "attack": 10,
+        "defense": 7,
+        "agility": 6,
+        "vitality": 51
+      },
+      "growthStats": {
+        "attack": 2.079,
+        "defense": 1.547,
+        "agility": 1.356,
+        "vitality": 10.082
+      },
+      "rideable": "탑승불가",
+      "totalGrowth": "4.982",
+      "grade": "일반등급"
+    },
+    {
+      "id": "819",
+      "name": "어린아이스드래곤",
+      "source": "설 맞이 포획 축제",
+      "imageLink": "",
+      "elementStats": {
+        "earth": 2,
+        "water": 8,
+        "fire": 0,
+        "wind": 0
+      },
+      "baseStats": {
+        "attack": 11,
+        "defense": 6,
+        "agility": 8,
+        "vitality": 51
+      },
+      "growthStats": {
+        "attack": 2.18,
+        "defense": 1.286,
+        "agility": 1.585,
+        "vitality": 10.101
+      },
+      "rideable": "탑승불가",
+      "totalGrowth": "5.05",
+      "grade": "일반등급"
+    },
+    {
+      "id": "820",
+      "name": "꼬꼬미",
+      "source": "페트합성",
+      "imageLink": "",
+      "elementStats": {
+        "earth": 3,
+        "water": 7,
+        "fire": 0,
+        "wind": 0
+      },
+      "baseStats": {
+        "attack": 9,
+        "defense": 7,
+        "agility": 6,
+        "vitality": 44
+      },
+      "growthStats": {
+        "attack": 2.032,
+        "defense": 1.589,
+        "agility": 1.405,
+        "vitality": 9.934
+      },
+      "rideable": "탑승불가",
+      "totalGrowth": "5.026",
+      "grade": "일반등급"
+    },
+    {
+      "id": "821",
+      "name": "얼룩부이비",
+      "source": "페트합성",
+      "imageLink": "",
+      "elementStats": {
+        "earth": 10,
+        "water": 0,
+        "fire": 0,
+        "wind": 0
+      },
+      "baseStats": {
+        "attack": 9,
+        "defense": 7,
+        "agility": 5,
+        "vitality": 49
+      },
+      "growthStats": {
+        "attack": 2.026,
+        "defense": 1.6,
+        "agility": 1.254,
+        "vitality": 10.668
+      },
+      "rideable": "탑승불가",
+      "totalGrowth": "4.88",
+      "grade": "일반등급"
+    },
+    {
+      "id": "822",
+      "name": "꼬이미",
+      "source": "페트합성",
+      "imageLink": "",
+      "elementStats": {
+        "earth": 0,
+        "water": 0,
+        "fire": 6,
+        "wind": 4
+      },
+      "baseStats": {
+        "attack": 8,
+        "defense": 7,
+        "agility": 5,
+        "vitality": 43
+      },
+      "growthStats": {
+        "attack": 1.978,
+        "defense": 1.623,
+        "agility": 1.307,
+        "vitality": 9.639
+      },
+      "rideable": "탑승불가",
+      "totalGrowth": "4.908",
+      "grade": "일반등급"
+    },
+    {
+      "id": "823",
+      "name": "후바티",
+      "source": "흑운모 상점",
+      "imageLink": "",
+      "elementStats": {
+        "earth": 0,
+        "water": 10,
+        "fire": 0,
+        "wind": 0
+      },
+      "baseStats": {
+        "attack": 11,
+        "defense": 12,
+        "agility": 4,
+        "vitality": 60
+      },
+      "growthStats": {
+        "attack": 2.161,
+        "defense": 2.203,
+        "agility": 0.733,
+        "vitality": 11.047
+      },
+      "rideable": "탑승가능",
+      "totalGrowth": "5.098",
+      "grade": "일반등급"
+    },
+    {
+      "id": "824",
+      "name": "오가",
+      "source": "페트합성",
+      "imageLink": "",
+      "elementStats": {
+        "earth": 9,
+        "water": 1,
+        "fire": 0,
+        "wind": 0
+      },
+      "baseStats": {
+        "attack": 11,
+        "defense": 8,
+        "agility": 7,
+        "vitality": 57
+      },
+      "growthStats": {
+        "attack": 2.175,
+        "defense": 1.664,
+        "agility": 1.396,
+        "vitality": 10.81
+      },
+      "rideable": "탑승불가",
+      "totalGrowth": "5.235",
+      "grade": "일반등급"
+    },
+    {
+      "id": "825",
+      "name": "포이비스(환)",
+      "source": "페트환생",
+      "imageLink": "",
+      "elementStats": {
+        "earth": 5,
+        "water": 0,
+        "fire": 0,
+        "wind": 5
+      },
+      "baseStats": {
+        "attack": 10,
+        "defense": 8,
+        "agility": 7,
+        "vitality": 51
+      },
+      "growthStats": {
+        "attack": 2.024,
+        "defense": 1.683,
+        "agility": 1.49,
+        "vitality": 10.053
+      },
+      "rideable": "탑승불가",
+      "totalGrowth": "5.197",
+      "grade": "일반등급"
+    },
+    {
+      "id": "826",
+      "name": "자크로",
+      "source": "필드포획(선행퀘클리어)",
+      "imageLink": "",
+      "elementStats": {
+        "earth": 2,
+        "water": 0,
+        "fire": 0,
+        "wind": 8
+      },
+      "baseStats": {
+        "attack": 11,
+        "defense": 8,
+        "agility": 6,
+        "vitality": 55
+      },
+      "growthStats": {
+        "attack": 2.118,
+        "defense": 1.693,
+        "agility": 1.206,
+        "vitality": 10.432
+      },
+      "rideable": "탑승불가",
+      "totalGrowth": "5.017",
+      "grade": "일반등급"
+    },
+    {
+      "id": "827",
+      "name": "녹우리",
+      "source": "페트합성",
+      "imageLink": "",
+      "elementStats": {
+        "earth": 6,
+        "water": 0,
+        "fire": 0,
+        "wind": 4
+      },
+      "baseStats": {
+        "attack": 9,
+        "defense": 7,
+        "agility": 5,
+        "vitality": 42
+      },
+      "growthStats": {
+        "attack": 2.057,
+        "defense": 1.716,
+        "agility": 1.206,
+        "vitality": 9.675
+      },
+      "rideable": "탑승불가",
+      "totalGrowth": "4.979",
+      "grade": "일반등급"
+    },
+    {
+      "id": "828",
+      "name": "후치무노",
+      "source": "필드포획",
+      "imageLink": "",
+      "elementStats": {
+        "earth": 0,
+        "water": 0,
+        "fire": 7,
+        "wind": 3
+      },
+      "baseStats": {
+        "attack": 10,
+        "defense": 8,
+        "agility": 5,
+        "vitality": 52
+      },
+      "growthStats": {
+        "attack": 2.028,
+        "defense": 1.773,
+        "agility": 1.017,
+        "vitality": 10.432
+      },
+      "rideable": "탑승불가",
+      "totalGrowth": "4.819",
+      "grade": "일반등급"
+    },
+    {
+      "id": "829",
+      "name": "쿠오",
+      "source": "쿠오산 공룡박사",
+      "imageLink": "",
+      "elementStats": {
+        "earth": 0,
+        "water": 5,
+        "fire": 5,
+        "wind": 0
+      },
+      "baseStats": {
+        "attack": 9,
+        "defense": 9,
+        "agility": 6,
+        "vitality": 50
+      },
+      "growthStats": {
+        "attack": 1.86,
+        "defense": 1.86,
+        "agility": 1.208,
+        "vitality": 10.033
+      },
+      "rideable": "탑승불가",
+      "totalGrowth": "4.928",
+      "grade": "2등급"
+    },
+    {
+      "id": "830",
+      "name": "짱우비",
+      "source": "페트합성",
+      "imageLink": "",
+      "elementStats": {
+        "earth": 0,
+        "water": 0,
+        "fire": 5,
+        "wind": 5
+      },
+      "baseStats": {
+        "attack": 10,
+        "defense": 9,
+        "agility": 5,
+        "vitality": 53
+      },
+      "growthStats": {
+        "attack": 2.102,
+        "defense": 1.931,
+        "agility": 1.159,
+        "vitality": 10.952
+      },
+      "rideable": "탑승불가",
+      "totalGrowth": "5.192",
+      "grade": "일반등급"
+    },
+    {
+      "id": "831",
+      "name": "비트로돈",
+      "source": "필드포획",
+      "imageLink": "",
+      "elementStats": {
+        "earth": 0,
+        "water": 0,
+        "fire": 8,
+        "wind": 2
+      },
+      "baseStats": {
+        "attack": 11,
+        "defense": 9,
+        "agility": 3,
+        "vitality": 54
+      },
+      "growthStats": {
+        "attack": 2.252,
+        "defense": 1.941,
+        "agility": 0.666,
+        "vitality": 10.723
+      },
+      "rideable": "탑승불가",
+      "totalGrowth": "4.859",
+      "grade": "일반등급"
+    },
+    {
+      "id": "832",
+      "name": "야무리",
+      "source": "필드포획",
+      "imageLink": "",
+      "elementStats": {
+        "earth": 0,
+        "water": 0,
+        "fire": 7,
+        "wind": 3
+      },
+      "baseStats": {
+        "attack": 11,
+        "defense": 10,
+        "agility": 2,
+        "vitality": 58
+      },
+      "growthStats": {
+        "attack": 2.229,
+        "defense": 2.017,
+        "agility": 0.402,
+        "vitality": 11
+      },
+      "rideable": "탑승불가",
+      "totalGrowth": "4.648",
+      "grade": "일반등급"
+    },
+    {
+      "id": "833",
+      "name": "진돌",
+      "source": "오픈기념홍보보상",
+      "imageLink": "",
+      "elementStats": {
+        "earth": 0,
+        "water": 2,
+        "fire": 8,
+        "wind": 0
+      },
+      "baseStats": {
+        "attack": 12,
+        "defense": 11,
+        "agility": 2,
+        "vitality": 61
+      },
+      "growthStats": {
+        "attack": 2.237,
+        "defense": 2.024,
+        "agility": 0.544,
+        "vitality": 11.142
+      },
+      "rideable": "탑승불가",
+      "totalGrowth": "4.804",
+      "grade": "일반등급"
+    },
+    {
+      "id": "834",
+      "name": "그램푸",
+      "source": "흑운모 상점",
+      "imageLink": "",
+      "elementStats": {
+        "earth": 5,
+        "water": 5,
+        "fire": 0,
+        "wind": 0
+      },
+      "baseStats": {
+        "attack": 11,
+        "defense": 10,
+        "agility": 3,
+        "vitality": 64
+      },
+      "growthStats": {
+        "attack": 2.13,
+        "defense": 2.045,
+        "agility": 0.686,
+        "vitality": 12.277
+      },
+      "rideable": "탑승불가",
+      "totalGrowth": "4.861",
+      "grade": "일반등급"
+    },
+    {
+      "id": "835",
+      "name": "테이토스",
+      "source": "이벤트듀얼순위권",
+      "imageLink": "",
+      "elementStats": {
+        "earth": 0,
+        "water": 8,
+        "fire": 2,
+        "wind": 0
+      },
+      "baseStats": {
+        "attack": 11,
+        "defense": 12,
+        "agility": 2,
+        "vitality": 62
+      },
+      "growthStats": {
+        "attack": 2.09,
+        "defense": 2.345,
+        "agility": 0.449,
+        "vitality": 11.757
+      },
+      "rideable": "탑승가능",
+      "totalGrowth": "4.885",
+      "grade": "일반등급"
+    },
+    {
+      "id": "836",
+      "name": "스톤크랩",
+      "source": "필드포획",
+      "imageLink": "",
+      "elementStats": {
+        "earth": 10,
+        "water": 0,
+        "fire": 0,
+        "wind": 0
+      },
+      "baseStats": {
+        "attack": 9,
+        "defense": 10,
+        "agility": 2,
+        "vitality": 49
+      },
+      "growthStats": {
+        "attack": 1.981,
+        "defense": 2.247,
+        "agility": 0.468,
+        "vitality": 10.575
+      },
+      "rideable": "탑승불가",
+      "totalGrowth": "4.696",
+      "grade": "일반등급"
+    },
+    {
+      "id": "837",
+      "name": "허미크",
+      "source": "흑운모 상점",
+      "imageLink": "",
+      "elementStats": {
+        "earth": 8,
+        "water": 2,
+        "fire": 0,
+        "wind": 0
+      },
+      "baseStats": {
+        "attack": 9,
+        "defense": 12,
+        "agility": 4,
+        "vitality": 56
+      },
+      "growthStats": {
+        "attack": 1.889,
+        "defense": 2.315,
+        "agility": 0.781,
+        "vitality": 10.763
+      },
+      "rideable": "탑승불가",
+      "totalGrowth": "4.984",
+      "grade": "일반등급"
+    },
+    {
+      "id": "838",
+      "name": "베이클",
+      "source": "페트합성(돌연변이)",
+      "imageLink": "",
+      "elementStats": {
+        "earth": 5,
+        "water": 0,
+        "fire": 0,
+        "wind": 5
+      },
+      "baseStats": {
+        "attack": 11,
+        "defense": 12,
+        "agility": 2,
+        "vitality": 53
+      },
+      "growthStats": {
+        "attack": 2.298,
+        "defense": 2.426,
+        "agility": 0.544,
+        "vitality": 10.479
+      },
+      "rideable": "탑승불가",
+      "totalGrowth": "5.268",
+      "grade": "일반등급"
+    },
+    {
+      "id": "839",
+      "name": "빅부이",
+      "source": "페트합성",
+      "imageLink": "",
+      "elementStats": {
+        "earth": 5,
+        "water": 5,
+        "fire": 0,
+        "wind": 0
+      },
+      "baseStats": {
+        "attack": 11,
+        "defense": 13,
+        "agility": 3,
+        "vitality": 63
+      },
+      "growthStats": {
+        "attack": 2.142,
+        "defense": 2.44,
+        "agility": 0.639,
+        "vitality": 11.52
+      },
+      "rideable": "탑승불가",
+      "totalGrowth": "5.221",
+      "grade": "일반등급"
+    },
+    {
+      "id": "840",
+      "name": "푸테라(환)",
+      "source": "페트환생",
+      "imageLink": "",
+      "elementStats": {
+        "earth": 0,
+        "water": 8,
+        "fire": 2,
+        "wind": 0
+      },
+      "baseStats": {
+        "attack": 11,
+        "defense": 11,
+        "agility": 7,
+        "vitality": 65
+      },
+      "growthStats": {
+        "attack": 2.071,
+        "defense": 1.943,
+        "agility": 1.301,
+        "vitality": 11.425
+      },
+      "rideable": "탑승불가",
+      "totalGrowth": "5.315",
+      "grade": "일반등급"
+    },
+    {
+      "id": "841",
+      "name": "어린어스드래곤",
+      "source": "설 맞이 포획 축제",
+      "imageLink": "",
+      "elementStats": {
+        "earth": 9,
+        "water": 1,
+        "fire": 0,
+        "wind": 0
+      },
+      "baseStats": {
+        "attack": 11,
+        "defense": 7,
+        "agility": 6,
+        "vitality": 52
+      },
+      "growthStats": {
+        "attack": 2.244,
+        "defense": 1.562,
+        "agility": 1.254,
+        "vitality": 10.29
+      },
+      "rideable": "탑승불가",
+      "totalGrowth": "5.06",
+      "grade": "일반등급"
+    },
+    {
+      "id": "842",
+      "name": "푸우리",
+      "source": "페트합성",
+      "imageLink": "",
+      "elementStats": {
+        "earth": 0,
+        "water": 8,
+        "fire": 2,
+        "wind": 0
+      },
+      "baseStats": {
+        "attack": 9,
+        "defense": 6,
+        "agility": 6,
+        "vitality": 45
+      },
+      "growthStats": {
+        "attack": 2.062,
+        "defense": 1.508,
+        "agility": 1.49,
+        "vitality": 10.29
+      },
+      "rideable": "탑승불가",
+      "totalGrowth": "5.06",
+      "grade": "일반등급"
+    },
+    {
+      "id": "843",
+      "name": "와일로",
+      "source": "흑운모 상점",
+      "imageLink": "",
+      "elementStats": {
+        "earth": 0,
+        "water": 10,
+        "fire": 0,
+        "wind": 0
+      },
+      "baseStats": {
+        "attack": 11,
+        "defense": 12,
+        "agility": 4,
+        "vitality": 68
+      },
+      "growthStats": {
+        "attack": 2.057,
+        "defense": 2.227,
+        "agility": 0.733,
+        "vitality": 12.419
+      },
+      "rideable": "탑승불가",
+      "totalGrowth": "5.017",
+      "grade": "일반등급"
+    },
+    {
+      "id": "844",
+      "name": "백룡",
+      "source": "페트진화",
+      "imageLink": "",
+      "elementStats": {
+        "earth": 0,
+        "water": 0,
+        "fire": 2,
+        "wind": 8
+      },
+      "baseStats": {
+        "attack": 12,
+        "defense": 6,
+        "agility": 10,
+        "vitality": 57
+      },
+      "growthStats": {
+        "attack": 2.222,
+        "defense": 1.158,
+        "agility": 1.869,
+        "vitality": 10.101
+      },
+      "rideable": "탑승불가",
+      "totalGrowth": "5.249",
+      "grade": "일반등급"
+    },
+    {
+      "id": "845",
+      "name": "어린백룡",
+      "source": "후원보상페트",
+      "imageLink": "",
+      "elementStats": {
+        "earth": 0,
+        "water": 0,
+        "fire": 2,
+        "wind": 8
+      },
+      "baseStats": {
+        "attack": 11,
+        "defense": 5,
+        "agility": 9,
+        "vitality": 54
+      },
+      "growthStats": {
+        "attack": 2.097,
+        "defense": 1.076,
+        "agility": 1.8,
+        "vitality": 9.885
+      },
+      "rideable": "탑승불가",
+      "totalGrowth": "4.972",
+      "grade": "일반등급"
+    },
+    {
+      "id": "846",
+      "name": "마크론",
+      "source": "오리진 낚시 상점",
+      "imageLink": "",
+      "elementStats": {
+        "earth": 0,
+        "water": 0,
+        "fire": 8,
+        "wind": 2
+      },
+      "baseStats": {
+        "attack": 11,
+        "defense": 5,
+        "agility": 8,
+        "vitality": 51
+      },
+      "growthStats": {
+        "attack": 2.294,
+        "defense": 1.14,
+        "agility": 1.602,
+        "vitality": 10.132
+      },
+      "rideable": "탑승가능",
+      "totalGrowth": "5.036",
+      "grade": "일반등급"
+    },
+    {
+      "id": "847",
+      "name": "몽몽",
+      "source": "오픈기념홍보보상",
+      "imageLink": "",
+      "elementStats": {
+        "earth": 2,
+        "water": 8,
+        "fire": 0,
+        "wind": 0
+      },
+      "baseStats": {
+        "attack": 11,
+        "defense": 11,
+        "agility": 2,
+        "vitality": 66
+      },
+      "growthStats": {
+        "attack": 2.033,
+        "defense": 2.118,
+        "agility": 0.449,
+        "vitality": 12.04
+      },
+      "rideable": "탑승불가",
+      "totalGrowth": "4.601",
+      "grade": "일반등급"
+    },
+    {
+      "id": "848",
+      "name": "푸미",
+      "source": "페트합성",
+      "imageLink": "",
+      "elementStats": {
+        "earth": 0,
+        "water": 9,
+        "fire": 1,
+        "wind": 0
+      },
+      "baseStats": {
+        "attack": 9,
+        "defense": 7,
+        "agility": 6,
+        "vitality": 46
+      },
+      "growthStats": {
+        "attack": 2.017,
+        "defense": 1.591,
+        "agility": 1.443,
+        "vitality": 10.101
+      },
+      "rideable": "탑승불가",
+      "totalGrowth": "5.05",
+      "grade": "일반등급"
+    },
+    {
+      "id": "849",
+      "name": "골드골로스",
+      "source": "맘모스쿠폰1회차(50회)",
+      "imageLink": "",
+      "elementStats": {
+        "earth": 0,
+        "water": 0,
+        "fire": 1,
+        "wind": 9
+      },
+      "baseStats": {
+        "attack": 12,
+        "defense": 7,
+        "agility": 8,
+        "vitality": 54
+      },
+      "growthStats": {
+        "attack": 2.227,
+        "defense": 1.333,
+        "agility": 1.585,
+        "vitality": 10.006
+      },
+      "rideable": "탑승가능",
+      "totalGrowth": "5.145",
+      "grade": "1등급"
+    },
+    {
+      "id": "850",
+      "name": "로데오",
+      "source": "네메시스의 길로",
+      "imageLink": "",
+      "elementStats": {
+        "earth": 0,
+        "water": 0,
+        "fire": 8,
+        "wind": 2
+      },
+      "baseStats": {
+        "attack": 12,
+        "defense": 7,
+        "agility": 7,
+        "vitality": 53
+      },
+      "growthStats": {
+        "attack": 2.272,
+        "defense": 1.335,
+        "agility": 1.443,
+        "vitality": 10.101
+      },
+      "rideable": "탑승가능",
+      "totalGrowth": "5.05",
+      "grade": "일반등급"
+    },
+    {
+      "id": "851",
+      "name": "씨보스(환)",
+      "source": "페트환생",
+      "imageLink": "",
+      "elementStats": {
+        "earth": 2,
+        "water": 8,
+        "fire": 0,
+        "wind": 0
+      },
+      "baseStats": {
+        "attack": 8,
+        "defense": 9,
+        "agility": 3,
+        "vitality": 52
+      },
+      "growthStats": {
+        "attack": 1.988,
+        "defense": 2.073,
+        "agility": 0.875,
+        "vitality": 11.804
+      },
+      "rideable": "탑승불가",
+      "totalGrowth": "4.937",
+      "grade": "일반등급"
+    },
+    {
+      "id": "852",
+      "name": "푸이",
+      "source": "페트합성",
+      "imageLink": "",
+      "elementStats": {
+        "earth": 0,
+        "water": 10,
+        "fire": 0,
+        "wind": 0
+      },
+      "baseStats": {
+        "attack": 9,
+        "defense": 9,
+        "agility": 5,
+        "vitality": 51
+      },
+      "growthStats": {
+        "attack": 1.969,
+        "defense": 1.969,
+        "agility": 1.159,
+        "vitality": 11.047
+      },
+      "rideable": "탑승불가",
+      "totalGrowth": "5.098",
+      "grade": "일반등급"
+    },
+    {
+      "id": "853",
+      "name": "다크바로스",
+      "source": "정규듀얼 1위보상",
+      "imageLink": "",
+      "elementStats": {
+        "earth": 0,
+        "water": 0,
+        "fire": 5,
+        "wind": 5
+      },
+      "baseStats": {
+        "attack": 13,
+        "defense": 7,
+        "agility": 6,
+        "vitality": 53
+      },
+      "growthStats": {
+        "attack": 2.405,
+        "defense": 1.425,
+        "agility": 1.254,
+        "vitality": 9.77
+      },
+      "rideable": "탑승가능",
+      "totalGrowth": "5.083",
+      "grade": "일반등급"
+    },
+    {
+      "id": "854",
+      "name": "흑귀",
+      "source": "에레보스 야생공룡퇴치",
+      "imageLink": "",
+      "elementStats": {
+        "earth": 6,
+        "water": 0,
+        "fire": 0,
+        "wind": 4
+      },
+      "baseStats": {
+        "attack": 12,
+        "defense": 7,
+        "agility": 7,
+        "vitality": 59
+      },
+      "growthStats": {
+        "attack": 2.251,
+        "defense": 1.442,
+        "agility": 1.396,
+        "vitality": 10.858
+      },
+      "rideable": "탑승가능",
+      "totalGrowth": "5.088",
+      "grade": "일반등급"
+    },
+    {
+      "id": "855",
+      "name": "무이(환)",
+      "source": "페트환생",
+      "imageLink": "",
+      "elementStats": {
+        "earth": 0,
+        "water": 10,
+        "fire": 0,
+        "wind": 0
+      },
+      "baseStats": {
+        "attack": 8,
+        "defense": 9,
+        "agility": 3,
+        "vitality": 51
+      },
+      "growthStats": {
+        "attack": 1.91,
+        "defense": 2.166,
+        "agility": 0.828,
+        "vitality": 12.135
+      },
+      "rideable": "탑승가능",
+      "totalGrowth": "4.904",
+      "grade": "일반등급"
+    },
+    {
+      "id": "856",
+      "name": "투이",
+      "source": "3환생보상",
+      "imageLink": "",
+      "elementStats": {
+        "earth": 0,
+        "water": 5,
+        "fire": 5,
+        "wind": 0
+      },
+      "baseStats": {
+        "attack": 8,
+        "defense": 8,
+        "agility": 3,
+        "vitality": 52
+      },
+      "growthStats": {
+        "attack": 1.835,
+        "defense": 1.835,
+        "agility": 0.692,
+        "vitality": 11.31
+      },
+      "rideable": "탑승가능",
+      "totalGrowth": "4.363",
+      "grade": "2등급"
+    },
+    {
+      "id": "857",
+      "name": "어스드래곤",
+      "source": "페트합성",
+      "imageLink": "",
+      "elementStats": {
+        "earth": 9,
+        "water": 1,
+        "fire": 0,
+        "wind": 0
+      },
+      "baseStats": {
+        "attack": 13,
+        "defense": 9,
+        "agility": 7,
+        "vitality": 60
+      },
+      "growthStats": {
+        "attack": 2.303,
+        "defense": 1.622,
+        "agility": 1.301,
+        "vitality": 10.621
+      },
+      "rideable": "탑승가능",
+      "totalGrowth": "5.225",
       "grade": "일반등급"
     }
   ]
