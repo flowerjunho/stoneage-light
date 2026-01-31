@@ -10,8 +10,8 @@
       "elementStats": {
         "earth": 0,
         "water": 5,
-        "fire": 5,
-        "wind": 0
+        "fire": 0,
+        "wind": 5
       },
       "baseStats": {
         "attack": 14,
