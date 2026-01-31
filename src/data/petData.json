@@ -3,6 +3,33 @@
   "totalCount": 614,
   "pets": [
     {
+      "id": "858",
+      "name": "예르체",
+      "source": "",
+      "imageLink": "",
+      "elementStats": {
+        "earth": 0,
+        "water": 5,
+        "fire": 5,
+        "wind": 0
+      },
+      "baseStats": {
+        "attack": 14,
+        "defense": 13,
+        "agility": 1,
+        "vitality": 67
+      },
+      "growthStats": {
+        "attack": 0,
+        "defense": 0,
+        "agility": 0,
+        "vitality": 08
+      },
+      "rideable": "탑승가능",
+      "totalGrowth": "-",
+      "grade": "일반등급"
+    },
+    {
       "id": "782",
       "name": "샤우트(환)",
       "source": "페트환생",
