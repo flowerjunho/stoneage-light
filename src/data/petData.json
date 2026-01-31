@@ -5,7 +5,7 @@
     {
       "id": "858",
       "name": "예르체",
-      "source": "",
+      "source": "금화상점 한정판매",
       "imageLink": "",
       "elementStats": {
         "earth": 0,
@@ -16,17 +16,17 @@
       "baseStats": {
         "attack": 14,
         "defense": 13,
-        "agility": 1,
+        "agility": 2,
         "vitality": 67
       },
       "growthStats": {
-        "attack": 0,
-        "defense": 0,
-        "agility": 0,
-        "vitality": 0
+        "attack": 2.386,
+        "defense": 2.173,
+        "agility": 0.308,
+        "vitality": 11.378
       },
       "rideable": "탑승가능",
-      "totalGrowth": "-",
+      "totalGrowth": "4.866",
       "grade": "일반등급"
     },
     {
@@ -2733,7 +2733,7 @@
       "id": "680",
       "name": "테이노스(각)",
       "source": "변종 테이노스에서 각성",
-      "imageLink": "https://media.discordapp.net/attachments/1382927282213228604/1389489318137172069/KakaoTalk_20250701_151357841.gif?ex=68cd9d84&is=68cc4c04&hm=4ef242c06fefafb8cbbadac2992fc0c09eca9e0e7ceed0886d2b96668d18ec8b&=&width=220&height=245",
+      "imageLink": "https://flowerjunho.github.io/stoneage-light/images/ride/%EC%84%9D%EB%AF%B8_%EA%B0%81%ED%85%8C%EC%9D%B4.gif",
       "elementStats": {
         "earth": 5,
         "water": 5,
