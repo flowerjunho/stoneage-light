@@ -23,7 +23,7 @@
         "attack": 0,
         "defense": 0,
         "agility": 0,
-        "vitality": 8
+        "vitality": 0
       },
       "rideable": "탑승가능",
       "totalGrowth": "-",
