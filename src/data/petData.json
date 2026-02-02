@@ -1,7 +1,223 @@
 {
   "lastUpdated": "2025-09-18T03:55:09.699Z",
-  "totalCount": 614,
+  "totalCount": 622,
   "pets": [
+    {
+      "id": "866",
+      "name": "메이란스",
+      "source": "후원보상",
+      "imageLink": "https://raw.githubusercontent.com/flowerjunho/stoneage-light/main/public/pets/stones.png",
+      "elementStats": {
+        "earth": 8,
+        "water": 0,
+        "fire": 0,
+        "wind": 2
+      },
+      "baseStats": {
+        "attack": 12,
+        "defense": 5,
+        "agility": 9,
+        "vitality": 57
+      },
+      "growthStats": {
+        "attack": 2.371,
+        "defense": 1.137,
+        "agility": 1.821,
+        "vitality": 10.716
+      },
+      "rideable": "탑승불가",
+      "totalGrowth": "5.329",
+      "grade": "일반등급"
+    },
+    {
+      "id": "865",
+      "name": "노가(각)",
+      "source": "페트 진화(노르곤)",
+      "imageLink": "",
+      "elementStats": {
+        "earth": 0,
+        "water": 0,
+        "fire": 1,
+        "wind": 9
+      },
+      "baseStats": {
+        "attack": 11,
+        "defense": 7,
+        "agility": 8,
+        "vitality": 57
+      },
+      "growthStats": {
+        "attack": 2.252,
+        "defense": 1.482,
+        "agility": 1.676,
+        "vitality": 10.619
+      },
+      "rideable": "탑승불가",
+      "totalGrowth": "5.410",
+      "grade": "일반등급"
+    },
+    {
+      "id": "864",
+      "name": "루가(각)",
+      "source": "페트 진화(오르곤)",
+      "imageLink": "",
+      "elementStats": {
+        "earth": 0,
+        "water": 8,
+        "fire": 2,
+        "wind": 0
+      },
+      "baseStats": {
+        "attack": 12,
+        "defense": 9,
+        "agility": 7,
+        "vitality": 62
+      },
+      "growthStats": {
+        "attack": 2.230,
+        "defense": 1.763,
+        "agility": 1.345,
+        "vitality": 11.094
+      },
+      "rideable": "탑승불가",
+      "totalGrowth": "5.338",
+      "grade": "일반등급"
+    },
+    {
+      "id": "863",
+      "name": "오가(각)",
+      "source": "페트 진화(오가로스)",
+      "imageLink": "",
+      "elementStats": {
+        "earth": 6,
+        "water": 4,
+        "fire": 0,
+        "wind": 0
+      },
+      "baseStats": {
+        "attack": 11,
+        "defense": 10,
+        "agility": 6,
+        "vitality": 59
+      },
+      "growthStats": {
+        "attack": 2.158,
+        "defense": 2.029,
+        "agility": 1.252,
+        "vitality": 11.000
+      },
+      "rideable": "탑승불가",
+      "totalGrowth": "5.439",
+      "grade": "일반등급"
+    },
+    {
+      "id": "862",
+      "name": "모가(각)",
+      "source": "페트 진화(모가로스)",
+      "imageLink": "",
+      "elementStats": {
+        "earth": 0,
+        "water": 2,
+        "fire": 8,
+        "wind": 0
+      },
+      "baseStats": {
+        "attack": 12,
+        "defense": 7,
+        "agility": 7,
+        "vitality": 56
+      },
+      "growthStats": {
+        "attack": 2.381,
+        "defense": 1.482,
+        "agility": 1.489,
+        "vitality": 10.381
+      },
+      "rideable": "탑승불가",
+      "totalGrowth": "5.352",
+      "grade": "일반등급"
+    },
+    {
+      "id": "861",
+      "name": "흑카키(환)",
+      "source": "페트 환생",
+      "imageLink": "https://www.hwansoo.top/data/file/pets/1676c51ca26c60fab3ea89287195e4e8_K79WFnQe_d3aa2f40689a30a737baf776d9993ce4b85841dc.gif",
+      "elementStats": {
+        "earth": 0,
+        "water": 0,
+        "fire": 2,
+        "wind": 8
+      },
+      "baseStats": {
+        "attack": 11,
+        "defense": 5,
+        "agility": 12,
+        "vitality": 56
+      },
+      "growthStats": {
+        "attack": 2.072,
+        "defense": 1.007,
+        "agility": 2.101,
+        "vitality": 10.050
+      },
+      "rideable": "탑승가능",
+      "totalGrowth": "5.180",
+      "grade": "일반등급"
+    },
+    {
+      "id": "860",
+      "name": "본드래곤(환)",
+      "source": "페트 환생",
+      "imageLink": "https://www.hwansoo.top/data/file/pets/23dd10a6042ea8765ea0405597f9aa0a_WN5V6Cni_79a8f12f52a1b417c3559631abd805001c08eebc.gif",
+      "elementStats": {
+        "earth": 8,
+        "water": 0,
+        "fire": 0,
+        "wind": 2
+      },
+      "baseStats": {
+        "attack": 12,
+        "defense": 8,
+        "agility": 6,
+        "vitality": 58
+      },
+      "growthStats": {
+        "attack": 2.397,
+        "defense": 1.546,
+        "agility": 1.301,
+        "vitality": 11.000
+      },
+      "rideable": "탑승가능",
+      "totalGrowth": "5.244",
+      "grade": "일반등급"
+    },
+    {
+      "id": "859",
+      "name": "메피노(환)",
+      "source": "페트 환생",
+      "imageLink": "https://www.hwansoo.top/data/file/pets/23dd10a6042ea8765ea0405597f9aa0a_7mMBrFWv_22fd9342f7294f1ef6eeb6fcd34b23da804f33ef.gif",
+      "elementStats": {
+        "earth": 0,
+        "water": 7,
+        "fire": 3,
+        "wind": 0
+      },
+      "baseStats": {
+        "attack": 13,
+        "defense": 8,
+        "agility": 7,
+        "vitality": 61
+      },
+      "growthStats": {
+        "attack": 2.390,
+        "defense": 1.496,
+        "agility": 1.348,
+        "vitality": 10.810
+      },
+      "rideable": "탑승불가",
+      "totalGrowth": "5.235",
+      "grade": "일반등급"
+    },
     {
       "id": "858",
       "name": "예르체",
