@@ -6,7 +6,7 @@
       "id": "866",
       "name": "메이란스",
       "source": "후원보상",
-      "imageLink": "https://raw.githubusercontent.com/flowerjunho/stoneage-light/main/public/pets/stones.png",
+      "imageLink": "https://raw.githubusercontent.com/flowerjunho/stoneage-light/main/public/images/pets/stones.png",
       "elementStats": {
         "earth": 8,
         "water": 0,
@@ -15069,33 +15069,6 @@
       "grade": "일반등급"
     },
     {
-      "id": "793",
-      "name": "모가",
-      "source": "페트합성",
-      "imageLink": "",
-      "elementStats": {
-        "earth": 0,
-        "water": 1,
-        "fire": 9,
-        "wind": 0
-      },
-      "baseStats": {
-        "attack": 12,
-        "defense": 6,
-        "agility": 8,
-        "vitality": 53
-      },
-      "growthStats": {
-        "attack": 2.272,
-        "defense": 1.293,
-        "agility": 1.632,
-        "vitality": 10.053
-      },
-      "rideable": "탑승불가",
-      "totalGrowth": "5.197",
-      "grade": "일반등급"
-    },
-    {
       "id": "794",
       "name": "우리스타",
       "source": "페트합성",
@@ -15336,33 +15309,6 @@
       },
       "rideable": "탑승가능",
       "totalGrowth": "5.244",
-      "grade": "일반등급"
-    },
-    {
-      "id": "803",
-      "name": "노가",
-      "source": "페트합성",
-      "imageLink": "",
-      "elementStats": {
-        "earth": 0,
-        "water": 0,
-        "fire": 0,
-        "wind": 10
-      },
-      "baseStats": {
-        "attack": 11,
-        "defense": 7,
-        "agility": 9,
-        "vitality": 54
-      },
-      "growthStats": {
-        "attack": 2.192,
-        "defense": 1.34,
-        "agility": 1.727,
-        "vitality": 10.29
-      },
-      "rideable": "탑승불가",
-      "totalGrowth": "5.259",
       "grade": "일반등급"
     },
     {
@@ -15607,33 +15553,6 @@
       "rideable": "탑승불가",
       "totalGrowth": "5.022",
       "grade": "1등급"
-    },
-    {
-      "id": "813",
-      "name": "루가",
-      "source": "페트합성",
-      "imageLink": "",
-      "elementStats": {
-        "earth": 0,
-        "water": 9,
-        "fire": 1,
-        "wind": 0
-      },
-      "baseStats": {
-        "attack": 12,
-        "defense": 8,
-        "agility": 7,
-        "vitality": 58
-      },
-      "growthStats": {
-        "attack": 2.215,
-        "defense": 1.619,
-        "agility": 1.443,
-        "vitality": 10.668
-      },
-      "rideable": "탑승불가",
-      "totalGrowth": "5.277",
-      "grade": "일반등급"
     },
     {
       "id": "814",
@@ -15903,33 +15822,6 @@
       },
       "rideable": "탑승가능",
       "totalGrowth": "5.098",
-      "grade": "일반등급"
-    },
-    {
-      "id": "824",
-      "name": "오가",
-      "source": "페트합성",
-      "imageLink": "",
-      "elementStats": {
-        "earth": 9,
-        "water": 1,
-        "fire": 0,
-        "wind": 0
-      },
-      "baseStats": {
-        "attack": 11,
-        "defense": 8,
-        "agility": 7,
-        "vitality": 57
-      },
-      "growthStats": {
-        "attack": 2.175,
-        "defense": 1.664,
-        "agility": 1.396,
-        "vitality": 10.81
-      },
-      "rideable": "탑승불가",
-      "totalGrowth": "5.235",
       "grade": "일반등급"
     },
     {
