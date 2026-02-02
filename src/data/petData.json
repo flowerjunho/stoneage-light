@@ -16365,33 +16365,6 @@
       "grade": "일반등급"
     },
     {
-      "id": "849",
-      "name": "골드골로스",
-      "source": "맘모스쿠폰1회차(50회)",
-      "imageLink": "",
-      "elementStats": {
-        "earth": 0,
-        "water": 0,
-        "fire": 1,
-        "wind": 9
-      },
-      "baseStats": {
-        "attack": 12,
-        "defense": 7,
-        "agility": 8,
-        "vitality": 54
-      },
-      "growthStats": {
-        "attack": 2.227,
-        "defense": 1.333,
-        "agility": 1.585,
-        "vitality": 10.006
-      },
-      "rideable": "탑승가능",
-      "totalGrowth": "5.145",
-      "grade": "1등급"
-    },
-    {
       "id": "850",
       "name": "로데오",
       "source": "네메시스의 길로",
