@@ -3,6 +3,33 @@
   "totalCount": 622,
   "pets": [
     {
+      "id": "867",
+      "name": "메가호크(환)",
+      "source": "페트 환생",
+      "imageLink": "https://www.hwansoo.top/data/file/pets/2d52124fb734e9161325272d0b97ce2b_QoMWyTvZ_575f98024ce343ebe8fb7a1383cde4549f6a771d.gif",
+      "elementStats": {
+        "earth": 0,
+        "water": 0,
+        "fire": 1,
+        "wind": 9
+      },
+      "baseStats": {
+        "attack": 11,
+        "defense": 5,
+        "agility": 11,
+        "vitality": 55
+      },
+      "growthStats": {
+        "attack": 2.125,
+        "defense": 1.014,
+        "agility": 2.112,
+        "vitality": 10.098
+      },
+      "rideable": "탑승가능",
+      "totalGrowth": "5.251",
+      "grade": "일반등급"
+    },
+    {
       "id": "866",
       "name": "메이란스",
       "source": "후원보상",
