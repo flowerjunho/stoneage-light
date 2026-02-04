@@ -24,6 +24,7 @@ import BattlePage from '@/features/battle/pages/BattlePage';
 import HomePage from '@/features/home/pages/HomePage';
 import DashboardPage from '@/features/dashboard/pages/DashboardPage';
 import Dashboard2Page from '@/features/dashboard/pages/Dashboard2Page';
+import AnalyticsPage from '@/features/analytics/pages/AnalyticsPage';
 import SharePage from '@/features/share/pages/SharePage';
 import GamePage from '@/features/game/pages/GamePage';
 import { VisitTracker } from '@/shared/utils/visitTracker';
@@ -39,6 +40,7 @@ const AppContent: React.FC = () => {
   const isDashboardPage = location.pathname === '/dashboard';
   const isDashboard2Page = location.pathname === '/dashboard2';
   const isTradePage = location.pathname === '/trade';
+  const isAnalyticsPage = location.pathname === '/analytics';
 
   // 페이지 전환 시 스크롤 최상단으로 이동
   useEffect(() => {
@@ -90,6 +92,15 @@ const AppContent: React.FC = () => {
     return (
       <Routes>
         <Route path="/dashboard2" element={<Dashboard2Page />} />
+      </Routes>
+    );
+  }
+
+  // 통계 페이지는 레이아웃 없이 렌더링
+  if (isAnalyticsPage) {
+    return (
+      <Routes>
+        <Route path="/analytics" element={<AnalyticsPage />} />
       </Routes>
     );
   }
