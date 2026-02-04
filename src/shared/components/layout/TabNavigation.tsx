@@ -1,6 +1,7 @@
 import { useRef, useLayoutEffect, useState, useCallback, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import {
+  Home,
   Bell,
   Heart,
   Users,
@@ -24,6 +25,7 @@ interface Tab {
 }
 
 const tabs: Tab[] = [
+  { path: '/', label: '홈', icon: <Home className="w-4 h-4" /> },
   { path: '/notice', label: '공지', icon: <Bell className="w-4 h-4" /> },
   { path: '/pets', label: '페트', icon: <Heart className="w-4 h-4" /> },
   {
@@ -51,7 +53,7 @@ const TabNavigation = () => {
   const [isHovering, setIsHovering] = useState(false);
 
   const isActive = (path: string) => {
-    return location.pathname === path || (location.pathname === '/' && path === '/pets');
+    return location.pathname === path;
   };
 
   // 스크롤 상태 체크

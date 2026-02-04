@@ -21,6 +21,7 @@ import BoardPage from '@/features/board/pages/BoardPage';
 import TipPage from '@/features/tip/pages/TipPage';
 import RadontaPage from '@/features/radonta/pages/RadontaPage';
 import BattlePage from '@/features/battle/pages/BattlePage';
+import HomePage from '@/features/home/pages/HomePage';
 import DashboardPage from '@/features/dashboard/pages/DashboardPage';
 import Dashboard2Page from '@/features/dashboard/pages/Dashboard2Page';
 import SharePage from '@/features/share/pages/SharePage';
@@ -38,6 +39,11 @@ const AppContent: React.FC = () => {
   const isDashboardPage = location.pathname === '/dashboard';
   const isDashboard2Page = location.pathname === '/dashboard2';
   const isTradePage = location.pathname === '/trade';
+
+  // 페이지 전환 시 스크롤 최상단으로 이동
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [location.pathname]);
 
   // 앱 시작 시 방문자 추적
   useEffect(() => {
@@ -103,7 +109,7 @@ const AppContent: React.FC = () => {
       <main className="pb-8">
         {!hideTabNavigation && <TabNavigation />}
         <Routes>
-          <Route path="/" element={<Navigate to="/pets" replace />} />
+          <Route path="/" element={<HomePage />} />
           <Route path="/notice" element={<NoticePage />} />
           <Route path="/notice/:type/:noteId" element={<PatchNoteDetailPage />} />
           <Route path="/market" element={<Navigate to="/pets" replace />} />
