@@ -40,7 +40,8 @@ const KeywordSearch: React.FC<KeywordSearchProps> = ({ keywords }) => {
           value={query}
           onChange={e => setQuery(e.target.value)}
           placeholder="키워드 검색..."
-          className="input-base pl-9 py-2.5 text-sm"
+          className="input-base py-2.5 text-sm"
+          style={{ paddingLeft: '2.5rem' }}
         />
       </div>
 
