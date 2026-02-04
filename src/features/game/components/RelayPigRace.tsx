@@ -943,7 +943,7 @@ const RelayPigRace = ({ onBack, initialMode, initialRoomCode, alreadyJoinedRoom,
   }, [room?.status, room?.players, room?.pigs]);
 
   // BGM 페이드아웃 ref (cleanup용)
-  const fadeIntervalRef = useRef<NodeJS.Timeout | null>(null);
+  const fadeIntervalRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   // BGM 페이드아웃 함수
   const fadeOutBgm = (duration: number = 1500) => {

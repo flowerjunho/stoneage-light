@@ -7,7 +7,7 @@ import ThemeToggle from '@/shared/components/layout/ThemeToggle';
 
 const Header: React.FC = () => {
   const [showTooltip, setShowTooltip] = useState(false);
-  const [tooltipTimeoutId, setTooltipTimeoutId] = useState<NodeJS.Timeout | null>(null);
+  const [tooltipTimeoutId, setTooltipTimeoutId] = useState<ReturnType<typeof setTimeout> | null>(null);
 
   const handleInfoClick = () => {
     if (tooltipTimeoutId) {

@@ -55,7 +55,7 @@ const BoardingPage: React.FC = () => {
   const [isCharacterModalOpen, setIsCharacterModalOpen] = useState(false);
   const [alertMessage, setAlertMessage] = useState<string>('');
   const [showAlert, setShowAlert] = useState(false);
-  const [alertTimeoutId, setAlertTimeoutId] = useState<NodeJS.Timeout | null>(null);
+  const [alertTimeoutId, setAlertTimeoutId] = useState<ReturnType<typeof setTimeout> | null>(null);
 
   // 공유 모드 감지
   const isShareMode = searchParams.get('share') === 'true';

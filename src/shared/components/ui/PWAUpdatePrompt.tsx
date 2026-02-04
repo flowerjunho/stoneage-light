@@ -6,8 +6,8 @@ const AUTO_UPDATE_SECONDS = 5;
 const PWAUpdatePrompt = () => {
   const [showPrompt, setShowPrompt] = useState(false);
   const [countdown, setCountdown] = useState(AUTO_UPDATE_SECONDS);
-  const timerRef = useRef<NodeJS.Timeout | null>(null);
-  const countdownRef = useRef<NodeJS.Timeout | null>(null);
+  const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const countdownRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const {
     needRefresh: [needRefresh, setNeedRefresh],
