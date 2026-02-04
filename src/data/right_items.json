@@ -1,5 +1,19 @@
 [
   {
+    "id": "94",
+    "name": " 라돈타의 귀걸이(진)",
+    "description": "공 +10 방 +10 민 +10 내 +10 회피 +5",
+    "imageUrl": "https://www.hwansoo.top/data/editor/2508/37781c5710467f184508e10fd18bcc00_1754352312_2321.png",
+    "materials": "라돈타의 귀걸이(개) + 라돈타의 귀걸이 + 1000만 스톤"
+  },
+  {
+    "id": "93",
+    "name": " 라돈타의 귀걸이(개)",
+    "description": "공 +7 방 +7 민 +7 내 +10 회피 +5",
+    "imageUrl": "https://www.hwansoo.top/data/editor/2508/37781c5710467f184508e10fd18bcc00_1754352312_2321.png",
+    "materials": "라돈타의 귀걸이 + 암흑 헤티아 파편"
+  },
+  {
     "id": "92",
     "name": "봉인된 열쇠",
     "description": "정령왕에게 가는 열쇠 (사용시 정령왕의 방 이동)",
@@ -603,7 +617,7 @@
   },
   {
     "id": "12",
-    "name": " 라돈타 귀걸이",
+    "name": " 라돈타의 귀걸이",
     "description": "공 +5 방 +5 민 +5 내 +10 회피 +5",
     "imageUrl": "https://www.hwansoo.top/data/editor/2508/37781c5710467f184508e10fd18bcc00_1754352312_2321.png",
     "materials": "라돈타 전리품 개봉시 랜덤 아이템 획득 가능"
