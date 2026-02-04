@@ -11,12 +11,19 @@ export function getWeekKey(date: Date): string {
   return `${d.getUTCFullYear()}-W${String(weekNo).padStart(2, '0')}`;
 }
 
+function toLocalDateString(d: Date): string {
+  const year = d.getFullYear();
+  const month = String(d.getMonth() + 1).padStart(2, '0');
+  const day = String(d.getDate()).padStart(2, '0');
+  return `${year}-${month}-${day}`;
+}
+
 export function getDateRange(start: string, end: string): string[] {
   const dates: string[] = [];
   const cur = new Date(start + 'T00:00:00');
   const endDate = new Date(end + 'T00:00:00');
   while (cur <= endDate) {
-    dates.push(cur.toISOString().split('T')[0]);
+    dates.push(toLocalDateString(cur));
     cur.setDate(cur.getDate() + 1);
   }
   return dates;
@@ -25,7 +32,7 @@ export function getDateRange(start: string, end: string): string[] {
 export function addDays(dateStr: string, days: number): string {
   const d = new Date(dateStr + 'T00:00:00');
   d.setDate(d.getDate() + days);
-  return d.toISOString().split('T')[0];
+  return toLocalDateString(d);
 }
 
 export function formatDisplayDate(dateStr: string): string {
