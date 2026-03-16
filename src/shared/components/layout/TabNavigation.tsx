@@ -6,7 +6,7 @@ import {
   Heart,
   Users,
   Package,
-  PlayCircle,
+  // PlayCircle,
   Calculator,
   Lightbulb,
   ClipboardCheck,

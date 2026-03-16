@@ -7,7 +7,9 @@ import ThemeToggle from '@/shared/components/layout/ThemeToggle';
 
 const Header: React.FC = () => {
   const [showTooltip, setShowTooltip] = useState(false);
-  const [tooltipTimeoutId, setTooltipTimeoutId] = useState<ReturnType<typeof setTimeout> | null>(null);
+  const [tooltipTimeoutId, setTooltipTimeoutId] = useState<ReturnType<typeof setTimeout> | null>(
+    null
+  );
 
   const handleInfoClick = () => {
     if (tooltipTimeoutId) {
@@ -31,16 +33,11 @@ const Header: React.FC = () => {
   return (
     <>
       {/* Minimal Navigation Bar - 스크롤 시 탭에 덮임 */}
-      <nav
-        className="py-4 bg-transparent"
-      >
+      <nav className="py-4 bg-transparent">
         <div className="max-w-6xl mx-auto px-4 md:px-6">
           <div className="flex items-center justify-between">
             {/* Minimal Logo */}
-            <Link
-              to="/"
-              className="group flex items-center gap-2.5 transition-all duration-300"
-            >
+            <Link to="/" className="group flex items-center gap-2.5 transition-all duration-300">
               {/* 고인돌 아이콘 */}
               <div className="relative">
                 <div
@@ -54,11 +51,7 @@ const Header: React.FC = () => {
                   )}
                 >
                   {/* 고인돌 SVG */}
-                  <svg
-                    viewBox="0 0 32 32"
-                    className="w-8 h-8"
-                    fill="none"
-                  >
+                  <svg viewBox="0 0 32 32" className="w-8 h-8" fill="none">
                     {/* 받침돌 2개 */}
                     <path
                       d="M6 28 L10 18 L12 28 Z"
@@ -103,7 +96,6 @@ const Header: React.FC = () => {
           </div>
         </div>
       </nav>
-
 
       {/* Hero Section - Clean & Modern */}
       <header className="relative w-full overflow-hidden">
@@ -238,7 +230,7 @@ const Header: React.FC = () => {
                            shadow-xl shadow-black/30 transition-transform duration-500 hover:scale-[1.02]"
               >
                 <img
-                  src={`${import.meta.env.BASE_URL}sa_1.png`}
+                  src={`${import.meta.env.BASE_URL}sa.jpg`}
                   alt="StoneAge Light"
                   className="w-full h-auto"
                 />
