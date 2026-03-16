@@ -35,7 +35,7 @@ const tabs: Tab[] = [
     icon: <Users className="w-4 h-4" />,
   },
   { path: '/items', label: '아이템', icon: <Package className="w-4 h-4" /> },
-  { path: '/game', label: '게임', icon: <PlayCircle className="w-4 h-4" /> },
+  // { path: '/game', label: '게임', icon: <PlayCircle className="w-4 h-4" /> },
   { path: '/calculator', label: '계산기', icon: <Calculator className="w-4 h-4" /> },
   { path: '/tip', label: '팁', icon: <Lightbulb className="w-4 h-4" /> },
   { path: '/quests', label: '퀘스트', icon: <ClipboardCheck className="w-4 h-4" /> },
