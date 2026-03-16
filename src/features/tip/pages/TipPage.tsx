@@ -1,6 +1,14 @@
 import React, { useState, useCallback, useEffect, useMemo } from 'react';
 import { useSearchParams } from 'react-router-dom';
-import { Lightbulb, ChevronDown, AlertTriangle, Info, Swords, Castle, Calendar } from 'lucide-react';
+import {
+  Lightbulb,
+  ChevronDown,
+  AlertTriangle,
+  Info,
+  Swords,
+  Castle,
+  Calendar,
+} from 'lucide-react';
 import iceCastleData from '@/data/ice_castle.json';
 import weeklyRaidData from '@/data/weekly_raid.json';
 import rightItemsData from '@/data/right_items.json';
@@ -461,11 +469,15 @@ const RadontaContent: React.FC = () => {
                 </div>
                 <div className="flex items-center gap-2 px-3 py-2 bg-bg-secondary rounded-lg">
                   <span className="text-xs text-text-muted">우대</span>
-                  <span className="text-sm font-semibold text-text-primary">{strategy.support}</span>
+                  <span className="text-sm font-semibold text-text-primary">
+                    {strategy.support}
+                  </span>
                 </div>
                 <div className="flex items-center gap-2 px-3 py-2 bg-bg-secondary rounded-lg">
                   <span className="text-xs text-text-muted">무지개</span>
-                  <span className="text-sm font-semibold text-text-primary">{strategy.rainbow}</span>
+                  <span className="text-sm font-semibold text-text-primary">
+                    {strategy.rainbow}
+                  </span>
                 </div>
               </div>
 
@@ -498,7 +510,10 @@ const RadontaContent: React.FC = () => {
                   </h5>
                   <ul className="space-y-2">
                     {strategy.basic.map((pet, petIdx) => (
-                      <li key={petIdx} className="flex items-center gap-2 text-sm text-text-secondary">
+                      <li
+                        key={petIdx}
+                        className="flex items-center gap-2 text-sm text-text-secondary"
+                      >
                         <span className="w-5 h-5 rounded-full bg-emerald-500 text-white flex items-center justify-center text-xs font-bold flex-shrink-0">
                           {petIdx + 1}
                         </span>
@@ -515,7 +530,10 @@ const RadontaContent: React.FC = () => {
                   </h5>
                   <ul className="space-y-2">
                     {strategy.aurora.map((pet, petIdx) => (
-                      <li key={petIdx} className="flex items-center gap-2 text-sm text-text-secondary">
+                      <li
+                        key={petIdx}
+                        className="flex items-center gap-2 text-sm text-text-secondary"
+                      >
                         <span className="w-5 h-5 rounded-full bg-blue-500 text-white flex items-center justify-center text-xs font-bold flex-shrink-0">
                           {petIdx + 1}
                         </span>
@@ -571,13 +589,17 @@ const TipPage: React.FC = () => {
     if (tabFromUrl === 'mytip' || tabFromUrl === 'raid') {
       return tabFromUrl;
     }
-    return 'mytip'; // 기본값을 나만의 팁으로 변경
+    return 'raid'; // 기본값을 레이드로 변경
   });
 
   // 레이드 서브탭 상태
   const [raidSubTab, setRaidSubTab] = useState<RaidSubTab>(() => {
     const subTabFromUrl = searchParams.get('sub');
-    return subTabFromUrl === 'radonta' || subTabFromUrl === 'ice-castle' || subTabFromUrl === 'weekly' ? subTabFromUrl : 'radonta';
+    return subTabFromUrl === 'radonta' ||
+      subTabFromUrl === 'ice-castle' ||
+      subTabFromUrl === 'weekly'
+      ? subTabFromUrl
+      : 'radonta';
   });
 
   // 페이지 로드 시 URL에 기본값 설정
@@ -591,31 +613,37 @@ const TipPage: React.FC = () => {
   }, []);
 
   // 메인 탭 변경 핸들러
-  const handleMainTabChange = useCallback((tab: MainTab) => {
-    setMainTab(tab);
-    if (tab === 'mytip') {
-      // mytip 탭일 때는 sub 파라미터 제거
-      setSearchParams({ tab });
-    } else {
-      // raid 탭일 때는 sub 파라미터 유지/설정
-      setSearchParams({ tab, sub: raidSubTab });
-    }
-  }, [setSearchParams, raidSubTab]);
+  const handleMainTabChange = useCallback(
+    (tab: MainTab) => {
+      setMainTab(tab);
+      if (tab === 'mytip') {
+        // mytip 탭일 때는 sub 파라미터 제거
+        setSearchParams({ tab });
+      } else {
+        // raid 탭일 때는 sub 파라미터 유지/설정
+        setSearchParams({ tab, sub: raidSubTab });
+      }
+    },
+    [setSearchParams, raidSubTab]
+  );
 
   // 서브탭 변경 핸들러
-  const handleRaidSubTabChange = useCallback((tab: RaidSubTab) => {
-    setRaidSubTab(tab);
-    setSearchParams(prev => {
-      const newParams = new URLSearchParams(prev);
-      newParams.set('tab', 'raid');
-      newParams.set('sub', tab);
-      return newParams;
-    });
-  }, [setSearchParams]);
+  const handleRaidSubTabChange = useCallback(
+    (tab: RaidSubTab) => {
+      setRaidSubTab(tab);
+      setSearchParams(prev => {
+        const newParams = new URLSearchParams(prev);
+        newParams.set('tab', 'raid');
+        newParams.set('sub', tab);
+        return newParams;
+      });
+    },
+    [setSearchParams]
+  );
 
   // 보스 아코디언 토글
   const toggleBoss = useCallback((bossId: string) => {
-    setExpandedBossId(prev => prev === bossId ? null : bossId);
+    setExpandedBossId(prev => (prev === bossId ? null : bossId));
   }, []);
 
   return (
@@ -635,7 +663,8 @@ const TipPage: React.FC = () => {
                 <Lightbulb className="w-4 h-4 text-accent" />
               </div>
               <p className="text-sm text-text-secondary text-left">
-                게임 플레이에 유용한 <span className="font-medium text-text-primary">공략과 팁</span>을 제공합니다.
+                게임 플레이에 유용한{' '}
+                <span className="font-medium text-text-primary">공략과 팁</span>을 제공합니다.
               </p>
             </div>
           </Card>
@@ -650,16 +679,31 @@ const TipPage: React.FC = () => {
             className="absolute top-1.5 h-[calc(100%-12px)] rounded-xl bg-accent shadow-glow
                        transition-all duration-300 ease-out-expo pointer-events-none"
             style={{
-              left: mainTab === 'mytip' ? '6px' : 'calc(50% + 2px)',
+              left: mainTab === 'raid' ? '6px' : 'calc(50% + 2px)',
               width: 'calc(50% - 8px)',
             }}
           />
           <Button
             variant="ghost"
+            onClick={() => handleMainTabChange('raid')}
+            className={cn(
+              'relative z-10 flex-1 w-1/2 gap-2 rounded-xl transition-colors duration-300',
+              mainTab === 'raid'
+                ? 'text-text-inverse hover:bg-transparent'
+                : 'text-text-secondary hover:text-text-primary'
+            )}
+          >
+            <Swords className="w-4 h-4" />
+            레이드
+          </Button>
+          <Button
+            variant="ghost"
             onClick={() => handleMainTabChange('mytip')}
             className={cn(
-              "relative z-10 flex-1 w-1/2 gap-2 rounded-xl transition-colors duration-300",
-              mainTab === 'mytip' ? 'text-text-inverse hover:bg-transparent' : 'text-text-secondary hover:text-text-primary'
+              'relative z-10 flex-1 w-1/2 gap-2 rounded-xl transition-colors duration-300',
+              mainTab === 'mytip'
+                ? 'text-text-inverse hover:bg-transparent'
+                : 'text-text-secondary hover:text-text-primary'
             )}
           >
             <Lightbulb className="w-4 h-4" />
@@ -667,17 +711,6 @@ const TipPage: React.FC = () => {
             <Badge className="ml-1 px-1.5 py-0 text-[10px] bg-amber-500 text-black hover:bg-amber-500">
               BETA
             </Badge>
-          </Button>
-          <Button
-            variant="ghost"
-            onClick={() => handleMainTabChange('raid')}
-            className={cn(
-              "relative z-10 flex-1 w-1/2 gap-2 rounded-xl transition-colors duration-300",
-              mainTab === 'raid' ? 'text-text-inverse hover:bg-transparent' : 'text-text-secondary hover:text-text-primary'
-            )}
-          >
-            <Swords className="w-4 h-4" />
-            레이드
           </Button>
         </Card>
 
@@ -709,7 +742,12 @@ const TipPage: React.FC = () => {
               className="absolute top-1.5 h-[calc(100%-12px)] rounded-xl bg-blue-500 shadow-glow
                          transition-all duration-300 ease-out-expo pointer-events-none"
               style={{
-                left: raidSubTab === 'radonta' ? '6px' : raidSubTab === 'ice-castle' ? 'calc(33.33% + 2px)' : 'calc(66.66% + 2px)',
+                left:
+                  raidSubTab === 'radonta'
+                    ? '6px'
+                    : raidSubTab === 'ice-castle'
+                      ? 'calc(33.33% + 2px)'
+                      : 'calc(66.66% + 2px)',
                 width: 'calc(33.33% - 8px)',
               }}
             />
@@ -717,8 +755,10 @@ const TipPage: React.FC = () => {
               variant="ghost"
               onClick={() => handleRaidSubTabChange('radonta')}
               className={cn(
-                "relative z-10 flex-1 w-1/3 gap-2 rounded-xl transition-colors duration-300",
-                raidSubTab === 'radonta' ? 'text-white hover:bg-transparent' : 'text-text-secondary hover:text-text-primary'
+                'relative z-10 flex-1 w-1/3 gap-2 rounded-xl transition-colors duration-300',
+                raidSubTab === 'radonta'
+                  ? 'text-white hover:bg-transparent'
+                  : 'text-text-secondary hover:text-text-primary'
               )}
             >
               <Swords className="w-4 h-4" />
@@ -728,8 +768,10 @@ const TipPage: React.FC = () => {
               variant="ghost"
               onClick={() => handleRaidSubTabChange('ice-castle')}
               className={cn(
-                "relative z-10 flex-1 w-1/3 gap-2 rounded-xl transition-colors duration-300",
-                raidSubTab === 'ice-castle' ? 'text-white hover:bg-transparent' : 'text-text-secondary hover:text-text-primary'
+                'relative z-10 flex-1 w-1/3 gap-2 rounded-xl transition-colors duration-300',
+                raidSubTab === 'ice-castle'
+                  ? 'text-white hover:bg-transparent'
+                  : 'text-text-secondary hover:text-text-primary'
               )}
             >
               <Castle className="w-4 h-4" />
@@ -739,8 +781,10 @@ const TipPage: React.FC = () => {
               variant="ghost"
               onClick={() => handleRaidSubTabChange('weekly')}
               className={cn(
-                "relative z-10 flex-1 w-1/3 gap-2 rounded-xl transition-colors duration-300",
-                raidSubTab === 'weekly' ? 'text-white hover:bg-transparent' : 'text-text-secondary hover:text-text-primary'
+                'relative z-10 flex-1 w-1/3 gap-2 rounded-xl transition-colors duration-300',
+                raidSubTab === 'weekly'
+                  ? 'text-white hover:bg-transparent'
+                  : 'text-text-secondary hover:text-text-primary'
               )}
             >
               <Calendar className="w-4 h-4" />
@@ -761,14 +805,10 @@ const TipPage: React.FC = () => {
       )}
 
       {/* 나만의 팁 컨텐츠 */}
-      {mainTab === 'mytip' && (
-        <MyTipBoard />
-      )}
+      {mainTab === 'mytip' && <MyTipBoard />}
 
       {/* 라돈타 공략 컨텐츠 */}
-      {mainTab === 'raid' && raidSubTab === 'radonta' && (
-        <RadontaContent />
-      )}
+      {mainTab === 'raid' && raidSubTab === 'radonta' && <RadontaContent />}
 
       {/* 얼음성 공략 컨텐츠 */}
       {mainTab === 'raid' && raidSubTab === 'ice-castle' && (
@@ -780,7 +820,7 @@ const TipPage: React.FC = () => {
             </Badge>
           </div>
 
-          {iceCastleData.bosses.map((boss) => {
+          {iceCastleData.bosses.map(boss => {
             const isExpanded = expandedBossId === boss.id;
             return (
               <Card key={boss.id} className="overflow-hidden">
@@ -790,27 +830,27 @@ const TipPage: React.FC = () => {
                   className="w-full p-4 flex items-center justify-between gap-2 hover:bg-bg-tertiary/30 transition-colors"
                 >
                   <div className="flex items-center gap-3 flex-wrap">
-                    <h3 className="text-lg font-bold text-text-primary">
-                      {boss.name}
-                    </h3>
+                    <h3 className="text-lg font-bold text-text-primary">{boss.name}</h3>
                     <div className="flex items-center gap-2">
                       <Badge variant="outline" className="text-xs">
                         {boss.room}
                       </Badge>
-                      <Badge className={cn(
-                        "text-xs",
-                        boss.attribute === '수속성'
-                          ? 'bg-blue-500/20 text-blue-400 hover:bg-blue-500/30'
-                          : 'bg-emerald-500/20 text-emerald-400 hover:bg-emerald-500/30'
-                      )}>
+                      <Badge
+                        className={cn(
+                          'text-xs',
+                          boss.attribute === '수속성'
+                            ? 'bg-blue-500/20 text-blue-400 hover:bg-blue-500/30'
+                            : 'bg-emerald-500/20 text-emerald-400 hover:bg-emerald-500/30'
+                        )}
+                      >
                         {boss.attribute}
                       </Badge>
                     </div>
                   </div>
                   <ChevronDown
                     className={cn(
-                      "w-5 h-5 text-text-secondary transition-transform duration-200 flex-shrink-0",
-                      isExpanded && "rotate-180"
+                      'w-5 h-5 text-text-secondary transition-transform duration-200 flex-shrink-0',
+                      isExpanded && 'rotate-180'
                     )}
                   />
                 </button>
@@ -852,7 +892,10 @@ const TipPage: React.FC = () => {
                       </h4>
                       <ol className="space-y-3">
                         {boss.strategy.map((step, idx) => (
-                          <li key={idx} className="flex items-start gap-3 text-sm text-text-secondary">
+                          <li
+                            key={idx}
+                            className="flex items-start gap-3 text-sm text-text-secondary"
+                          >
                             <span className="flex-shrink-0 w-6 h-6 bg-accent rounded-full flex items-center justify-center text-white text-xs font-bold">
                               {idx + 1}
                             </span>
@@ -883,16 +926,25 @@ const TipPage: React.FC = () => {
                           <table className="w-full text-sm">
                             <thead>
                               <tr className="border-b border-border bg-bg-tertiary/50">
-                                <th className="text-left py-3 px-3 text-text-muted font-medium w-16">이미지</th>
-                                <th className="text-left py-3 px-3 text-text-muted font-medium">아이템</th>
-                                <th className="text-left py-3 px-3 text-text-muted font-medium hidden sm:table-cell">설명</th>
+                                <th className="text-left py-3 px-3 text-text-muted font-medium w-16">
+                                  이미지
+                                </th>
+                                <th className="text-left py-3 px-3 text-text-muted font-medium">
+                                  아이템
+                                </th>
+                                <th className="text-left py-3 px-3 text-text-muted font-medium hidden sm:table-cell">
+                                  설명
+                                </th>
                               </tr>
                             </thead>
                             <tbody>
                               {boss.rewards.map((reward, idx) => {
                                 const itemInfo = itemsMap.get(reward.itemId);
                                 return (
-                                  <tr key={idx} className="border-b border-border/50 hover:bg-bg-tertiary/30 transition-colors">
+                                  <tr
+                                    key={idx}
+                                    className="border-b border-border/50 hover:bg-bg-tertiary/30 transition-colors"
+                                  >
                                     <td className="py-3 px-3">
                                       <div className="w-12 h-12 bg-bg-secondary rounded-lg overflow-hidden flex items-center justify-center border border-border">
                                         {itemInfo?.imageUrl ? (
@@ -911,7 +963,9 @@ const TipPage: React.FC = () => {
                                       </div>
                                     </td>
                                     <td className="py-3 px-3">
-                                      <div className="font-medium text-text-primary">{reward.name}</div>
+                                      <div className="font-medium text-text-primary">
+                                        {reward.name}
+                                      </div>
                                       <div className="sm:hidden text-xs text-text-muted mt-1 line-clamp-2">
                                         {itemInfo?.description || '-'}
                                       </div>
@@ -945,7 +999,7 @@ const TipPage: React.FC = () => {
             </Badge>
           </div>
 
-          {weeklyRaidData.bosses.map((boss) => {
+          {weeklyRaidData.bosses.map(boss => {
             const isExpanded = expandedBossId === boss.id;
             return (
               <Card key={boss.id} className="overflow-hidden">
@@ -955,22 +1009,22 @@ const TipPage: React.FC = () => {
                   className="w-full p-4 flex items-center justify-between gap-2 hover:bg-bg-tertiary/30 transition-colors"
                 >
                   <div className="flex items-center gap-3 flex-wrap">
-                    <h3 className="text-lg font-bold text-text-primary">
-                      {boss.name}
-                    </h3>
-                    <Badge className={cn(
-                      "text-xs",
-                      boss.attribute === '수속성'
-                        ? 'bg-blue-500/20 text-blue-400 hover:bg-blue-500/30'
-                        : 'bg-emerald-500/20 text-emerald-400 hover:bg-emerald-500/30'
-                    )}>
+                    <h3 className="text-lg font-bold text-text-primary">{boss.name}</h3>
+                    <Badge
+                      className={cn(
+                        'text-xs',
+                        boss.attribute === '수속성'
+                          ? 'bg-blue-500/20 text-blue-400 hover:bg-blue-500/30'
+                          : 'bg-emerald-500/20 text-emerald-400 hover:bg-emerald-500/30'
+                      )}
+                    >
                       {boss.attribute}
                     </Badge>
                   </div>
                   <ChevronDown
                     className={cn(
-                      "w-5 h-5 text-text-secondary transition-transform duration-200 flex-shrink-0",
-                      isExpanded && "rotate-180"
+                      'w-5 h-5 text-text-secondary transition-transform duration-200 flex-shrink-0',
+                      isExpanded && 'rotate-180'
                     )}
                   />
                 </button>
@@ -1012,7 +1066,10 @@ const TipPage: React.FC = () => {
                       </h4>
                       <ol className="space-y-3">
                         {boss.strategy.map((step, idx) => (
-                          <li key={idx} className="flex items-start gap-3 text-sm text-text-secondary">
+                          <li
+                            key={idx}
+                            className="flex items-start gap-3 text-sm text-text-secondary"
+                          >
                             <span className="flex-shrink-0 w-6 h-6 bg-accent rounded-full flex items-center justify-center text-white text-xs font-bold">
                               {idx + 1}
                             </span>
@@ -1043,16 +1100,25 @@ const TipPage: React.FC = () => {
                           <table className="w-full text-sm">
                             <thead>
                               <tr className="border-b border-border bg-bg-tertiary/50">
-                                <th className="text-left py-3 px-3 text-text-muted font-medium w-16">이미지</th>
-                                <th className="text-left py-3 px-3 text-text-muted font-medium">아이템</th>
-                                <th className="text-left py-3 px-3 text-text-muted font-medium hidden sm:table-cell">설명</th>
+                                <th className="text-left py-3 px-3 text-text-muted font-medium w-16">
+                                  이미지
+                                </th>
+                                <th className="text-left py-3 px-3 text-text-muted font-medium">
+                                  아이템
+                                </th>
+                                <th className="text-left py-3 px-3 text-text-muted font-medium hidden sm:table-cell">
+                                  설명
+                                </th>
                               </tr>
                             </thead>
                             <tbody>
                               {boss.rewards.map((reward, idx) => {
                                 const itemInfo = itemsMap.get(reward.itemId);
                                 return (
-                                  <tr key={idx} className="border-b border-border/50 hover:bg-bg-tertiary/30 transition-colors">
+                                  <tr
+                                    key={idx}
+                                    className="border-b border-border/50 hover:bg-bg-tertiary/30 transition-colors"
+                                  >
                                     <td className="py-3 px-3">
                                       <div className="w-12 h-12 bg-bg-secondary rounded-lg overflow-hidden flex items-center justify-center border border-border">
                                         {itemInfo?.imageUrl ? (
@@ -1071,7 +1137,9 @@ const TipPage: React.FC = () => {
                                       </div>
                                     </td>
                                     <td className="py-3 px-3">
-                                      <div className="font-medium text-text-primary">{reward.name}</div>
+                                      <div className="font-medium text-text-primary">
+                                        {reward.name}
+                                      </div>
                                       <div className="sm:hidden text-xs text-text-muted mt-1 line-clamp-2">
                                         {itemInfo?.description || '-'}
                                       </div>
