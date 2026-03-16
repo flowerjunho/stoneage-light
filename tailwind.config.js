@@ -1,7 +1,7 @@
 /** @type {import('tailwindcss').Config} */
 
 // CSS 변수를 opacity modifier와 함께 사용할 수 있도록 하는 헬퍼 함수
-const withOpacity = (variableName) => {
+const withOpacity = variableName => {
   return ({ opacityValue }) => {
     if (opacityValue !== undefined) {
       return `rgba(var(${variableName}), ${opacityValue})`;
@@ -105,6 +105,7 @@ export default {
         'border-flow': 'border-flow 3s ease infinite',
         'rotate-slow': 'rotate-slow 20s linear infinite',
         'bounce-subtle': 'bounce-subtle 2s ease-in-out infinite',
+        shake: 'shake 0.4s ease-in-out',
       },
       transitionTimingFunction: {
         'out-expo': 'cubic-bezier(0.19, 1, 0.22, 1)',

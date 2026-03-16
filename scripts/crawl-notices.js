@@ -13,7 +13,7 @@ async function crawlNotices() {
 
   const browser = await puppeteer.launch({
     headless: true,
-    args: ['--no-sandbox', '--disable-setuid-sandbox']
+    args: ['--no-sandbox', '--disable-setuid-sandbox'],
   });
   const page = await browser.newPage();
 
@@ -35,7 +35,7 @@ async function crawlNotices() {
             if (title && title.length > 0) {
               notices.push({
                 title: title,
-                link: link.href
+                link: link.href,
               });
             }
           }
@@ -43,8 +43,8 @@ async function crawlNotices() {
       });
 
       // 중복 제거
-      return notices.filter((item, index, self) =>
-        index === self.findIndex(t => t.link === item.link)
+      return notices.filter(
+        (item, index, self) => index === self.findIndex(t => t.link === item.link)
       );
     });
 
@@ -65,9 +65,10 @@ async function crawlNotices() {
         const date = timeEl ? timeEl.textContent.trim() : '';
 
         // 본문 HTML 추출
-        const contentSection = document.querySelector('section.bo_v_atc')
-          || document.querySelector('#bo_v_atc')
-          || document.querySelector('.bo_v_atc');
+        const contentSection =
+          document.querySelector('section.bo_v_atc') ||
+          document.querySelector('#bo_v_atc') ||
+          document.querySelector('.bo_v_atc');
 
         let contentHtml = '';
         if (contentSection) {
@@ -92,30 +93,49 @@ async function crawlNotices() {
         title,
         link,
         date: detail.date,
-        contentHtml: detail.contentHtml
+        contentHtml: detail.contentHtml,
       });
 
       // 요청 간 딜레이 (서버 부하 방지)
       await new Promise(resolve => setTimeout(resolve, 500));
     }
 
-    // 4. JSON 파일로 저장
+    // 4. 기존 데이터 로드 후 중복 제거 병합
     const outputPath = path.join(__dirname, '..', 'src', 'data', 'notices.json');
 
-    // data 폴더가 없으면 생성
     const dataDir = path.dirname(outputPath);
     if (!fs.existsSync(dataDir)) {
       fs.mkdirSync(dataDir, { recursive: true });
     }
 
-    fs.writeFileSync(outputPath, JSON.stringify(notices, null, 2), 'utf-8');
+    let existing = [];
+    if (fs.existsSync(outputPath)) {
+      try {
+        existing = JSON.parse(fs.readFileSync(outputPath, 'utf-8'));
+        console.log(`📂 기존 데이터 ${existing.length}개 로드됨`);
+      } catch {
+        console.log('⚠️ 기존 파일 파싱 실패, 새로 생성합니다.');
+      }
+    }
 
+    // id 기준 중복 제거 (새 데이터 우선)
+    const mergedMap = new Map();
+    for (const item of existing) {
+      mergedMap.set(item.id, item);
+    }
+    for (const item of notices) {
+      mergedMap.set(item.id, item);
+    }
+    const merged = Array.from(mergedMap.values()).sort((a, b) => b.id - a.id);
+
+    fs.writeFileSync(outputPath, JSON.stringify(merged, null, 2), 'utf-8');
+
+    const newCount = notices.filter(n => !existing.some(e => e.id === n.id)).length;
     console.log(`\n✅ 크롤링 완료!`);
     console.log(`📁 저장 위치: ${outputPath}`);
-    console.log(`📊 총 ${notices.length}개의 공지사항 수집됨`);
+    console.log(`📊 총 ${merged.length}개 (기존 ${existing.length} + 신규 ${newCount})`);
 
     return notices;
-
   } catch (error) {
     console.error('❌ 크롤링 중 오류 발생:', error);
     throw error;

@@ -28,6 +28,7 @@ import AnalyticsPage from '@/features/analytics/pages/AnalyticsPage';
 import SharePage from '@/features/share/pages/SharePage';
 import GamePage from '@/features/game/pages/GamePage';
 import { VisitTracker } from '@/shared/utils/visitTracker';
+import PasswordGate from '@/shared/components/auth/PasswordGate';
 
 const AppContent: React.FC = () => {
   const location = useLocation();
@@ -52,7 +53,7 @@ const AppContent: React.FC = () => {
     // 관리자가 아닌 경우에만 방문자 카운트
     const adminId = localStorage.getItem('ADMIN_ID_STONE');
     const isAdmin = adminId === 'flowerjunho';
-    
+
     if (!isAdmin) {
       VisitTracker.trackVisit().catch(error => {
         console.error('방문자 추적 실패:', error);
@@ -109,7 +110,10 @@ const AppContent: React.FC = () => {
   if (isTradePage) {
     return (
       <Routes>
-        <Route path="/trade" element={<SharePage tribe="family" requireAuth={true} title="🏪 형명가 거래소" />} />
+        <Route
+          path="/trade"
+          element={<SharePage tribe="family" requireAuth={true} title="🏪 형명가 거래소" />}
+        />
       </Routes>
     );
   }
@@ -124,7 +128,12 @@ const AppContent: React.FC = () => {
           <Route path="/notice" element={<NoticePage />} />
           <Route path="/notice/:type/:noteId" element={<PatchNoteDetailPage />} />
           <Route path="/market" element={<Navigate to="/pets" replace />} />
-          <Route path="/auction" element={<SharePage tribe="all" requireAuth={false} title="🏪 거래소" defaultTab="auction" />} />
+          <Route
+            path="/auction"
+            element={
+              <SharePage tribe="all" requireAuth={false} title="🏪 거래소" defaultTab="auction" />
+            }
+          />
           <Route path="/pets" element={<PetsPage />} />
           <Route path="/boarding" element={<BoardingPage />} />
           <Route path="/tip" element={<TipPage />} />
@@ -162,9 +171,11 @@ function App() {
   return (
     <MusicPlayerProvider>
       <Router>
-        <AppContent />
-        <MusicPlayer />
-        <PWAUpdatePrompt />
+        <PasswordGate>
+          <AppContent />
+          <MusicPlayer />
+          <PWAUpdatePrompt />
+        </PasswordGate>
       </Router>
     </MusicPlayerProvider>
   );
