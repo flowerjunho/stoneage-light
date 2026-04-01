@@ -242,7 +242,7 @@ const BattlePage: React.FC = () => {
       if (i !== index) return unit;
       const newAlive = !unit.alive;
       // 캐릭터가 죽으면 펫도 함께 죽음
-      return { alive: newAlive, petAlive: newAlive ? unit.petAlive : false };
+      return { ...unit, alive: newAlive, petAlive: newAlive ? unit.petAlive : false };
     }));
   };
 
