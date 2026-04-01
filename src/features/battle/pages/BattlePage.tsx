@@ -230,10 +230,10 @@ const BattlePage: React.FC = () => {
   // 듀얼 패널 상태
   // 각 팀 5명: { alive: boolean, petAlive: boolean }
   const [teamA, setTeamA] = useState(
-    Array.from({ length: 5 }, () => ({ alive: true, petAlive: true }))
+    Array.from({ length: 5 }, (_, i) => ({ alive: true, petAlive: true, name: `A${i + 1} 캐릭터` }))
   );
   const [teamB, setTeamB] = useState(
-    Array.from({ length: 5 }, () => ({ alive: true, petAlive: true }))
+    Array.from({ length: 5 }, (_, i) => ({ alive: true, petAlive: true, name: `B${i + 1} 캐릭터` }))
   );
 
   const toggleCharacter = (team: 'A' | 'B', index: number) => {
@@ -257,8 +257,13 @@ const BattlePage: React.FC = () => {
   };
 
   const resetDualPanel = () => {
-    setTeamA(Array.from({ length: 5 }, () => ({ alive: true, petAlive: true })));
-    setTeamB(Array.from({ length: 5 }, () => ({ alive: true, petAlive: true })));
+    setTeamA(Array.from({ length: 5 }, (_, i) => ({ alive: true, petAlive: true, name: `A${i + 1} 캐릭터` })));
+    setTeamB(Array.from({ length: 5 }, (_, i) => ({ alive: true, petAlive: true, name: `B${i + 1} 캐릭터` })));
+  };
+
+  const renameUnit = (team: 'A' | 'B', index: number, name: string) => {
+    const setter = team === 'A' ? setTeamA : setTeamB;
+    setter(prev => prev.map((unit, i) => i === index ? { ...unit, name } : unit));
   };
 
   const getAliveCount = (team: typeof teamA) => {
@@ -6212,12 +6217,12 @@ const BattlePage: React.FC = () => {
                         style={{ left: `${baseX}%`, top: `${baseY}%`, transform: 'translate(-50%, -50%)' }}
                         title={`A${i + 1} 캐릭터 ${unit.alive ? '(생존)' : '(사망)'} - 클릭하여 토글`}
                       >
-                        <div className={`w-14 h-14 md:w-[72px] md:h-[72px] rounded-full border-2 flex items-center justify-center text-sm md:text-lg font-bold transition-all duration-200 ${
+                        <div className={`w-9 h-9 md:w-[72px] md:h-[72px] rounded-full border-2 flex items-center justify-center text-[10px] md:text-lg font-bold transition-all duration-200 ${
                           unit.alive
                             ? 'bg-blue-500/30 border-blue-400 text-blue-300 shadow-[0_0_8px_rgba(59,130,246,0.4)] group-hover:shadow-[0_0_12px_rgba(59,130,246,0.6)]'
                             : 'bg-gray-800/60 border-gray-600 text-gray-500 opacity-50'
                         }`}>
-                          {unit.alive ? `A${i + 1}` : <Skull className="w-4 h-4 md:w-5 md:h-5" />}
+                          {unit.alive ? `A${i + 1}` : <Skull className="w-3 h-3 md:w-5 md:h-5" />}
                         </div>
                         <span className={`text-[9px] md:text-[10px] font-bold ${unit.alive ? 'text-blue-400' : 'text-gray-600 line-through'}`}>
                           캐릭터
@@ -6230,12 +6235,12 @@ const BattlePage: React.FC = () => {
                         style={{ left: `${baseX + 8}%`, top: `${baseY + 6}%`, transform: 'translate(-50%, -50%)' }}
                         title={`A${i + 1} 펫 ${unit.petAlive ? '(생존)' : '(사망)'} - 클릭하여 토글`}
                       >
-                        <div className={`w-12 h-12 md:w-14 md:h-14 rounded-lg border-2 flex items-center justify-center text-sm md:text-base font-bold transition-all duration-200 ${
+                        <div className={`w-7 h-7 md:w-14 md:h-14 rounded-lg border-2 flex items-center justify-center text-[9px] md:text-base font-bold transition-all duration-200 ${
                           unit.petAlive
                             ? 'bg-cyan-500/25 border-cyan-400 text-cyan-300 shadow-[0_0_6px_rgba(34,211,238,0.3)] group-hover:shadow-[0_0_10px_rgba(34,211,238,0.5)]'
                             : 'bg-gray-800/60 border-gray-600 text-gray-500 opacity-50'
                         }`}>
-                          {unit.petAlive ? <PawPrint className="w-4 h-4 md:w-5 md:h-5" /> : <Skull className="w-4 h-4 md:w-5 md:h-5" />}
+                          {unit.petAlive ? <PawPrint className="w-3 h-3 md:w-5 md:h-5" /> : <Skull className="w-3 h-3 md:w-5 md:h-5" />}
                         </div>
                         <span className={`text-[8px] md:text-[9px] ${unit.petAlive ? 'text-cyan-400' : 'text-gray-600 line-through'}`}>
                           펫
@@ -6261,12 +6266,12 @@ const BattlePage: React.FC = () => {
                         style={{ left: `${baseX}%`, top: `${baseY}%`, transform: 'translate(-50%, -50%)' }}
                         title={`B${i + 1} 캐릭터 ${unit.alive ? '(생존)' : '(사망)'} - 클릭하여 토글`}
                       >
-                        <div className={`w-14 h-14 md:w-[72px] md:h-[72px] rounded-full border-2 flex items-center justify-center text-sm md:text-lg font-bold transition-all duration-200 ${
+                        <div className={`w-9 h-9 md:w-[72px] md:h-[72px] rounded-full border-2 flex items-center justify-center text-[10px] md:text-lg font-bold transition-all duration-200 ${
                           unit.alive
                             ? 'bg-red-500/30 border-red-400 text-red-300 shadow-[0_0_8px_rgba(239,68,68,0.4)] group-hover:shadow-[0_0_12px_rgba(239,68,68,0.6)]'
                             : 'bg-gray-800/60 border-gray-600 text-gray-500 opacity-50'
                         }`}>
-                          {unit.alive ? `B${i + 1}` : <Skull className="w-4 h-4 md:w-5 md:h-5" />}
+                          {unit.alive ? `B${i + 1}` : <Skull className="w-3 h-3 md:w-5 md:h-5" />}
                         </div>
                         <span className={`text-[9px] md:text-[10px] font-bold ${unit.alive ? 'text-red-400' : 'text-gray-600 line-through'}`}>
                           캐릭터
@@ -6279,12 +6284,12 @@ const BattlePage: React.FC = () => {
                         style={{ left: `${baseX - 8}%`, top: `${baseY - 6}%`, transform: 'translate(-50%, -50%)' }}
                         title={`B${i + 1} 펫 ${unit.petAlive ? '(생존)' : '(사망)'} - 클릭하여 토글`}
                       >
-                        <div className={`w-12 h-12 md:w-14 md:h-14 rounded-lg border-2 flex items-center justify-center text-sm md:text-base font-bold transition-all duration-200 ${
+                        <div className={`w-7 h-7 md:w-14 md:h-14 rounded-lg border-2 flex items-center justify-center text-[9px] md:text-base font-bold transition-all duration-200 ${
                           unit.petAlive
                             ? 'bg-orange-500/25 border-orange-400 text-orange-300 shadow-[0_0_6px_rgba(251,146,60,0.3)] group-hover:shadow-[0_0_10px_rgba(251,146,60,0.5)]'
                             : 'bg-gray-800/60 border-gray-600 text-gray-500 opacity-50'
                         }`}>
-                          {unit.petAlive ? <PawPrint className="w-4 h-4 md:w-5 md:h-5" /> : <Skull className="w-4 h-4 md:w-5 md:h-5" />}
+                          {unit.petAlive ? <PawPrint className="w-3 h-3 md:w-5 md:h-5" /> : <Skull className="w-3 h-3 md:w-5 md:h-5" />}
                         </div>
                         <span className={`text-[8px] md:text-[9px] ${unit.petAlive ? 'text-orange-400' : 'text-gray-600 line-through'}`}>
                           펫
@@ -6308,32 +6313,46 @@ const BattlePage: React.FC = () => {
                   </h3>
                   <div className="space-y-1.5">
                     {teamA.map((unit, i) => (
-                      <div key={i} className="flex items-center gap-2 text-xs">
-                        <button
-                          onClick={() => toggleCharacter('A', i)}
-                          className={`basis-[58%] shrink-0 flex items-center gap-2 px-2 py-1.5 rounded transition-all ${
-                            unit.alive
-                              ? 'bg-blue-500/10 hover:bg-blue-500/20 text-text-primary'
-                              : 'bg-gray-800/40 text-gray-500 line-through'
-                          }`}
-                        >
-                          <span className={`w-5 h-5 rounded-full border flex items-center justify-center text-[10px] font-bold ${
+                      <div key={i} className="flex items-center gap-1 text-xs">
+                        <div className={`basis-[80%] shrink-0 flex items-center gap-2 px-2 py-1.5 rounded transition-all ${
+                          unit.alive
+                            ? 'bg-blue-500/10 text-text-primary'
+                            : 'bg-gray-800/40 text-gray-500'
+                        }`}>
+                          <span className={`w-5 h-5 rounded-full border flex items-center justify-center text-[10px] font-bold shrink-0 ${
                             unit.alive ? 'border-blue-400 text-blue-400' : 'border-gray-600 text-gray-600'
                           }`}>
                             {i + 1}
                           </span>
-                          <span>A{i + 1} 캐릭터</span>
-                          <span className="ml-auto">{unit.alive ? '생존' : '사망'}</span>
+                          <input
+                            type="text"
+                            value={unit.name}
+                            onChange={(e) => renameUnit('A', i, e.target.value)}
+                            className={`flex-1 min-w-0 bg-transparent border-b border-transparent focus:border-blue-400 outline-none text-xs px-0.5 ${
+                              unit.alive ? 'text-text-primary' : 'text-gray-500 line-through'
+                            }`}
+                            placeholder={`A${i + 1} 캐릭터`}
+                          />
+                        </div>
+                        <button
+                          onClick={() => toggleCharacter('A', i)}
+                          className={`basis-[10%] shrink-0 py-1.5 rounded text-center text-[10px] font-bold transition-all ${
+                            unit.alive
+                              ? 'bg-blue-500/20 text-blue-400 hover:bg-blue-500/30'
+                              : 'bg-gray-700/40 text-gray-500 hover:bg-gray-700/60'
+                          }`}
+                        >
+                          {unit.alive ? '생존' : '사망'}
                         </button>
                         <button
                           onClick={() => togglePet('A', i)}
-                          className={`basis-[38%] shrink-0 flex items-center justify-center gap-1 px-2 py-1.5 rounded transition-all ${
+                          className={`basis-[10%] shrink-0 py-1.5 rounded text-center text-[10px] font-bold transition-all ${
                             unit.petAlive
-                              ? 'bg-cyan-500/10 hover:bg-cyan-500/20 text-cyan-400'
-                              : 'bg-gray-800/40 text-gray-500 line-through'
+                              ? 'bg-cyan-500/20 text-cyan-400 hover:bg-cyan-500/30'
+                              : 'bg-gray-700/40 text-gray-500 hover:bg-gray-700/60'
                           } ${!unit.alive ? 'opacity-40 cursor-not-allowed' : ''}`}
                         >
-                          <PawPrint className="w-3.5 h-3.5" /> {unit.petAlive ? '생존' : '사망'}
+                          {unit.petAlive ? '생존' : '사망'}
                         </button>
                       </div>
                     ))}
@@ -6351,32 +6370,46 @@ const BattlePage: React.FC = () => {
                   </h3>
                   <div className="space-y-1.5">
                     {teamB.map((unit, i) => (
-                      <div key={i} className="flex items-center gap-2 text-xs">
-                        <button
-                          onClick={() => toggleCharacter('B', i)}
-                          className={`basis-[58%] shrink-0 flex items-center gap-2 px-2 py-1.5 rounded transition-all ${
-                            unit.alive
-                              ? 'bg-red-500/10 hover:bg-red-500/20 text-text-primary'
-                              : 'bg-gray-800/40 text-gray-500 line-through'
-                          }`}
-                        >
-                          <span className={`w-5 h-5 rounded-full border flex items-center justify-center text-[10px] font-bold ${
+                      <div key={i} className="flex items-center gap-1 text-xs">
+                        <div className={`basis-[80%] shrink-0 flex items-center gap-2 px-2 py-1.5 rounded transition-all ${
+                          unit.alive
+                            ? 'bg-red-500/10 text-text-primary'
+                            : 'bg-gray-800/40 text-gray-500'
+                        }`}>
+                          <span className={`w-5 h-5 rounded-full border flex items-center justify-center text-[10px] font-bold shrink-0 ${
                             unit.alive ? 'border-red-400 text-red-400' : 'border-gray-600 text-gray-600'
                           }`}>
                             {i + 1}
                           </span>
-                          <span>B{i + 1} 캐릭터</span>
-                          <span className="ml-auto">{unit.alive ? '생존' : '사망'}</span>
+                          <input
+                            type="text"
+                            value={unit.name}
+                            onChange={(e) => renameUnit('B', i, e.target.value)}
+                            className={`flex-1 min-w-0 bg-transparent border-b border-transparent focus:border-red-400 outline-none text-xs px-0.5 ${
+                              unit.alive ? 'text-text-primary' : 'text-gray-500 line-through'
+                            }`}
+                            placeholder={`B${i + 1} 캐릭터`}
+                          />
+                        </div>
+                        <button
+                          onClick={() => toggleCharacter('B', i)}
+                          className={`basis-[10%] shrink-0 py-1.5 rounded text-center text-[10px] font-bold transition-all ${
+                            unit.alive
+                              ? 'bg-red-500/20 text-red-400 hover:bg-red-500/30'
+                              : 'bg-gray-700/40 text-gray-500 hover:bg-gray-700/60'
+                          }`}
+                        >
+                          {unit.alive ? '생존' : '사망'}
                         </button>
                         <button
                           onClick={() => togglePet('B', i)}
-                          className={`basis-[38%] shrink-0 flex items-center justify-center gap-1 px-2 py-1.5 rounded transition-all ${
+                          className={`basis-[10%] shrink-0 py-1.5 rounded text-center text-[10px] font-bold transition-all ${
                             unit.petAlive
-                              ? 'bg-orange-500/10 hover:bg-orange-500/20 text-orange-400'
-                              : 'bg-gray-800/40 text-gray-500 line-through'
+                              ? 'bg-orange-500/20 text-orange-400 hover:bg-orange-500/30'
+                              : 'bg-gray-700/40 text-gray-500 hover:bg-gray-700/60'
                           } ${!unit.alive ? 'opacity-40 cursor-not-allowed' : ''}`}
                         >
-                          <PawPrint className="w-3.5 h-3.5" /> {unit.petAlive ? '생존' : '사망'}
+                          {unit.petAlive ? '생존' : '사망'}
                         </button>
                       </div>
                     ))}
