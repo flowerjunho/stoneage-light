@@ -1,9 +1,10 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
+import { Skull, PawPrint, RotateCcw, Swords, User, Info } from 'lucide-react';
 import ThemeToggle from '@/shared/components/layout/ThemeToggle';
 import petDataJson from '@/data/petData.json';
 
-type TabType = 'info' | 'combo' | 'calculator';
+type TabType = 'info' | 'combo' | 'calculator' | 'dual';
 type CalculatorSubTab = 'damage' | 'reverse';
 type AttributeType = 'fire' | 'water' | 'earth' | 'wind';
 type UnitType = 'PLAYER' | 'PET';
@@ -159,7 +160,7 @@ const BattlePage: React.FC = () => {
   // URL 쿼리에서 탭 상태 가져오기
   const tabFromQuery = searchParams.get('tab') as TabType | null;
   const initialTab =
-    tabFromQuery === 'calculator' || tabFromQuery === 'info' || tabFromQuery === 'combo'
+    tabFromQuery === 'calculator' || tabFromQuery === 'info' || tabFromQuery === 'combo' || tabFromQuery === 'dual'
       ? tabFromQuery
       : 'info';
 
@@ -225,6 +226,46 @@ const BattlePage: React.FC = () => {
   const [isSimulating, setIsSimulating] = useState(false);
   const [simStatsExpanded, setSimStatsExpanded] = useState(false);
   const [simProgress, setSimProgress] = useState(0);
+
+  // 듀얼 패널 상태
+  // 각 팀 5명: { alive: boolean, petAlive: boolean }
+  const [teamA, setTeamA] = useState(
+    Array.from({ length: 5 }, () => ({ alive: true, petAlive: true }))
+  );
+  const [teamB, setTeamB] = useState(
+    Array.from({ length: 5 }, () => ({ alive: true, petAlive: true }))
+  );
+
+  const toggleCharacter = (team: 'A' | 'B', index: number) => {
+    const setter = team === 'A' ? setTeamA : setTeamB;
+    setter(prev => prev.map((unit, i) => {
+      if (i !== index) return unit;
+      const newAlive = !unit.alive;
+      // 캐릭터가 죽으면 펫도 함께 죽음
+      return { alive: newAlive, petAlive: newAlive ? unit.petAlive : false };
+    }));
+  };
+
+  const togglePet = (team: 'A' | 'B', index: number) => {
+    const setter = team === 'A' ? setTeamA : setTeamB;
+    setter(prev => prev.map((unit, i) => {
+      if (i !== index) return unit;
+      // 캐릭터가 죽어있으면 펫 토글 불가
+      if (!unit.alive) return unit;
+      return { ...unit, petAlive: !unit.petAlive };
+    }));
+  };
+
+  const resetDualPanel = () => {
+    setTeamA(Array.from({ length: 5 }, () => ({ alive: true, petAlive: true })));
+    setTeamB(Array.from({ length: 5 }, () => ({ alive: true, petAlive: true })));
+  };
+
+  const getAliveCount = (team: typeof teamA) => {
+    const chars = team.filter(u => u.alive).length;
+    const pets = team.filter(u => u.petAlive).length;
+    return { chars, pets, total: chars + pets };
+  };
 
   // 인증 확인 및 테마 적용
   useEffect(() => {
@@ -1062,6 +1103,16 @@ const BattlePage: React.FC = () => {
             }`}
           >
             계산기
+          </button>
+          <button
+            onClick={() => setActiveTab('dual')}
+            className={`flex-1 px-4 py-2 font-bold transition-colors ${
+              activeTab === 'dual'
+                ? 'text-accent border-b-2 border-accent'
+                : 'text-text-secondary hover:text-text-primary'
+            }`}
+          >
+            듀얼 패널
           </button>
         </div>
 
@@ -6085,6 +6136,265 @@ const BattlePage: React.FC = () => {
             )}
           </div>
         )}
+
+        {/* 듀얼 패널 탭 */}
+        {activeTab === 'dual' && (() => {
+          const aStats = getAliveCount(teamA);
+          const bStats = getAliveCount(teamB);
+
+          return (
+            <div className="space-y-4">
+              {/* 헤더 & 리셋 */}
+              <div className="flex items-center justify-between">
+                <h2 className="text-lg md:text-xl font-bold text-text-primary">5 vs 5 듀얼 대전</h2>
+                <button
+                  onClick={resetDualPanel}
+                  className="px-3 py-1.5 text-xs font-bold rounded bg-red-500/20 text-red-400 hover:bg-red-500/30 border border-red-500/30 transition-colors flex items-center gap-1"
+                >
+                  <RotateCcw className="w-3 h-3" /> 초기화
+                </button>
+              </div>
+
+              {/* 생존 현황 */}
+              <div className="grid grid-cols-3 gap-2 text-center text-sm">
+                <div className="bg-blue-500/10 border border-blue-500/30 rounded-lg p-3">
+                  <div className="text-blue-400 font-bold text-base">{aStats.total}</div>
+                  <div className="text-text-secondary text-xs">A팀 생존 ({aStats.chars}명+{aStats.pets}펫)</div>
+                </div>
+                <div className="bg-bg-secondary border border-border rounded-lg p-3 flex items-center justify-center">
+                  <span className="text-text-primary font-bold text-lg">{aStats.total} : {bStats.total}</span>
+                </div>
+                <div className="bg-red-500/10 border border-red-500/30 rounded-lg p-3">
+                  <div className="text-red-400 font-bold text-base">{bStats.total}</div>
+                  <div className="text-text-secondary text-xs">B팀 생존 ({bStats.chars}명+{bStats.pets}펫)</div>
+                </div>
+              </div>
+
+              {/* 듀얼 배틀 필드 */}
+              <div className="relative bg-bg-secondary border border-border rounded-xl overflow-hidden" style={{ aspectRatio: '4/3' }}>
+                {/* 배경 그리드 */}
+                <div className="absolute inset-0 opacity-10">
+                  <svg width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
+                    <defs>
+                      <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
+                        <path d="M 40 0 L 0 0 0 40" fill="none" stroke="currentColor" strokeWidth="0.5" className="text-text-secondary" />
+                      </pattern>
+                    </defs>
+                    <rect width="100%" height="100%" fill="url(#grid)" />
+                  </svg>
+                </div>
+
+                {/* 중앙 대각선 */}
+                <div className="absolute inset-0">
+                  <svg width="100%" height="100%" className="text-border">
+                    <line x1="0%" y1="100%" x2="100%" y2="0%" stroke="currentColor" strokeWidth="1" strokeDasharray="8 4" opacity="0.3" />
+                  </svg>
+                </div>
+
+                {/* VS 텍스트 */}
+                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-10">
+                  <Swords className="w-8 h-8 md:w-10 md:h-10 text-accent/30" />
+                </div>
+
+                {/* A팀 (왼쪽 위, "/" 슬래시 대각선 배치) - 캐릭터 뒤, 펫 앞(적 방향) */}
+                {teamA.map((unit, i) => {
+                  // "/" 대각선: 왼쪽 위 코너 쪽으로 밀착
+                  // i=0이 제일 아래왼쪽, i=4가 제일 위오른쪽
+                  const baseX = 8 + i * 7;    // 8% → 36%
+                  const baseY = 48 - i * 10;  // 48% → 8%
+
+                  return (
+                    <React.Fragment key={`a-${i}`}>
+                      {/* 캐릭터 (뒤쪽 = 왼쪽 위) */}
+                      <button
+                        onClick={() => toggleCharacter('A', i)}
+                        className="absolute flex flex-col items-center gap-0.5 transition-all duration-200 group z-20"
+                        style={{ left: `${baseX}%`, top: `${baseY}%`, transform: 'translate(-50%, -50%)' }}
+                        title={`A${i + 1} 캐릭터 ${unit.alive ? '(생존)' : '(사망)'} - 클릭하여 토글`}
+                      >
+                        <div className={`w-14 h-14 md:w-[72px] md:h-[72px] rounded-full border-2 flex items-center justify-center text-sm md:text-lg font-bold transition-all duration-200 ${
+                          unit.alive
+                            ? 'bg-blue-500/30 border-blue-400 text-blue-300 shadow-[0_0_8px_rgba(59,130,246,0.4)] group-hover:shadow-[0_0_12px_rgba(59,130,246,0.6)]'
+                            : 'bg-gray-800/60 border-gray-600 text-gray-500 opacity-50'
+                        }`}>
+                          {unit.alive ? `A${i + 1}` : <Skull className="w-4 h-4 md:w-5 md:h-5" />}
+                        </div>
+                        <span className={`text-[9px] md:text-[10px] font-bold ${unit.alive ? 'text-blue-400' : 'text-gray-600 line-through'}`}>
+                          캐릭터
+                        </span>
+                      </button>
+                      {/* 펫 (캐릭터 앞쪽 = 오른쪽 아래, 적에게 가까운 쪽) */}
+                      <button
+                        onClick={() => togglePet('A', i)}
+                        className="absolute flex flex-col items-center gap-0.5 transition-all duration-200 group z-20"
+                        style={{ left: `${baseX + 8}%`, top: `${baseY + 6}%`, transform: 'translate(-50%, -50%)' }}
+                        title={`A${i + 1} 펫 ${unit.petAlive ? '(생존)' : '(사망)'} - 클릭하여 토글`}
+                      >
+                        <div className={`w-12 h-12 md:w-14 md:h-14 rounded-lg border-2 flex items-center justify-center text-sm md:text-base font-bold transition-all duration-200 ${
+                          unit.petAlive
+                            ? 'bg-cyan-500/25 border-cyan-400 text-cyan-300 shadow-[0_0_6px_rgba(34,211,238,0.3)] group-hover:shadow-[0_0_10px_rgba(34,211,238,0.5)]'
+                            : 'bg-gray-800/60 border-gray-600 text-gray-500 opacity-50'
+                        }`}>
+                          {unit.petAlive ? <PawPrint className="w-4 h-4 md:w-5 md:h-5" /> : <Skull className="w-4 h-4 md:w-5 md:h-5" />}
+                        </div>
+                        <span className={`text-[8px] md:text-[9px] ${unit.petAlive ? 'text-cyan-400' : 'text-gray-600 line-through'}`}>
+                          펫
+                        </span>
+                      </button>
+                    </React.Fragment>
+                  );
+                })}
+
+                {/* B팀 (오른쪽 아래, "/" 슬래시 대각선 배치) - 캐릭터 뒤, 펫 앞(적 방향) */}
+                {teamB.map((unit, i) => {
+                  // "/" 대각선: 오른쪽 아래 코너 쪽으로 밀착
+                  // i=0이 제일 아래왼쪽, i=4가 제일 위오른쪽
+                  const baseX = 64 + i * 7;  // 64% → 92%
+                  const baseY = 92 - i * 10; // 92% → 52%
+
+                  return (
+                    <React.Fragment key={`b-${i}`}>
+                      {/* 캐릭터 (뒤쪽 = 오른쪽 아래) */}
+                      <button
+                        onClick={() => toggleCharacter('B', i)}
+                        className="absolute flex flex-col items-center gap-0.5 transition-all duration-200 group z-20"
+                        style={{ left: `${baseX}%`, top: `${baseY}%`, transform: 'translate(-50%, -50%)' }}
+                        title={`B${i + 1} 캐릭터 ${unit.alive ? '(생존)' : '(사망)'} - 클릭하여 토글`}
+                      >
+                        <div className={`w-14 h-14 md:w-[72px] md:h-[72px] rounded-full border-2 flex items-center justify-center text-sm md:text-lg font-bold transition-all duration-200 ${
+                          unit.alive
+                            ? 'bg-red-500/30 border-red-400 text-red-300 shadow-[0_0_8px_rgba(239,68,68,0.4)] group-hover:shadow-[0_0_12px_rgba(239,68,68,0.6)]'
+                            : 'bg-gray-800/60 border-gray-600 text-gray-500 opacity-50'
+                        }`}>
+                          {unit.alive ? `B${i + 1}` : <Skull className="w-4 h-4 md:w-5 md:h-5" />}
+                        </div>
+                        <span className={`text-[9px] md:text-[10px] font-bold ${unit.alive ? 'text-red-400' : 'text-gray-600 line-through'}`}>
+                          캐릭터
+                        </span>
+                      </button>
+                      {/* 펫 (캐릭터 앞쪽 = 왼쪽 위, 적에게 가까운 쪽) */}
+                      <button
+                        onClick={() => togglePet('B', i)}
+                        className="absolute flex flex-col items-center gap-0.5 transition-all duration-200 group z-20"
+                        style={{ left: `${baseX - 8}%`, top: `${baseY - 6}%`, transform: 'translate(-50%, -50%)' }}
+                        title={`B${i + 1} 펫 ${unit.petAlive ? '(생존)' : '(사망)'} - 클릭하여 토글`}
+                      >
+                        <div className={`w-12 h-12 md:w-14 md:h-14 rounded-lg border-2 flex items-center justify-center text-sm md:text-base font-bold transition-all duration-200 ${
+                          unit.petAlive
+                            ? 'bg-orange-500/25 border-orange-400 text-orange-300 shadow-[0_0_6px_rgba(251,146,60,0.3)] group-hover:shadow-[0_0_10px_rgba(251,146,60,0.5)]'
+                            : 'bg-gray-800/60 border-gray-600 text-gray-500 opacity-50'
+                        }`}>
+                          {unit.petAlive ? <PawPrint className="w-4 h-4 md:w-5 md:h-5" /> : <Skull className="w-4 h-4 md:w-5 md:h-5" />}
+                        </div>
+                        <span className={`text-[8px] md:text-[9px] ${unit.petAlive ? 'text-orange-400' : 'text-gray-600 line-through'}`}>
+                          펫
+                        </span>
+                      </button>
+                    </React.Fragment>
+                  );
+                })}
+              </div>
+
+              {/* A팀 상세 목록 */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                {/* A팀 */}
+                <div className="bg-bg-secondary border border-blue-500/20 rounded-lg p-3">
+                  <h3 className="text-sm font-bold text-blue-400 mb-2 flex items-center gap-2">
+                    <span className="w-2 h-2 rounded-full bg-blue-400"></span>
+                    A팀 (왼쪽 위)
+                    <span className="ml-auto text-text-secondary text-xs">
+                      생존 {aStats.chars}/5명 · {aStats.pets}/5펫
+                    </span>
+                  </h3>
+                  <div className="space-y-1.5">
+                    {teamA.map((unit, i) => (
+                      <div key={i} className="flex items-center gap-2 text-xs">
+                        <button
+                          onClick={() => toggleCharacter('A', i)}
+                          className={`basis-[58%] shrink-0 flex items-center gap-2 px-2 py-1.5 rounded transition-all ${
+                            unit.alive
+                              ? 'bg-blue-500/10 hover:bg-blue-500/20 text-text-primary'
+                              : 'bg-gray-800/40 text-gray-500 line-through'
+                          }`}
+                        >
+                          <span className={`w-5 h-5 rounded-full border flex items-center justify-center text-[10px] font-bold ${
+                            unit.alive ? 'border-blue-400 text-blue-400' : 'border-gray-600 text-gray-600'
+                          }`}>
+                            {i + 1}
+                          </span>
+                          <span>A{i + 1} 캐릭터</span>
+                          <span className="ml-auto">{unit.alive ? '생존' : '사망'}</span>
+                        </button>
+                        <button
+                          onClick={() => togglePet('A', i)}
+                          className={`basis-[38%] shrink-0 flex items-center justify-center gap-1 px-2 py-1.5 rounded transition-all ${
+                            unit.petAlive
+                              ? 'bg-cyan-500/10 hover:bg-cyan-500/20 text-cyan-400'
+                              : 'bg-gray-800/40 text-gray-500 line-through'
+                          } ${!unit.alive ? 'opacity-40 cursor-not-allowed' : ''}`}
+                        >
+                          <PawPrint className="w-3.5 h-3.5" /> {unit.petAlive ? '생존' : '사망'}
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                {/* B팀 */}
+                <div className="bg-bg-secondary border border-red-500/20 rounded-lg p-3">
+                  <h3 className="text-sm font-bold text-red-400 mb-2 flex items-center gap-2">
+                    <span className="w-2 h-2 rounded-full bg-red-400"></span>
+                    B팀 (오른쪽 아래)
+                    <span className="ml-auto text-text-secondary text-xs">
+                      생존 {bStats.chars}/5명 · {bStats.pets}/5펫
+                    </span>
+                  </h3>
+                  <div className="space-y-1.5">
+                    {teamB.map((unit, i) => (
+                      <div key={i} className="flex items-center gap-2 text-xs">
+                        <button
+                          onClick={() => toggleCharacter('B', i)}
+                          className={`basis-[58%] shrink-0 flex items-center gap-2 px-2 py-1.5 rounded transition-all ${
+                            unit.alive
+                              ? 'bg-red-500/10 hover:bg-red-500/20 text-text-primary'
+                              : 'bg-gray-800/40 text-gray-500 line-through'
+                          }`}
+                        >
+                          <span className={`w-5 h-5 rounded-full border flex items-center justify-center text-[10px] font-bold ${
+                            unit.alive ? 'border-red-400 text-red-400' : 'border-gray-600 text-gray-600'
+                          }`}>
+                            {i + 1}
+                          </span>
+                          <span>B{i + 1} 캐릭터</span>
+                          <span className="ml-auto">{unit.alive ? '생존' : '사망'}</span>
+                        </button>
+                        <button
+                          onClick={() => togglePet('B', i)}
+                          className={`basis-[38%] shrink-0 flex items-center justify-center gap-1 px-2 py-1.5 rounded transition-all ${
+                            unit.petAlive
+                              ? 'bg-orange-500/10 hover:bg-orange-500/20 text-orange-400'
+                              : 'bg-gray-800/40 text-gray-500 line-through'
+                          } ${!unit.alive ? 'opacity-40 cursor-not-allowed' : ''}`}
+                        >
+                          <PawPrint className="w-3.5 h-3.5" /> {unit.petAlive ? '생존' : '사망'}
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+
+              {/* 사용법 안내 */}
+              <div className="bg-bg-secondary border border-border rounded-lg p-3 text-xs text-text-secondary space-y-1.5">
+                <p className="font-bold text-text-primary text-sm mb-1 flex items-center gap-1.5"><Info className="w-4 h-4 text-accent" /> 사용 방법</p>
+                <p className="flex items-center gap-1.5"><User className="w-3 h-3 text-text-muted" /> 캐릭터를 클릭하면 생존/사망을 토글합니다</p>
+                <p className="flex items-center gap-1.5"><Skull className="w-3 h-3 text-text-muted" /> 캐릭터가 사망하면 해당 펫도 자동으로 사망 처리됩니다</p>
+                <p className="flex items-center gap-1.5"><PawPrint className="w-3 h-3 text-text-muted" /> 펫만 별도로 클릭하여 펫의 생존/사망을 토글할 수 있습니다</p>
+                <p className="flex items-center gap-1.5"><RotateCcw className="w-3 h-3 text-text-muted" /> 초기화 버튼으로 모든 유닛을 생존 상태로 리셋합니다</p>
+              </div>
+            </div>
+          );
+        })()}
       </div>
     </div>
   );
