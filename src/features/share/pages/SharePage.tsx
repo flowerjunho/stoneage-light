@@ -657,7 +657,7 @@ interface SharePageProps {
 const SharePage: React.FC<SharePageProps> = ({
   tribe = 'family',
   requireAuth = true,
-  title = '🏪 형명가 거래소',
+  title = '🏪 게이 거래소',
   defaultTab = 'trade',
 }) => {
   const navigate = useNavigate();
@@ -4440,7 +4440,7 @@ const SharePage: React.FC<SharePageProps> = ({
   // Main authenticated view
   return (
     <div className="min-h-screen bg-bg-primary text-text-primary">
-      {/* Header - 형명가 거래소(requireAuth)에서만 표시 */}
+      {/* Header - 게이 거래소(requireAuth)에서만 표시 */}
       {requireAuth && viewMode !== 'create' && (
         <header className="bg-bg-secondary border-b border-border">
           <div className="max-w-7xl mx-auto px-4 py-4 flex items-center justify-between">

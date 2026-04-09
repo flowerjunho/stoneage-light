@@ -468,7 +468,7 @@ npm install -g pnpm
         <a href="https://github.com/flowerjun">
           <img src="https://github.com/flowerjun.png" width="100px;" alt="flowerjun"/>
           <br />
-          <sub><b>형명가 (flowerjun)</b></sub>
+          <sub><b>게이왕 (flowerjun)</b></sub>
         </a>
         <br />
         <sub>🏗️ 창작자 & 메인테이너</sub>
@@ -552,7 +552,7 @@ npm install -g pnpm
     <strong>⭐ 이 프로젝트가 도움이 되었다면 Star를 눌러주세요! ⭐</strong>
   </p>
   <p>
-    Made with ❤️ by <a href="https://github.com/flowerjun"><strong>형명가</strong></a>
+    Made with ❤️ by <a href="https://github.com/flowerjun"><strong>게이왕</strong></a>
   </p>
   <p>
     <small>Last updated: 2025-09-23</small>

@@ -112,7 +112,7 @@ const AppContent: React.FC = () => {
       <Routes>
         <Route
           path="/trade"
-          element={<SharePage tribe="family" requireAuth={true} title="🏪 형명가 거래소" />}
+          element={<SharePage tribe="family" requireAuth={true} title="🏪 게이 거래소" />}
         />
       </Routes>
     );
