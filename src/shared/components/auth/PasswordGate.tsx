@@ -5,7 +5,7 @@ const STORAGE_KEY = 'SA_LIGHT_AUTH';
 const PASSCODE = '5882';
 
 export function isAuthenticated(): boolean {
-  return 'true';
+  return true;
 }
 
 interface PasswordGateProps {
