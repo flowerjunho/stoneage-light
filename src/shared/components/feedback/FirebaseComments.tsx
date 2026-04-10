@@ -405,6 +405,15 @@ const FirebaseComments: React.FC = () => {
           <div className="flex items-center justify-between mb-4">
             <h3 className="text-sm font-semibold text-text-primary">📈 주간 방문자 현황</h3>
             <div className="flex items-center gap-2">
+              {currentWeekOffset !== 0 && (
+                <button
+                  onClick={() => setCurrentWeekOffset(0)}
+                  className="px-2 py-1 text-[10px] bg-accent/10 hover:bg-accent/20 text-accent font-medium rounded border border-accent/20 transition-all active:scale-95"
+                  title="이번 주로 이동"
+                >
+                  오늘
+                </button>
+              )}
               <button
                 onClick={() => setCurrentWeekOffset(prev => prev - 1)}
                 className="px-2 py-1 text-xs bg-bg-secondary hover:bg-bg-primary rounded border border-border transition-colors"
