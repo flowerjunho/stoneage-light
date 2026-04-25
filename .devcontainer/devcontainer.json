@@ -8,7 +8,8 @@
         "Google.geminicodeassist"
       ],
       "settings": {
-        "terminal.integrated.gpuAcceleration": "off"
+        "terminal.integrated.gpuAcceleration": "off",
+        "terminal.integrated.colorScheme": "Default Dark+"
       }
     }
   },
