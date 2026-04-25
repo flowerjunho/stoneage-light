@@ -1,0 +1,7 @@
+{
+  "postCreateCommand": "sudo apt-get install -y locales && sudo locale-gen ko_KR.UTF-8 && sudo update-locale LANG=ko_KR.UTF-8 LC_ALL=ko_KR.UTF-8",
+  "containerEnv": {
+    "LANG": "ko_KR.UTF-8",
+    "LC_ALL": "ko_KR.UTF-8"
+  }
+}
