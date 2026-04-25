@@ -6,5 +6,7 @@ RUN apt-get update && apt-get install -y locales \
 
 RUN npm install -g pnpm
 
+RUN echo 'export PROMPT_COMMAND="PS1=\"\u@\h:\w\\$ \""' >> /etc/bash.bashrc
+
 ENV LANG=en_US.UTF-8
 ENV LC_ALL=en_US.UTF-8
