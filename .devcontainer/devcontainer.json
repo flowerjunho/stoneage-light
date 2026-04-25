@@ -2,15 +2,18 @@
   "build": {
     "dockerfile": "Dockerfile"
   },
-  "remoteEnv": {
-    "LANG": "en_US.UTF-8",
-    "LC_ALL": "en_US.UTF-8"
-  },
   "customizations": {
     "vscode": {
       "extensions": [
         "Google.geminicodeassist"
-      ]
+      ],
+      "settings": {
+        "terminal.integrated.env.linux": {
+          "LANG": "en_US.UTF-8",
+          "LC_ALL": "en_US.UTF-8"
+        },
+        "terminal.integrated.defaultProfile.linux": "bash"
+      }
     }
   },
   "postCreateCommand": "pnpm install"
