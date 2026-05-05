@@ -1,0 +1,17 @@
+{
+  "build": {
+    "dockerfile": "Dockerfile"
+  },
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "Google.geminicodeassist"
+      ],
+      "settings": {
+        "terminal.integrated.gpuAcceleration": "off",
+        "terminal.integrated.colorScheme": "Default Dark+"
+      }
+    }
+  },
+  "postCreateCommand": "pnpm install"
+}

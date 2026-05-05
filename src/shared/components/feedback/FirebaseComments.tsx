@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
+import { useQuery } from '@tanstack/react-query';
 import {
   collection,
   addDoc,
@@ -24,7 +25,6 @@ const FirebaseComments: React.FC = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isAdmin, setIsAdmin] = useState(false);
   const [dailyVisitors, setDailyVisitors] = useState<number>(0);
-  const [weeklyStats, setWeeklyStats] = useState<Array<{ date: string; count: number }>>([]);
   const [currentWeekOffset, setCurrentWeekOffset] = useState<number>(0); // 0: 이번주, -1: 지난주, 1: 다음주
   const [showAdminModal, setShowAdminModal] = useState(false);
   const [adminPassword, setAdminPassword] = useState('');
@@ -40,7 +40,7 @@ const FirebaseComments: React.FC = () => {
   };
 
   // 주의 시작일 (월요일)을 구하는 함수 (서울 시간대 기준)
-  const getWeekStartDate = (offset: number = 0): Date => {
+  const getWeekStartDate = useCallback((offset: number = 0): Date => {
     // 서울 시간대 기준으로 현재 날짜 구하기
     const seoulDateString = new Date().toLocaleDateString('en-CA', { timeZone: 'Asia/Seoul' });
     const seoulDate = new Date(seoulDateString + 'T00:00:00');
@@ -51,46 +51,46 @@ const FirebaseComments: React.FC = () => {
     const weekStart = new Date(seoulDate);
     weekStart.setDate(seoulDate.getDate() + daysFromMonday + (offset * 7));
     return weekStart;
-  };
-
-  // 방문자 통계 로드 함수 (관리자 전용) - 최적화된 단일 쿼리 사용
-  const loadVisitorStats = useCallback(async (weekOffset: number = 0) => {
-    try {
-      const todayCount = await VisitTracker.getDailyStats();
-      setDailyVisitors(todayCount);
-
-      // 특정 주의 통계 로드 - 최적화된 배치 쿼리 사용
-      const weekStart = getWeekStartDate(weekOffset);
-      const weekStats = await VisitTracker.getWeeklyStatsOptimized(weekStart);
-      
-      setWeeklyStats(weekStats);
-    } catch (error) {
-      console.error('방문자 통계 로드 실패:', error);
-    }
   }, []);
 
-  // 저장된 타이틀, 닉네임 및 관리자 권한 확인
+  // React Query를 사용한 주간 통계 조회
+  const weekStart = getWeekStartDate(currentWeekOffset);
+  const weekStartKey = weekStart.toLocaleDateString('en-CA', { timeZone: 'Asia/Seoul' });
+
+  const { 
+    data: weeklyStats = [], 
+    isFetching: isStatsFetching,
+    isError: isStatsError, 
+    refetch: refetchStats 
+  } = useQuery({
+    queryKey: ['visitorStats', weekStartKey],
+    queryFn: () => VisitTracker.getWeeklyStatsOptimized(new Date(weekStartKey + 'T00:00:00')),
+    enabled: isAdmin && !!weekStartKey,
+    staleTime: 1000 * 60 * 60, // 1시간
+    placeholderData: (prev) => prev,
+    notifyOnChangeProps: 'all', // 모든 상태 변화에 대해 리렌더링 강제
+  });
+
+  // 초기 로딩 여부 (데이터가 아예 없고 페칭 중일 때만)
+  const isInitialLoading = isStatsFetching && weeklyStats.length === 0;
+
+  // 초기화: 저장된 데이터 및 관리자 권한 확인
   useEffect(() => {
     const savedTitle = localStorage.getItem('firebase-comment-title');
-    if (savedTitle) {
-      setTitle(savedTitle);
-    }
+    if (savedTitle) setTitle(savedTitle);
 
     const savedNickname = localStorage.getItem('firebase-comment-nickname');
-    if (savedNickname) {
-      setNickname(savedNickname);
-    }
+    if (savedNickname) setNickname(savedNickname);
 
-    // 관리자 권한 확인
     const adminId = localStorage.getItem('ADMIN_ID_STONE');
     const isAdminUser = adminId === 'flowerjunho';
     setIsAdmin(isAdminUser);
-    
-    // 관리자인 경우에만 방문자 통계 로드
+
+    // 관리자인 경우 오늘 방문자 수 한 번만 로드
     if (isAdminUser) {
-      loadVisitorStats(currentWeekOffset);
+      VisitTracker.getDailyStats().then(setDailyVisitors).catch(console.error);
     }
-  }, [currentWeekOffset, loadVisitorStats]);
+  }, []);
 
   // 실시간 댓글 불러오기
   useEffect(() => {
@@ -400,10 +400,21 @@ const FirebaseComments: React.FC = () => {
       </div>
 
       {/* 관리자 전용 주간 방문자 통계 */}
-      {isAdmin && weeklyStats.length > 0 && (
+      {isAdmin && (
         <div className="mt-6 bg-bg-tertiary rounded-lg p-4 border border-border">
           <div className="flex items-center justify-between mb-4">
-            <h3 className="text-sm font-semibold text-text-primary">📈 주간 방문자 현황</h3>
+            <div className="flex items-center gap-2">
+              <h3 className="text-sm font-semibold text-text-primary">📈 주간 방문자 현황</h3>
+              {isStatsError && (
+                <button 
+                  onClick={() => refetchStats()} 
+                  className="text-[10px] text-red-500 hover:underline flex items-center gap-1"
+                >
+                  <span>⚠️ 실패</span>
+                  <span>(재시도)</span>
+                </button>
+              )}
+            </div>
             <div className="flex items-center gap-2">
               {currentWeekOffset !== 0 && (
                 <button
@@ -421,7 +432,7 @@ const FirebaseComments: React.FC = () => {
               >
                 ◀
               </button>
-              <span className="text-xs text-text-secondary">
+              <span className="text-xs text-text-secondary min-w-[50px] text-center">
                 {currentWeekOffset === 0 ? '이번 주' : 
                  currentWeekOffset === -1 ? '지난 주' : 
                  currentWeekOffset === 1 ? '다음 주' : 
@@ -429,7 +440,8 @@ const FirebaseComments: React.FC = () => {
               </span>
               <button
                 onClick={() => setCurrentWeekOffset(prev => prev + 1)}
-                className="px-2 py-1 text-xs bg-bg-secondary hover:bg-bg-primary rounded border border-border transition-colors"
+                disabled={currentWeekOffset >= 0}
+                className="px-2 py-1 text-xs bg-bg-secondary hover:bg-bg-primary rounded border border-border transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
                 title="다음 주"
               >
                 ▶
@@ -437,37 +449,73 @@ const FirebaseComments: React.FC = () => {
             </div>
           </div>
           
-          <div className="space-y-1">
-            {weeklyStats.map((stat) => {
-              const date = new Date(stat.date);
-              const dayName = ['월', '화', '수', '목', '금', '토', '일'][date.getDay() === 0 ? 6 : date.getDay() - 1];
-              const today = new Date().toLocaleDateString('en-CA', { timeZone: 'Asia/Seoul' });
-              const isToday = stat.date === today;
-              const isWeekend = date.getDay() === 0 || date.getDay() === 6; // 일요일 또는 토요일
-              
-              return (
-                <div 
-                  key={stat.date} 
-                  className={`flex justify-between items-center text-xs py-1 px-2 rounded ${
-                    isToday ? 'font-semibold text-accent bg-accent/10' : 
-                    isWeekend ? 'text-red-400' : 'text-text-secondary'
-                  }`}
-                >
-                  <span className="flex items-center gap-2">
-                    <span className="w-4 text-center">{dayName}</span>
-                    <span>{stat.date}</span>
-                    {isToday && <span className="text-xs text-accent">오늘</span>}
-                  </span>
-                  <span className="font-mono">{stat.count}명</span>
-                </div>
-              );
-            })}
-            
-            <div className="border-t border-border pt-2 mt-2">
-              <div className="flex justify-between text-xs font-semibold text-text-primary bg-bg-secondary/50 rounded px-2 py-1">
-                <span>주간 총계</span>
-                <span className="font-mono">{weeklyStats.reduce((total, stat) => total + stat.count, 0)}명</span>
+          <div className="relative h-[208px] overflow-hidden">
+            {isInitialLoading ? (
+              // 초기 로딩 스켈레톤 (원본 사이즈 유지)
+              <div className="grid grid-rows-7 h-full">
+                {Array(7).fill(0).map((_, idx) => (
+                  <div key={`skeleton-${idx}`} className="flex justify-between items-center text-xs py-1 px-2">
+                    <span className="flex items-center gap-2">
+                      <span className="w-4 text-center text-text-muted">{['월', '화', '수', '목', '금', '토', '일'][idx]}</span>
+                      <div className="h-3 w-20 bg-bg-secondary rounded animate-pulse" />
+                    </span>
+                    <div className="h-3 w-8 bg-bg-secondary rounded animate-pulse" />
+                  </div>
+                ))}
               </div>
+            ) : isStatsError ? (
+              <div className="h-full flex flex-col items-center justify-center text-xs text-text-secondary gap-3">
+                <p>데이터를 불러오지 못했습니다.</p>
+                <button 
+                  onClick={() => refetchStats()}
+                  className="text-accent hover:underline"
+                >
+                  다시 시도
+                </button>
+              </div>
+            ) : (
+              <div className={`grid grid-rows-7 h-full transition-opacity duration-200 ${isStatsFetching ? 'opacity-50' : 'opacity-100'}`}>
+                {weeklyStats.map((stat, idx) => {
+                  const dayName = ['월', '화', '수', '목', '금', '토', '일'][idx];
+                  const date = stat.date ? new Date(stat.date) : null;
+                  const today = new Date().toLocaleDateString('en-CA', { timeZone: 'Asia/Seoul' });
+                  const isToday = stat.date === today;
+                  const isWeekend = date ? (date.getDay() === 0 || date.getDay() === 6) : false;
+                  
+                  return (
+                    <div 
+                      key={stat.date || `stat-${idx}`} 
+                      className={`flex justify-between items-center text-xs py-1 px-2 rounded ${
+                        isToday ? 'font-semibold text-accent bg-accent/10' : 
+                        isWeekend ? 'text-red-400' : 'text-text-secondary'
+                      }`}
+                    >
+                      <span className="flex items-center gap-2">
+                        <span className="w-4 text-center">{dayName}</span>
+                        <span>{stat.date || '---- -- --'}</span>
+                        {isToday && <span className="text-xs text-accent">오늘</span>}
+                      </span>
+                      <span className="font-mono">{stat.count.toLocaleString()}명</span>
+                    </div>
+                  );
+                })}
+              </div>
+            )}
+          </div>
+            
+          <div className="border-t border-border mt-2 pt-2">
+            <div className="flex justify-between items-center text-xs font-semibold text-text-primary bg-bg-secondary/50 rounded px-2 py-1">
+              <div className="flex items-center gap-2">
+                <span>주간 총계</span>
+                {isStatsFetching && <span className="text-[10px] text-accent animate-pulse font-normal"> (업데이트 중...)</span>}
+              </div>
+              {isInitialLoading ? (
+                <div className="h-3 w-10 bg-bg-secondary rounded animate-pulse" />
+              ) : (
+                <span className="font-mono">
+                  {weeklyStats.reduce((total, stat) => total + stat.count, 0).toLocaleString()}명
+                </span>
+              )}
             </div>
           </div>
         </div>

@@ -1,4 +1,4 @@
-import { doc, getDoc, setDoc, updateDoc, increment, query, collection, where, getDocs } from 'firebase/firestore';
+import { doc, getDoc, setDoc, updateDoc, increment, query, collection, where, getDocs, documentId } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
 
 // 방문자 추적을 위한 유틸리티 함수들
@@ -95,7 +95,7 @@ export class VisitTracker {
     }
   }
 
-  // 특정 주간의 방문자 수 조회 (관리자용) - 배치 쿼리로 최적화
+  // 특정 주간의 방문자 수 조회 (관리자용) - 단일 쿼리(documentId IN) 방식으로 속도 극대화
   public static async getWeeklyStatsOptimized(weekStartDate: Date): Promise<Array<{ date: string; count: number }>> {
     try {
       const results: Array<{ date: string; count: number }> = [];
@@ -110,10 +110,10 @@ export class VisitTracker {
         results.push({ date: dateString, count: 0 }); // 기본값 0으로 초기화
       }
       
-      // Firestore에서 해당 주간의 모든 데이터를 한 번에 조회
+      // Firestore의 documentId() 쿼리를 사용하여 7일치 데이터를 한 번의 네트워크 요청으로 조회
       const q = query(
         collection(db, this.COLLECTION_NAME),
-        where('date', 'in', dateStrings)
+        where(documentId(), 'in', dateStrings)
       );
       
       const querySnapshot = await getDocs(q);
@@ -121,7 +121,7 @@ export class VisitTracker {
       // 조회된 데이터를 결과 배열에 매핑
       querySnapshot.forEach((doc) => {
         const data = doc.data();
-        const dateIndex = dateStrings.indexOf(data.date);
+        const dateIndex = dateStrings.indexOf(doc.id);
         if (dateIndex !== -1) {
           results[dateIndex].count = data.count || 0;
         }
