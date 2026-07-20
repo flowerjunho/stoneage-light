@@ -190,7 +190,7 @@ const Header: React.FC = () => {
                                transition-all duration-300 group-hover:ring-accent group-hover:scale-110"
                   />
                   <span className="text-sm">
-                    문의: <span className="text-accent font-semibold">왕/킹</span>
+                    문의: <span className="text-accent font-semibold">빌게이츠</span>
                   </span>
                   <ChevronRight
                     className="w-4 h-4 text-accent opacity-0 -translate-x-2
