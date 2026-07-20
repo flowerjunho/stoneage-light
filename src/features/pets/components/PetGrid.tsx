@@ -1,4 +1,4 @@
-import React, { useMemo, useCallback } from 'react';
+import React, { useMemo, useCallback, useEffect, useRef, useState } from 'react';
 import type { Pet } from '@/shared/types';
 import type { ElementFilterItem } from '@/shared/components/filters/ElementFilter';
 import type { GradeType } from '@/shared/components/filters/GradeFilter';
@@ -23,10 +23,11 @@ interface PetGridProps {
   showFavoritesOnly: boolean;
   sortOption: SortOption;
   onSortChange: (sort: SortOption) => void;
+  scrollToId?: string;
 }
 
 const PetGrid: React.FC<PetGridProps> = React.memo(
-  ({ pets, searchTerm, elementFilters, gradeFilters, statFilters, showFavoritesOnly, sortOption, onSortChange }) => {
+  ({ pets, searchTerm, elementFilters, gradeFilters, statFilters, showFavoritesOnly, sortOption, onSortChange, scrollToId }) => {
     // 디바운싱된 검색어
     const debouncedSearchTerm = useDebounce(searchTerm, 300);
 
@@ -134,6 +135,38 @@ const PetGrid: React.FC<PetGridProps> = React.memo(
     const memoizedLoadMore = useCallback(() => {
       loadMore();
     }, [loadMore]);
+
+    // 홈에서 특정 페트 선택 시 해당 카드로 스크롤
+    const [highlightedId, setHighlightedId] = useState<string | null>(null);
+    const scrollAttemptedRef = useRef(false);
+    const loadMoreRef = useRef(loadMore);
+    useEffect(() => { loadMoreRef.current = loadMore; }, [loadMore]);
+
+    useEffect(() => {
+      scrollAttemptedRef.current = false;
+    }, [scrollToId]);
+
+    useEffect(() => {
+      if (!scrollToId || isInitialLoading || scrollAttemptedRef.current) return;
+
+      const petIndex = filteredPets.findIndex(p => p.id === scrollToId);
+      if (petIndex === -1) return;
+
+      if (petIndex >= displayedItems.length) {
+        if (hasMore) loadMoreRef.current();
+        return;
+      }
+
+      scrollAttemptedRef.current = true;
+      requestAnimationFrame(() => {
+        const el = document.getElementById(`pet-${scrollToId}`);
+        if (!el) return;
+        el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        setHighlightedId(scrollToId);
+        setTimeout(() => setHighlightedId(null), 1800);
+      });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [scrollToId, displayedItems.length, filteredPets, isInitialLoading, hasMore]);
 
     const loadTriggerRef = useIntersectionObserver({
       onIntersect: memoizedLoadMore,
@@ -268,7 +301,17 @@ const PetGrid: React.FC<PetGridProps> = React.memo(
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8 md:gap-4 iphone16:gap-4 iphone16:mb-6">
           {displayedItems.map((pet, index) => (
-            <PetCard key={`${pet.name}-${pet.baseStats.attack}-${pet.baseStats.defense}-${index}`} pet={pet} />
+            <div
+              key={`${pet.name}-${pet.baseStats.attack}-${pet.baseStats.defense}-${index}`}
+              id={`pet-${pet.id}`}
+              className={
+                highlightedId === pet.id
+                  ? 'rounded-[24px] ring-2 ring-accent ring-offset-2 ring-offset-bg-primary shadow-glow transition-all duration-300'
+                  : undefined
+              }
+            >
+              <PetCard pet={pet} />
+            </div>
           ))}
         </div>
 

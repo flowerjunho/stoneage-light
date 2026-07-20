@@ -38,7 +38,7 @@ const PetSection = () => {
         {latestPets.map((pet) => (
           <Link
             key={pet.id}
-            to={`/pets?search=${encodeURIComponent(pet.name)}`}
+            to={`/pets?scrollTo=${encodeURIComponent(pet.id)}`}
             className="flex-shrink-0 w-[140px] md:w-auto"
           >
             <Card

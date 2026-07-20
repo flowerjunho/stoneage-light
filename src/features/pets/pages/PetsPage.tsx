@@ -53,6 +53,8 @@ const PetsPage: React.FC = () => {
     return searchParams.get('tab') || 'info';
   });
 
+  const scrollToId = searchParams.get('scrollTo') ?? undefined;
+
   // 탭 변경 함수 - 깜빡임 방지를 위한 간단한 구조
   const handleTabChange = useCallback(
     (tab: string) => {
@@ -237,6 +239,7 @@ const PetsPage: React.FC = () => {
           showFavoritesOnly={showFavoritesOnly}
           sortOption={sortOption}
           onSortChange={handleSortChange}
+          scrollToId={scrollToId}
         />
 
         <FloatingFilterButton
@@ -259,6 +262,7 @@ const PetsPage: React.FC = () => {
       showFavoritesOnly,
       sortOption,
       pets,
+      scrollToId,
       handleElementFilterChange,
       handleGradeFilterChange,
       handleStatFilterChange,

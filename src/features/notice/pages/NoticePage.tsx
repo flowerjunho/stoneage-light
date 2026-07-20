@@ -26,7 +26,7 @@ const NoticePage: React.FC = () => {
   const [patchnotes, setPatchnotes] = useState<NoticeItem[]>([]);
   const [notices, setNotices] = useState<NoticeItem[]>([]);
   const [activeTab, setActiveTab] = useState<NoticeTab>(() => {
-    return (searchParams.get('tab') as NoticeTab) || 'announcement';
+    return (searchParams.get('tab') as NoticeTab) || 'patchnotes';
   });
   const [searchTerm, setSearchTerm] = useState(() => {
     return searchParams.get('search') || '';
@@ -176,21 +176,10 @@ const NoticePage: React.FC = () => {
             className="absolute top-1.5 h-[calc(100%-12px)] rounded-xl bg-accent shadow-glow
                        transition-all duration-300 ease-out-expo pointer-events-none"
             style={{
-              left: activeTab === 'announcement' ? '6px' : 'calc(50% + 2px)',
+              left: activeTab === 'patchnotes' ? '6px' : 'calc(50% + 2px)',
               width: 'calc(50% - 8px)',
             }}
           />
-          <Button
-            variant="ghost"
-            onClick={() => handleTabChange('announcement')}
-            className={cn(
-              "relative z-10 flex-1 w-1/2 gap-2 rounded-xl transition-colors duration-300",
-              activeTab === 'announcement' ? 'text-text-inverse hover:bg-transparent' : 'text-text-secondary hover:text-text-primary'
-            )}
-          >
-            <Megaphone className="w-4 h-4" />
-            공지
-          </Button>
           <Button
             variant="ghost"
             onClick={() => handleTabChange('patchnotes')}
@@ -201,6 +190,17 @@ const NoticePage: React.FC = () => {
           >
             <FileText className="w-4 h-4" />
             패치노트
+          </Button>
+          <Button
+            variant="ghost"
+            onClick={() => handleTabChange('announcement')}
+            className={cn(
+              "relative z-10 flex-1 w-1/2 gap-2 rounded-xl transition-colors duration-300",
+              activeTab === 'announcement' ? 'text-text-inverse hover:bg-transparent' : 'text-text-secondary hover:text-text-primary'
+            )}
+          >
+            <Megaphone className="w-4 h-4" />
+            공지
           </Button>
         </Card>
       </div>

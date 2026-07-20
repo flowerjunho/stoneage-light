@@ -13,7 +13,9 @@
     "scrape:pets": "node scripts/petScraper.js",
     "scrape:quests": "node scripts/questScraper.js",
     "scrape:quests:content": "node scripts/questScraperWithContent.js",
-    "scrape:items": "node scrape_items.js"
+    "scrape:items": "node scrape_items.js",
+    "scrape:patchnotes": "node scripts/crawl-patchnotes.js",
+    "scrape:notices": "node scripts/crawl-notices.js"
   },
   "dependencies": {
     "@radix-ui/react-accordion": "^1.2.12",
