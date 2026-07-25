@@ -1,6 +1,12 @@
 import { doc, getDoc, setDoc, updateDoc, increment, query, collection, where, getDocs, documentId } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
 
+export interface DailyVisitStats {
+  date: string;
+  count: number;       // 순수 방문자 수 (중복 제거)
+  totalVisits: number; // 총 방문 횟수 (중복 방문 포함)
+}
+
 // 방문자 추적을 위한 유틸리티 함수들
 export class VisitTracker {
   private static readonly COLLECTION_NAME = 'daily_stats';
@@ -24,68 +30,104 @@ export class VisitTracker {
     localStorage.setItem(todayKey, 'visited');
   }
 
-  // 방문자 수 증가 (신규 방문자인 경우에만)
-  public static async trackVisit(): Promise<void> {
-    // 이미 오늘 방문한 경우 스킵
-    if (this.hasVisitedToday()) {
-      return;
+  // 관리자 여부 확인
+  private static isAdmin(): boolean {
+    const adminId = localStorage.getItem('ADMIN_ID_STONE');
+    return adminId === 'flowerjunho';
+  }
+
+  // 방문자 수 및 총 방문 횟수 증가
+  public static async trackVisit(): Promise<DailyVisitStats | null> {
+    // 관리자인 경우 방문 카운트 적재 스킵
+    if (this.isAdmin()) {
+      return null;
     }
 
     try {
       const today = this.getTodayString();
       const docRef = doc(db, this.COLLECTION_NAME, today);
       const docSnap = await getDoc(docRef);
+      const isFirstVisitToday = !this.hasVisitedToday();
+
+      let count = 1;
+      let totalVisits = 1;
 
       if (docSnap.exists()) {
-        // 문서가 존재하면 count 증가
-        await updateDoc(docRef, {
-          count: increment(1)
-        });
+        const data = docSnap.data();
+        const existingCount = data.count || 0;
+        const existingTotal = data.totalVisits !== undefined ? data.totalVisits : existingCount;
+
+        count = existingCount + (isFirstVisitToday ? 1 : 0);
+        totalVisits = Math.max(existingTotal + 1, count);
+
+        const updateData: Record<string, any> = {
+          totalVisits: data.totalVisits !== undefined ? increment(1) : totalVisits
+        };
+
+        // 오늘 첫 방문인 경우에만 순수 방문자수(count)도 증가
+        if (isFirstVisitToday) {
+          updateData.count = increment(1);
+        }
+
+        await updateDoc(docRef, updateData);
       } else {
-        // 문서가 없으면 새로 생성 (첫 방문자)
+        // 문서가 없으면 새로 생성 (오늘 첫 방문자)
         await setDoc(docRef, {
           date: today,
           count: 1,
+          totalVisits: 1,
           createdAt: new Date()
         });
       }
 
-      // 로컬스토리지에 방문 기록 저장
-      this.markAsVisited();
+      // 오늘 첫 방문 시 로컬스토리지에 방문 기록 저장
+      if (isFirstVisitToday) {
+        this.markAsVisited();
+      }
+
+      return { date: today, count, totalVisits };
     } catch (error) {
       console.error('방문자 추적 중 오류:', error);
+      return null;
     }
   }
 
-  // 일별 방문자 수 조회 (관리자용)
-  public static async getDailyStats(dateString?: string): Promise<number> {
+  // 일별 방문자 수 및 총 방문 횟수 조회 (관리자용)
+  public static async getDailyStats(dateString?: string): Promise<DailyVisitStats> {
     try {
       const targetDate = dateString || this.getTodayString();
       const docRef = doc(db, this.COLLECTION_NAME, targetDate);
       const docSnap = await getDoc(docRef);
 
       if (docSnap.exists()) {
-        return docSnap.data().count || 0;
+        const data = docSnap.data();
+        const count = data.count || 0;
+        const totalVisits = Math.max(data.totalVisits !== undefined ? data.totalVisits : count, count);
+        return {
+          date: targetDate,
+          count,
+          totalVisits
+        };
       }
-      return 0;
+      return { date: targetDate, count: 0, totalVisits: 0 };
     } catch (error) {
       console.error('방문자 수 조회 중 오류:', error);
-      return 0;
+      return { date: dateString || this.getTodayString(), count: 0, totalVisits: 0 };
     }
   }
 
   // 최근 7일간 방문자 수 조회 (관리자용)
-  public static async getWeeklyStats(): Promise<Array<{ date: string; count: number }>> {
+  public static async getWeeklyStats(): Promise<DailyVisitStats[]> {
     try {
-      const results: Array<{ date: string; count: number }> = [];
+      const results: DailyVisitStats[] = [];
       
       for (let i = 6; i >= 0; i--) {
         const date = new Date();
         date.setDate(date.getDate() - i);
         const dateString = this.formatDate(date);
-        const count = await this.getDailyStats(dateString);
+        const stat = await this.getDailyStats(dateString);
         
-        results.push({ date: dateString, count });
+        results.push(stat);
       }
       
       return results;
@@ -96,9 +138,9 @@ export class VisitTracker {
   }
 
   // 특정 주간의 방문자 수 조회 (관리자용) - 단일 쿼리(documentId IN) 방식으로 속도 극대화
-  public static async getWeeklyStatsOptimized(weekStartDate: Date): Promise<Array<{ date: string; count: number }>> {
+  public static async getWeeklyStatsOptimized(weekStartDate: Date): Promise<DailyVisitStats[]> {
     try {
-      const results: Array<{ date: string; count: number }> = [];
+      const results: DailyVisitStats[] = [];
       const dateStrings: string[] = [];
       
       // 7일간의 날짜 문자열 생성
@@ -107,7 +149,7 @@ export class VisitTracker {
         date.setDate(weekStartDate.getDate() + i);
         const dateString = this.formatDate(date);
         dateStrings.push(dateString);
-        results.push({ date: dateString, count: 0 }); // 기본값 0으로 초기화
+        results.push({ date: dateString, count: 0, totalVisits: 0 }); // 기본값 0으로 초기화
       }
       
       // Firestore의 documentId() 쿼리를 사용하여 7일치 데이터를 한 번의 네트워크 요청으로 조회
@@ -123,7 +165,10 @@ export class VisitTracker {
         const data = doc.data();
         const dateIndex = dateStrings.indexOf(doc.id);
         if (dateIndex !== -1) {
-          results[dateIndex].count = data.count || 0;
+          const count = data.count || 0;
+          const totalVisits = Math.max(data.totalVisits !== undefined ? data.totalVisits : count, count);
+          results[dateIndex].count = count;
+          results[dateIndex].totalVisits = totalVisits;
         }
       });
       
@@ -140,3 +185,4 @@ export class VisitTracker {
     return date.toLocaleDateString('en-CA', { timeZone: 'Asia/Seoul' });
   }
 }
+

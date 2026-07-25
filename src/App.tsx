@@ -48,9 +48,8 @@ const AppContent: React.FC = () => {
     window.scrollTo(0, 0);
   }, [location.pathname]);
 
-  // 앱 시작 시 방문자 추적
+  // 앱 시작 시 방문자 추적 (관리자가 아닌 경우에만 적재)
   useEffect(() => {
-    // 관리자가 아닌 경우에만 방문자 카운트
     const adminId = localStorage.getItem('ADMIN_ID_STONE');
     const isAdmin = adminId === 'flowerjunho';
 

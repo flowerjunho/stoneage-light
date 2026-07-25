@@ -13,7 +13,7 @@ import {
   Timestamp,
 } from 'firebase/firestore';
 import { db, type Comment } from '@/lib/firebase';
-import { VisitTracker } from '@/shared/utils/visitTracker';
+import { VisitTracker, type DailyVisitStats } from '@/shared/utils/visitTracker';
 
 const FirebaseComments: React.FC = () => {
   const [comments, setComments] = useState<Comment[]>([]);
@@ -24,7 +24,7 @@ const FirebaseComments: React.FC = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isAdmin, setIsAdmin] = useState(false);
-  const [dailyVisitors, setDailyVisitors] = useState<number>(0);
+  const [dailyVisitors, setDailyVisitors] = useState<DailyVisitStats>({ date: '', count: 0, totalVisits: 0 });
   const [currentWeekOffset, setCurrentWeekOffset] = useState<number>(0); // 0: 이번주, -1: 지난주, 1: 다음주
   const [showAdminModal, setShowAdminModal] = useState(false);
   const [adminPassword, setAdminPassword] = useState('');
@@ -86,9 +86,11 @@ const FirebaseComments: React.FC = () => {
     const isAdminUser = adminId === 'flowerjunho';
     setIsAdmin(isAdminUser);
 
-    // 관리자인 경우 오늘 방문자 수 한 번만 로드
+    // 관리자인 경우 오늘 방문자 수 로드 (trackVisit 비동기 반영 후 최신 데이터 조회)
     if (isAdminUser) {
-      VisitTracker.getDailyStats().then(setDailyVisitors).catch(console.error);
+      setTimeout(() => {
+        VisitTracker.getDailyStats().then(setDailyVisitors).catch(console.error);
+      }, 400);
     }
   }, []);
 
@@ -274,7 +276,8 @@ const FirebaseComments: React.FC = () => {
                 👑 관리자 모드
               </span>
               <div className="text-xs text-text-secondary">
-                📊 오늘 방문자: <span className="font-semibold text-accent">{dailyVisitors}명</span>
+                📊 오늘 방문자: <span className="font-semibold text-accent">{dailyVisitors.count}명</span>{' '}
+                <span className="text-[11px] text-text-muted font-normal">(총 {dailyVisitors.totalVisits}회)</span>
               </div>
             </div>
           )}
@@ -495,7 +498,10 @@ const FirebaseComments: React.FC = () => {
                         <span>{stat.date || '---- -- --'}</span>
                         {isToday && <span className="text-xs text-accent">오늘</span>}
                       </span>
-                      <span className="font-mono">{stat.count.toLocaleString()}명</span>
+                      <span className="font-mono">
+                        {stat.count.toLocaleString()}명{' '}
+                        <span className="text-[11px] text-text-muted font-normal ml-0.5">({stat.totalVisits.toLocaleString()}회)</span>
+                      </span>
                     </div>
                   );
                 })}
@@ -513,7 +519,10 @@ const FirebaseComments: React.FC = () => {
                 <div className="h-3 w-10 bg-bg-secondary rounded animate-pulse" />
               ) : (
                 <span className="font-mono">
-                  {weeklyStats.reduce((total, stat) => total + stat.count, 0).toLocaleString()}명
+                  {weeklyStats.reduce((total, stat) => total + stat.count, 0).toLocaleString()}명{' '}
+                  <span className="text-[11px] text-text-muted font-normal ml-0.5">
+                    (총 {weeklyStats.reduce((total, stat) => total + stat.totalVisits, 0).toLocaleString()}회)
+                  </span>
                 </span>
               )}
             </div>
