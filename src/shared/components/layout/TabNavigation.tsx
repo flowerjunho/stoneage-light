@@ -14,6 +14,7 @@ import {
   MessageSquare,
   ChevronLeft,
   ChevronRight,
+  Swords,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
@@ -27,6 +28,7 @@ interface Tab {
 const tabs: Tab[] = [
   { path: '/', label: '홈', icon: <Home className="w-4 h-4" /> },
   { path: '/notice', label: '공지', icon: <Bell className="w-4 h-4" /> },
+  { path: '/battle', label: '듀얼', icon: <Swords className="w-4 h-4" /> },
   { path: '/pets', label: '페트', icon: <Heart className="w-4 h-4" /> },
   {
     path: '/boarding',

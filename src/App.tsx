@@ -37,7 +37,6 @@ const AppContent: React.FC = () => {
     (location.pathname.includes('/maps/') && location.pathname !== '/maps') ||
     (location.pathname.includes('/notice/') && location.pathname !== '/notice');
   const isRadontaPage = location.pathname === '/radonta';
-  const isBattlePage = location.pathname === '/battle';
   const isDashboardPage = location.pathname === '/dashboard';
   const isDashboard2Page = location.pathname === '/dashboard2';
   const isTradePage = location.pathname === '/trade';
@@ -69,14 +68,6 @@ const AppContent: React.FC = () => {
     );
   }
 
-  // 배틀 페이지는 레이아웃 없이 렌더링
-  if (isBattlePage) {
-    return (
-      <Routes>
-        <Route path="/battle" element={<BattlePage />} />
-      </Routes>
-    );
-  }
 
   // 대시보드 페이지는 레이아웃 없이 렌더링
   if (isDashboardPage) {
@@ -143,6 +134,7 @@ const AppContent: React.FC = () => {
           <Route path="/maps/:mapId" element={<MapDetailPage />} />
           <Route path="/game" element={<GamePage />} />
           <Route path="/calculator" element={<CalculatorPage />} />
+          <Route path="/battle" element={<BattlePage />} />
           <Route path="/board" element={<BoardPage />} />
         </Routes>
       </main>

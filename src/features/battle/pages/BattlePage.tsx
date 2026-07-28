@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
-import { useNavigate, useSearchParams } from 'react-router-dom';
+import { useSearchParams } from 'react-router-dom';
 import { Skull, PawPrint, RotateCcw, Swords, User, Info } from 'lucide-react';
-import ThemeToggle from '@/shared/components/layout/ThemeToggle';
 import petDataJson from '@/data/petData.json';
 
 type TabType = 'info' | 'combo' | 'calculator' | 'dual';
@@ -151,11 +150,7 @@ const savePetStatsToStorage = (key: string, petStats: PetStats | null) => {
 };
 
 const BattlePage: React.FC = () => {
-  const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [password, setPassword] = useState('');
-  const [showPasswordError, setShowPasswordError] = useState(false);
 
   // URL 쿼리에서 탭 상태 가져오기
   const tabFromQuery = searchParams.get('tab') as TabType | null;
@@ -272,40 +267,6 @@ const BattlePage: React.FC = () => {
     return { chars, pets, total: chars + pets };
   };
 
-  // 인증 확인 및 테마 적용
-  useEffect(() => {
-    // Apply saved theme
-    const savedTheme = localStorage.getItem('THEME_TOGGLE_STATE');
-    const root = document.documentElement;
-
-    if (savedTheme === 'light') {
-      root.classList.add('light');
-      root.classList.remove('dark');
-    } else {
-      root.classList.add('dark');
-      root.classList.remove('light');
-    }
-
-    // Check authentication
-    const authKey = localStorage.getItem('BATTLE_AUTH');
-    if (authKey === 'authenticated') {
-      setIsAuthenticated(true);
-    }
-  }, []);
-
-  // 비밀번호 확인
-  const handlePasswordSubmit = () => {
-    // 비밀번호 설정 (원하는 비밀번호로 변경 가능)
-    const correctPassword = '2580';
-
-    if (password === correctPassword) {
-      localStorage.setItem('BATTLE_AUTH', 'authenticated');
-      setIsAuthenticated(true);
-      setShowPasswordError(false);
-    } else {
-      setShowPasswordError(true);
-    }
-  };
 
   // 탭 변경 시 URL 쿼리 업데이트
   useEffect(() => {
@@ -1002,67 +963,8 @@ const BattlePage: React.FC = () => {
     touchStartRef.current = null;
   }, []);
 
-  // 비밀번호 입력 화면
-  if (!isAuthenticated) {
-    return (
-      <div className="w-full min-h-screen bg-bg-primary text-text-primary flex items-center justify-center">
-        <ThemeToggle />
-        <div className="bg-bg-secondary rounded-lg p-8 border border-border shadow-lg max-w-md w-full mx-4">
-          <h2 className="text-2xl font-bold text-center mb-6">🔐 비밀번호 입력</h2>
-          <div className="space-y-4">
-            <input
-              type="password"
-              value={password}
-              onChange={e => setPassword(e.target.value)}
-              onKeyPress={e => {
-                if (e.key === 'Enter') {
-                  handlePasswordSubmit();
-                }
-              }}
-              placeholder="비밀번호를 입력하세요"
-              className="w-full px-4 py-2 bg-bg-tertiary border border-border rounded-lg focus:outline-none focus:border-accent"
-            />
-            {showPasswordError && <p className="text-red-500 text-sm">잘못된 비밀번호입니다.</p>}
-            <button
-              onClick={handlePasswordSubmit}
-              className="w-full px-4 py-2 bg-accent text-white rounded-lg hover:bg-accent/90 transition-colors"
-            >
-              확인
-            </button>
-          </div>
-        </div>
-      </div>
-    );
-  }
-
   return (
-    <div className="w-full min-h-screen bg-bg-primary text-text-primary p-3 md:p-4">
-      <div className="max-w-7xl mx-auto">
-        {/* 헤더 */}
-        <div className="flex items-center justify-between mb-4">
-          <button
-            onClick={() => navigate('/?tab=pet')}
-            className="flex items-center gap-2 px-3 py-2 bg-bg-secondary hover:bg-bg-tertiary border border-border rounded-lg transition-colors"
-            aria-label="홈으로 가기"
-          >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              className="h-5 w-5"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"
-              />
-            </svg>
-          </button>
-          <ThemeToggle />
-        </div>
-
+    <div className="max-w-6xl mx-auto px-4 iphone16:px-3 pt-4 pb-20">
         {/* 타이틀 */}
         <div className="text-center mb-4">
           <h1 className="text-3xl md:text-4xl font-bold mb-2 text-text-primary">
@@ -6429,7 +6331,6 @@ const BattlePage: React.FC = () => {
           );
         })()}
       </div>
-    </div>
   );
 };
 
