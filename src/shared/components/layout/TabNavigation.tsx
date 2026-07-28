@@ -1,5 +1,6 @@
 import { useRef, useLayoutEffect, useState, useCallback, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
+import { EventTracker } from '@/shared/utils/eventTracker';
 import {
   Home,
   Bell,
@@ -186,6 +187,9 @@ const TabNavigation = () => {
                   key={tab.path}
                   ref={active ? activeTabRef : null}
                   to={tab.path}
+                  onClick={() => {
+                    EventTracker.trackEvent('TAB_CLICK', tab.path, tab.label);
+                  }}
                   className={cn(
                     'group relative flex items-center gap-2 px-4 py-2.5 text-sm font-medium whitespace-nowrap rounded-xl mx-0.5',
                     // 모바일: transform/opacity만 트랜지션, PC: all

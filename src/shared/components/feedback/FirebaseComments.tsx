@@ -14,6 +14,7 @@ import {
 } from 'firebase/firestore';
 import { db, type Comment } from '@/lib/firebase';
 import { VisitTracker, type DailyVisitStats } from '@/shared/utils/visitTracker';
+import AdminEventStatsModal from './AdminEventStatsModal';
 
 const FirebaseComments: React.FC = () => {
   const [comments, setComments] = useState<Comment[]>([]);
@@ -29,6 +30,8 @@ const FirebaseComments: React.FC = () => {
   const [showAdminModal, setShowAdminModal] = useState(false);
   const [adminPassword, setAdminPassword] = useState('');
   const [showAdminPasswordError, setShowAdminPasswordError] = useState(false);
+  const [showEventModal, setShowEventModal] = useState(false);
+  const [selectedEventDate, setSelectedEventDate] = useState<string>('');
 
   // 간단한 해시 함수 (실제 프로덕션에서는 더 강력한 해시 사용 권장)
   const simpleHash = async (text: string): Promise<string> => {
@@ -488,10 +491,17 @@ const FirebaseComments: React.FC = () => {
                   return (
                     <div 
                       key={stat.date || `stat-${idx}`} 
-                      className={`flex justify-between items-center text-xs py-1 px-2 rounded ${
+                      onClick={() => {
+                        if (stat.date) {
+                          setSelectedEventDate(stat.date);
+                          setShowEventModal(true);
+                        }
+                      }}
+                      className={`flex justify-between items-center text-xs py-1 px-2 rounded cursor-pointer hover:bg-bg-primary transition-colors ${
                         isToday ? 'font-semibold text-accent bg-accent/10' : 
                         isWeekend ? 'text-red-400' : 'text-text-secondary'
                       }`}
+                      title="상세 이벤트 통계 보기"
                     >
                       <span className="flex items-center gap-2">
                         <span className="w-4 text-center">{dayName}</span>
@@ -578,6 +588,13 @@ const FirebaseComments: React.FC = () => {
           </div>
         </div>
       )}
+
+      {/* 이벤트 통계 모달 */}
+      <AdminEventStatsModal 
+        isOpen={showEventModal} 
+        onClose={() => setShowEventModal(false)} 
+        initialDateStr={selectedEventDate} 
+      />
     </div>
   );
 };

@@ -2,6 +2,7 @@ import * as React from "react"
 import { Slot } from "@radix-ui/react-slot"
 import { cva, type VariantProps } from "class-variance-authority"
 import { cn } from "@/lib/utils"
+import { EventTracker } from "@/shared/utils/eventTracker"
 
 const buttonVariants = cva(
   "group relative inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-xl text-sm font-semibold transition-all duration-300 ease-out focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-bg-primary disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 overflow-hidden",
@@ -59,6 +60,22 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
         className={cn(buttonVariants({ variant, size, className }))}
         ref={ref}
         disabled={loading || props.disabled}
+        onClick={(e) => {
+          if (props.onClick) {
+            props.onClick(e)
+          }
+          // Track button click
+          let actionName = 'button_click';
+          if (typeof children === 'string') {
+            actionName = children;
+          } else if (Array.isArray(children)) {
+            const textChild = children.find(c => typeof c === 'string');
+            if (textChild) actionName = textChild;
+          } else if (props['aria-label']) {
+            actionName = props['aria-label'];
+          }
+          EventTracker.trackEvent('BUTTON_CLICK', window.location.pathname, actionName);
+        }}
         {...props}
       >
         {/* Ripple effect layer */}

@@ -28,6 +28,7 @@ import AnalyticsPage from '@/features/analytics/pages/AnalyticsPage';
 import SharePage from '@/features/share/pages/SharePage';
 import GamePage from '@/features/game/pages/GamePage';
 import { VisitTracker } from '@/shared/utils/visitTracker';
+import { EventTracker } from '@/shared/utils/eventTracker';
 import PasswordGate from '@/shared/components/auth/PasswordGate';
 
 const AppContent: React.FC = () => {
@@ -42,9 +43,10 @@ const AppContent: React.FC = () => {
   const isTradePage = location.pathname === '/trade';
   const isAnalyticsPage = location.pathname === '/analytics';
 
-  // 페이지 전환 시 스크롤 최상단으로 이동
+  // 페이지 전환 시 스크롤 최상단으로 이동 및 페이지 뷰 추적
   useEffect(() => {
     window.scrollTo(0, 0);
+    EventTracker.trackEvent('PAGE_VIEW', location.pathname, 'view');
   }, [location.pathname]);
 
   // 앱 시작 시 방문자 추적 (관리자가 아닌 경우에만 적재)
