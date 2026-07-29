@@ -60,10 +60,15 @@ const AdminEventStatsModal: React.FC<AdminEventStatsModalProps> = ({ isOpen, onC
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm p-4">
-      <div className="bg-bg-secondary w-full max-w-4xl max-h-[90vh] rounded-xl border border-border shadow-2xl flex flex-col overflow-hidden">
+    <div className="fixed inset-0 z-50 flex items-end md:items-center justify-center bg-black/70 backdrop-blur-sm p-0 md:p-4 animate-in fade-in duration-200">
+      <div className="bg-bg-secondary w-full max-w-4xl h-[85vh] md:h-auto md:max-h-[90vh] rounded-t-2xl md:rounded-xl border border-border shadow-2xl flex flex-col overflow-hidden animate-in slide-in-from-bottom-8 md:slide-in-from-bottom-0 md:zoom-in-95 duration-300">
+        {/* Mobile handle */}
+        <div className="w-full flex justify-center pt-3 pb-1 md:hidden bg-bg-tertiary shrink-0">
+          <div className="w-12 h-1.5 bg-border rounded-full"></div>
+        </div>
+        
         {/* Header */}
-        <div className="flex items-center justify-between p-4 border-b border-border bg-bg-tertiary">
+        <div className="flex items-center justify-between p-4 border-b border-border bg-bg-tertiary shrink-0">
           <h2 className="text-lg font-bold flex items-center gap-2">
             <Activity className="w-5 h-5 text-accent" />
             상세 이벤트 통계
@@ -74,7 +79,7 @@ const AdminEventStatsModal: React.FC<AdminEventStatsModalProps> = ({ isOpen, onC
         </div>
 
         {/* Date Picker Area */}
-        <div className="p-4 border-b border-border flex flex-wrap items-center gap-4 bg-bg-primary/50">
+        <div className="p-4 border-b border-border flex flex-wrap items-center gap-3 bg-bg-primary/50 shrink-0">
           <div className="flex items-center gap-2">
             <label className="text-sm font-medium">시작일:</label>
             <input 
