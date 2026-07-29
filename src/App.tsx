@@ -59,8 +59,20 @@ const AppContent: React.FC = () => {
         console.error('방문자 추적 실패:', error);
       });
       
-      const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) || window.innerWidth <= 768;
+      const ua = navigator.userAgent;
+      const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(ua) || window.innerWidth <= 768;
       EventTracker.trackEvent('DEVICE_INFO', 'device', isMobile ? 'MOBILE' : 'PC');
+      
+      let os = '기타 모바일';
+      if (/iPhone|iPad|iPod/i.test(ua)) os = 'iOS';
+      else if (/Android/i.test(ua)) os = 'Android';
+      else if (!isMobile) {
+        if (/Windows NT/i.test(ua)) os = 'Windows';
+        else if (/Mac OS X/i.test(ua)) os = 'macOS';
+        else if (/Linux/i.test(ua)) os = 'Linux';
+        else os = '기타 PC';
+      }
+      EventTracker.trackEvent('DEVICE_INFO', 'os', os);
     }
   }, []); // 빈 dependency array로 한 번만 실행
 
