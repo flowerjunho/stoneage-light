@@ -58,6 +58,9 @@ const AppContent: React.FC = () => {
       VisitTracker.trackVisit().catch(error => {
         console.error('방문자 추적 실패:', error);
       });
+      
+      const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) || window.innerWidth <= 768;
+      EventTracker.trackEvent('DEVICE_INFO', 'device', isMobile ? 'MOBILE' : 'PC');
     }
   }, []); // 빈 dependency array로 한 번만 실행
 

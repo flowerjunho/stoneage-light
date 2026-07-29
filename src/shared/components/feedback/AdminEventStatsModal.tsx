@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import { EventTracker } from '@/shared/utils/eventTracker';
-import { X, Search, Activity, MousePointerClick, AppWindow } from 'lucide-react';
+import { X, Search, Activity, MousePointerClick, AppWindow, MonitorSmartphone } from 'lucide-react';
 
 interface AdminEventStatsModalProps {
   isOpen: boolean;
@@ -40,10 +40,11 @@ const AdminEventStatsModal: React.FC<AdminEventStatsModalProps> = ({ isOpen, onC
     PAGE_VIEW: {} as Record<string, number>,
     TAB_CLICK: {} as Record<string, number>,
     BUTTON_CLICK: {} as Record<string, number>,
+    DEVICE_INFO: {} as Record<string, number>,
   };
 
   stats.forEach(dayStat => {
-    ['PAGE_VIEW', 'TAB_CLICK', 'BUTTON_CLICK'].forEach(type => {
+    ['PAGE_VIEW', 'TAB_CLICK', 'BUTTON_CLICK', 'DEVICE_INFO'].forEach(type => {
       if (dayStat[type]) {
         for (const [key, count] of Object.entries(dayStat[type] as Record<string, number>)) {
           const decodedKey = EventTracker.decodeKey(key);
@@ -118,8 +119,60 @@ const AdminEventStatsModal: React.FC<AdminEventStatsModalProps> = ({ isOpen, onC
               해당 기간의 데이터가 없습니다.
             </div>
           ) : (
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              {/* PAGE VIEWS */}
+            <>
+              {/* 기기 통계 (PC vs Mobile) */}
+              {(() => {
+                const pcCount = aggregated.DEVICE_INFO?.['device::PC'] || 0;
+                const mobileCount = aggregated.DEVICE_INFO?.['device::MOBILE'] || 0;
+                const totalDevice = pcCount + mobileCount;
+                const pcRatio = totalDevice > 0 ? Math.round((pcCount / totalDevice) * 100) : 0;
+                const mobileRatio = totalDevice > 0 ? Math.round((mobileCount / totalDevice) * 100) : 0;
+                
+                if (totalDevice === 0) return null;
+
+                return (
+                  <div className="bg-bg-tertiary rounded-lg border border-border p-4 mb-4">
+                    <h3 className="font-bold flex items-center gap-2 border-b border-border pb-2 mb-3 text-orange-400">
+                      <MonitorSmartphone className="w-4 h-4" /> 기기 접속 현황 (비율)
+                    </h3>
+                    <div className="flex flex-col md:flex-row items-center gap-4">
+                      <div className="w-full md:w-2/3 bg-bg-secondary rounded-full h-5 overflow-hidden flex ring-1 ring-border">
+                        {pcCount > 0 && (
+                          <div 
+                            className="bg-blue-500 h-full flex items-center justify-center text-[11px] text-white font-bold transition-all duration-500" 
+                            style={{ width: `${pcRatio}%` }}
+                            title={`PC: ${pcCount}명`}
+                          >
+                            {pcRatio > 10 ? `PC ${pcRatio}%` : ''}
+                          </div>
+                        )}
+                        {mobileCount > 0 && (
+                          <div 
+                            className="bg-green-500 h-full flex items-center justify-center text-[11px] text-white font-bold transition-all duration-500" 
+                            style={{ width: `${mobileRatio}%` }}
+                            title={`Mobile: ${mobileCount}명`}
+                          >
+                            {mobileRatio > 10 ? `Mobile ${mobileRatio}%` : ''}
+                          </div>
+                        )}
+                      </div>
+                      <div className="flex gap-4 text-sm whitespace-nowrap w-full md:w-1/3 justify-center md:justify-start">
+                        <div className="flex items-center gap-1.5 font-medium">
+                          <div className="w-3 h-3 bg-blue-500 rounded-sm"></div> 
+                          PC: <span className="font-mono text-accent">{pcCount.toLocaleString()}</span>명
+                        </div>
+                        <div className="flex items-center gap-1.5 font-medium">
+                          <div className="w-3 h-3 bg-green-500 rounded-sm"></div> 
+                          모바일: <span className="font-mono text-accent">{mobileCount.toLocaleString()}</span>명
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                );
+              })()}
+
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                {/* PAGE VIEWS */}
               <div className="bg-bg-tertiary rounded-lg border border-border p-4">
                 <h3 className="font-bold flex items-center gap-2 border-b border-border pb-2 mb-3 text-blue-400">
                   <AppWindow className="w-4 h-4" /> 페이지 뷰
@@ -188,6 +241,7 @@ const AdminEventStatsModal: React.FC<AdminEventStatsModalProps> = ({ isOpen, onC
                 </div>
               </div>
             </div>
+            </>
           )}
         </div>
       </div>
