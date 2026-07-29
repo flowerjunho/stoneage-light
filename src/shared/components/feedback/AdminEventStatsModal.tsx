@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import { EventTracker } from '@/shared/utils/eventTracker';
 import { X, Search, Activity, MousePointerClick, AppWindow } from 'lucide-react';
 
@@ -59,8 +60,8 @@ const AdminEventStatsModal: React.FC<AdminEventStatsModalProps> = ({ isOpen, onC
     return Object.entries(obj).sort((a, b) => b[1] - a[1]);
   };
 
-  return (
-    <div className="fixed inset-0 z-50 flex items-end md:items-center justify-center bg-black/70 backdrop-blur-sm p-0 md:p-4 animate-in fade-in duration-200">
+  const modalContent = (
+    <div className="fixed inset-0 z-[9999] flex items-end md:items-center justify-center bg-black/70 backdrop-blur-sm p-0 md:p-4 animate-in fade-in duration-200">
       <div className="bg-bg-secondary w-full max-w-4xl h-[85vh] md:h-auto md:max-h-[90vh] rounded-t-2xl md:rounded-xl border border-border shadow-2xl flex flex-col overflow-hidden animate-in slide-in-from-bottom-8 md:slide-in-from-bottom-0 md:zoom-in-95 duration-300">
         {/* Mobile handle */}
         <div className="w-full flex justify-center pt-3 pb-1 md:hidden bg-bg-tertiary shrink-0">
@@ -192,6 +193,8 @@ const AdminEventStatsModal: React.FC<AdminEventStatsModalProps> = ({ isOpen, onC
       </div>
     </div>
   );
+
+  return createPortal(modalContent, document.body);
 };
 
 export default AdminEventStatsModal;
