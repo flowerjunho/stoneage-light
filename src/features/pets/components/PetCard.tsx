@@ -3,6 +3,7 @@ import { createPortal } from 'react-dom';
 import type { Pet } from '@/shared/types';
 import { isFavorite, toggleFavorite, addFavoriteChangeListener } from '@/shared/utils/favorites';
 import PetBoardingModal from '@/features/boarding/components/PetBoardingModal';
+import { EventTracker } from '@/shared/utils/eventTracker';
 
 interface PetCardProps {
   pet: Pet;
@@ -36,8 +37,9 @@ const PetCard: React.FC<PetCardProps> = ({ pet }) => {
   }, [pet]);
 
   const handlePetClick = useCallback(() => {
+    EventTracker.trackEvent('BUTTON_CLICK', 'pet_card', pet.name);
     setIsModalOpen(true);
-  }, []);
+  }, [pet.name]);
 
   const handleModalClose = useCallback(() => {
     setIsModalOpen(false);
