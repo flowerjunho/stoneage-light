@@ -1,7 +1,7 @@
 import { doc, getDoc, setDoc, updateDoc, increment, collection, query, where, getDocs } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
 
-export type EventType = 'PAGE_VIEW' | 'TAB_CLICK' | 'BUTTON_CLICK' | 'DEVICE_INFO';
+export type EventType = 'PAGE_VIEW' | 'TAB_CLICK' | 'BUTTON_CLICK' | 'DEVICE_INFO' | 'IMPRESSION';
 
 export interface TrackingEvent {
   type: EventType;
@@ -44,7 +44,11 @@ export class EventTracker {
       timestamp: Date.now()
     });
 
-    if (events.length >= this.BATCH_SIZE) {
+    // 임프레션만 있는 경우 5개, 다른 이벤트가 포함된 경우 2개를 기준으로 전송
+    const hasNonImpression = events.some(e => e.type !== 'IMPRESSION');
+    const flushLimit = hasNonImpression ? this.BATCH_SIZE : 5;
+
+    if (events.length >= flushLimit) {
       await this.flushEvents(events);
     } else {
       this.saveLocalEvents(events);
