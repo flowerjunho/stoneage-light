@@ -20,6 +20,8 @@ const PetCard: React.FC<PetCardProps> = ({ pet }) => {
   const [showShareMenu, setShowShareMenu] = useState(false);
   const [isCapturing, setIsCapturing] = useState(false);
   const cardRef = useRef<HTMLDivElement>(null);
+  const impressionTimerRef = useRef<number | null>(null);
+  const hasTrackedImpression = useRef(false);
 
   useEffect(() => {
     const updateFavoriteState = () => {
@@ -28,6 +30,47 @@ const PetCard: React.FC<PetCardProps> = ({ pet }) => {
     const removeListener = addFavoriteChangeListener(updateFavoriteState);
     return removeListener;
   }, [pet]);
+
+  useEffect(() => {
+    if (hasTrackedImpression.current) return;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        const [entry] = entries;
+        
+        if (entry.isIntersecting) {
+          // 화면에 보이기 시작하면 5초 타이머 시작
+          impressionTimerRef.current = window.setTimeout(() => {
+            EventTracker.trackEvent('IMPRESSION', 'pet_card', pet.name);
+            hasTrackedImpression.current = true;
+            observer.disconnect(); // 트래킹 완료 후 관찰 종료
+          }, 5000);
+        } else {
+          // 5초가 되기 전에 화면에서 사라지면 타이머 취소
+          if (impressionTimerRef.current) {
+            window.clearTimeout(impressionTimerRef.current);
+            impressionTimerRef.current = null;
+          }
+        }
+      },
+      {
+        root: null, // viewport 기준
+        rootMargin: '0px',
+        threshold: 0.5, // 카드의 50% 이상이 보일 때 교차로 인정
+      }
+    );
+
+    if (cardRef.current) {
+      observer.observe(cardRef.current);
+    }
+
+    return () => {
+      observer.disconnect();
+      if (impressionTimerRef.current) {
+        window.clearTimeout(impressionTimerRef.current);
+      }
+    };
+  }, [pet.name]);
 
   const handleFavoriteToggle = useCallback(() => {
     setIsAnimating(true);

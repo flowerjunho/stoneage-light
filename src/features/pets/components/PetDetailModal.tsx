@@ -1,6 +1,5 @@
 import React, { useMemo, useEffect } from 'react';
 import type { Pet } from '@/shared/types';
-import { EventTracker } from '@/shared/utils/eventTracker';
 
 interface PetDetailModalProps {
   isOpen: boolean;
@@ -10,17 +9,6 @@ interface PetDetailModalProps {
 }
 
 const PetDetailModal: React.FC<PetDetailModalProps> = ({ isOpen, onClose, pet, ridingImageUrl }) => {
-
-  // 임프레션(5초 이상 조회) 트래킹
-  useEffect(() => {
-    let timer: number;
-    if (isOpen && pet) {
-      timer = setTimeout(() => {
-        EventTracker.trackEvent('IMPRESSION', 'pet_detail', pet.name);
-      }, 5000);
-    }
-    return () => clearTimeout(timer);
-  }, [isOpen, pet]);
 
   // ESC 키로 모달 닫기 및 스크롤 막기
   useEffect(() => {
