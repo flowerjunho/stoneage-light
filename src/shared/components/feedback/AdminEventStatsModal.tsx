@@ -23,6 +23,14 @@ const AdminEventStatsModal: React.FC<AdminEventStatsModalProps> = ({ isOpen, onC
         setEndDate(initialDateStr);
       }
       fetchStats(initialDateStr || today, initialDateStr || today);
+
+      const handleKeyDown = (e: KeyboardEvent) => {
+        if (e.key === 'Escape') {
+          onClose();
+        }
+      };
+      window.addEventListener('keydown', handleKeyDown);
+      return () => window.removeEventListener('keydown', handleKeyDown);
     }
   }, [isOpen, initialDateStr]);
 
@@ -63,8 +71,14 @@ const AdminEventStatsModal: React.FC<AdminEventStatsModalProps> = ({ isOpen, onC
   };
 
   const modalContent = (
-    <div className="fixed inset-0 z-[9999] flex items-end md:items-center justify-center bg-black/70 backdrop-blur-sm p-0 md:p-4 animate-in fade-in duration-200">
-      <div className="bg-bg-secondary w-full max-w-4xl h-[85vh] md:h-auto md:max-h-[90vh] rounded-t-2xl md:rounded-xl border border-border shadow-2xl flex flex-col overflow-hidden animate-in slide-in-from-bottom-8 md:slide-in-from-bottom-0 md:zoom-in-95 duration-300">
+    <div 
+      className="fixed inset-0 z-[9999] flex items-end md:items-center justify-center bg-black/70 backdrop-blur-sm p-0 md:p-4 animate-in fade-in duration-200"
+      onClick={onClose}
+    >
+      <div 
+        className="bg-bg-secondary w-full max-w-4xl h-[85vh] md:h-auto md:max-h-[90vh] rounded-t-2xl md:rounded-xl border border-border shadow-2xl flex flex-col overflow-hidden animate-in slide-in-from-bottom-8 md:slide-in-from-bottom-0 md:zoom-in-95 duration-300"
+        onClick={(e) => e.stopPropagation()}
+      >
         {/* Mobile handle */}
         <div className="w-full flex justify-center pt-3 pb-1 md:hidden bg-bg-tertiary shrink-0">
           <div className="w-12 h-1.5 bg-border rounded-full"></div>
