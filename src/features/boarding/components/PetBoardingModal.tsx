@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import type { Pet } from '@/shared/types';
+import { EventTracker } from '@/shared/utils/eventTracker';
 
 interface BoardingData {
   [character: string]: string[];
@@ -16,6 +17,17 @@ const PetBoardingModal: React.FC<PetBoardingModalProps> = ({ isOpen, onClose, pe
   const navigate = useNavigate();
   const [boardingData, setBoardingData] = useState<BoardingData>({});
   const [isLoading, setIsLoading] = useState(true);
+
+  // 임프레션(5초 이상 조회) 트래킹
+  useEffect(() => {
+    let timer: number;
+    if (isOpen && pet) {
+      timer = window.setTimeout(() => {
+        EventTracker.trackEvent('IMPRESSION', 'pet_detail', pet.name);
+      }, 5000);
+    }
+    return () => window.clearTimeout(timer);
+  }, [isOpen, pet]);
 
   // 데이터 로딩
   useEffect(() => {
