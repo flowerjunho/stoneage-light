@@ -313,6 +313,8 @@ const AdminEventStatsModal: React.FC<AdminEventStatsModalProps> = ({ isOpen, onC
                     <div className="text-xs text-text-muted text-center py-2">데이터 없음</div>
                   )}
                 </div>
+              </div>
+
               {/* SEARCH */}
               <div className="bg-bg-tertiary rounded-lg border border-border p-4">
                 <h3 className="font-bold flex items-center gap-2 border-b border-border pb-2 mb-3 text-red-400">

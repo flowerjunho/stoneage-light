@@ -54,6 +54,7 @@ const MapsPage: React.FC = () => {
                matchesConsonantSearch(searchTerm, map.category);
       }
       return true;
+    });
   }, [maps, selectedCategory, searchTerm]);
 
   useEffect(() => {

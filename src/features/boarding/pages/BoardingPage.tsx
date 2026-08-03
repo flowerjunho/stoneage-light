@@ -1,6 +1,6 @@
-import React, { useState, useEffect, useMemo, useRef, useCallback } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
-import { ArrowLeft, ExternalLink, AlertCircle, X, Search, Loader2, Users, PawPrint, Star, ChevronRight, Check } from 'lucide-react';
+import { ArrowLeft, ExternalLink, AlertCircle, X, Search, Loader2, Users, PawPrint, Star } from 'lucide-react';
 import SearchBar from '@/shared/components/ui/SearchBar';
 import CharacterTabs from '@/features/calculator/components/CharacterTabs';
 import PetDetailModal from '@/features/pets/components/PetDetailModal';
