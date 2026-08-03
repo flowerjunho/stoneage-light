@@ -1,8 +1,9 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { Map, Info, Eye, ChevronRight, Search } from 'lucide-react';
 import mapsData from '@/data/pooyasMaps.json';
 import { matchesConsonantSearch } from '@/shared/utils/searchUtils';
+import { EventTracker } from '@/shared/utils/eventTracker';
 import SearchBar from '@/shared/components/ui/SearchBar';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
@@ -53,8 +54,16 @@ const MapsPage: React.FC = () => {
                matchesConsonantSearch(searchTerm, map.category);
       }
       return true;
-    });
   }, [maps, selectedCategory, searchTerm]);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      if (searchTerm.trim()) {
+        EventTracker.trackEvent('SEARCH', '지도', searchTerm.trim());
+      }
+    }, 1000);
+    return () => clearTimeout(timer);
+  }, [searchTerm]);
 
   const handleMapClick = (mapIdx: number) => {
     const currentSearch = searchParams.get('search');

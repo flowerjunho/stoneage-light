@@ -1,7 +1,7 @@
 import { doc, getDoc, setDoc, updateDoc, increment, collection, query, where, getDocs } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
 
-export type EventType = 'PAGE_VIEW' | 'TAB_CLICK' | 'BUTTON_CLICK' | 'DEVICE_INFO' | 'IMPRESSION';
+export type EventType = 'PAGE_VIEW' | 'TAB_CLICK' | 'BUTTON_CLICK' | 'DEVICE_INFO' | 'IMPRESSION' | 'SEARCH';
 
 export interface TrackingEvent {
   type: EventType;

@@ -3,6 +3,7 @@ import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import ThemeToggle from '@/shared/components/layout/ThemeToggle';
 import { pushManager } from '@/shared/utils/pushNotification';
+import { EventTracker } from '@/shared/utils/eventTracker';
 
 // Debounce hook
 const useDebounce = <T,>(value: T, delay: number): T => {
@@ -733,6 +734,18 @@ const SharePage: React.FC<SharePageProps> = ({
   const [filterStatus, setFilterStatus] = useState<string>('ongoing');
   const [searchQuery, setSearchQuery] = useState('');
   const debouncedSearchQuery = useDebounce(searchQuery, 300);
+
+  useEffect(() => {
+    if (debouncedSearchQuery.trim()) {
+      EventTracker.trackEvent('SEARCH', '나눔판매', debouncedSearchQuery.trim());
+    }
+  }, [debouncedSearchQuery]);
+
+  useEffect(() => {
+    if (debouncedAuctionSearch.trim()) {
+      EventTracker.trackEvent('SEARCH', '경매장', debouncedAuctionSearch.trim());
+    }
+  }, [debouncedAuctionSearch]);
 
   // Search input ref
   const searchInputRef = useRef<HTMLInputElement>(null);

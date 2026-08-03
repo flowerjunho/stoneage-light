@@ -20,6 +20,7 @@ import PetDetailModal from '@/features/pets/components/PetDetailModal';
 import ExpTableModal from '@/features/calculator/components/ExpTableModal';
 import petData from '@/data/petData.json';
 import levelExpData from '@/data/level_exp.json';
+import { EventTracker } from '@/shared/utils/eventTracker';
 
 // 속성 타입
 type AttributeType = 'fire' | 'water' | 'earth' | 'wind';
@@ -72,6 +73,15 @@ const CalculatorPage: React.FC = () => {
   const [petSearchQuery, setPetSearchQuery] = useState('');
   const [showPetDropdown, setShowPetDropdown] = useState(false);
   const [filteredPets, setFilteredPets] = useState(petData.pets);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      if (petSearchQuery.trim()) {
+        EventTracker.trackEvent('SEARCH', '계산기_펫', petSearchQuery.trim());
+      }
+    }, 1000);
+    return () => clearTimeout(timer);
+  }, [petSearchQuery]);
 
   // Excel 분석에 따른 정확한 초기값 - 5환까지
   const [userInputs, setUserInputs] = useState({

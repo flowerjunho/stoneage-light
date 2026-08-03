@@ -14,6 +14,7 @@ import {
   updateTipPost,
   verifyPassword,
 } from '../services/tipBoardService';
+import { EventTracker } from '@/shared/utils/eventTracker';
 
 type ViewMode = 'list' | 'detail' | 'create' | 'edit';
 
@@ -259,6 +260,9 @@ const MyTipBoard: React.FC = () => {
   useEffect(() => {
     const timer = setTimeout(() => {
       setActiveSearch(searchQuery);
+      if (searchQuery.trim()) {
+        EventTracker.trackEvent('SEARCH', '팁게시판', searchQuery.trim());
+      }
     }, 500);
 
     return () => clearTimeout(timer);

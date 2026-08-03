@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo, useRef, useCallback } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
-import { ArrowLeft, ExternalLink, AlertCircle, X, Search, Loader2, Users, PawPrint, Star } from 'lucide-react';
+import { ArrowLeft, ExternalLink, AlertCircle, X, Search, Loader2, Users, PawPrint, Star, ChevronRight, Check } from 'lucide-react';
 import SearchBar from '@/shared/components/ui/SearchBar';
 import CharacterTabs from '@/features/calculator/components/CharacterTabs';
 import PetDetailModal from '@/features/pets/components/PetDetailModal';
@@ -8,6 +8,7 @@ import CharacterDetailModal from '@/features/calculator/components/CharacterDeta
 import ShareButton from '@/shared/components/ui/ShareButton';
 import { useDebounce } from '@/shared/hooks/useDebounce';
 import { matchesConsonantSearch } from '@/shared/utils/korean';
+import { EventTracker } from '@/shared/utils/eventTracker';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -102,6 +103,15 @@ const BoardingPage: React.FC = () => {
       }
     };
   }, [alertTimeoutId]);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      if (searchTerm.trim()) {
+        EventTracker.trackEvent('SEARCH', '탑승', searchTerm.trim());
+      }
+    }, 1000);
+    return () => clearTimeout(timer);
+  }, [searchTerm]);
 
   const handleSearchChange = (value: string) => {
     setSearchTerm(value);

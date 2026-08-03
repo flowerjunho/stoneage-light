@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
+import { EventTracker } from '@/shared/utils/eventTracker';
 import { Info, Lightbulb, ExternalLink, MapPin, Search, Map } from 'lucide-react';
 import SearchBar from '@/shared/components/ui/SearchBar';
 import ElementFilter, { type ElementFilterItem } from '@/shared/components/filters/ElementFilter';
@@ -131,6 +132,24 @@ const PetsPage: React.FC = () => {
       }
     }
   }, [searchParams, pets]);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      if (searchTerm.trim()) {
+        EventTracker.trackEvent('SEARCH', '페트', searchTerm.trim());
+      }
+    }, 1000);
+    return () => clearTimeout(timer);
+  }, [searchTerm]);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      if (skillSearchTerm.trim()) {
+        EventTracker.trackEvent('SEARCH', '페트스킬', skillSearchTerm.trim());
+      }
+    }, 1000);
+    return () => clearTimeout(timer);
+  }, [skillSearchTerm]);
 
   const handleSearchChange = (value: string) => {
     setSearchTerm(value);

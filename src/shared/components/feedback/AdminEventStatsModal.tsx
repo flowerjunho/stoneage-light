@@ -50,10 +50,11 @@ const AdminEventStatsModal: React.FC<AdminEventStatsModalProps> = ({ isOpen, onC
     BUTTON_CLICK: {} as Record<string, number>,
     DEVICE_INFO: {} as Record<string, number>,
     IMPRESSION: {} as Record<string, number>,
+    SEARCH: {} as Record<string, number>,
   };
 
   stats.forEach(dayStat => {
-    ['PAGE_VIEW', 'TAB_CLICK', 'BUTTON_CLICK', 'DEVICE_INFO', 'IMPRESSION'].forEach(type => {
+    ['PAGE_VIEW', 'TAB_CLICK', 'BUTTON_CLICK', 'DEVICE_INFO', 'IMPRESSION', 'SEARCH'].forEach(type => {
       if (dayStat[type]) {
         for (const [key, count] of Object.entries(dayStat[type] as Record<string, number>)) {
           const decodedKey = EventTracker.decodeKey(key);
@@ -297,6 +298,29 @@ const AdminEventStatsModal: React.FC<AdminEventStatsModalProps> = ({ isOpen, onC
                 <div className="space-y-2">
                   {sortStats(aggregated.IMPRESSION).length > 0 ? (
                     sortStats(aggregated.IMPRESSION).map(([key, count]) => {
+                      const [path, action] = key.split('::');
+                      return (
+                        <div key={key} className="flex justify-between items-center text-sm">
+                          <div className="flex flex-col truncate pr-2">
+                            <span className="text-text-primary truncate" title={action}>{action || '알수없음'}</span>
+                            <span className="text-[10px] text-text-muted truncate">{path}</span>
+                          </div>
+                          <span className="font-mono text-accent">{count.toLocaleString()}</span>
+                        </div>
+                      )
+                    })
+                  ) : (
+                    <div className="text-xs text-text-muted text-center py-2">데이터 없음</div>
+                  )}
+                </div>
+              {/* SEARCH */}
+              <div className="bg-bg-tertiary rounded-lg border border-border p-4">
+                <h3 className="font-bold flex items-center gap-2 border-b border-border pb-2 mb-3 text-red-400">
+                  <Search className="w-4 h-4" /> 검색어
+                </h3>
+                <div className="space-y-2">
+                  {sortStats(aggregated.SEARCH).length > 0 ? (
+                    sortStats(aggregated.SEARCH).map(([key, count]) => {
                       const [path, action] = key.split('::');
                       return (
                         <div key={key} className="flex justify-between items-center text-sm">

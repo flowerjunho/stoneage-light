@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
+import { EventTracker } from '@/shared/utils/eventTracker';
 import { ClipboardCheck, Info, Sparkles, Archive, Eye, ChevronRight, Search, AlertTriangle, Sun } from 'lucide-react';
 import questWithContentData from '@/data/questWithContent.json';
 import { matchesConsonantSearch } from '@/shared/utils/searchUtils';
@@ -49,6 +50,15 @@ const QuestsPage: React.FC = () => {
 
     loadQuests();
   }, []);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      if (searchTerm.trim()) {
+        EventTracker.trackEvent('SEARCH', '퀘스트', searchTerm.trim());
+      }
+    }, 1000);
+    return () => clearTimeout(timer);
+  }, [searchTerm]);
 
   // 현재 탭에 따른 퀘스트 목록
   const currentQuests = activeTab === 'hwansoo' ? quests : pooyasQuests;

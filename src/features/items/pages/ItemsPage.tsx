@@ -4,6 +4,7 @@ import { Package, Info, MousePointer, RefreshCw, Sparkles, Archive, ExternalLink
 import itemsData from '@/data/pooyas_items.json';
 import rightItemsData from '@/data/right_items.json';
 import { searchMultipleFields } from '@/shared/utils/searchUtils';
+import { EventTracker } from '@/shared/utils/eventTracker';
 import SearchBar from '@/shared/components/ui/SearchBar';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
@@ -109,6 +110,15 @@ const ItemsPage: React.FC = () => {
     }
     return [];
   }, [allItems, activeTab, searchTerm]);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      if (searchTerm.trim()) {
+        EventTracker.trackEvent('SEARCH', '아이템', searchTerm.trim());
+      }
+    }, 1000);
+    return () => clearTimeout(timer);
+  }, [searchTerm]);
 
   // 무한스크롤을 위한 더 많은 아이템 로드
   const loadMoreItems = useCallback(async () => {

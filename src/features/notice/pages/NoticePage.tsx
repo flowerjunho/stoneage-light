@@ -4,6 +4,7 @@ import { Bell, Info, Megaphone, FileText, Calendar, Eye, ChevronRight, Search, A
 import patchnotesData from '@/data/patchnotes.json';
 import noticesData from '@/data/notices.json';
 import { matchesConsonantSearch } from '@/shared/utils/searchUtils';
+import { EventTracker } from '@/shared/utils/eventTracker';
 import SearchBar from '@/shared/components/ui/SearchBar';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
@@ -43,6 +44,15 @@ const NoticePage: React.FC = () => {
 
     loadData();
   }, []);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      if (searchTerm.trim()) {
+        EventTracker.trackEvent('SEARCH', '공지사항', searchTerm.trim());
+      }
+    }, 1000);
+    return () => clearTimeout(timer);
+  }, [searchTerm]);
 
   // 검색 필터링
   const filteredPatchnotes = patchnotes.filter(note => {
