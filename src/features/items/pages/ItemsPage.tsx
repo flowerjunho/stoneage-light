@@ -116,7 +116,7 @@ const ItemsPage: React.FC = () => {
       if (searchTerm.trim()) {
         EventTracker.trackEvent('SEARCH', '아이템', searchTerm.trim());
       }
-    }, 1000);
+    }, 5000);
     return () => clearTimeout(timer);
   }, [searchTerm]);
 

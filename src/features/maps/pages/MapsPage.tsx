@@ -62,7 +62,7 @@ const MapsPage: React.FC = () => {
       if (searchTerm.trim()) {
         EventTracker.trackEvent('SEARCH', '지도', searchTerm.trim());
       }
-    }, 1000);
+    }, 5000);
     return () => clearTimeout(timer);
   }, [searchTerm]);
 

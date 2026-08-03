@@ -260,10 +260,18 @@ const MyTipBoard: React.FC = () => {
   useEffect(() => {
     const timer = setTimeout(() => {
       setActiveSearch(searchQuery);
+    }, 500);
+
+    return () => clearTimeout(timer);
+  }, [searchQuery]);
+
+  // 검색어 이벤트 트래킹 (5초)
+  useEffect(() => {
+    const timer = setTimeout(() => {
       if (searchQuery.trim()) {
         EventTracker.trackEvent('SEARCH', '팁게시판', searchQuery.trim());
       }
-    }, 500);
+    }, 5000);
 
     return () => clearTimeout(timer);
   }, [searchQuery]);

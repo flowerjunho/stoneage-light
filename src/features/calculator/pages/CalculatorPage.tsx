@@ -79,7 +79,7 @@ const CalculatorPage: React.FC = () => {
       if (petSearchQuery.trim()) {
         EventTracker.trackEvent('SEARCH', '계산기_펫', petSearchQuery.trim());
       }
-    }, 1000);
+    }, 5000);
     return () => clearTimeout(timer);
   }, [petSearchQuery]);
 

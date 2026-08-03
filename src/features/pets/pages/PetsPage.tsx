@@ -138,7 +138,7 @@ const PetsPage: React.FC = () => {
       if (searchTerm.trim()) {
         EventTracker.trackEvent('SEARCH', '페트', searchTerm.trim());
       }
-    }, 1000);
+    }, 5000);
     return () => clearTimeout(timer);
   }, [searchTerm]);
 
@@ -147,7 +147,7 @@ const PetsPage: React.FC = () => {
       if (skillSearchTerm.trim()) {
         EventTracker.trackEvent('SEARCH', '페트스킬', skillSearchTerm.trim());
       }
-    }, 1000);
+    }, 5000);
     return () => clearTimeout(timer);
   }, [skillSearchTerm]);
 

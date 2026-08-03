@@ -736,16 +736,22 @@ const SharePage: React.FC<SharePageProps> = ({
   const debouncedSearchQuery = useDebounce(searchQuery, 300);
 
   useEffect(() => {
-    if (debouncedSearchQuery.trim()) {
-      EventTracker.trackEvent('SEARCH', '나눔판매', debouncedSearchQuery.trim());
-    }
-  }, [debouncedSearchQuery]);
+    const timer = setTimeout(() => {
+      if (searchQuery.trim()) {
+        EventTracker.trackEvent('SEARCH', '나눔판매', searchQuery.trim());
+      }
+    }, 5000);
+    return () => clearTimeout(timer);
+  }, [searchQuery]);
 
   useEffect(() => {
-    if (debouncedAuctionSearch.trim()) {
-      EventTracker.trackEvent('SEARCH', '경매장', debouncedAuctionSearch.trim());
-    }
-  }, [debouncedAuctionSearch]);
+    const timer = setTimeout(() => {
+      if (auctionSearchQuery.trim()) {
+        EventTracker.trackEvent('SEARCH', '경매장', auctionSearchQuery.trim());
+      }
+    }, 5000);
+    return () => clearTimeout(timer);
+  }, [auctionSearchQuery]);
 
   // Search input ref
   const searchInputRef = useRef<HTMLInputElement>(null);
