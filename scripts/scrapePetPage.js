@@ -163,7 +163,8 @@ async function main() {
 
         // 8. 총성장률
         const totalGrowthMatch = /<td class="pettb_name">총성장률<\/td>[\s\S]*?<strong class="pettb_num"[^>]*>([\d.]+)<\/strong>/.exec(block);
-        const totalGrowth = totalGrowthMatch ? totalGrowthMatch[1] : '0.000';
+        const rawTotalGrowth = totalGrowthMatch ? totalGrowthMatch[1] : '0.000';
+        const totalGrowth = isNaN(parseFloat(rawTotalGrowth)) ? '0.000' : parseFloat(rawTotalGrowth).toFixed(3);
 
         // 9. 판매등급
         const gradeMatch = /<td class="pettb_name">판매등급<\/td>[\s\S]*?<td [^>]*class="pettb_data">([\s\S]*?)<\/td>/.exec(block);

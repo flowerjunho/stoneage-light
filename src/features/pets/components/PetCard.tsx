@@ -10,6 +10,12 @@ interface PetCardProps {
   pet: Pet;
 }
 
+const formatGrowth = (val: number | string): string => {
+  const num = typeof val === 'number' ? val : parseFloat(String(val));
+  if (isNaN(num)) return '0.000';
+  return num.toFixed(3);
+};
+
 const PetCard: React.FC<PetCardProps> = ({ pet }) => {
   const [isFav, setIsFav] = useState(() => isFavorite(pet));
   const [isAnimating, setIsAnimating] = useState(false);
@@ -484,7 +490,7 @@ const PetCard: React.FC<PetCardProps> = ({ pet }) => {
       ctx.fillText(stat.label, x + statW / 2, y + s(18));
       ctx.fillStyle = '#f59e0b';
       ctx.font = `bold ${s(16)}px -apple-system, BlinkMacSystemFont, sans-serif`;
-      ctx.fillText(String(stat.value), x + statW / 2, y + s(42));
+      ctx.fillText(formatGrowth(stat.value), x + statW / 2, y + s(42));
     });
 
     // Total growth box
@@ -497,7 +503,7 @@ const PetCard: React.FC<PetCardProps> = ({ pet }) => {
     ctx.fillStyle = '#f59e0b';
     ctx.font = `bold ${s(28)}px -apple-system, BlinkMacSystemFont, sans-serif`;
     ctx.textAlign = 'right';
-    ctx.fillText(String(pet.totalGrowth), w - p - s(16), y + s(36));
+    ctx.fillText(formatGrowth(pet.totalGrowth), w - p - s(16), y + s(36));
 
     // === FOOTER SECTION ===
     y += s(68);
@@ -910,7 +916,7 @@ const PetCard: React.FC<PetCardProps> = ({ pet }) => {
                       className="text-sm font-black text-accent tabular-nums"
                       style={{ textShadow: '0 0 10px var(--accent-glow)' }}
                     >
-                      {stat.value}
+                      {formatGrowth(stat.value)}
                     </div>
                   </div>
                 ))}
@@ -931,7 +937,7 @@ const PetCard: React.FC<PetCardProps> = ({ pet }) => {
                   className="text-2xl font-black text-accent tabular-nums"
                   style={{ textShadow: '0 0 20px var(--accent-glow)' }}
                 >
-                  {pet.totalGrowth}
+                  {formatGrowth(pet.totalGrowth)}
                 </span>
               </div>
             </div>
