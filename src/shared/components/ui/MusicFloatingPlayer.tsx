@@ -11,6 +11,7 @@ function getTrackUrl(filename: string): string {
   return `${cleanBase}bgm/${filename}`;
 }
 
+// 1번부터 10번까지의 기본 BGM 순서 배열
 const PLAYLIST = [
   getTrackUrl('stone1.mp3'),
   getTrackUrl('stone2.mp3'),
@@ -20,7 +21,12 @@ const PLAYLIST = [
   getTrackUrl('stone6.mp3'),
   getTrackUrl('stone7.mp3'),
   getTrackUrl('stone8.mp3'),
+  getTrackUrl('stone9.mp3'),
+  getTrackUrl('stone10.mp3'),
 ];
+
+// 메인(/) 루트 페이지 전용 BGM
+const LOGIN_BGM = getTrackUrl('stone_login.mp3');
 
 const BGM_STATE_KEY = 'BGM_AUTOPLAY_STATE'; // 'PLAYING' | 'PAUSED'
 const BGM_INDEX_KEY = 'BGM_CURRENT_INDEX';
@@ -29,10 +35,15 @@ const MusicFloatingPlayer: React.FC = () => {
   const location = useLocation();
 
   // 저장된 트랙 인덱스 불러오기 (기본값: 0)
-  const [currentIndex, setCurrentIndex] = useState<number>(() => {
+  const [playlistIndex, setPlaylistIndex] = useState<number>(() => {
     const saved = localStorage.getItem(BGM_INDEX_KEY);
     const parsed = saved ? parseInt(saved, 10) : 0;
     return isNaN(parsed) || parsed < 0 || parsed >= PLAYLIST.length ? 0 : parsed;
+  });
+
+  // 현재 재생할 음원 파일 경로 (기본값: 루트 여부에 따라 분기)
+  const [currentSrc, setCurrentSrc] = useState<string>(() => {
+    return location.pathname === '/' ? LOGIN_BGM : PLAYLIST[playlistIndex];
   });
 
   // 로컬스토리지 재생 상태 불러오기 (기본값: 'PLAYING')
@@ -45,18 +56,48 @@ const MusicFloatingPlayer: React.FC = () => {
   const [hasFilterButton, setHasFilterButton] = useState(false);
 
   const audioRef = useRef<HTMLAudioElement | null>(null);
+  const isPlayingRef = useRef(isPlaying);
+  const lastPathRef = useRef<string>(location.pathname);
 
-  // 1. 트랙 인덱스 변경 시 로컬스토리지 저장
+  // isPlayingRef 동기화
   useEffect(() => {
-    localStorage.setItem(BGM_INDEX_KEY, currentIndex.toString());
-  }, [currentIndex]);
+    isPlayingRef.current = isPlaying;
+  }, [isPlaying]);
 
-  // 2. 초고속 오디오 언락 & 재생 가동 함수 (Web Audio Context + HTML5 Audio)
+  // 1. 일반 트랙 인덱스 변경 시 로컬스토리지 저장
+  useEffect(() => {
+    if (currentSrc !== LOGIN_BGM) {
+      localStorage.setItem(BGM_INDEX_KEY, playlistIndex.toString());
+    }
+  }, [playlistIndex, currentSrc]);
+
+  // 2. 메인 페이지(/) 진입 감지: 루트 진입 시 무조건 stone_login.mp3로 다시 시작
+  useEffect(() => {
+    const isRoot = location.pathname === '/';
+    const pathChanged = lastPathRef.current !== location.pathname;
+    lastPathRef.current = location.pathname;
+
+    if (isRoot && pathChanged) {
+      setCurrentSrc(LOGIN_BGM);
+      const audio = audioRef.current;
+      if (audio) {
+        audio.src = LOGIN_BGM;
+        audio.currentTime = 0;
+
+        const savedState = localStorage.getItem(BGM_STATE_KEY);
+        if (savedState !== 'PAUSED') {
+          audio.play().then(() => setIsPlaying(true)).catch(() => {});
+        }
+      }
+    }
+  }, [location.pathname]);
+
+  // 3. 초고속 오디오 강제 가동 함수 (Web Audio Context + HTML5 Audio)
   const forceStartAudio = useCallback(() => {
     const savedState = localStorage.getItem(BGM_STATE_KEY);
     if (savedState === 'PAUSED') return;
 
-    // Web Audio Context 오디오 파이프라인 가상 언락 시도
+    // Web Audio Context 활성화
     try {
       const AudioCtx = window.AudioContext || (window as any).webkitAudioContext;
       if (AudioCtx) {
@@ -82,12 +123,12 @@ const MusicFloatingPlayer: React.FC = () => {
           setIsPlaying(true);
         })
         .catch(() => {
-          // 차단 시 브라우저 기본 상태 유지
+          // 브라우저 거부 시 무시
         });
     }
   }, []);
 
-  // 3. 진입 시 100ms 간격 자동 재생 시도
+  // 4. 진입 시 100ms 간격 자동 재생 시도
   useEffect(() => {
     const savedState = localStorage.getItem(BGM_STATE_KEY);
     if (savedState === 'PAUSED') {
@@ -107,14 +148,23 @@ const MusicFloatingPlayer: React.FC = () => {
     }, 100);
 
     return () => clearInterval(interval);
-  }, [currentIndex, forceStartAudio]);
+  }, [currentSrc, forceStartAudio]);
 
-  // 4. 곡 종료 시 다음 곡으로 무한 순환 (8번 곡 종료 시 다시 1번 곡으로)
+  // 5. 한 곡이 종료되었을 때 다음 트랙 처리
   const handleTrackEnded = useCallback(() => {
-    setCurrentIndex(prevIndex => (prevIndex + 1) % PLAYLIST.length);
-  }, []);
+    if (currentSrc === LOGIN_BGM) {
+      // stone_login.mp3가 끝나면 1번 곡(stone1.mp3)으로 전환되어 계속 순환
+      setCurrentSrc(PLAYLIST[0]);
+      setPlaylistIndex(0);
+    } else {
+      // 일반 트랙인 경우 다음 번호 트랙으로 (10번 후에는 1번으로 순환)
+      const nextIndex = (playlistIndex + 1) % PLAYLIST.length;
+      setPlaylistIndex(nextIndex);
+      setCurrentSrc(PLAYLIST[nextIndex]);
+    }
+  }, [currentSrc, playlistIndex]);
 
-  // 5. 트랙 변경 시 계속 재생
+  // 6. currentSrc 변경 시 음서 로드 및 계속 재생
   useEffect(() => {
     const audio = audioRef.current;
     if (!audio) return;
@@ -122,26 +172,26 @@ const MusicFloatingPlayer: React.FC = () => {
     const savedState = localStorage.getItem(BGM_STATE_KEY);
     if (savedState === 'PAUSED') return;
 
-    audio.src = PLAYLIST[currentIndex];
+    audio.src = currentSrc;
     audio.muted = false;
     audio.volume = 1.0;
     audio.play().then(() => {
       setIsPlaying(true);
     }).catch(() => {});
-  }, [currentIndex]);
+  }, [currentSrc]);
 
-  // 6. Non-blocking 전역 캡처 리스너: touchstart, scroll, wheel, click 등 모든 반응에 0.01초 만에 즉시 반응!
+  // 7. Non-blocking 전역 캡처 리스너: touchstart, scroll, wheel, click 등 모든 반응에 즉각 반응
   useEffect(() => {
     const handleNonBlockingInteraction = () => {
       forceStartAudio();
     };
 
     const events = [
-      'touchstart', // 손가락이 화면에 닿는 0.01초 그 순간!
+      'touchstart', // 손가락 닿는 0.01초 순간
       'touchmove',
       'touchend',
-      'scroll',     // 화면 스크롤!
-      'wheel',      // 마우스 휠!
+      'scroll',     // 화면 스크롤
+      'wheel',      // 마우스 휠
       'click',
       'mousedown',
       'mousemove',
@@ -149,7 +199,6 @@ const MusicFloatingPlayer: React.FC = () => {
       'keydown',
     ];
 
-    // passive: true, capture: true 옵션으로 기존 탭 버튼 클릭 및 화면 터치가 100% 정상 작동함을 보장!
     events.forEach(event => {
       window.addEventListener(event, handleNonBlockingInteraction, { passive: true, capture: true });
       document.addEventListener(event, handleNonBlockingInteraction, { passive: true, capture: true });
@@ -163,7 +212,7 @@ const MusicFloatingPlayer: React.FC = () => {
     };
   }, [forceStartAudio]);
 
-  // 7. 화면에 필터 버튼 존재 여부 감지 (위치 동적 조절)
+  // 8. 화면에 필터 버튼 존재 여부 감지 (위치 동적 조절)
   useEffect(() => {
     const checkFilterPresence = () => {
       const filterElement = document.querySelector('[aria-label="필터 설정"]');
@@ -176,7 +225,7 @@ const MusicFloatingPlayer: React.FC = () => {
     return () => clearInterval(timer);
   }, [location.pathname]);
 
-  // 8. 메인 재생 / 정지 토글 버튼 (로컬스토리지 상태 연동)
+  // 9. 메인 재생 / 정지 토글 버튼 (로컬스토리지 상태 연동)
   const togglePlay = () => {
     const audio = audioRef.current;
     if (!audio) return;
@@ -196,7 +245,7 @@ const MusicFloatingPlayer: React.FC = () => {
       {/* HTML5 Static Asset MP3 Audio Engine */}
       <audio
         ref={audioRef}
-        src={PLAYLIST[currentIndex]}
+        src={currentSrc}
         autoPlay={isPlaying}
         onEnded={handleTrackEnded}
         onPlay={() => setIsPlaying(true)}
@@ -228,7 +277,11 @@ const MusicFloatingPlayer: React.FC = () => {
               : 'bg-gradient-to-r from-purple-600 to-pink-600 text-white shadow-purple-500/30'
           )}
           aria-label={isPlaying ? '음악 정지' : '음악 재생'}
-          title={isPlaying ? `음악 정지 (현재 ${currentIndex + 1}번 트랙 재생 중)` : '음악 재생'}
+          title={
+            isPlaying
+              ? `음악 정지 (현재 ${currentSrc === LOGIN_BGM ? '로그인 BGM' : `${playlistIndex + 1}번 트랙`} 재생 중)`
+              : '음악 재생'
+          }
         >
           {isLoading ? (
             <Loader2 className="w-5 h-5 animate-spin text-white" />
