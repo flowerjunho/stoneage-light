@@ -333,10 +333,10 @@ const BattlePage: React.FC = () => {
     if (!pet) return null;
 
     return {
-      str: Math.floor(pet.baseStats.attack + pet.growthStats.attack * petLevel),
-      tgh: Math.floor(pet.baseStats.defense + pet.growthStats.defense * petLevel),
-      dex: Math.floor(pet.baseStats.agility + pet.growthStats.agility * petLevel),
-      hp: Math.floor(pet.baseStats.vitality + pet.growthStats.vitality * petLevel),
+      str: Math.floor(pet.baseStats.attack + Number(pet.growthStats.attack) * petLevel),
+      tgh: Math.floor(pet.baseStats.defense + Number(pet.growthStats.defense) * petLevel),
+      dex: Math.floor(pet.baseStats.agility + Number(pet.growthStats.agility) * petLevel),
+      hp: Math.floor(pet.baseStats.vitality + Number(pet.growthStats.vitality) * petLevel),
     };
   };
 

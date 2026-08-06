@@ -26,10 +26,10 @@ export interface Pet {
 
   // 성장률
   growthStats: {
-    attack: number;
-    defense: number;
-    agility: number;
-    vitality: number;
+    attack: number | string;
+    defense: number | string;
+    agility: number | string;
+    vitality: number | string;
   };
 }
 

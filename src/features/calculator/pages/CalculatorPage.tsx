@@ -454,16 +454,16 @@ const CalculatorPage: React.FC = () => {
 
     return {
       attack: Math.floor(
-        selectedPet.baseStats.attack + selectedPet.growthStats.attack * levelBonus
+        selectedPet.baseStats.attack + Number(selectedPet.growthStats.attack) * levelBonus
       ),
       defense: Math.floor(
-        selectedPet.baseStats.defense + selectedPet.growthStats.defense * levelBonus
+        selectedPet.baseStats.defense + Number(selectedPet.growthStats.defense) * levelBonus
       ),
       agility: Math.floor(
-        selectedPet.baseStats.agility + selectedPet.growthStats.agility * levelBonus
+        selectedPet.baseStats.agility + Number(selectedPet.growthStats.agility) * levelBonus
       ),
       vitality: Math.floor(
-        selectedPet.baseStats.vitality + selectedPet.growthStats.vitality * levelBonus
+        selectedPet.baseStats.vitality + Number(selectedPet.growthStats.vitality) * levelBonus
       ),
     };
   };

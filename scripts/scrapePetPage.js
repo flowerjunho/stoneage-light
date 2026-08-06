@@ -140,14 +140,15 @@ async function main() {
         }
 
         // 6. 성장률
-        const growthStats = { attack: 0, defense: 0, agility: 0, vitality: 0 };
+        const growthStats = { attack: '0.000', defense: '0.000', agility: '0.000', vitality: '0.000' };
         const growthRowMatch = /<td class="pettb_name">성장률<\/td>([\s\S]*?)<\/tr>/.exec(block);
         if (growthRowMatch) {
           const nums = [];
           const numRegex = /<strong class="pettb_num">([\d.]+)<\/strong>/g;
           let nm;
           while ((nm = numRegex.exec(growthRowMatch[1])) !== null) {
-            nums.push(parseFloat(nm[1]));
+            const parsedVal = parseFloat(nm[1]);
+            nums.push(isNaN(parsedVal) ? '0.000' : parsedVal.toFixed(3));
           }
           if (nums.length >= 4) {
             growthStats.attack = nums[0];

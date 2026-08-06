@@ -62,23 +62,23 @@ export const sortPets = (pets: Pet[], sortOption: SortOption): Pet[] => {
       // 성장률
       case 'attackGrowth-asc':
       case 'attackGrowth-desc':
-        valueA = a.growthStats.attack;
-        valueB = b.growthStats.attack;
+        valueA = Number(a.growthStats.attack);
+        valueB = Number(b.growthStats.attack);
         break;
       case 'defenseGrowth-asc':
       case 'defenseGrowth-desc':
-        valueA = a.growthStats.defense;
-        valueB = b.growthStats.defense;
+        valueA = Number(a.growthStats.defense);
+        valueB = Number(b.growthStats.defense);
         break;
       case 'agilityGrowth-asc':
       case 'agilityGrowth-desc':
-        valueA = a.growthStats.agility;
-        valueB = b.growthStats.agility;
+        valueA = Number(a.growthStats.agility);
+        valueB = Number(b.growthStats.agility);
         break;
       case 'vitalityGrowth-asc':
       case 'vitalityGrowth-desc':
-        valueA = a.growthStats.vitality;
-        valueB = b.growthStats.vitality;
+        valueA = Number(a.growthStats.vitality);
+        valueB = Number(b.growthStats.vitality);
         break;
       case 'totalGrowth-asc':
       case 'totalGrowth-desc':
