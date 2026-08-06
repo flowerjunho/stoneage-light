@@ -12,12 +12,12 @@ export const getAssetUrl = (url?: string): string => {
     return url;
   }
 
-  // 앞쪽 슬래시 정규화
+  // 슬래시 제거 후 경로 정규화
   const cleanPath = url.startsWith('/') ? url.slice(1) : url;
 
-  // 이미 stoneage-light/ 접두어가 붙어있는 경우 중복 적용 방지
-  if (cleanPath.startsWith('stoneage-light/')) {
-    return `/${cleanPath}`;
+  // 이미 'stoneage-light' 키워드가 포함되어 있는 경우 중복 적용 방지
+  if (cleanPath.startsWith('stoneage-light')) {
+    return url.startsWith('/') ? url : `/${url}`;
   }
 
   const baseUrl = import.meta.env.BASE_URL || '/';
