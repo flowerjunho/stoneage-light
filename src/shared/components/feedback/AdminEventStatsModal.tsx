@@ -32,8 +32,8 @@ const StatCategoryCard: React.FC<StatCategoryCardProps> = ({
           {icon}
           {title}
         </span>
-        <span className="text-[11px] font-normal text-text-muted shrink-0 ml-1">
-          (총 {items.length}개)
+        <span className="text-[11px] font-medium text-text-muted shrink-0 ml-1 bg-bg-secondary/80 px-2 py-0.5 rounded border border-border/50">
+          총 {items.length}개
         </span>
       </h3>
 
