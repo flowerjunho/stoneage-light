@@ -1,4 +1,5 @@
-import React, { useMemo, useCallback, useEffect, useRef, useState } from 'react';
+import React, { useMemo, useEffect, useRef, useState } from 'react';
+import { useWindowVirtualizer } from '@tanstack/react-virtual';
 import type { Pet } from '@/shared/types';
 import type { ElementFilterItem } from '@/shared/components/filters/ElementFilter';
 import type { GradeType } from '@/shared/components/filters/GradeFilter';
@@ -6,9 +7,6 @@ import type { StatFilterItem } from '@/shared/components/filters/StatFilter';
 import type { SortOption } from '@/shared/components/ui/SortDropdown';
 import SortDropdown from '@/shared/components/ui/SortDropdown';
 import PetCard from './PetCard';
-import PetCardSkeleton from './PetCardSkeleton';
-import { useInfiniteScroll } from '@/shared/hooks/useInfiniteScroll';
-import { useIntersectionObserver } from '@/shared/hooks/useIntersectionObserver';
 import { useDebounce } from '@/shared/hooks/useDebounce';
 import { matchesConsonantSearch } from '@/shared/utils/korean';
 import { isFavorite } from '@/shared/utils/favorites';
@@ -28,24 +26,49 @@ interface PetGridProps {
 
 const PetGrid: React.FC<PetGridProps> = React.memo(
   ({ pets, searchTerm, elementFilters, gradeFilters, statFilters, showFavoritesOnly, sortOption, onSortChange, scrollToId }) => {
-    // 디바운싱된 검색어
+    // 1. 디바운싱된 검색어
     const debouncedSearchTerm = useDebounce(searchTerm, 300);
 
-    // 검색 및 속성 필터링을 메모이제이션
+    // 2. 반응형 컬럼 수 감지 (모바일: 1, 태블릿: 2, 데스크톱: 3)
+    const [columnCount, setColumnCount] = useState<number>(() => {
+      if (typeof window === 'undefined') return 3;
+      if (window.innerWidth < 768) return 1;
+      if (window.innerWidth < 1024) return 2;
+      return 3;
+    });
+
+    useEffect(() => {
+      const updateColumnCount = () => {
+        const width = window.innerWidth;
+        if (width < 768) {
+          setColumnCount(1);
+        } else if (width < 1024) {
+          setColumnCount(2);
+        } else {
+          setColumnCount(3);
+        }
+      };
+
+      updateColumnCount();
+      window.addEventListener('resize', updateColumnCount);
+      return () => window.removeEventListener('resize', updateColumnCount);
+    }, []);
+
+    // 3. 검색 및 필터링 적용
     const filteredPets = useMemo(() => {
       let result = pets;
 
-      // 즐겨찾기 필터링 (가장 먼저 적용)
+      // 즐겨찾기 필터링
       if (showFavoritesOnly) {
         result = result.filter(pet => isFavorite(pet));
       }
 
-      // 텍스트 검색 필터링 (name 필드만 검색)
+      // 텍스트 검색 필터링
       if (debouncedSearchTerm) {
         result = result.filter(pet => matchesConsonantSearch(pet.name, debouncedSearchTerm));
       }
 
-      // 속성 필터링 (선택된 속성 중 하나라도 조건을 만족해야 함)
+      // 속성 필터링
       if (elementFilters.length > 0) {
         result = result.filter(pet => {
           return elementFilters.some(filter => {
@@ -68,7 +91,6 @@ const PetGrid: React.FC<PetGridProps> = React.memo(
                 return false;
             }
             
-            // exactValue가 있으면 정확한 값 매칭, 없으면 기존 로직 (> 0)
             if (filter.exactValue !== undefined) {
               return petValue === filter.exactValue;
             } else {
@@ -78,25 +100,22 @@ const PetGrid: React.FC<PetGridProps> = React.memo(
         });
       }
 
-      // 등급 필터링 (선택된 등급 중 하나와 일치해야 함)
+      // 등급 필터링
       if (gradeFilters.length > 0) {
         result = result.filter(pet => {
-          // "일반" 필터가 선택된 경우 일반 관련 등급들 모두 포함
           if (gradeFilters.includes('일반') && pet.grade.includes('일반')) {
             return true;
           }
-          // 다른 등급들은 정확히 일치해야 함
           return gradeFilters.includes(pet.grade as GradeType);
         });
       }
 
-      // 스탯 필터링 (모든 활성화된 조건을 만족해야 함)
+      // 스탯 필터링
       if (statFilters.length > 0) {
         const activeFilters = statFilters.filter(filter => filter.enabled);
         if (activeFilters.length > 0) {
           result = result.filter(pet => {
             return activeFilters.every(filter => {
-              // nested 객체 접근을 위한 함수
               const getNestedValue = (obj: unknown, path: string): number => {
                 const keys = path.split('.');
                 let value: unknown = obj;
@@ -117,64 +136,49 @@ const PetGrid: React.FC<PetGridProps> = React.memo(
         }
       }
 
-      // 정렬 적용 (필터링 후 마지막에 적용)
+      // 정렬 적용
       result = sortPets(result, sortOption);
 
       return result;
     }, [pets, debouncedSearchTerm, elementFilters, gradeFilters, statFilters, showFavoritesOnly, sortOption]);
 
-    // 실시간 타이핑 중인지 확인
+    // 4. 가상화 로우 배열 가공
+    const rows = useMemo(() => {
+      const result: Pet[][] = [];
+      for (let i = 0; i < filteredPets.length; i += columnCount) {
+        result.push(filteredPets.slice(i, i + columnCount));
+      }
+      return result;
+    }, [filteredPets, columnCount]);
+
     const isTyping = searchTerm !== debouncedSearchTerm;
 
-    const { displayedItems, hasMore, isLoading, isInitialLoading, loadMore } = useInfiniteScroll({
-      items: filteredPets,
-      itemsPerPage: 30,
+    // 5. TanStack React Virtual 가상화 스크롤 리스너
+    const parentRef = useRef<HTMLDivElement | null>(null);
+
+    const virtualizer = useWindowVirtualizer({
+      count: rows.length,
+      estimateSize: () => 500, // 카드 평균 높이 추정
+      overscan: 2, // 화면 앞뒤로 예비 2개 로우만 프리렌더링
     });
 
-    // loadMore 함수를 메모이제이션
-    const memoizedLoadMore = useCallback(() => {
-      loadMore();
-    }, [loadMore]);
-
-    // 홈에서 특정 페트 선택 시 해당 카드로 스크롤
+    // 특정 펫 이동 (scrollToId)
     const [highlightedId, setHighlightedId] = useState<string | null>(null);
-    const scrollAttemptedRef = useRef(false);
-    const loadMoreRef = useRef(loadMore);
-    useEffect(() => { loadMoreRef.current = loadMore; }, [loadMore]);
-
     useEffect(() => {
-      scrollAttemptedRef.current = false;
-    }, [scrollToId]);
-
-    useEffect(() => {
-      if (!scrollToId || isInitialLoading || scrollAttemptedRef.current) return;
+      if (!scrollToId) return;
 
       const petIndex = filteredPets.findIndex(p => p.id === scrollToId);
       if (petIndex === -1) return;
 
-      if (petIndex >= displayedItems.length) {
-        if (hasMore) loadMoreRef.current();
-        return;
-      }
+      const rowIndex = Math.floor(petIndex / columnCount);
+      virtualizer.scrollToIndex(rowIndex, { align: 'center' });
 
-      scrollAttemptedRef.current = true;
-      requestAnimationFrame(() => {
-        const el = document.getElementById(`pet-${scrollToId}`);
-        if (!el) return;
-        el.scrollIntoView({ behavior: 'smooth', block: 'center' });
-        setHighlightedId(scrollToId);
-        setTimeout(() => setHighlightedId(null), 1800);
-      });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [scrollToId, displayedItems.length, filteredPets, isInitialLoading, hasMore]);
+      setHighlightedId(scrollToId);
+      const timer = setTimeout(() => setHighlightedId(null), 2000);
+      return () => clearTimeout(timer);
+    }, [scrollToId, filteredPets, columnCount, virtualizer]);
 
-    const loadTriggerRef = useIntersectionObserver({
-      onIntersect: memoizedLoadMore,
-      enabled: hasMore && !isLoading && !isInitialLoading && !isTyping,
-      rootMargin: '200px',
-    });
-
-    // 타이핑 중일 때 검색 인디케이터 표시
+    // 검색 타이핑 중 표시
     if (isTyping && searchTerm.trim()) {
       return (
         <div className="max-w-6xl mx-auto px-4 iphone16:px-3">
@@ -188,7 +192,7 @@ const PetGrid: React.FC<PetGridProps> = React.memo(
                   viewBox="0 0 24 24"
                   fill="none"
                   xmlns="http://www.w3.org/2000/svg"
-                  className="w-full h-full animate-spin"
+                  className="w-full h-full animate-spin text-accent"
                 >
                   <path
                     d="M21 21L16.514 16.506L21 21ZM19 10.5C19 15.194 15.194 19 10.5 19C5.806 19 2 15.194 2 10.5C2 5.806 5.806 2 10.5 2C15.194 2 19 5.806 19 10.5Z"
@@ -216,6 +220,7 @@ const PetGrid: React.FC<PetGridProps> = React.memo(
       );
     }
 
+    // 결과 없음 표시
     if (filteredPets.length === 0) {
       return (
         <div className="max-w-6xl mx-auto px-4 iphone16:px-3">
@@ -274,74 +279,59 @@ const PetGrid: React.FC<PetGridProps> = React.memo(
       );
     }
 
-    // 초기 로딩 중일 때 스켈레톤 표시
-    if (isInitialLoading) {
-      return (
-        <div className="max-w-6xl mx-auto px-4 iphone16:px-3">
-          <div className="mb-6 iphone16:mb-4">
-            <div className="h-5 bg-bg-tertiary rounded w-32 animate-pulse"></div>
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8 md:gap-4 iphone16:gap-4 iphone16:mb-6">
-            {Array.from({ length: 12 }, (_, index) => (
-              <PetCardSkeleton key={`skeleton-${index}`} />
-            ))}
-          </div>
-        </div>
-      );
-    }
-
     return (
       <div className="max-w-6xl mx-auto px-4 iphone16:px-3">
-        {/* Pets shown 라인과 정렬 버튼 */}
+        {/* 상단 총 펫 개수 표시 및 정렬 드롭다운 */}
         <div className="mb-6 px-2 iphone16:mb-4 flex items-center justify-between">
           <span className="text-text-secondary text-sm font-medium">
-            {displayedItems.length} of {filteredPets.length} pets shown
+            Total <span className="text-accent font-bold">{filteredPets.length}</span> pets
           </span>
           <SortDropdown currentSort={sortOption} onSortChange={onSortChange} />
         </div>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8 md:gap-4 iphone16:gap-4 iphone16:mb-6">
-          {displayedItems.map((pet, index) => (
-            <div
-              key={`${pet.name}-${pet.baseStats.attack}-${pet.baseStats.defense}-${index}`}
-              id={`pet-${pet.id}`}
-              className={
-                highlightedId === pet.id
-                  ? 'rounded-[24px] ring-2 ring-accent ring-offset-2 ring-offset-bg-primary shadow-glow transition-all duration-300'
-                  : undefined
-              }
-            >
-              <PetCard pet={pet} />
-            </div>
-          ))}
+
+        {/* TanStack Virtualized Virtual List Engine */}
+        <div ref={parentRef} className="relative w-full">
+          <div
+            style={{
+              height: `${virtualizer.getTotalSize()}px`,
+              width: '100%',
+              position: 'relative',
+            }}
+          >
+            {virtualizer.getVirtualItems().map(virtualRow => {
+              const rowPets = rows[virtualRow.index];
+              if (!rowPets) return null;
+
+              return (
+                <div
+                  key={virtualRow.key}
+                  data-index={virtualRow.index}
+                  ref={virtualizer.measureElement}
+                  className="absolute top-0 left-0 w-full"
+                  style={{
+                    transform: `translateY(${virtualRow.start}px)`,
+                  }}
+                >
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-4 iphone16:gap-4 pb-6">
+                    {rowPets.map((pet, index) => (
+                      <div
+                        key={`${pet.id || pet.name}-${index}`}
+                        id={`pet-${pet.id}`}
+                        className={
+                          highlightedId === pet.id
+                            ? 'rounded-[24px] ring-2 ring-accent ring-offset-2 ring-offset-bg-primary shadow-glow transition-all duration-300'
+                            : undefined
+                        }
+                      >
+                        <PetCard pet={pet} />
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              );
+            })}
+          </div>
         </div>
-
-        {/* Load Trigger & Loading Indicator */}
-        {hasMore && (
-          <div ref={loadTriggerRef} className="flex justify-center items-center py-8">
-            {isLoading ? (
-              <div className="flex items-center gap-3 text-text-secondary">
-                <div className="w-6 h-6 border-2 border-accent border-t-transparent rounded-full animate-spin"></div>
-                <span className="text-sm font-medium">Loading more pets...</span>
-              </div>
-            ) : (
-              <button
-                onClick={memoizedLoadMore}
-                className="px-6 py-3 bg-accent text-white rounded-lg font-medium hover:bg-accent/90 transition-colors"
-              >
-                Load More Pets
-              </button>
-            )}
-          </div>
-        )}
-
-        {/* End Message */}
-        {!hasMore && displayedItems.length > 30 && (
-          <div className="flex justify-center py-8">
-            <span className="text-text-secondary text-sm">
-              All {filteredPets.length} pets loaded
-            </span>
-          </div>
-        )}
       </div>
     );
   }
