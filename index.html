@@ -57,7 +57,7 @@
           window.history.replaceState(null, null, l.pathname.slice(0, -1) + decoded + l.hash);
         }
         // Redirect /stoneage-light to /stoneage-light/#/pets
-        else if (l.pathname === '/stoneage-light' && !l.hash) {
+        else if ((l.pathname === '/stoneage-light' || l.pathname === '/stoneage-light/') && !l.hash) {
           window.history.replaceState(null, null, '/stoneage-light/#/pets');
         }
       })(window.location);
