@@ -4,7 +4,7 @@ import { Package, Info, MousePointer, RefreshCw, Sparkles, Archive, ExternalLink
 import itemsData from '@/data/pooyas_items.json';
 import rightItemsData from '@/data/right_items.json';
 import { searchMultipleFields } from '@/shared/utils/searchUtils';
-import { handleImageErrorWithFallback } from '@/shared/utils/imageUtils';
+import { handleImageErrorWithFallback, getAssetUrl } from '@/shared/utils/imageUtils';
 import { EventTracker } from '@/shared/utils/eventTracker';
 import SearchBar from '@/shared/components/ui/SearchBar';
 import { Button } from '@/components/ui/button';
@@ -39,14 +39,7 @@ interface Item {
 }
 
 // 로컬 이미지 경로 처리 (로컬/프로덕션 환경 모두 지원)
-const getImageUrl = (url: string): string => {
-  // 외부 URL (http/https)은 그대로 반환
-  if (url.startsWith('http://') || url.startsWith('https://')) {
-    return url;
-  }
-  // 로컬 이미지는 BASE_URL 적용
-  return `${import.meta.env.BASE_URL}${url}`;
-};
+const getImageUrl = getAssetUrl;
 
 const ItemsPage: React.FC = () => {
   const [searchParams, setSearchParams] = useSearchParams();

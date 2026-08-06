@@ -17,7 +17,7 @@ import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { cn } from '@/lib/utils';
-import { handleImageErrorWithFallback } from '@/shared/utils/imageUtils';
+import { handleImageErrorWithFallback, getAssetUrl } from '@/shared/utils/imageUtils';
 
 type MainTab = 'mytip' | 'raid';
 type RaidSubTab = 'radonta' | 'ice-castle' | 'weekly';
@@ -561,13 +561,7 @@ interface RightItem {
 }
 
 // 로컬 이미지 경로 처리 (로컬/프로덕션 환경 모두 지원)
-const getImageUrl = (url: string): string => {
-  if (!url) return '';
-  if (url.startsWith('http://') || url.startsWith('https://')) {
-    return url;
-  }
-  return `${import.meta.env.BASE_URL}${url}`;
-};
+const getImageUrl = getAssetUrl;
 
 const TipPage: React.FC = () => {
   const [searchParams, setSearchParams] = useSearchParams();

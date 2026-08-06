@@ -4,6 +4,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import ThemeToggle from '@/shared/components/layout/ThemeToggle';
 import { pushManager } from '@/shared/utils/pushNotification';
 import { EventTracker } from '@/shared/utils/eventTracker';
+import { getAssetUrl } from '@/shared/utils/imageUtils';
 
 // Debounce hook
 const useDebounce = <T,>(value: T, delay: number): T => {
@@ -269,7 +270,8 @@ const updateAuctionApi = async (
 const getImageUrl = (url: string) => {
   if (!url) return '';
   if (url.startsWith('http://') || url.startsWith('https://')) return url;
-  return `${serverUrl}${url}`;
+  if (url.startsWith('/storage/') || url.startsWith('storage/')) return `${serverUrl}${url}`;
+  return getAssetUrl(url);
 };
 
 // Category badge color
