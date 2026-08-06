@@ -7,19 +7,23 @@ import React from 'react';
 export const getAssetUrl = (url?: string): string => {
   if (!url) return '';
 
-  // 외부 HTTP/HTTPS 링크인 경우 그대로 반환
+  // 1) 외부 HTTP/HTTPS 링크인 경우 그대로 반환
   if (url.startsWith('http://') || url.startsWith('https://')) {
     return url;
   }
 
-  // 슬래시 제거 후 경로 정규화
+  // 2) 앞쪽 슬래시 정리
   const cleanPath = url.startsWith('/') ? url.slice(1) : url;
 
-  // 이미 'stoneage-light' 키워드가 포함되어 있는 경우 중복 적용 방지
-  if (cleanPath.startsWith('stoneage-light')) {
-    return url.startsWith('/') ? url : `/${url}`;
+  // 3) 이미 'stoneage-light/' 가 경로에 들어가 있는 경우 중복 적용 방지
+  if (cleanPath.startsWith('stoneage-light/')) {
+    return `/${cleanPath}`;
+  }
+  if (cleanPath === 'stoneage-light') {
+    return '/stoneage-light/';
   }
 
+  // 4) Base Path 결합
   const baseUrl = import.meta.env.BASE_URL || '/';
   const prefix = baseUrl.endsWith('/') ? baseUrl : `${baseUrl}/`;
 
