@@ -4,6 +4,7 @@ import type { Pet } from '@/shared/types';
 import { isFavorite, toggleFavorite, addFavoriteChangeListener } from '@/shared/utils/favorites';
 import PetBoardingModal from '@/features/boarding/components/PetBoardingModal';
 import { EventTracker } from '@/shared/utils/eventTracker';
+import { handleImageErrorWithFallback } from '@/shared/utils/imageUtils';
 
 interface PetCardProps {
   pet: Pet;
@@ -702,9 +703,7 @@ const PetCard: React.FC<PetCardProps> = ({ pet }) => {
                     alt={pet.name}
                     className="w-full h-full object-contain p-3 transition-transform duration-500 group-hover/image:scale-110"
                     loading="lazy"
-                    onError={e => {
-                      e.currentTarget.style.display = 'none';
-                    }}
+                    onError={e => handleImageErrorWithFallback(e)}
                   />
                 ) : (
                   <div className="w-full h-full flex items-center justify-center text-text-muted text-xs">

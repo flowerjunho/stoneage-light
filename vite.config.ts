@@ -49,10 +49,11 @@ export default defineConfig({
         importScripts: ['sw-custom.js'],
         runtimeCaching: [
           {
-            urlPattern: /^https:\/\/www\.hwansoo\.(net|top)\/.*/i,
-            handler: 'CacheFirst',
+            urlPattern: /^https:\/\/(www\.)?hwansoo\.(net|top|vip)\/.*/i,
+            handler: 'NetworkFirst',
             options: {
               cacheName: 'external-images',
+              networkTimeoutSeconds: 3,
               expiration: {
                 maxEntries: 500,
                 maxAgeSeconds: 60 * 60 * 24 * 30, // 30일

@@ -1,5 +1,6 @@
 import React, { useMemo, useEffect } from 'react';
 import type { Pet } from '@/shared/types';
+import { handleImageErrorWithFallback } from '@/shared/utils/imageUtils';
 
 interface PetDetailModalProps {
   isOpen: boolean;
@@ -213,12 +214,12 @@ const PetDetailModal: React.FC<PetDetailModalProps> = ({ isOpen, onClose, pet, r
                           alt={pet.name}
                           className="w-16 h-16 object-contain rounded bg-bg-tertiary p-1"
                           loading="lazy"
-                          onError={(e) => {
-                            const parentDiv = e.currentTarget.closest('div');
+                          onError={(e) => handleImageErrorWithFallback(e, (err) => {
+                            const parentDiv = err.currentTarget.closest('div');
                             if (parentDiv) {
                               parentDiv.style.display = 'none';
                             }
-                          }}
+                          })}
                         />
                       </div>
                     )}
@@ -231,12 +232,12 @@ const PetDetailModal: React.FC<PetDetailModalProps> = ({ isOpen, onClose, pet, r
                           alt={`${pet.name} 탑승`}
                           className="w-16 h-16 object-contain rounded bg-bg-tertiary p-1"
                           loading="lazy"
-                          onError={(e) => {
-                            const parentDiv = e.currentTarget.closest('div');
+                          onError={(e) => handleImageErrorWithFallback(e, (err) => {
+                            const parentDiv = err.currentTarget.closest('div');
                             if (parentDiv) {
                               parentDiv.style.display = 'none';
                             }
-                          }}
+                          })}
                         />
                       </div>
                     )}

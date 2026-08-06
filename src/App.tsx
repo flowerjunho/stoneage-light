@@ -74,7 +74,27 @@ const AppContent: React.FC = () => {
       }
       EventTracker.trackEvent('DEVICE_INFO', 'os', os);
     }
-  }, []); // 빈 dependency array로 한 번만 실행
+  }, []);
+
+  // hwansoo.top 이미지 접근 실패 시 hwansoo.vip 호스트로 변경 시도하는 전역 캡처 리스너
+  useEffect(() => {
+    const handleGlobalImageError = (event: ErrorEvent) => {
+      const target = event.target as HTMLElement;
+      if (target && target.tagName === 'IMG') {
+        const img = target as HTMLImageElement;
+        if (img.src && img.src.includes('hwansoo.top') && !img.dataset.fallbackTried) {
+          img.dataset.fallbackTried = 'true';
+          img.style.display = '';
+          img.src = img.src.replace(/hwansoo\.top/g, 'hwansoo.vip');
+        }
+      }
+    };
+
+    window.addEventListener('error', handleGlobalImageError, true);
+    return () => {
+      window.removeEventListener('error', handleGlobalImageError, true);
+    };
+  }, []);
 
   // 라돈타 페이지는 레이아웃 없이 렌더링
   if (isRadontaPage) {
