@@ -1,13 +1,72 @@
 import React, { useState, useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import { EventTracker } from '@/shared/utils/eventTracker';
-import { X, Search, Activity, MousePointerClick, AppWindow, MonitorSmartphone, Eye } from 'lucide-react';
+import { X, Search, Activity, MousePointerClick, AppWindow, MonitorSmartphone, Eye, ChevronDown, ChevronUp } from 'lucide-react';
+import { cn } from '@/lib/utils';
 
 interface AdminEventStatsModalProps {
   isOpen: boolean;
   onClose: () => void;
   initialDateStr?: string;
 }
+
+interface StatCategoryCardProps {
+  title: string;
+  icon: React.ReactNode;
+  headerColorClass: string;
+  items: [string, number][];
+  renderItem: (item: [string, number]) => React.ReactNode;
+}
+
+const StatCategoryCard: React.FC<StatCategoryCardProps> = ({
+  title,
+  icon,
+  headerColorClass,
+  items,
+  renderItem,
+}) => {
+  const [isExpanded, setIsExpanded] = useState(false);
+  const INITIAL_LIMIT = 10;
+  const hasMore = items.length > INITIAL_LIMIT;
+  const displayItems = isExpanded ? items : items.slice(0, INITIAL_LIMIT);
+
+  return (
+    <div className="bg-bg-tertiary rounded-lg border border-border p-4 flex flex-col h-full">
+      <h3 className={cn("font-bold flex items-center justify-between border-b border-border pb-2 mb-3 text-sm md:text-base", headerColorClass)}>
+        <span className="flex items-center gap-2">
+          {icon}
+          {title}
+        </span>
+        <span className="text-xs font-normal text-text-muted">
+          (총 {items.length}개)
+        </span>
+      </h3>
+
+      {/* 내부 스크롤 및 고정 높이 지정 */}
+      <div className="space-y-2 flex-1 max-h-72 overflow-y-auto pr-1">
+        {items.length > 0 ? (
+          displayItems.map(item => renderItem(item))
+        ) : (
+          <div className="text-xs text-text-muted text-center py-6">데이터 없음</div>
+        )}
+      </div>
+
+      {/* 10개 초과 시 더보기 / 접기 토글 버튼 */}
+      {hasMore && (
+        <button
+          onClick={() => setIsExpanded(prev => !prev)}
+          className="mt-3 pt-2 border-t border-border/50 text-xs font-semibold text-accent hover:text-accent/80 flex items-center justify-center gap-1 transition-colors w-full shrink-0"
+        >
+          {isExpanded ? (
+            <>접기 <ChevronUp className="w-3.5 h-3.5" /></>
+          ) : (
+            <>+{items.length - INITIAL_LIMIT}개 더보기 <ChevronDown className="w-3.5 h-3.5" /></>
+          )}
+        </button>
+      )}
+    </div>
+  );
+};
 
 const AdminEventStatsModal: React.FC<AdminEventStatsModalProps> = ({ isOpen, onClose, initialDateStr }) => {
   const today = new Date().toLocaleDateString('en-CA', { timeZone: 'Asia/Seoul' });
@@ -67,7 +126,7 @@ const AdminEventStatsModal: React.FC<AdminEventStatsModalProps> = ({ isOpen, onC
     });
   });
 
-  const sortStats = (obj: Record<string, number>) => {
+  const sortStats = (obj: Record<string, number>): [string, number][] => {
     return Object.entries(obj).sort((a, b) => b[1] - a[1]);
   };
 
@@ -77,7 +136,7 @@ const AdminEventStatsModal: React.FC<AdminEventStatsModalProps> = ({ isOpen, onC
       onClick={onClose}
     >
       <div 
-        className="bg-bg-secondary w-full max-w-4xl h-[85vh] md:h-auto md:max-h-[90vh] rounded-t-2xl md:rounded-xl border border-border shadow-2xl flex flex-col overflow-hidden animate-in slide-in-from-bottom-8 md:slide-in-from-bottom-0 md:zoom-in-95 duration-300"
+        className="bg-bg-secondary w-full max-w-5xl h-[85vh] md:h-auto md:max-h-[90vh] rounded-t-2xl md:rounded-xl border border-border shadow-2xl flex flex-col overflow-hidden animate-in slide-in-from-bottom-8 md:slide-in-from-bottom-0 md:zoom-in-95 duration-300"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Mobile handle */}
@@ -220,126 +279,101 @@ const AdminEventStatsModal: React.FC<AdminEventStatsModalProps> = ({ isOpen, onC
                 );
               })()}
 
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                 {/* PAGE VIEWS */}
-              <div className="bg-bg-tertiary rounded-lg border border-border p-4">
-                <h3 className="font-bold flex items-center gap-2 border-b border-border pb-2 mb-3 text-blue-400">
-                  <AppWindow className="w-4 h-4" /> 페이지 뷰
-                </h3>
-                <div className="space-y-2">
-                  {sortStats(aggregated.PAGE_VIEW).length > 0 ? (
-                    sortStats(aggregated.PAGE_VIEW).map(([path, count]) => (
-                      <div key={path} className="flex justify-between items-center text-sm">
-                        <span className="truncate pr-2 text-text-secondary" title={path}>{path}</span>
-                        <span className="font-mono text-accent">{count.toLocaleString()}</span>
+                <StatCategoryCard
+                  title="페이지 뷰"
+                  icon={<AppWindow className="w-4 h-4" />}
+                  headerColorClass="text-blue-400"
+                  items={sortStats(aggregated.PAGE_VIEW)}
+                  renderItem={([path, count]) => (
+                    <div key={path} className="flex justify-between items-center text-sm py-0.5">
+                      <span className="truncate pr-2 text-text-secondary" title={path}>{path}</span>
+                      <span className="font-mono text-accent shrink-0">{count.toLocaleString()}</span>
+                    </div>
+                  )}
+                />
+
+                {/* TAB CLICKS */}
+                <StatCategoryCard
+                  title="탭 클릭"
+                  icon={<MousePointerClick className="w-4 h-4" />}
+                  headerColorClass="text-green-400"
+                  items={sortStats(aggregated.TAB_CLICK)}
+                  renderItem={([key, count]) => {
+                    const [path, action] = key.split('::');
+                    return (
+                      <div key={key} className="flex justify-between items-center text-sm py-0.5">
+                        <div className="flex flex-col truncate pr-2">
+                          <span className="text-text-primary truncate" title={action}>{action || '알수없음'}</span>
+                          <span className="text-[10px] text-text-muted truncate">{path}</span>
+                        </div>
+                        <span className="font-mono text-accent shrink-0">{count.toLocaleString()}</span>
                       </div>
-                    ))
-                  ) : (
-                    <div className="text-xs text-text-muted text-center py-2">데이터 없음</div>
-                  )}
-                </div>
-              </div>
+                    );
+                  }}
+                />
 
-              {/* TAB CLICKS */}
-              <div className="bg-bg-tertiary rounded-lg border border-border p-4">
-                <h3 className="font-bold flex items-center gap-2 border-b border-border pb-2 mb-3 text-green-400">
-                  <MousePointerClick className="w-4 h-4" /> 탭 클릭
-                </h3>
-                <div className="space-y-2">
-                  {sortStats(aggregated.TAB_CLICK).length > 0 ? (
-                    sortStats(aggregated.TAB_CLICK).map(([key, count]) => {
-                      const [path, action] = key.split('::');
-                      return (
-                        <div key={key} className="flex justify-between items-center text-sm">
-                          <div className="flex flex-col truncate pr-2">
-                            <span className="text-text-primary truncate" title={action}>{action || '알수없음'}</span>
-                            <span className="text-[10px] text-text-muted truncate">{path}</span>
-                          </div>
-                          <span className="font-mono text-accent">{count.toLocaleString()}</span>
+                {/* BUTTON CLICKS */}
+                <StatCategoryCard
+                  title="버튼 클릭"
+                  icon={<MousePointerClick className="w-4 h-4" />}
+                  headerColorClass="text-purple-400"
+                  items={sortStats(aggregated.BUTTON_CLICK)}
+                  renderItem={([key, count]) => {
+                    const [path, action] = key.split('::');
+                    return (
+                      <div key={key} className="flex justify-between items-center text-sm py-0.5">
+                        <div className="flex flex-col truncate pr-2">
+                          <span className="text-text-primary truncate" title={action}>{action || '알수없음'}</span>
+                          <span className="text-[10px] text-text-muted truncate">{path}</span>
                         </div>
-                      )
-                    })
-                  ) : (
-                    <div className="text-xs text-text-muted text-center py-2">데이터 없음</div>
-                  )}
-                </div>
-              </div>
+                        <span className="font-mono text-accent shrink-0">{count.toLocaleString()}</span>
+                      </div>
+                    );
+                  }}
+                />
 
-              {/* BUTTON CLICKS */}
-              <div className="bg-bg-tertiary rounded-lg border border-border p-4">
-                <h3 className="font-bold flex items-center gap-2 border-b border-border pb-2 mb-3 text-purple-400">
-                  <MousePointerClick className="w-4 h-4" /> 버튼 클릭
-                </h3>
-                <div className="space-y-2">
-                  {sortStats(aggregated.BUTTON_CLICK).length > 0 ? (
-                    sortStats(aggregated.BUTTON_CLICK).map(([key, count]) => {
-                      const [path, action] = key.split('::');
-                      return (
-                        <div key={key} className="flex justify-between items-center text-sm">
-                          <div className="flex flex-col truncate pr-2">
-                            <span className="text-text-primary truncate" title={action}>{action || '알수없음'}</span>
-                            <span className="text-[10px] text-text-muted truncate">{path}</span>
-                          </div>
-                          <span className="font-mono text-accent">{count.toLocaleString()}</span>
+                {/* IMPRESSIONS */}
+                <StatCategoryCard
+                  title="임프레션 (5초 이상)"
+                  icon={<Eye className="w-4 h-4" />}
+                  headerColorClass="text-yellow-400"
+                  items={sortStats(aggregated.IMPRESSION)}
+                  renderItem={([key, count]) => {
+                    const [path, action] = key.split('::');
+                    return (
+                      <div key={key} className="flex justify-between items-center text-sm py-0.5">
+                        <div className="flex flex-col truncate pr-2">
+                          <span className="text-text-primary truncate" title={action}>{action || '알수없음'}</span>
+                          <span className="text-[10px] text-text-muted truncate">{path}</span>
                         </div>
-                      )
-                    })
-                  ) : (
-                    <div className="text-xs text-text-muted text-center py-2">데이터 없음</div>
-                  )}
-                </div>
-              </div>
+                        <span className="font-mono text-accent shrink-0">{count.toLocaleString()}</span>
+                      </div>
+                    );
+                  }}
+                />
 
-              {/* IMPRESSIONS */}
-              <div className="bg-bg-tertiary rounded-lg border border-border p-4">
-                <h3 className="font-bold flex items-center gap-2 border-b border-border pb-2 mb-3 text-yellow-400">
-                  <Eye className="w-4 h-4" /> 임프레션 (5초 이상)
-                </h3>
-                <div className="space-y-2">
-                  {sortStats(aggregated.IMPRESSION).length > 0 ? (
-                    sortStats(aggregated.IMPRESSION).map(([key, count]) => {
-                      const [path, action] = key.split('::');
-                      return (
-                        <div key={key} className="flex justify-between items-center text-sm">
-                          <div className="flex flex-col truncate pr-2">
-                            <span className="text-text-primary truncate" title={action}>{action || '알수없음'}</span>
-                            <span className="text-[10px] text-text-muted truncate">{path}</span>
-                          </div>
-                          <span className="font-mono text-accent">{count.toLocaleString()}</span>
+                {/* SEARCH */}
+                <StatCategoryCard
+                  title="검색어"
+                  icon={<Search className="w-4 h-4" />}
+                  headerColorClass="text-red-400"
+                  items={sortStats(aggregated.SEARCH)}
+                  renderItem={([key, count]) => {
+                    const [path, action] = key.split('::');
+                    return (
+                      <div key={key} className="flex justify-between items-center text-sm py-0.5">
+                        <div className="flex flex-col truncate pr-2">
+                          <span className="text-text-primary truncate" title={action}>{action || '알수없음'}</span>
+                          <span className="text-[10px] text-text-muted truncate">{path}</span>
                         </div>
-                      )
-                    })
-                  ) : (
-                    <div className="text-xs text-text-muted text-center py-2">데이터 없음</div>
-                  )}
-                </div>
+                        <span className="font-mono text-accent shrink-0">{count.toLocaleString()}</span>
+                      </div>
+                    );
+                  }}
+                />
               </div>
-
-              {/* SEARCH */}
-              <div className="bg-bg-tertiary rounded-lg border border-border p-4">
-                <h3 className="font-bold flex items-center gap-2 border-b border-border pb-2 mb-3 text-red-400">
-                  <Search className="w-4 h-4" /> 검색어
-                </h3>
-                <div className="space-y-2">
-                  {sortStats(aggregated.SEARCH).length > 0 ? (
-                    sortStats(aggregated.SEARCH).map(([key, count]) => {
-                      const [path, action] = key.split('::');
-                      return (
-                        <div key={key} className="flex justify-between items-center text-sm">
-                          <div className="flex flex-col truncate pr-2">
-                            <span className="text-text-primary truncate" title={action}>{action || '알수없음'}</span>
-                            <span className="text-[10px] text-text-muted truncate">{path}</span>
-                          </div>
-                          <span className="font-mono text-accent">{count.toLocaleString()}</span>
-                        </div>
-                      )
-                    })
-                  ) : (
-                    <div className="text-xs text-text-muted text-center py-2">데이터 없음</div>
-                  )}
-                </div>
-              </div>
-            </div>
             </>
           )}
         </div>
