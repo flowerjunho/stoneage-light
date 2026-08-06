@@ -231,11 +231,7 @@ const BoardingPage: React.FC = () => {
       });
 
       if (ridingPet && ridingPet.imageUrl) {
-        // 로컬 이미지인 경우 base URL 추가
-        if (ridingPet.imageUrl.startsWith('/')) {
-          return `${import.meta.env.BASE_URL}${ridingPet.imageUrl.slice(1)}`;
-        }
-        return ridingPet.imageUrl;
+        return getAssetUrl(ridingPet.imageUrl);
       }
     }
 
@@ -257,7 +253,7 @@ const BoardingPage: React.FC = () => {
       return cleanPetDataNameNoEnv === cleanBoardingNameNoEnv;
     });
 
-    return matchingPet?.imageLink || '';
+    return matchingPet?.imageLink ? getAssetUrl(matchingPet.imageLink) : '';
   };
 
   // 모달용: 순수한 탑승 이미지만 반환 (일반 이미지 폴백 없음)
@@ -281,11 +277,7 @@ const BoardingPage: React.FC = () => {
       });
 
       if (ridingPet && ridingPet.imageUrl) {
-        // 로컬 이미지인 경우 base URL 추가
-        if (ridingPet.imageUrl.startsWith('/')) {
-          return `${import.meta.env.BASE_URL}${ridingPet.imageUrl.slice(1)}`;
-        }
-        return ridingPet.imageUrl;
+        return getAssetUrl(ridingPet.imageUrl);
       }
     }
 
