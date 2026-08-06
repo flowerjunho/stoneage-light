@@ -1,15 +1,19 @@
 import React, { useState, useEffect, forwardRef } from 'react';
 import { createPortal } from 'react-dom';
 import DatePicker, { registerLocale } from 'react-datepicker';
-import { ko } from 'date-fns/locale/ko';
-import { format, parseISO } from 'date-fns';
+import { ko } from 'date-fns/locale';
 import 'react-datepicker/dist/react-datepicker.css';
 
 import { EventTracker } from '@/shared/utils/eventTracker';
 import { X, Search, Activity, MousePointerClick, AppWindow, MonitorSmartphone, Eye, Calendar as CalendarIcon } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
-registerLocale('ko', ko);
+// 안전하게 한국어 로케일 등록
+try {
+  if (ko) registerLocale('ko', ko);
+} catch {
+  // 로케일 등록 실패 시 기본 영문 로케일 사용
+}
 
 interface AdminEventStatsModalProps {
   isOpen: boolean;
@@ -25,6 +29,39 @@ interface StatCategoryCardProps {
   renderItem: (item: [string, number]) => React.ReactNode;
 }
 
+// 안전한 날짜 파싱 헬퍼
+const parseDateStr = (dateStr?: string): Date => {
+  if (!dateStr || typeof dateStr !== 'string') return new Date();
+  try {
+    // "2026. 08. 06." -> "2026-08-06"
+    const cleaned = dateStr.replace(/\./g, '-').replace(/\s+/g, '').replace(/-+$/, '');
+    const parts = cleaned.split('-');
+    if (parts.length === 3) {
+      const year = parseInt(parts[0], 10);
+      const month = parseInt(parts[1], 10) - 1;
+      const day = parseInt(parts[2], 10);
+      const d = new Date(year, month, day);
+      if (!isNaN(d.getTime())) return d;
+    }
+    const fallback = new Date(dateStr);
+    if (!isNaN(fallback.getTime())) return fallback;
+  } catch {
+    // 예외 발생 시 현재 날짜 사용
+  }
+  return new Date();
+};
+
+// 안전한 yyyy-MM-dd 포맷 헬퍼
+const safeFormatDate = (dateObj: Date): string => {
+  if (!dateObj || !(dateObj instanceof Date) || isNaN(dateObj.getTime())) {
+    return new Date().toLocaleDateString('en-CA', { timeZone: 'Asia/Seoul' });
+  }
+  const year = dateObj.getFullYear();
+  const month = String(dateObj.getMonth() + 1).padStart(2, '0');
+  const day = String(dateObj.getDate()).padStart(2, '0');
+  return `${year}-${month}-${day}`;
+};
+
 // Custom DatePicker Button Component
 const CustomDateInput = forwardRef<
   HTMLButtonElement,
@@ -37,7 +74,7 @@ const CustomDateInput = forwardRef<
     className="flex items-center gap-2 bg-bg-secondary border border-border hover:border-accent/80 rounded-lg px-2.5 py-1.5 text-xs md:text-sm font-medium transition-colors text-text-primary focus:outline-none focus:ring-2 focus:ring-accent/50 shadow-sm"
   >
     <CalendarIcon className="w-3.5 h-3.5 md:w-4 md:h-4 text-accent shrink-0" />
-    <span>{value}</span>
+    <span>{value || '날짜 선택'}</span>
   </button>
 ));
 
@@ -75,29 +112,18 @@ const StatCategoryCard: React.FC<StatCategoryCardProps> = ({
 };
 
 const AdminEventStatsModal: React.FC<AdminEventStatsModalProps> = ({ isOpen, onClose, initialDateStr }) => {
-  const todayStr = new Date().toLocaleDateString('en-CA', { timeZone: 'Asia/Seoul' });
-  
-  const parseDateStr = (dateStr?: string): Date => {
-    if (!dateStr) return new Date();
-    try {
-      return parseISO(dateStr);
-    } catch {
-      return new Date();
-    }
-  };
-
-  const [startDate, setStartDate] = useState<Date>(parseDateStr(initialDateStr || todayStr));
-  const [endDate, setEndDate] = useState<Date>(parseDateStr(initialDateStr || todayStr));
+  const [startDate, setStartDate] = useState<Date>(() => parseDateStr(initialDateStr));
+  const [endDate, setEndDate] = useState<Date>(() => parseDateStr(initialDateStr));
   const [stats, setStats] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     if (isOpen) {
-      const initialDate = parseDateStr(initialDateStr || todayStr);
+      const initialDate = parseDateStr(initialDateStr);
       setStartDate(initialDate);
       setEndDate(initialDate);
 
-      const formattedStart = format(initialDate, 'yyyy-MM-dd');
+      const formattedStart = safeFormatDate(initialDate);
       fetchStats(formattedStart, formattedStart);
 
       const handleKeyDown = (e: KeyboardEvent) => {
@@ -112,14 +138,20 @@ const AdminEventStatsModal: React.FC<AdminEventStatsModalProps> = ({ isOpen, onC
 
   const fetchStats = async (startStr: string, endStr: string) => {
     setIsLoading(true);
-    const data = await EventTracker.getEventStats(startStr, endStr);
-    setStats(data);
-    setIsLoading(false);
+    try {
+      const data = await EventTracker.getEventStats(startStr, endStr);
+      setStats(data || []);
+    } catch (err) {
+      console.error('이벤트 통계 로드 실패:', err);
+      setStats([]);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const handleSearch = () => {
-    const formattedStart = format(startDate, 'yyyy-MM-dd');
-    const formattedEnd = format(endDate, 'yyyy-MM-dd');
+    const formattedStart = safeFormatDate(startDate);
+    const formattedEnd = safeFormatDate(endDate);
     fetchStats(formattedStart, formattedEnd);
   };
 
@@ -135,7 +167,8 @@ const AdminEventStatsModal: React.FC<AdminEventStatsModalProps> = ({ isOpen, onC
     SEARCH: {} as Record<string, number>,
   };
 
-  stats.forEach(dayStat => {
+  (stats || []).forEach(dayStat => {
+    if (!dayStat) return;
     ['PAGE_VIEW', 'TAB_CLICK', 'BUTTON_CLICK', 'DEVICE_INFO', 'IMPRESSION', 'SEARCH'].forEach(type => {
       if (dayStat[type]) {
         for (const [key, count] of Object.entries(dayStat[type] as Record<string, number>)) {
@@ -150,6 +183,7 @@ const AdminEventStatsModal: React.FC<AdminEventStatsModalProps> = ({ isOpen, onC
   });
 
   const sortStats = (obj: Record<string, number>): [string, number][] => {
+    if (!obj) return [];
     return Object.entries(obj).sort((a, b) => b[1] - a[1]);
   };
 
