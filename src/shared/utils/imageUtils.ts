@@ -1,23 +1,36 @@
 import React from 'react';
 
 /**
- * hwansoo.top 이미지 로드 실패 시 hwansoo.vip 호스트로 전환하는 fallback 핸들러
+ * GitHub Pages 등 서브 경로(BASE_URL) 배포 환경에서도
+ * 로컬 이미지(/pets/...)가 404 없이 정상 로딩되도록 절대 URL을 보장하는 유틸리티
+ */
+export const getPetImageUrl = (imageLink?: string): string => {
+  if (!imageLink) return '';
+
+  // 외부 HTTP/HTTPS 링크인 경우 그대로 반환
+  if (imageLink.startsWith('http://') || imageLink.startsWith('https://')) {
+    return imageLink;
+  }
+
+  // 로컬 정적 이미지인 경우 Vite import.meta.env.BASE_URL 접두어 자동 연결
+  const cleanPath = imageLink.startsWith('/') ? imageLink.slice(1) : imageLink;
+  const baseUrl = import.meta.env.BASE_URL || '/';
+  const prefix = baseUrl.endsWith('/') ? baseUrl : `${baseUrl}/`;
+
+  return `${prefix}${cleanPath}`;
+};
+
+/**
+ * 이미지 로딩 실패 시 폴백 처리 헬퍼 함수
  */
 export const handleImageErrorWithFallback = (
   e: React.SyntheticEvent<HTMLImageElement, Event>,
-  onFinalError?: (e: React.SyntheticEvent<HTMLImageElement, Event>) => void
+  onFail?: (target: HTMLImageElement) => void
 ) => {
-  const img = e.currentTarget;
-  if (img.src && img.src.includes('hwansoo.top') && !img.dataset.fallbackTried) {
-    img.dataset.fallbackTried = 'true';
-    img.style.display = '';
-    img.src = img.src.replace(/hwansoo\.top/g, 'hwansoo.vip');
-    return;
-  }
-
-  if (onFinalError) {
-    onFinalError(e);
+  const target = e.currentTarget;
+  if (onFail) {
+    onFail(target);
   } else {
-    img.style.display = 'none';
+    target.style.display = 'none';
   }
 };

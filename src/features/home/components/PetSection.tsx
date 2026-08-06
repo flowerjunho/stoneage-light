@@ -5,6 +5,7 @@ import { Badge } from '@/components/ui/badge';
 import { cn } from '@/lib/utils';
 import SectionHeader from './SectionHeader';
 import petData from '@/data/petData.json';
+import { getPetImageUrl } from '@/shared/utils/imageUtils';
 
 const gradeVariant = (grade: string) => {
   switch (grade) {
@@ -49,7 +50,7 @@ const PetSection = () => {
               {/* Pet Image */}
               <div className="relative w-16 h-16 rounded-xl overflow-hidden bg-bg-tertiary/50 flex-shrink-0">
                 <img
-                  src={pet.imageLink}
+                  src={getPetImageUrl(pet.imageLink)}
                   alt={pet.name}
                   className="w-full h-full object-contain transition-transform duration-300 group-hover:scale-110"
                   loading="lazy"

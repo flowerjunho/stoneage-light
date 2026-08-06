@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
 import { EventTracker } from '@/shared/utils/eventTracker';
+import { getPetImageUrl } from '@/shared/utils/imageUtils';
 import { Info, Lightbulb, ExternalLink, MapPin, Search, Map } from 'lucide-react';
 import SearchBar from '@/shared/components/ui/SearchBar';
 import ElementFilter, { type ElementFilterItem } from '@/shared/components/filters/ElementFilter';
@@ -566,7 +567,7 @@ const PetsPage: React.FC = () => {
                   {sharedPet.imageLink ? (
                     <div className="w-36 h-36 bg-bg-tertiary rounded-lg overflow-hidden border border-border">
                       <img
-                        src={sharedPet.imageLink}
+                        src={getPetImageUrl(sharedPet.imageLink)}
                         alt={sharedPet.name}
                         className="w-full h-full object-contain"
                         loading="lazy"

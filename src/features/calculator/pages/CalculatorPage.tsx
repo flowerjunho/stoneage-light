@@ -8,6 +8,7 @@ import {
   formatTimestamp,
   type SavedData,
 } from '@/shared/utils/storage';
+import { getPetImageUrl } from '@/shared/utils/imageUtils';
 import {
   useRebirthCalculation,
   type StatInput,
@@ -1458,7 +1459,7 @@ const CalculatorPage: React.FC = () => {
                     {selectedPet.imageLink ? (
                       <div className="w-32 h-32 mx-auto md:mx-0">
                         <img
-                          src={selectedPet.imageLink}
+                          src={getPetImageUrl(selectedPet.imageLink)}
                           alt={selectedPet.name}
                           className="w-full h-full object-contain rounded-lg border border-border bg-bg-tertiary"
                           onError={e => {

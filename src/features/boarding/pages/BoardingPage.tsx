@@ -9,6 +9,7 @@ import ShareButton from '@/shared/components/ui/ShareButton';
 import { useDebounce } from '@/shared/hooks/useDebounce';
 import { matchesConsonantSearch } from '@/shared/utils/korean';
 import { EventTracker } from '@/shared/utils/eventTracker';
+import { getPetImageUrl } from '@/shared/utils/imageUtils';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -409,7 +410,7 @@ const BoardingPage: React.FC = () => {
               <div className="relative w-48 h-48 rounded-2xl bg-gradient-to-br from-accent/10 to-accent/5
                             border border-accent/20 flex items-center justify-center overflow-hidden">
                 <img
-                  src={sharedPet.imageLink}
+                  src={getPetImageUrl(sharedPet.imageLink)}
                   alt={sharedPet.name}
                   className="w-40 h-40 object-contain"
                   loading="eager"
