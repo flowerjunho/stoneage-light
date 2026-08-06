@@ -4,11 +4,11 @@ import { Play, Pause, Loader2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 
+import { getAssetUrl } from '@/shared/utils/imageUtils';
+
 // public/bgm/ 경로의 정적 MP3 음원 리스트 안전 생성
 function getTrackUrl(filename: string): string {
-  const baseUrl = import.meta.env.BASE_URL || '/';
-  const cleanBase = baseUrl.endsWith('/') ? baseUrl : `${baseUrl}/`;
-  return `${cleanBase}bgm/${filename}`;
+  return getAssetUrl(`bgm/${filename}`);
 }
 
 // 1번부터 10번까지의 기본 BGM 순서 배열

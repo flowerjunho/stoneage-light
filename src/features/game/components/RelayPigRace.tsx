@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
+import { getAssetUrl } from '@/shared/utils/imageUtils';
 import type { GameRoom, Player, PigState, RelayState, HostChangedData, KickedData, ChatMessage } from '../services/gameApi';
 import {
   createRoom,
@@ -448,7 +449,7 @@ const RelayPigRace = ({ onBack, initialMode, initialRoomCode, alreadyJoinedRoom,
 
     // 모바일 오디오 unlock (게스트도 준비 버튼 클릭 시 unlock)
     if (!bgmRef.current) {
-      bgmRef.current = new Audio(`${import.meta.env.BASE_URL}bgm.mp3`);
+      bgmRef.current = new Audio(getAssetUrl('bgm.mp3'));
       bgmRef.current.loop = true;
       bgmRef.current.volume = 0.2;
     }
@@ -468,7 +469,7 @@ const RelayPigRace = ({ onBack, initialMode, initialRoomCode, alreadyJoinedRoom,
 
     // 모바일 오디오 unlock (사용자 상호작용 시점에 미리 준비)
     if (!bgmRef.current) {
-      bgmRef.current = new Audio(`${import.meta.env.BASE_URL}bgm.mp3`);
+      bgmRef.current = new Audio(getAssetUrl('bgm.mp3'));
       bgmRef.current.loop = true;
       bgmRef.current.volume = 0.1;
     }
@@ -983,7 +984,7 @@ const RelayPigRace = ({ onBack, initialMode, initialRoomCode, alreadyJoinedRoom,
       }
       // 레이스 시작 시 BGM 재생
       if (!bgmRef.current) {
-        bgmRef.current = new Audio(`${import.meta.env.BASE_URL}bgm.mp3`);
+        bgmRef.current = new Audio(getAssetUrl('bgm.mp3'));
         bgmRef.current.loop = true;
       }
       bgmRef.current.volume = 0.2;

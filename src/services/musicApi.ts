@@ -94,10 +94,15 @@ export async function getTrack(trackId: string): Promise<Track> {
   return result.data;
 }
 
+import { getAssetUrl } from '@/shared/utils/imageUtils';
+
 /**
  * 스트리밍 URL 생성
  */
 export function getStreamUrl(trackId: string): string {
+  if (trackId.endsWith('.mp3')) {
+    return getAssetUrl(`bgm/${trackId}`);
+  }
   return `${API_BASE_URL}/api/music/stream/${trackId}`;
 }
 
@@ -106,8 +111,7 @@ export function getStreamUrl(trackId: string): string {
  */
 export function getCoverUrl(coverPath: string | null): string {
   if (!coverPath) return '';
-  if (coverPath.startsWith('http')) return coverPath;
-  return `${API_BASE_URL}${coverPath}`;
+  return getAssetUrl(coverPath);
 }
 
 /**
