@@ -1,19 +1,8 @@
-import React, { useState, useEffect, forwardRef } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { createPortal } from 'react-dom';
-import DatePicker, { registerLocale } from 'react-datepicker';
-import { ko } from 'date-fns/locale';
-import 'react-datepicker/dist/react-datepicker.css';
-
 import { EventTracker } from '@/shared/utils/eventTracker';
-import { X, Search, Activity, MousePointerClick, AppWindow, MonitorSmartphone, Eye, Calendar as CalendarIcon } from 'lucide-react';
+import { X, Search, Activity, MousePointerClick, AppWindow, MonitorSmartphone, Eye, Calendar as CalendarIcon, ChevronLeft, ChevronRight } from 'lucide-react';
 import { cn } from '@/lib/utils';
-
-// 안전하게 한국어 로케일 등록
-try {
-  if (ko) registerLocale('ko', ko);
-} catch {
-  // 로케일 등록 실패 시 기본 영문 로케일 사용
-}
 
 interface AdminEventStatsModalProps {
   isOpen: boolean;
@@ -33,7 +22,6 @@ interface StatCategoryCardProps {
 const parseDateStr = (dateStr?: string): Date => {
   if (!dateStr || typeof dateStr !== 'string') return new Date();
   try {
-    // "2026. 08. 06." -> "2026-08-06"
     const cleaned = dateStr.replace(/\./g, '-').replace(/\s+/g, '').replace(/-+$/, '');
     const parts = cleaned.split('-');
     if (parts.length === 3) {
@@ -46,7 +34,7 @@ const parseDateStr = (dateStr?: string): Date => {
     const fallback = new Date(dateStr);
     if (!isNaN(fallback.getTime())) return fallback;
   } catch {
-    // 예외 발생 시 현재 날짜 사용
+    // 예외 발생 시 현재 날짜
   }
   return new Date();
 };
@@ -62,23 +50,155 @@ const safeFormatDate = (dateObj: Date): string => {
   return `${year}-${month}-${day}`;
 };
 
-// Custom DatePicker Button Component
-const CustomDateInput = forwardRef<
-  HTMLButtonElement,
-  { value?: string; onClick?: () => void }
->(({ value, onClick }, ref) => (
-  <button
-    type="button"
-    onClick={onClick}
-    ref={ref}
-    className="flex items-center gap-2 bg-bg-secondary border border-border hover:border-accent/80 rounded-lg px-2.5 py-1.5 text-xs md:text-sm font-medium transition-colors text-text-primary focus:outline-none focus:ring-2 focus:ring-accent/50 shadow-sm"
-  >
-    <CalendarIcon className="w-3.5 h-3.5 md:w-4 md:h-4 text-accent shrink-0" />
-    <span>{value || '날짜 선택'}</span>
-  </button>
-));
+// React 19 전용 100% 호환 커스텀 캘린더 팝오버 피커
+interface CustomDatePickerProps {
+  selectedDate: Date;
+  onChange: (date: Date) => void;
+  minDate?: Date;
+  label?: string;
+}
 
-CustomDateInput.displayName = 'CustomDateInput';
+const CustomDatePicker: React.FC<CustomDatePickerProps> = ({ selectedDate, onChange, minDate }) => {
+  const [isOpen, setIsOpen] = useState(false);
+  const [viewDate, setViewDate] = useState<Date>(() => new Date(selectedDate));
+  const containerRef = useRef<HTMLDivElement | null>(null);
+
+  useEffect(() => {
+    setViewDate(new Date(selectedDate));
+  }, [selectedDate]);
+
+  // 팝오버 외부 클릭 감지 닫기
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      if (containerRef.current && !containerRef.current.contains(e.target as Node)) {
+        setIsOpen(false);
+      }
+    };
+    if (isOpen) {
+      document.addEventListener('mousedown', handleClickOutside);
+    }
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, [isOpen]);
+
+  const year = viewDate.getFullYear();
+  const month = viewDate.getMonth(); // 0~11
+
+  const handlePrevMonth = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    setViewDate(new Date(year, month - 1, 1));
+  };
+
+  const handleNextMonth = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    setViewDate(new Date(year, month + 1, 1));
+  };
+
+  // 캘린더 일자 배열 생성
+  const firstDayOfMonth = new Date(year, month, 1).getDay(); // 0(일)~6(토)
+  const daysInMonth = new Date(year, month + 1, 0).getDate();
+
+  const days: (number | null)[] = [];
+  for (let i = 0; i < firstDayOfMonth; i++) {
+    days.push(null);
+  }
+  for (let i = 1; i <= daysInMonth; i++) {
+    days.push(i);
+  }
+
+  const isSameDay = (d1: Date, y: number, m: number, d: number) => {
+    return d1.getFullYear() === y && d1.getMonth() === m && d1.getDate() === d;
+  };
+
+  const isBeforeMinDate = (y: number, m: number, d: number) => {
+    if (!minDate) return false;
+    const current = new Date(y, m, d, 23, 59, 59);
+    const min = new Date(minDate.getFullYear(), minDate.getMonth(), minDate.getDate(), 0, 0, 0);
+    return current < min;
+  };
+
+  return (
+    <div className="relative inline-block" ref={containerRef}>
+      <button
+        type="button"
+        onClick={() => setIsOpen(prev => !prev)}
+        className="flex items-center gap-2 bg-bg-secondary border border-border hover:border-accent/80 rounded-lg px-2.5 py-1.5 text-xs md:text-sm font-medium transition-colors text-text-primary focus:outline-none focus:ring-2 focus:ring-accent/50 shadow-sm"
+      >
+        <CalendarIcon className="w-3.5 h-3.5 md:w-4 md:h-4 text-accent shrink-0" />
+        <span>{safeFormatDate(selectedDate)}</span>
+      </button>
+
+      {/* Popover Calendar */}
+      {isOpen && (
+        <div className="absolute top-full left-0 mt-1 z-[10000] bg-bg-secondary border border-border rounded-xl shadow-2xl p-3 w-64 md:w-72 animate-in fade-in zoom-in-95 duration-150">
+          {/* Header */}
+          <div className="flex items-center justify-between mb-3 pb-2 border-b border-border/60">
+            <button
+              type="button"
+              onClick={handlePrevMonth}
+              className="p-1 rounded hover:bg-bg-tertiary text-text-secondary hover:text-text-primary transition-colors"
+            >
+              <ChevronLeft className="w-4 h-4" />
+            </button>
+            <span className="font-bold text-xs md:text-sm text-text-primary">
+              {year}년 {month + 1}월
+            </span>
+            <button
+              type="button"
+              onClick={handleNextMonth}
+              className="p-1 rounded hover:bg-bg-tertiary text-text-secondary hover:text-text-primary transition-colors"
+            >
+              <ChevronRight className="w-4 h-4" />
+            </button>
+          </div>
+
+          {/* Weekday Labels */}
+          <div className="grid grid-cols-7 gap-1 text-center text-[10px] md:text-xs font-semibold text-text-muted mb-1">
+            <span className="text-red-400">일</span>
+            <span>월</span>
+            <span>화</span>
+            <span>수</span>
+            <span>목</span>
+            <span>금</span>
+            <span className="text-blue-400">토</span>
+          </div>
+
+          {/* Days Grid */}
+          <div className="grid grid-cols-7 gap-1">
+            {days.map((day, idx) => {
+              if (day === null) {
+                return <div key={`empty-${idx}`} className="h-7 md:h-8" />;
+              }
+
+              const selected = isSameDay(selectedDate, year, month, day);
+              const disabled = isBeforeMinDate(year, month, day);
+
+              return (
+                <button
+                  key={`day-${day}`}
+                  type="button"
+                  disabled={disabled}
+                  onClick={() => {
+                    const newDate = new Date(year, month, day);
+                    onChange(newDate);
+                    setIsOpen(false);
+                  }}
+                  className={cn(
+                    "h-7 md:h-8 rounded-md text-xs font-medium flex items-center justify-center transition-all",
+                    disabled && "opacity-30 cursor-not-allowed",
+                    !disabled && !selected && "hover:bg-bg-elevated text-text-primary hover:text-accent",
+                    selected && "bg-accent text-black font-bold shadow-sm"
+                  )}
+                >
+                  {day}
+                </button>
+              );
+            })}
+          </div>
+        </div>
+      )}
+    </div>
+  );
+};
 
 const StatCategoryCard: React.FC<StatCategoryCardProps> = ({
   title,
@@ -216,29 +336,22 @@ const AdminEventStatsModal: React.FC<AdminEventStatsModalProps> = ({ isOpen, onC
         <div className="p-3 md:p-4 border-b border-border flex flex-wrap items-center gap-2 md:gap-3 bg-bg-primary/50 shrink-0 text-xs md:text-sm">
           <div className="flex items-center gap-1.5">
             <label className="font-medium shrink-0 text-text-secondary">시작일:</label>
-            <DatePicker
-              selected={startDate}
-              onChange={(date: Date | null) => date && setStartDate(date)}
-              selectsStart
-              startDate={startDate}
-              endDate={endDate}
-              dateFormat="yyyy-MM-dd"
-              locale="ko"
-              customInput={<CustomDateInput />}
+            <CustomDatePicker
+              selectedDate={startDate}
+              onChange={(date) => {
+                setStartDate(date);
+                if (date > endDate) {
+                  setEndDate(date);
+                }
+              }}
             />
           </div>
           <div className="flex items-center gap-1.5">
             <label className="font-medium shrink-0 text-text-secondary">종료일:</label>
-            <DatePicker
-              selected={endDate}
-              onChange={(date: Date | null) => date && setEndDate(date)}
-              selectsEnd
-              startDate={startDate}
-              endDate={endDate}
+            <CustomDatePicker
+              selectedDate={endDate}
               minDate={startDate}
-              dateFormat="yyyy-MM-dd"
-              locale="ko"
-              customInput={<CustomDateInput />}
+              onChange={(date) => setEndDate(date)}
             />
           </div>
           <button 
