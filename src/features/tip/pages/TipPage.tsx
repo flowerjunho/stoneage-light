@@ -17,6 +17,7 @@ import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { cn } from '@/lib/utils';
+import { handleImageErrorWithFallback } from '@/shared/utils/imageUtils';
 
 type MainTab = 'mytip' | 'raid';
 type RaidSubTab = 'radonta' | 'ice-castle' | 'weekly';
@@ -952,10 +953,7 @@ const TipPage: React.FC = () => {
                                             src={getImageUrl(itemInfo.imageUrl)}
                                             alt={reward.name}
                                             className="w-full h-full object-contain"
-                                            onError={e => {
-                                              const target = e.target as HTMLImageElement;
-                                              target.style.display = 'none';
-                                            }}
+                                            onError={e => handleImageErrorWithFallback(e)}
                                           />
                                         ) : (
                                           <span className="text-text-muted text-xs">-</span>
@@ -1126,10 +1124,7 @@ const TipPage: React.FC = () => {
                                             src={getImageUrl(itemInfo.imageUrl)}
                                             alt={reward.name}
                                             className="w-full h-full object-contain"
-                                            onError={e => {
-                                              const target = e.target as HTMLImageElement;
-                                              target.style.display = 'none';
-                                            }}
+                                            onError={e => handleImageErrorWithFallback(e)}
                                           />
                                         ) : (
                                           <span className="text-text-muted text-xs">-</span>

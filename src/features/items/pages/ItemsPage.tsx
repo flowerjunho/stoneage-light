@@ -4,6 +4,7 @@ import { Package, Info, MousePointer, RefreshCw, Sparkles, Archive, ExternalLink
 import itemsData from '@/data/pooyas_items.json';
 import rightItemsData from '@/data/right_items.json';
 import { searchMultipleFields } from '@/shared/utils/searchUtils';
+import { handleImageErrorWithFallback } from '@/shared/utils/imageUtils';
 import { EventTracker } from '@/shared/utils/eventTracker';
 import SearchBar from '@/shared/components/ui/SearchBar';
 import { Button } from '@/components/ui/button';
@@ -398,11 +399,11 @@ const ItemsPage: React.FC = () => {
                             src={getImageUrl(item.imageUrl)}
                             alt={item.name}
                             className="w-full h-full object-contain p-1"
-                            onError={e => {
-                              const target = e.target as HTMLImageElement;
+                            onError={e => handleImageErrorWithFallback(e, () => {
+                              const target = e.currentTarget;
                               target.style.display = 'none';
                               target.nextElementSibling!.classList.remove('hidden');
-                            }}
+                            })}
                           />
                         ) : null}
                         <div className="hidden text-text-muted text-xs">No Image</div>
