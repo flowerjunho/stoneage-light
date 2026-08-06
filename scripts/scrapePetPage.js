@@ -169,9 +169,12 @@ async function main() {
         const name = nameMatch ? nameMatch[1].trim() : '';
         if (!name) continue;
 
-        // 크롤링 순서 중복 방지 (동일 페이지/이후 페이지 중복 방지)
-        if (seenScrapedNames.has(name)) continue;
-        seenScrapedNames.add(name);
+        // 크롤링 순서 중복 방지 (공백 제거 이름 기준 정규화 대조)
+        const normName = (str) => str.replace(/\s+/g, '');
+        const normalizedNameKey = normName(name);
+
+        if (seenScrapedNames.has(normalizedNameKey)) continue;
+        seenScrapedNames.add(normalizedNameKey);
 
         // 2. 획득처 (source)
         const sourceMatch = /<a [^>]*class="detail_pets">([\s\S]*?)<\/a>/.exec(block);
@@ -301,8 +304,9 @@ async function main() {
     return currentLink;
   };
 
-  // 1~44페이지에 포함되지 않은 기존 기타 펫들만 따로 추출 (맨 밑으로 배치할 펫들)
-  const legacyPetsNotInScraped = existingPets.filter(ep => !seenScrapedNames.has(ep.name));
+  // 1~44페이지에 포함되지 않은 기존 기타 펫들만 따로 추출 (공백 제거 이름 기준 대조)
+  const normName = (str) => str.replace(/\s+/g, '');
+  const legacyPetsNotInScraped = existingPets.filter(ep => !seenScrapedNames.has(normName(ep.name)));
 
   // 이미지 경로 정밀 업데이트
   scrapedPetsInOrder.forEach(p => {

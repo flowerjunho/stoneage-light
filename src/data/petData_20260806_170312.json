@@ -1,9 +1,9 @@
 {
-  "lastUpdated": "2026-08-06T08:03:19.312Z",
-  "totalCount": 723,
+  "lastUpdated": "2026-08-06T07:49:04.490Z",
+  "totalCount": 728,
   "pets": [
     {
-      "id": "723",
+      "id": "728",
       "name": "카르벤",
       "source": "후원",
       "imageLink": "/pets/pet_kareuben.webp",
@@ -30,7 +30,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "722",
+      "id": "727",
       "name": "카르벤(환)",
       "source": "페트 환생",
       "imageLink": "/pets/pet_kareuben_hwan.webp",
@@ -57,7 +57,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "721",
+      "id": "726",
       "name": "보로(각)",
       "source": "페트 각성",
       "imageLink": "/pets/pet_boro_gak.webp",
@@ -84,7 +84,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "720",
+      "id": "725",
       "name": "티렉스(환)",
       "source": "페트 환생",
       "imageLink": "/pets/pet_tirekseu_hwan.webp",
@@ -111,7 +111,7 @@
       "grade": "일반 페트등급"
     },
     {
-      "id": "719",
+      "id": "724",
       "name": "아비시니안(환)",
       "source": "페트 환생",
       "imageLink": "/pets/pet_abisinian_hwan.webp",
@@ -138,7 +138,7 @@
       "grade": "일반 페트등급"
     },
     {
-      "id": "718",
+      "id": "723",
       "name": "페루루(환)",
       "source": "페트 환생",
       "imageLink": "/pets/pet_peruru_hwan.webp",
@@ -165,7 +165,7 @@
       "grade": "일반 페트등급"
     },
     {
-      "id": "717",
+      "id": "722",
       "name": "고루루(환)",
       "source": "페트 환생",
       "imageLink": "/pets/pet_goruru_hwan.webp",
@@ -192,7 +192,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "716",
+      "id": "721",
       "name": "하르가(환)",
       "source": "페트 환생",
       "imageLink": "/pets/pet_hareuga_hwan.webp",
@@ -219,7 +219,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "715",
+      "id": "720",
       "name": "하르가",
       "source": "기타",
       "imageLink": "/pets/pet_hareuga.webp",
@@ -246,7 +246,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "714",
+      "id": "719",
       "name": "포일론",
       "source": "지옥문",
       "imageLink": "/pets/pet_poilron.webp",
@@ -273,7 +273,7 @@
       "grade": "일반 등급"
     },
     {
-      "id": "713",
+      "id": "718",
       "name": "헬베로스",
       "source": "기타",
       "imageLink": "/pets/pet_helberoseu.webp",
@@ -300,7 +300,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "712",
+      "id": "717",
       "name": "메가프라키(환)",
       "source": "페트 환생",
       "imageLink": "/pets/pet_megapeuraki_hwan.webp",
@@ -327,7 +327,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "711",
+      "id": "716",
       "name": "기린(환)",
       "source": "페트 환생",
       "imageLink": "/pets/pet_girin_hwan.webp",
@@ -354,7 +354,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "710",
+      "id": "715",
       "name": "아마란스(각)",
       "source": "페트 각성",
       "imageLink": "/pets/pet_amaranseu_gak.webp",
@@ -381,7 +381,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "709",
+      "id": "714",
       "name": "로데오",
       "source": "네메시스 보상",
       "imageLink": "/pets/pet_rodeo.webp",
