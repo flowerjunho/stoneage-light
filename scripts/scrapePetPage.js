@@ -26,10 +26,40 @@ const getDatetimeStr = () => {
   return `${YYYY}${MM}${DD}_${hh}${mm}${ss}`;
 };
 
-// 안전한 파일명 변환 함수
-const sanitizeFilename = (name) => {
-  return name.replace(/[\/\\?%*:|"<>]/g, '_').trim();
-};
+// 한글 -> 영문 발음(로마자) 변환기
+function koreanToRoman(text) {
+  let s = text
+    .replace(/\(환\)/g, '_hwan')
+    .replace(/\(각\)/g, '_gak')
+    .replace(/\(진\)/g, '_jin')
+    .replace(/\(변종\)/g, '_byeonjong')
+    .replace(/\(각성\)/g, '_gakseong')
+    .replace(/\(신\)/g, '_shin')
+    .replace(/\(개\)/g, '_gae')
+    .replace(/\(SD\)/g, '_sd')
+    .replace(/\(SD_환\)/g, '_sd_hwan');
+
+  const cho = ['g', 'kk', 'n', 'd', 'tt', 'r', 'm', 'b', 'pp', 's', 'ss', '', 'j', 'jj', 'ch', 'k', 't', 'p', 'h'];
+  const jung = ['a', 'ae', 'ya', 'yae', 'eo', 'e', 'ye', 'ye', 'o', 'wa', 'wae', 'oe', 'yo', 'u', 'wo', 'we', 'wi', 'yu', 'eu', 'ui', 'i'];
+  const jong = ['', 'k', 'k', 'k', 'n', 'n', 'n', 't', 'l', 'k', 'm', 'l', 'l', 'l', 'p', 'l', 'm', 'p', 'p', 't', 't', 'ng', 't', 't', 'k', 't', 'p', 't'];
+
+  let res = '';
+  for (let i = 0; i < s.length; i++) {
+    const code = s.charCodeAt(i);
+    if (code >= 0xac00 && code <= 0xd7a3) {
+      const uni = code - 0xac00;
+      const c = Math.floor(uni / 588);
+      const v = Math.floor((uni % 588) / 28);
+      const j = uni % 28;
+      res += cho[c] + jung[v] + jong[j];
+    } else {
+      res += s[i];
+    }
+  }
+
+  const clean = res.toLowerCase().replace(/[^a-z0-9_]/g, '_').replace(/_+/g, '_').replace(/^_+|_+$/g, '');
+  return clean || 'pet';
+}
 
 // 이미지 직접 다운로드 함수
 async function downloadImage(page, imageUrl, targetPath) {
@@ -153,10 +183,10 @@ async function main() {
 
         // 이미지 파일 다운로드 시도
         if (originalImageLink) {
-          const safeName = sanitizeFilename(name);
+          const romanName = koreanToRoman(name);
           const extMatch = originalImageLink.match(/\.(webp|png|jpg|jpeg|gif)(\?.*)?$/i);
           const ext = extMatch ? extMatch[1].toLowerCase() : 'webp';
-          const localFileName = `pet_${safeName}.${ext}`;
+          const localFileName = `pet_${romanName}.${ext}`;
           const localFilePath = path.join(publicPetsDir, localFileName);
 
           if (!fs.existsSync(localFilePath)) {
@@ -258,11 +288,11 @@ async function main() {
 
   // 로컬 디스크 파일 검증 후 이미지 경로 /pets/ 대체 함수
   const resolveLocalImageLink = (petName, currentLink) => {
-    const safeName = sanitizeFilename(petName);
+    const romanName = koreanToRoman(petName);
     const extensions = ['webp', 'png', 'jpg', 'jpeg', 'gif'];
     
     for (const ext of extensions) {
-      const localFileName = `pet_${safeName}.${ext}`;
+      const localFileName = `pet_${romanName}.${ext}`;
       const localFilePath = path.join(publicPetsDir, localFileName);
       if (fs.existsSync(localFilePath)) {
         return `/pets/${localFileName}`;

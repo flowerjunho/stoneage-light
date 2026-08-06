@@ -6,7 +6,7 @@
       "id": "728",
       "name": "카르벤",
       "source": "후원",
-      "imageLink": "/pets/pet_카르벤.webp",
+      "imageLink": "/pets/pet_kareuben.webp",
       "elementStats": {
         "earth": 5,
         "water": 0,
@@ -33,7 +33,7 @@
       "id": "727",
       "name": "카르벤(환)",
       "source": "페트 환생",
-      "imageLink": "/pets/pet_카르벤(환).webp",
+      "imageLink": "/pets/pet_kareuben_hwan.webp",
       "elementStats": {
         "earth": 5,
         "water": 0,
@@ -60,7 +60,7 @@
       "id": "726",
       "name": "보로(각)",
       "source": "페트 각성",
-      "imageLink": "/pets/pet_보로(각).webp",
+      "imageLink": "/pets/pet_boro_gak.webp",
       "elementStats": {
         "earth": 0,
         "water": 0,
@@ -87,7 +87,7 @@
       "id": "725",
       "name": "티렉스(환)",
       "source": "페트 환생",
-      "imageLink": "/pets/pet_티렉스(환).webp",
+      "imageLink": "/pets/pet_tirekseu_hwan.webp",
       "elementStats": {
         "earth": 8,
         "water": 2,
@@ -114,7 +114,7 @@
       "id": "724",
       "name": "아비시니안(환)",
       "source": "페트 환생",
-      "imageLink": "/pets/pet_아비시니안(환).webp",
+      "imageLink": "/pets/pet_abisinian_hwan.webp",
       "elementStats": {
         "earth": 0,
         "water": 0,
@@ -141,7 +141,7 @@
       "id": "723",
       "name": "페루루(환)",
       "source": "페트 환생",
-      "imageLink": "/pets/pet_페루루(환).webp",
+      "imageLink": "/pets/pet_peruru_hwan.webp",
       "elementStats": {
         "earth": 0,
         "water": 0,
@@ -168,7 +168,7 @@
       "id": "722",
       "name": "고루루(환)",
       "source": "페트 환생",
-      "imageLink": "/pets/pet_고루루(환).webp",
+      "imageLink": "/pets/pet_goruru_hwan.webp",
       "elementStats": {
         "earth": 0,
         "water": 5,
@@ -195,7 +195,7 @@
       "id": "721",
       "name": "하르가(환)",
       "source": "페트 환생",
-      "imageLink": "/pets/pet_하르가(환).webp",
+      "imageLink": "/pets/pet_hareuga_hwan.webp",
       "elementStats": {
         "earth": 0,
         "water": 6,
@@ -222,7 +222,7 @@
       "id": "720",
       "name": "하르가",
       "source": "기타",
-      "imageLink": "/pets/pet_하르가.webp",
+      "imageLink": "/pets/pet_hareuga.webp",
       "elementStats": {
         "earth": 0,
         "water": 6,
@@ -249,7 +249,7 @@
       "id": "719",
       "name": "포일론",
       "source": "지옥문",
-      "imageLink": "/pets/pet_포일론.webp",
+      "imageLink": "/pets/pet_poilron.webp",
       "elementStats": {
         "earth": 0,
         "water": 7,
@@ -276,7 +276,7 @@
       "id": "718",
       "name": "헬베로스",
       "source": "기타",
-      "imageLink": "/pets/pet_헬베로스.webp",
+      "imageLink": "/pets/pet_helberoseu.webp",
       "elementStats": {
         "earth": 0,
         "water": 0,
@@ -303,7 +303,7 @@
       "id": "717",
       "name": "메가프라키(환)",
       "source": "페트 환생",
-      "imageLink": "/pets/pet_메가프라키(환).webp",
+      "imageLink": "/pets/pet_megapeuraki_hwan.webp",
       "elementStats": {
         "earth": 1,
         "water": 9,
@@ -330,7 +330,7 @@
       "id": "716",
       "name": "기린(환)",
       "source": "페트 환생",
-      "imageLink": "/pets/pet_기린(환).webp",
+      "imageLink": "/pets/pet_girin_hwan.webp",
       "elementStats": {
         "earth": 9,
         "water": 0,
@@ -357,7 +357,7 @@
       "id": "715",
       "name": "아마란스(각)",
       "source": "페트 각성",
-      "imageLink": "/pets/pet_아마란스(각).webp",
+      "imageLink": "/pets/pet_amaranseu_gak.webp",
       "elementStats": {
         "earth": 2,
         "water": 8,
@@ -384,7 +384,7 @@
       "id": "714",
       "name": "로데오",
       "source": "네메시스 보상",
-      "imageLink": "/pets/pet_로데오.webp",
+      "imageLink": "/pets/pet_rodeo.webp",
       "elementStats": {
         "earth": 0,
         "water": 0,
@@ -411,7 +411,7 @@
       "id": "713",
       "name": "로데오(환)",
       "source": "페트 환생",
-      "imageLink": "/pets/pet_로데오(환).webp",
+      "imageLink": "/pets/pet_rodeo_hwan.webp",
       "elementStats": {
         "earth": 0,
         "water": 0,
@@ -438,7 +438,7 @@
       "id": "712",
       "name": "청룡(변종)",
       "source": "페트 변종",
-      "imageLink": "/pets/pet_청룡(변종).webp",
+      "imageLink": "/pets/pet_cheongryong_byeonjong.webp",
       "elementStats": {
         "earth": 0,
         "water": 9,
@@ -465,7 +465,7 @@
       "id": "711",
       "name": "청룡(각)",
       "source": "페트 각성",
-      "imageLink": "/pets/pet_청룡(각).webp",
+      "imageLink": "/pets/pet_cheongryong_gak.webp",
       "elementStats": {
         "earth": 0,
         "water": 9,
@@ -492,7 +492,7 @@
       "id": "710",
       "name": "(신)백호(환)",
       "source": "패트 환생",
-      "imageLink": "/pets/pet_(신)백호(환).webp",
+      "imageLink": "/pets/pet_shinbaekho_hwan.webp",
       "elementStats": {
         "earth": 7,
         "water": 3,
@@ -519,7 +519,7 @@
       "id": "709",
       "name": "(신)백호",
       "source": "퀘스트",
-      "imageLink": "/pets/pet_(신)백호.webp",
+      "imageLink": "/pets/pet_shinbaekho.webp",
       "elementStats": {
         "earth": 7,
         "water": 3,
@@ -546,7 +546,7 @@
       "id": "708",
       "name": "시어룬(환)",
       "source": "패트 환생",
-      "imageLink": "/pets/pet_시어룬(환).webp",
+      "imageLink": "/pets/pet_sieorun_hwan.webp",
       "elementStats": {
         "earth": 0,
         "water": 9,
@@ -573,7 +573,7 @@
       "id": "707",
       "name": "리어룬(환)",
       "source": "패트 환생",
-      "imageLink": "/pets/pet_리어룬(환).webp",
+      "imageLink": "/pets/pet_rieorun_hwan.webp",
       "elementStats": {
         "earth": 0,
         "water": 0,
@@ -600,7 +600,7 @@
       "id": "706",
       "name": "격수(환)",
       "source": "패트 환생",
-      "imageLink": "/pets/pet_격수(환).webp",
+      "imageLink": "/pets/pet_gyeksu_hwan.webp",
       "elementStats": {
         "earth": 0,
         "water": 7,
@@ -627,7 +627,7 @@
       "id": "705",
       "name": "격수",
       "source": "빕 상점",
-      "imageLink": "/pets/pet_격수.webp",
+      "imageLink": "/pets/pet_gyeksu.webp",
       "elementStats": {
         "earth": 0,
         "water": 7,
@@ -654,7 +654,7 @@
       "id": "704",
       "name": "싸가트(환)",
       "source": "페트 환생",
-      "imageLink": "/pets/pet_싸가트(환).webp",
+      "imageLink": "/pets/pet_ssagateu_hwan.webp",
       "elementStats": {
         "earth": 4,
         "water": 6,
@@ -681,7 +681,7 @@
       "id": "703",
       "name": "싸가트",
       "source": "천하 제일 듀얼",
-      "imageLink": "/pets/pet_싸가트.webp",
+      "imageLink": "/pets/pet_ssagateu.webp",
       "elementStats": {
         "earth": 4,
         "water": 6,
@@ -708,7 +708,7 @@
       "id": "702",
       "name": "풍복어(신)",
       "source": "풍복어 변신",
-      "imageLink": "/pets/pet_풍복어(신).webp",
+      "imageLink": "/pets/pet_pungbokeo_shin.webp",
       "elementStats": {
         "earth": 0,
         "water": 0,
@@ -735,7 +735,7 @@
       "id": "701",
       "name": "화복어(신)",
       "source": "화복어 변신",
-      "imageLink": "/pets/pet_화복어(신).webp",
+      "imageLink": "/pets/pet_hwabokeo_shin.webp",
       "elementStats": {
         "earth": 0,
         "water": 3,
@@ -762,7 +762,7 @@
       "id": "700",
       "name": "수복어(신)",
       "source": "수복어 변신",
-      "imageLink": "/pets/pet_수복어(신).webp",
+      "imageLink": "/pets/pet_subokeo_shin.webp",
       "elementStats": {
         "earth": 3,
         "water": 7,
@@ -789,7 +789,7 @@
       "id": "699",
       "name": "지복어(신)",
       "source": "지복어 변신",
-      "imageLink": "/pets/pet_지복어(신).webp",
+      "imageLink": "/pets/pet_jibokeo_shin.webp",
       "elementStats": {
         "earth": 7,
         "water": 0,
@@ -816,7 +816,7 @@
       "id": "698",
       "name": "풍복어(환)",
       "source": "패트 환생",
-      "imageLink": "/pets/pet_풍복어(환).webp",
+      "imageLink": "/pets/pet_pungbokeo_hwan.webp",
       "elementStats": {
         "earth": 0,
         "water": 0,
@@ -843,7 +843,7 @@
       "id": "697",
       "name": "풍복어",
       "source": "맘모스 쿠폰",
-      "imageLink": "/pets/pet_풍복어.webp",
+      "imageLink": "/pets/pet_pungbokeo.webp",
       "elementStats": {
         "earth": 0,
         "water": 0,
@@ -870,7 +870,7 @@
       "id": "696",
       "name": "화복어(환)",
       "source": "패트 환생",
-      "imageLink": "/pets/pet_화복어(환).webp",
+      "imageLink": "/pets/pet_hwabokeo_hwan.webp",
       "elementStats": {
         "earth": 0,
         "water": 3,
@@ -897,7 +897,7 @@
       "id": "695",
       "name": "화복어",
       "source": "맘모스 쿠폰",
-      "imageLink": "/pets/pet_화복어.webp",
+      "imageLink": "/pets/pet_hwabokeo.webp",
       "elementStats": {
         "earth": 0,
         "water": 3,
@@ -924,7 +924,7 @@
       "id": "694",
       "name": "수복어(환)",
       "source": "패트 환생",
-      "imageLink": "/pets/pet_수복어(환).webp",
+      "imageLink": "/pets/pet_subokeo_hwan.webp",
       "elementStats": {
         "earth": 3,
         "water": 7,
@@ -951,7 +951,7 @@
       "id": "693",
       "name": "수복어",
       "source": "맘모스 쿠폰",
-      "imageLink": "/pets/pet_수복어.webp",
+      "imageLink": "/pets/pet_subokeo.webp",
       "elementStats": {
         "earth": 3,
         "water": 7,
@@ -978,7 +978,7 @@
       "id": "692",
       "name": "지복어(환)",
       "source": "패트 환생",
-      "imageLink": "/pets/pet_지복어(환).webp",
+      "imageLink": "/pets/pet_jibokeo_hwan.webp",
       "elementStats": {
         "earth": 7,
         "water": 0,
@@ -1005,7 +1005,7 @@
       "id": "691",
       "name": "지복어",
       "source": "맘모스 쿠폰",
-      "imageLink": "/pets/pet_지복어.webp",
+      "imageLink": "/pets/pet_jibokeo.webp",
       "elementStats": {
         "earth": 7,
         "water": 0,
@@ -1032,7 +1032,7 @@
       "id": "690",
       "name": "모사크(환)",
       "source": "패트 환생",
-      "imageLink": "/pets/pet_모사크(환).webp",
+      "imageLink": "/pets/pet_mosakeu_hwan.webp",
       "elementStats": {
         "earth": 0,
         "water": 10,
@@ -1059,7 +1059,7 @@
       "id": "689",
       "name": "흑호(환)",
       "source": "패트 환생",
-      "imageLink": "/pets/pet_흑호(환).webp",
+      "imageLink": "/pets/pet_heukho_hwan.webp",
       "elementStats": {
         "earth": 0,
         "water": 0,
@@ -1086,7 +1086,7 @@
       "id": "688",
       "name": "청호(환)",
       "source": "패트 환생",
-      "imageLink": "/pets/pet_청호(환).webp",
+      "imageLink": "/pets/pet_cheongho_hwan.webp",
       "elementStats": {
         "earth": 2,
         "water": 8,
@@ -1113,7 +1113,7 @@
       "id": "687",
       "name": "이블티거(환)",
       "source": "패트 환생",
-      "imageLink": "/pets/pet_이블티거(환).webp",
+      "imageLink": "/pets/pet_ibeultigeo_hwan.webp",
       "elementStats": {
         "earth": 0,
         "water": 2,
@@ -1140,7 +1140,7 @@
       "id": "686",
       "name": "황호(환)",
       "source": "패트 환생",
-      "imageLink": "/pets/pet_황호(환).webp",
+      "imageLink": "/pets/pet_hwangho_hwan.webp",
       "elementStats": {
         "earth": 8,
         "water": 0,
@@ -1167,7 +1167,7 @@
       "id": "685",
       "name": "기계풍말(환)",
       "source": "패트 환생",
-      "imageLink": "/pets/pet_기계풍말(환).webp",
+      "imageLink": "/pets/pet_gigyepungmal_hwan.webp",
       "elementStats": {
         "earth": 0,
         "water": 0,
@@ -1194,7 +1194,7 @@
       "id": "684",
       "name": "기계풍말",
       "source": "후원 보상",
-      "imageLink": "/pets/pet_기계풍말.webp",
+      "imageLink": "/pets/pet_gigyepungmal.webp",
       "elementStats": {
         "earth": 0,
         "water": 0,
@@ -1221,7 +1221,7 @@
       "id": "683",
       "name": "기계화말(환)",
       "source": "패트 환생",
-      "imageLink": "/pets/pet_기계화말(환).webp",
+      "imageLink": "/pets/pet_gigyehwamal_hwan.webp",
       "elementStats": {
         "earth": 0,
         "water": 0,
@@ -1248,7 +1248,7 @@
       "id": "682",
       "name": "기계화말",
       "source": "후원 보상",
-      "imageLink": "/pets/pet_기계화말.webp",
+      "imageLink": "/pets/pet_gigyehwamal.webp",
       "elementStats": {
         "earth": 0,
         "water": 0,
@@ -1275,7 +1275,7 @@
       "id": "681",
       "name": "기계수말(환)",
       "source": "패트 환생",
-      "imageLink": "/pets/pet_기계수말(환).webp",
+      "imageLink": "/pets/pet_gigyesumal_hwan.webp",
       "elementStats": {
         "earth": 0,
         "water": 8,
@@ -1302,7 +1302,7 @@
       "id": "680",
       "name": "기계수말",
       "source": "후원 보상",
-      "imageLink": "/pets/pet_기계수말.webp",
+      "imageLink": "/pets/pet_gigyesumal.webp",
       "elementStats": {
         "earth": 0,
         "water": 8,
@@ -1329,7 +1329,7 @@
       "id": "679",
       "name": "기계지말(환)",
       "source": "패트 환생",
-      "imageLink": "/pets/pet_기계지말(환).webp",
+      "imageLink": "/pets/pet_gigyejimal_hwan.webp",
       "elementStats": {
         "earth": 8,
         "water": 0,
@@ -1356,7 +1356,7 @@
       "id": "678",
       "name": "기계지말",
       "source": "후원 보상",
-      "imageLink": "/pets/pet_기계지말.webp",
+      "imageLink": "/pets/pet_gigyejimal.webp",
       "elementStats": {
         "earth": 8,
         "water": 0,
@@ -1383,7 +1383,7 @@
       "id": "677",
       "name": "주작(변종)",
       "source": "주작 변종",
-      "imageLink": "/pets/pet_주작(변종).webp",
+      "imageLink": "/pets/pet_jujak_byeonjong.webp",
       "elementStats": {
         "earth": 0,
         "water": 0,
@@ -1410,7 +1410,7 @@
       "id": "676",
       "name": "주작(각)",
       "source": "주작 각성",
-      "imageLink": "/pets/pet_주작(각).webp",
+      "imageLink": "/pets/pet_jujak_gak.webp",
       "elementStats": {
         "earth": 0,
         "water": 0,
@@ -1437,7 +1437,7 @@
       "id": "675",
       "name": "지발리(환)",
       "source": "페트 환생",
-      "imageLink": "/pets/pet_지발리(환).webp",
+      "imageLink": "/pets/pet_jibalri_hwan.webp",
       "elementStats": {
         "earth": 7,
         "water": 3,
@@ -1464,7 +1464,7 @@
       "id": "674",
       "name": "파르체(환)",
       "source": "페트 환생",
-      "imageLink": "/pets/pet_파르체(환).webp",
+      "imageLink": "/pets/pet_pareuche_hwan.webp",
       "elementStats": {
         "earth": 0,
         "water": 8,
@@ -1491,7 +1491,7 @@
       "id": "673",
       "name": "샤르체(환)",
       "source": "페트 환생",
-      "imageLink": "/pets/pet_샤르체(환).webp",
+      "imageLink": "/pets/pet_syareuche_hwan.webp",
       "elementStats": {
         "earth": 0,
         "water": 0,
@@ -1518,7 +1518,7 @@
       "id": "672",
       "name": "슈발리(환)",
       "source": "페트 환생",
-      "imageLink": "/pets/pet_슈발리(환).webp",
+      "imageLink": "/pets/pet_syubalri_hwan.webp",
       "elementStats": {
         "earth": 0,
         "water": 0,
@@ -1545,7 +1545,7 @@
       "id": "671",
       "name": "암흑천마",
       "source": "충전 보상",
-      "imageLink": "/pets/pet_암흑천마.webp",
+      "imageLink": "/pets/pet_amheukcheonma.webp",
       "elementStats": {
         "earth": 0,
         "water": 0,
@@ -1572,7 +1572,7 @@
       "id": "670",
       "name": "암흑천마(환)",
       "source": "페트환생",
-      "imageLink": "/pets/pet_암흑천마(환).webp",
+      "imageLink": "/pets/pet_amheukcheonma_hwan.webp",
       "elementStats": {
         "earth": 0,
         "water": 0,
@@ -1599,7 +1599,7 @@
       "id": "669",
       "name": "메가호크(변종)",
       "source": "변종",
-      "imageLink": "/pets/pet_메가호크(변종).webp",
+      "imageLink": "/pets/pet_megahokeu_byeonjong.webp",
       "elementStats": {
         "earth": 0,
         "water": 0,
@@ -1626,7 +1626,7 @@
       "id": "668",
       "name": "메가호크(각)",
       "source": "각성",
-      "imageLink": "/pets/pet_메가호크(각).webp",
+      "imageLink": "/pets/pet_megahokeu_gak.webp",
       "elementStats": {
         "earth": 0,
         "water": 0,
@@ -1653,7 +1653,7 @@
       "id": "667",
       "name": "메가카키(환)",
       "source": "패트 환생",
-      "imageLink": "/pets/pet_메가카키(환).webp",
+      "imageLink": "/pets/pet_megakaki_hwan.webp",
       "elementStats": {
         "earth": 0,
         "water": 0,
@@ -1680,7 +1680,7 @@
       "id": "666",
       "name": "메가호크(환)",
       "source": "패트 환생",
-      "imageLink": "/pets/pet_메가호크(환).webp",
+      "imageLink": "/pets/pet_megahokeu_hwan.webp",
       "elementStats": {
         "earth": 0,
         "water": 0,
@@ -1707,7 +1707,7 @@
       "id": "665",
       "name": "현무(변종)",
       "source": "현무 변종",
-      "imageLink": "/pets/pet_현무(변종).webp",
+      "imageLink": "/pets/pet_hyenmu_byeonjong.webp",
       "elementStats": {
         "earth": 10,
         "water": 0,
@@ -1734,7 +1734,7 @@
       "id": "664",
       "name": "현무(각)",
       "source": "현무 각성",
-      "imageLink": "/pets/pet_현무(각).gif",
+      "imageLink": "/pets/pet_hyenmu_gak.gif",
       "elementStats": {
         "earth": 9,
         "water": 1,
@@ -1761,7 +1761,7 @@
       "id": "663",
       "name": "코발스(환)",
       "source": "패트 환생",
-      "imageLink": "/pets/pet_코발스(환).webp",
+      "imageLink": "/pets/pet_kobalseu_hwan.webp",
       "elementStats": {
         "earth": 0,
         "water": 10,
@@ -1788,7 +1788,7 @@
       "id": "662",
       "name": "현무(환)",
       "source": "패트 환생",
-      "imageLink": "/pets/pet_현무(환).webp",
+      "imageLink": "/pets/pet_hyenmu_hwan.webp",
       "elementStats": {
         "earth": 9,
         "water": 1,
@@ -1815,7 +1815,7 @@
       "id": "661",
       "name": "메가리스키(환)",
       "source": "패트 환생",
-      "imageLink": "/pets/pet_메가리스키(환).webp",
+      "imageLink": "/pets/pet_megariseuki_hwan.webp",
       "elementStats": {
         "earth": 0,
         "water": 3,
@@ -1842,7 +1842,7 @@
       "id": "660",
       "name": "메이란스(환)",
       "source": "패트 환생",
-      "imageLink": "/pets/pet_메이란스(환).webp",
+      "imageLink": "/pets/pet_meiranseu_hwan.webp",
       "elementStats": {
         "earth": 8,
         "water": 0,
@@ -1869,7 +1869,7 @@
       "id": "659",
       "name": "현무",
       "source": "현무의 영혼석 20개",
-      "imageLink": "/pets/pet_현무.webp",
+      "imageLink": "/pets/pet_hyenmu.webp",
       "elementStats": {
         "earth": 9,
         "water": 1,
@@ -1896,7 +1896,7 @@
       "id": "658",
       "name": "백호(환)",
       "source": "패트 환생",
-      "imageLink": "/pets/pet_백호(환).webp",
+      "imageLink": "/pets/pet_baekho_hwan.webp",
       "elementStats": {
         "earth": 0,
         "water": 10,
@@ -1923,7 +1923,7 @@
       "id": "657",
       "name": "모사크",
       "source": "출석 이벤트",
-      "imageLink": "/pets/pet_모사크.webp",
+      "imageLink": "/pets/pet_mosakeu.webp",
       "elementStats": {
         "earth": 0,
         "water": 10,
@@ -1950,7 +1950,7 @@
       "id": "656",
       "name": "은하다이노(환)",
       "source": "페트 환생",
-      "imageLink": "/pets/pet_은하다이노(환).gif",
+      "imageLink": "/pets/pet_eunhadaino_hwan.gif",
       "elementStats": {
         "earth": 0,
         "water": 8,
@@ -1977,7 +1977,7 @@
       "id": "655",
       "name": "은하다이노",
       "source": "스톤 상점",
-      "imageLink": "/pets/pet_은하다이노.gif",
+      "imageLink": "/pets/pet_eunhadaino.gif",
       "elementStats": {
         "earth": 0,
         "water": 8,
@@ -2004,7 +2004,7 @@
       "id": "654",
       "name": "산타로비(환)",
       "source": "페트 환생",
-      "imageLink": "/pets/pet_산타로비(환).webp",
+      "imageLink": "/pets/pet_santarobi_hwan.webp",
       "elementStats": {
         "earth": 0,
         "water": 8,
@@ -2031,7 +2031,7 @@
       "id": "653",
       "name": "산타링코(환)",
       "source": "페트 환생",
-      "imageLink": "/pets/pet_산타링코(환).webp",
+      "imageLink": "/pets/pet_santaringko_hwan.webp",
       "elementStats": {
         "earth": 0,
         "water": 7,
@@ -2058,7 +2058,7 @@
       "id": "652",
       "name": "산타로스(환)",
       "source": "페트 환생",
-      "imageLink": "/pets/pet_산타로스(환).webp",
+      "imageLink": "/pets/pet_santaroseu_hwan.webp",
       "elementStats": {
         "earth": 0,
         "water": 5,
@@ -2085,7 +2085,7 @@
       "id": "651",
       "name": "산타베르가(환)",
       "source": "페트 환생",
-      "imageLink": "/pets/pet_산타베르가(환).webp",
+      "imageLink": "/pets/pet_santabereuga_hwan.webp",
       "elementStats": {
         "earth": 7,
         "water": 3,
@@ -2112,7 +2112,7 @@
       "id": "650",
       "name": "키오아치(환)",
       "source": "페트 환생",
-      "imageLink": "/pets/pet_키오아치(환).webp",
+      "imageLink": "/pets/pet_kioachi_hwan.webp",
       "elementStats": {
         "earth": 0,
         "water": 7,
@@ -2139,7 +2139,7 @@
       "id": "649",
       "name": "키오아치",
       "source": "이벤트",
-      "imageLink": "/pets/pet_키오아치.webp",
+      "imageLink": "/pets/pet_kioachi.webp",
       "elementStats": {
         "earth": 0,
         "water": 7,
@@ -2166,7 +2166,7 @@
       "id": "648",
       "name": "돌북이(환)",
       "source": "포획",
-      "imageLink": "/pets/pet_돌북이(환).webp",
+      "imageLink": "/pets/pet_dolbuki_hwan.webp",
       "elementStats": {
         "earth": 9,
         "water": 0,
@@ -2193,7 +2193,7 @@
       "id": "647",
       "name": "레드프라키(환)",
       "source": "페트 환생",
-      "imageLink": "/pets/pet_레드프라키(환).webp",
+      "imageLink": "/pets/pet_redeupeuraki_hwan.webp",
       "elementStats": {
         "earth": 0,
         "water": 0,
@@ -2220,7 +2220,7 @@
       "id": "646",
       "name": "레드프라키",
       "source": "상점",
-      "imageLink": "/pets/pet_레드프라키.webp",
+      "imageLink": "/pets/pet_redeupeuraki.webp",
       "elementStats": {
         "earth": 0,
         "water": 0,
@@ -2247,7 +2247,7 @@
       "id": "645",
       "name": "메카다이노(환)",
       "source": "페트 환생",
-      "imageLink": "/pets/pet_메카다이노(환).webp",
+      "imageLink": "/pets/pet_mekadaino_hwan.webp",
       "elementStats": {
         "earth": 0,
         "water": 0,
@@ -2274,7 +2274,7 @@
       "id": "644",
       "name": "메카다이노",
       "source": "충전보상",
-      "imageLink": "/pets/pet_메카다이노.webp",
+      "imageLink": "/pets/pet_mekadaino.webp",
       "elementStats": {
         "earth": 0,
         "water": 0,
@@ -2301,7 +2301,7 @@
       "id": "643",
       "name": "해빙룡(환)",
       "source": "페트 환생",
-      "imageLink": "/pets/pet_해빙룡(환).webp",
+      "imageLink": "/pets/pet_haebingryong_hwan.webp",
       "elementStats": {
         "earth": 0,
         "water": 9,
@@ -2328,7 +2328,7 @@
       "id": "642",
       "name": "해빙룡",
       "source": "1주년 이벤트 펫 - 맘쿠 특등상 (기간 제한)",
-      "imageLink": "/pets/pet_해빙룡.webp",
+      "imageLink": "/pets/pet_haebingryong.webp",
       "elementStats": {
         "earth": 0,
         "water": 9,
@@ -2355,7 +2355,7 @@
       "id": "641",
       "name": "기계환룡(환)",
       "source": "페트 환생",
-      "imageLink": "/pets/pet_기계환룡(환).gif",
+      "imageLink": "/pets/pet_gigyehwanryong_hwan.gif",
       "elementStats": {
         "earth": 0,
         "water": 0,
@@ -2382,7 +2382,7 @@
       "id": "640",
       "name": "기계환룡",
       "source": "충전보상",
-      "imageLink": "/pets/pet_기계환룡.gif",
+      "imageLink": "/pets/pet_gigyehwanryong.gif",
       "elementStats": {
         "earth": 0,
         "water": 0,
@@ -2409,7 +2409,7 @@
       "id": "639",
       "name": "화마(각)",
       "source": "페트 각성",
-      "imageLink": "/pets/pet_화마(각).webp",
+      "imageLink": "/pets/pet_hwama_gak.webp",
       "elementStats": {
         "earth": 0,
         "water": 0,
@@ -2436,7 +2436,7 @@
       "id": "638",
       "name": "홍모",
       "source": "맘모스쿠폰",
-      "imageLink": "/pets/pet_홍모.webp",
+      "imageLink": "/pets/pet_hongmo.webp",
       "elementStats": {
         "earth": 0,
         "water": 2,
@@ -2463,7 +2463,7 @@
       "id": "637",
       "name": "청모",
       "source": "금화상점",
-      "imageLink": "/pets/pet_청모.webp",
+      "imageLink": "/pets/pet_cheongmo.webp",
       "elementStats": {
         "earth": 0,
         "water": 8,
@@ -2490,7 +2490,7 @@
       "id": "636",
       "name": "뇌호(변종)",
       "source": "변종",
-      "imageLink": "/pets/pet_뇌호(변종).webp",
+      "imageLink": "/pets/pet_noeho_byeonjong.webp",
       "elementStats": {
         "earth": 0,
         "water": 10,
@@ -2517,7 +2517,7 @@
       "id": "635",
       "name": "백호(각)",
       "source": "페트각성",
-      "imageLink": "/pets/pet_백호(각).webp",
+      "imageLink": "/pets/pet_baekho_gak.webp",
       "elementStats": {
         "earth": 0,
         "water": 10,
@@ -2544,7 +2544,7 @@
       "id": "634",
       "name": "레이비",
       "source": "금화상점",
-      "imageLink": "/pets/pet_레이비.webp",
+      "imageLink": "/pets/pet_reibi.webp",
       "elementStats": {
         "earth": 0,
         "water": 0,
@@ -2571,7 +2571,7 @@
       "id": "633",
       "name": "라이비",
       "source": "금화상점",
-      "imageLink": "/pets/pet_라이비.webp",
+      "imageLink": "/pets/pet_raibi.webp",
       "elementStats": {
         "earth": 0,
         "water": 5,
@@ -2598,7 +2598,7 @@
       "id": "632",
       "name": "테이론(환)",
       "source": "페트환생",
-      "imageLink": "/pets/pet_테이론(환).webp",
+      "imageLink": "/pets/pet_teiron_hwan.webp",
       "elementStats": {
         "earth": 0,
         "water": 5,
@@ -2625,7 +2625,7 @@
       "id": "631",
       "name": "테이론",
       "source": "충전보상",
-      "imageLink": "/pets/pet_테이론.webp",
+      "imageLink": "/pets/pet_teiron.webp",
       "elementStats": {
         "earth": 0,
         "water": 5,
@@ -2652,7 +2652,7 @@
       "id": "630",
       "name": "지발리",
       "source": "환생보상",
-      "imageLink": "/pets/pet_지발리.webp",
+      "imageLink": "/pets/pet_jibalri.webp",
       "elementStats": {
         "earth": 7,
         "water": 3,
@@ -2679,7 +2679,7 @@
       "id": "629",
       "name": "파르체",
       "source": "환생보상",
-      "imageLink": "/pets/pet_파르체.webp",
+      "imageLink": "/pets/pet_pareuche.webp",
       "elementStats": {
         "earth": 0,
         "water": 8,
@@ -2706,7 +2706,7 @@
       "id": "628",
       "name": "샤르체",
       "source": "환생보상",
-      "imageLink": "/pets/pet_샤르체.webp",
+      "imageLink": "/pets/pet_syareuche.webp",
       "elementStats": {
         "earth": 0,
         "water": 0,
@@ -2733,7 +2733,7 @@
       "id": "627",
       "name": "슈발리",
       "source": "환생보상",
-      "imageLink": "/pets/pet_슈발리.webp",
+      "imageLink": "/pets/pet_syubalri.webp",
       "elementStats": {
         "earth": 0,
         "water": 0,
@@ -2760,7 +2760,7 @@
       "id": "626",
       "name": "카루(각성)",
       "source": "카루 각성",
-      "imageLink": "/pets/pet_카루(각성).webp",
+      "imageLink": "/pets/pet_karu_gakseong.webp",
       "elementStats": {
         "earth": 10,
         "water": 0,
@@ -2787,7 +2787,7 @@
       "id": "625",
       "name": "기노(각)",
       "source": "기노 각성",
-      "imageLink": "/pets/pet_기노(각).webp",
+      "imageLink": "/pets/pet_gino_gak.webp",
       "elementStats": {
         "earth": 0,
         "water": 0,
@@ -2814,7 +2814,7 @@
       "id": "624",
       "name": "기로(각)",
       "source": "기로 각성",
-      "imageLink": "/pets/pet_기로(각).webp",
+      "imageLink": "/pets/pet_giro_gak.webp",
       "elementStats": {
         "earth": 0,
         "water": 9,
@@ -2841,7 +2841,7 @@
       "id": "623",
       "name": "비노(각)",
       "source": "비노 각성",
-      "imageLink": "/pets/pet_비노(각).webp",
+      "imageLink": "/pets/pet_bino_gak.webp",
       "elementStats": {
         "earth": 10,
         "water": 0,
@@ -2868,7 +2868,7 @@
       "id": "622",
       "name": "르돈(각)",
       "source": "르돈 각성",
-      "imageLink": "/pets/pet_르돈(각).webp",
+      "imageLink": "/pets/pet_reudon_gak.webp",
       "elementStats": {
         "earth": 0,
         "water": 0,
@@ -2895,7 +2895,7 @@
       "id": "621",
       "name": "금호(변종)",
       "source": "변종",
-      "imageLink": "/pets/pet_금호(변종).webp",
+      "imageLink": "/pets/pet_geumho_byeonjong.webp",
       "elementStats": {
         "earth": 0,
         "water": 10,
@@ -2922,7 +2922,7 @@
       "id": "620",
       "name": "천 룡(환)",
       "source": "페트 환생",
-      "imageLink": "/pets/pet_천 룡(환).webp",
+      "imageLink": "/pets/pet_cheon_ryong_hwan.webp",
       "elementStats": {
         "earth": 0,
         "water": 0,
@@ -2949,7 +2949,7 @@
       "id": "619",
       "name": "금호(각)",
       "source": "페트 각성",
-      "imageLink": "/pets/pet_금호(각).webp",
+      "imageLink": "/pets/pet_geumho_gak.webp",
       "elementStats": {
         "earth": 0,
         "water": 10,
@@ -2976,7 +2976,7 @@
       "id": "618",
       "name": "메가기룡(환)",
       "source": "페트 환생",
-      "imageLink": "/pets/pet_메가기룡(환).webp",
+      "imageLink": "/pets/pet_megagiryong_hwan.webp",
       "elementStats": {
         "earth": 0,
         "water": 0,
@@ -3003,7 +3003,7 @@
       "id": "617",
       "name": "메가기룡",
       "source": "듀얼 보상",
-      "imageLink": "/pets/pet_메가기룡.webp",
+      "imageLink": "/pets/pet_megagiryong.webp",
       "elementStats": {
         "earth": 0,
         "water": 0,
@@ -3030,7 +3030,7 @@
       "id": "616",
       "name": "풍운룡(환)",
       "source": "페트 환생",
-      "imageLink": "/pets/pet_풍운룡(환).webp",
+      "imageLink": "/pets/pet_pungunryong_hwan.webp",
       "elementStats": {
         "earth": 0,
         "water": 0,
@@ -3057,7 +3057,7 @@
       "id": "615",
       "name": "호크(환)",
       "source": "페트환생",
-      "imageLink": "/pets/pet_호크(환).gif",
+      "imageLink": "/pets/pet_hokeu_hwan.gif",
       "elementStats": {
         "earth": 0,
         "water": 0,
@@ -3084,7 +3084,7 @@
       "id": "614",
       "name": "스콜(환)",
       "source": "페트환생",
-      "imageLink": "/pets/pet_스콜(환).gif",
+      "imageLink": "/pets/pet_seukol_hwan.gif",
       "elementStats": {
         "earth": 8,
         "water": 0,
@@ -3111,7 +3111,7 @@
       "id": "613",
       "name": "펜릭스(환)",
       "source": "페트환생",
-      "imageLink": "/pets/pet_펜릭스(환).gif",
+      "imageLink": "/pets/pet_penrikseu_hwan.gif",
       "elementStats": {
         "earth": 5,
         "water": 5,
@@ -3138,7 +3138,7 @@
       "id": "612",
       "name": "펜리(환)",
       "source": "페트환생",
-      "imageLink": "/pets/pet_펜리(환).gif",
+      "imageLink": "/pets/pet_penri_hwan.gif",
       "elementStats": {
         "earth": 0,
         "water": 0,
@@ -3165,7 +3165,7 @@
       "id": "611",
       "name": "스콜",
       "source": "매우낮은 확률의 맘모스쿠폰",
-      "imageLink": "/pets/pet_스콜.gif",
+      "imageLink": "/pets/pet_seukol.gif",
       "elementStats": {
         "earth": 8,
         "water": 0,
@@ -3192,7 +3192,7 @@
       "id": "610",
       "name": "펜릭스",
       "source": "정령왕의 방 클리어 랜덤 보상",
-      "imageLink": "/pets/pet_펜릭스.gif",
+      "imageLink": "/pets/pet_penrikseu.gif",
       "elementStats": {
         "earth": 5,
         "water": 5,
@@ -3219,7 +3219,7 @@
       "id": "609",
       "name": "펜리",
       "source": "충전보상",
-      "imageLink": "/pets/pet_펜리.gif",
+      "imageLink": "/pets/pet_penri.gif",
       "elementStats": {
         "earth": 0,
         "water": 0,
@@ -3246,7 +3246,7 @@
       "id": "608",
       "name": "메이란스",
       "source": "후원보상",
-      "imageLink": "/pets/pet_메이란스.webp",
+      "imageLink": "/pets/pet_meiranseu.webp",
       "elementStats": {
         "earth": 8,
         "water": 0,
@@ -3273,7 +3273,7 @@
       "id": "607",
       "name": "노가(각)",
       "source": "노르곤 각성",
-      "imageLink": "/pets/pet_노가(각).webp",
+      "imageLink": "/pets/pet_noga_gak.webp",
       "elementStats": {
         "earth": 0,
         "water": 0,
@@ -3300,7 +3300,7 @@
       "id": "606",
       "name": "루가(각)",
       "source": "오르곤 각성",
-      "imageLink": "/pets/pet_루가(각).webp",
+      "imageLink": "/pets/pet_ruga_gak.webp",
       "elementStats": {
         "earth": 0,
         "water": 9,
@@ -3327,7 +3327,7 @@
       "id": "605",
       "name": "오가(각)",
       "source": "오가로스 각성",
-      "imageLink": "/pets/pet_오가(각).webp",
+      "imageLink": "/pets/pet_oga_gak.webp",
       "elementStats": {
         "earth": 6,
         "water": 4,
@@ -3354,7 +3354,7 @@
       "id": "604",
       "name": "모가(각)",
       "source": "모가로스 각성",
-      "imageLink": "/pets/pet_모가(각).webp",
+      "imageLink": "/pets/pet_moga_gak.webp",
       "elementStats": {
         "earth": 0,
         "water": 1,
@@ -3381,7 +3381,7 @@
       "id": "603",
       "name": "흑카키(환)",
       "source": "페트환생",
-      "imageLink": "/pets/pet_흑카키(환).gif",
+      "imageLink": "/pets/pet_heukkaki_hwan.gif",
       "elementStats": {
         "earth": 0,
         "water": 0,
@@ -3408,7 +3408,7 @@
       "id": "602",
       "name": "본드래곤(환)",
       "source": "페트환생",
-      "imageLink": "/pets/pet_본드래곤(환).gif",
+      "imageLink": "/pets/pet_bondeuraegon_hwan.gif",
       "elementStats": {
         "earth": 8,
         "water": 0,
@@ -3435,7 +3435,7 @@
       "id": "601",
       "name": "메피노(환)",
       "source": "패트 환생",
-      "imageLink": "/pets/pet_메피노(환).gif",
+      "imageLink": "/pets/pet_mepino_hwan.gif",
       "elementStats": {
         "earth": 0,
         "water": 7,
@@ -3462,7 +3462,7 @@
       "id": "600",
       "name": "골드골로스(환)",
       "source": "페트환생",
-      "imageLink": "/pets/pet_골드골로스(환).gif",
+      "imageLink": "/pets/pet_goldeugolroseu_hwan.gif",
       "elementStats": {
         "earth": 0,
         "water": 0,
@@ -3489,7 +3489,7 @@
       "id": "599",
       "name": "초크론(환)",
       "source": "페트환생",
-      "imageLink": "/pets/pet_초크론(환).gif",
+      "imageLink": "/pets/pet_chokeuron_hwan.gif",
       "elementStats": {
         "earth": 10,
         "water": 0,
@@ -3516,7 +3516,7 @@
       "id": "598",
       "name": "아이스만모(환)",
       "source": "페트환생",
-      "imageLink": "/pets/pet_아이스만모(환).gif",
+      "imageLink": "/pets/pet_aiseumanmo_hwan.gif",
       "elementStats": {
         "earth": 3,
         "water": 7,
@@ -3543,7 +3543,7 @@
       "id": "597",
       "name": "예르체(환)",
       "source": "페트환생",
-      "imageLink": "/pets/pet_예르체(환).webp",
+      "imageLink": "/pets/pet_yereuche_hwan.webp",
       "elementStats": {
         "earth": 0,
         "water": 0,
@@ -3570,7 +3570,7 @@
       "id": "596",
       "name": "토우트(환)",
       "source": "페트환생",
-      "imageLink": "/pets/pet_토우트(환).gif",
+      "imageLink": "/pets/pet_touteu_hwan.gif",
       "elementStats": {
         "earth": 0,
         "water": 9,
@@ -3597,7 +3597,7 @@
       "id": "595",
       "name": "흑우트(환)",
       "source": "페트환생",
-      "imageLink": "/pets/pet_흑우트(환).gif",
+      "imageLink": "/pets/pet_heukuteu_hwan.gif",
       "elementStats": {
         "earth": 9,
         "water": 0,
@@ -3624,7 +3624,7 @@
       "id": "594",
       "name": "테이루스(환)",
       "source": "페트환생",
-      "imageLink": "/pets/pet_테이루스(환).webp",
+      "imageLink": "/pets/pet_teiruseu_hwan.webp",
       "elementStats": {
         "earth": 0,
         "water": 2,
@@ -3651,7 +3651,7 @@
       "id": "593",
       "name": "테이루스",
       "source": "충전보상",
-      "imageLink": "/pets/pet_테이루스.webp",
+      "imageLink": "/pets/pet_teiruseu.webp",
       "elementStats": {
         "earth": 0,
         "water": 2,
@@ -3678,7 +3678,7 @@
       "id": "592",
       "name": "아리",
       "source": "이벤트 및 금화",
-      "imageLink": "/pets/pet_아리.webp",
+      "imageLink": "/pets/pet_ari.webp",
       "elementStats": {
         "earth": 0,
         "water": 0,
@@ -3705,7 +3705,7 @@
       "id": "591",
       "name": "깜아리",
       "source": "이벤트 및 금화",
-      "imageLink": "/pets/pet_깜아리.webp",
+      "imageLink": "/pets/pet_kkamari.webp",
       "elementStats": {
         "earth": 0,
         "water": 5,
@@ -3732,7 +3732,7 @@
       "id": "590",
       "name": "홍아리",
       "source": "이벤트 및 금화",
-      "imageLink": "/pets/pet_홍아리.webp",
+      "imageLink": "/pets/pet_hongari.webp",
       "elementStats": {
         "earth": 0,
         "water": 0,
@@ -3759,7 +3759,7 @@
       "id": "589",
       "name": "흑주작(환)",
       "source": "페트 환생",
-      "imageLink": "/pets/pet_흑주작(환).gif",
+      "imageLink": "/pets/pet_heukjujak_hwan.gif",
       "elementStats": {
         "earth": 0,
         "water": 0,
@@ -3786,7 +3786,7 @@
       "id": "588",
       "name": "골드 테이노스(환)",
       "source": "페트 환생",
-      "imageLink": "/pets/pet_골드 테이노스(환).webp",
+      "imageLink": "/pets/pet_goldeu_teinoseu_hwan.webp",
       "elementStats": {
         "earth": 0,
         "water": 0,
@@ -3813,7 +3813,7 @@
       "id": "587",
       "name": "골드 테이노스",
       "source": "천하제일 무술대회 1등보상",
-      "imageLink": "/pets/pet_골드 테이노스.webp",
+      "imageLink": "/pets/pet_goldeu_teinoseu.webp",
       "elementStats": {
         "earth": 0,
         "water": 0,
@@ -3840,7 +3840,7 @@
       "id": "586",
       "name": "아스타로(환)",
       "source": "페트환생",
-      "imageLink": "/pets/pet_아스타로(환).gif",
+      "imageLink": "/pets/pet_aseutaro_hwan.gif",
       "elementStats": {
         "earth": 0,
         "water": 8,
@@ -3867,7 +3867,7 @@
       "id": "585",
       "name": "블랙테이노스(환)",
       "source": "페트환생",
-      "imageLink": "/pets/pet_블랙테이노스(환).webp",
+      "imageLink": "/pets/pet_beulraekteinoseu_hwan.webp",
       "elementStats": {
         "earth": 0,
         "water": 5,
@@ -3894,7 +3894,7 @@
       "id": "584",
       "name": "샤크라이(환)",
       "source": "페트환생",
-      "imageLink": "/pets/pet_샤크라이(환).gif",
+      "imageLink": "/pets/pet_syakeurai_hwan.gif",
       "elementStats": {
         "earth": 5,
         "water": 5,
@@ -3921,7 +3921,7 @@
       "id": "583",
       "name": "샤크라(환)",
       "source": "페트환생",
-      "imageLink": "/pets/pet_샤크라(환).gif",
+      "imageLink": "/pets/pet_syakeura_hwan.gif",
       "elementStats": {
         "earth": 0,
         "water": 0,
@@ -3948,7 +3948,7 @@
       "id": "582",
       "name": "청룡(환)",
       "source": "페트환생",
-      "imageLink": "/pets/pet_청룡(환).webp",
+      "imageLink": "/pets/pet_cheongryong_hwan.webp",
       "elementStats": {
         "earth": 0,
         "water": 9,
@@ -3975,7 +3975,7 @@
       "id": "581",
       "name": "베가(환)",
       "source": "페트환생",
-      "imageLink": "/pets/pet_베가(환).gif",
+      "imageLink": "/pets/pet_bega_hwan.gif",
       "elementStats": {
         "earth": 0,
         "water": 10,
@@ -4002,7 +4002,7 @@
       "id": "580",
       "name": "프로돈(환)",
       "source": "페트환생",
-      "imageLink": "/pets/pet_프로돈(환).gif",
+      "imageLink": "/pets/pet_peurodon_hwan.gif",
       "elementStats": {
         "earth": 0,
         "water": 10,
@@ -4029,7 +4029,7 @@
       "id": "579",
       "name": "메카 카키(환)",
       "source": "페트환생",
-      "imageLink": "/pets/pet_메카 카키(환).gif",
+      "imageLink": "/pets/pet_meka_kaki_hwan.gif",
       "elementStats": {
         "earth": 0,
         "water": 0,
@@ -4056,7 +4056,7 @@
       "id": "578",
       "name": "메가 카키",
       "source": "레이드 보상",
-      "imageLink": "/pets/pet_메가 카키.gif",
+      "imageLink": "/pets/pet_mega_kaki.gif",
       "elementStats": {
         "earth": 0,
         "water": 0,
@@ -4083,7 +4083,7 @@
       "id": "577",
       "name": "메가르곤(환)",
       "source": "페트환생",
-      "imageLink": "/pets/pet_메가르곤(환).webp",
+      "imageLink": "/pets/pet_megareugon_hwan.webp",
       "elementStats": {
         "earth": 0,
         "water": 3,
@@ -4110,7 +4110,7 @@
       "id": "576",
       "name": "메가흑곤(환)",
       "source": "페트환생",
-      "imageLink": "/pets/pet_메가흑곤(환).webp",
+      "imageLink": "/pets/pet_megaheukgon_hwan.webp",
       "elementStats": {
         "earth": 0,
         "water": 7,
@@ -4137,7 +4137,7 @@
       "id": "575",
       "name": "마아곤",
       "source": "이벤트 보상",
-      "imageLink": "/pets/pet_마아곤.webp",
+      "imageLink": "/pets/pet_maagon.webp",
       "elementStats": {
         "earth": 3,
         "water": 7,
@@ -4164,7 +4164,7 @@
       "id": "574",
       "name": "그린바로스",
       "source": "지옥문 보상",
-      "imageLink": "/pets/pet_그린바로스.webp",
+      "imageLink": "/pets/pet_geurinbaroseu.webp",
       "elementStats": {
         "earth": 8,
         "water": 2,
@@ -4191,7 +4191,7 @@
       "id": "573",
       "name": "메가르곤",
       "source": "충전보상",
-      "imageLink": "/pets/pet_메가르곤.webp",
+      "imageLink": "/pets/pet_megareugon.webp",
       "elementStats": {
         "earth": 0,
         "water": 3,
@@ -4218,7 +4218,7 @@
       "id": "572",
       "name": "메가흑곤",
       "source": "충전보상",
-      "imageLink": "/pets/pet_메가흑곤.webp",
+      "imageLink": "/pets/pet_megaheukgon.webp",
       "elementStats": {
         "earth": 0,
         "water": 7,
@@ -4245,7 +4245,7 @@
       "id": "571",
       "name": "메가리스키",
       "source": "맘모스쿠폰 100회",
-      "imageLink": "/pets/pet_메가리스키.webp",
+      "imageLink": "/pets/pet_megariseuki.webp",
       "elementStats": {
         "earth": 0,
         "water": 3,
@@ -4272,7 +4272,7 @@
       "id": "570",
       "name": "메가갈푸스(환)",
       "source": "페트환생",
-      "imageLink": "/pets/pet_메가갈푸스(환).webp",
+      "imageLink": "/pets/pet_megagalpuseu_hwan.webp",
       "elementStats": {
         "earth": 0,
         "water": 3,
@@ -4299,7 +4299,7 @@
       "id": "569",
       "name": "디어룬(환)",
       "source": "페트환생",
-      "imageLink": "/pets/pet_디어룬(환).gif",
+      "imageLink": "/pets/pet_dieorun_hwan.gif",
       "elementStats": {
         "earth": 9,
         "water": 0,
@@ -4326,7 +4326,7 @@
       "id": "568",
       "name": "지주작(환)",
       "source": "페트환생",
-      "imageLink": "/pets/pet_지주작(환).webp",
+      "imageLink": "/pets/pet_jijujak_hwan.webp",
       "elementStats": {
         "earth": 9,
         "water": 1,
@@ -4353,7 +4353,7 @@
       "id": "567",
       "name": "지주작",
       "source": "충전보상",
-      "imageLink": "/pets/pet_지주작.webp",
+      "imageLink": "/pets/pet_jijujak.webp",
       "elementStats": {
         "earth": 9,
         "water": 1,
@@ -4380,7 +4380,7 @@
       "id": "566",
       "name": "가스트(환)",
       "source": "페트환생",
-      "imageLink": "/pets/pet_가스트(환).gif",
+      "imageLink": "/pets/pet_gaseuteu_hwan.gif",
       "elementStats": {
         "earth": 5,
         "water": 0,
@@ -4407,7 +4407,7 @@
       "id": "565",
       "name": "게이블(환)",
       "source": "페트환생",
-      "imageLink": "/pets/pet_게이블(환).gif",
+      "imageLink": "/pets/pet_geibeul_hwan.gif",
       "elementStats": {
         "earth": 2,
         "water": 8,
@@ -4434,7 +4434,7 @@
       "id": "564",
       "name": "테라탄(환)",
       "source": "페트환생",
-      "imageLink": "/pets/pet_테라탄(환).gif",
+      "imageLink": "/pets/pet_teratan_hwan.gif",
       "elementStats": {
         "earth": 0,
         "water": 0,
@@ -4461,7 +4461,7 @@
       "id": "563",
       "name": "페가수스(환)",
       "source": "페트환생",
-      "imageLink": "/pets/pet_페가수스(환).gif",
+      "imageLink": "/pets/pet_pegasuseu_hwan.gif",
       "elementStats": {
         "earth": 0,
         "water": 0,
@@ -4488,7 +4488,7 @@
       "id": "562",
       "name": "암흑골로스(환)",
       "source": "페트환생",
-      "imageLink": "/pets/pet_암흑골로스(환).gif",
+      "imageLink": "/pets/pet_amheukgolroseu_hwan.gif",
       "elementStats": {
         "earth": 0,
         "water": 0,
@@ -4515,7 +4515,7 @@
       "id": "561",
       "name": "화이트드래곤(진)",
       "source": "페트진화",
-      "imageLink": "/pets/pet_화이트드래곤(진).webp",
+      "imageLink": "/pets/pet_hwaiteudeuraegon_jin.webp",
       "elementStats": {
         "earth": 0,
         "water": 7,
@@ -4542,7 +4542,7 @@
       "id": "560",
       "name": "화이트드래곤",
       "source": "충전보상",
-      "imageLink": "/pets/pet_화이트드래곤.webp",
+      "imageLink": "/pets/pet_hwaiteudeuraegon.webp",
       "elementStats": {
         "earth": 0,
         "water": 7,
@@ -4569,7 +4569,7 @@
       "id": "559",
       "name": "메가갈푸스",
       "source": "충전보상",
-      "imageLink": "/pets/pet_메가갈푸스.webp",
+      "imageLink": "/pets/pet_megagalpuseu.webp",
       "elementStats": {
         "earth": 0,
         "water": 3,
@@ -4596,7 +4596,7 @@
       "id": "558",
       "name": "메가프라키",
       "source": "맘모스쿠폰",
-      "imageLink": "/pets/pet_메가프라키.webp",
+      "imageLink": "/pets/pet_megapeuraki.webp",
       "elementStats": {
         "earth": 1,
         "water": 9,
@@ -4623,7 +4623,7 @@
       "id": "557",
       "name": "리바이어던",
       "source": "후르도 1등 복권",
-      "imageLink": "/pets/pet_리바이어던.gif",
+      "imageLink": "/pets/pet_ribaieodeon.gif",
       "elementStats": {
         "earth": 0,
         "water": 9,
@@ -4650,7 +4650,7 @@
       "id": "556",
       "name": "흑카키",
       "source": "쟈쟈 1등복권 페트",
-      "imageLink": "/pets/pet_흑카키.webp",
+      "imageLink": "/pets/pet_heukkaki.webp",
       "elementStats": {
         "earth": 0,
         "water": 0,
@@ -4677,7 +4677,7 @@
       "id": "555",
       "name": "블랙드래곤(환)",
       "source": "페트환생",
-      "imageLink": "/pets/pet_블랙드래곤(환).webp",
+      "imageLink": "/pets/pet_beulraekdeuraegon_hwan.webp",
       "elementStats": {
         "earth": 0,
         "water": 0,
@@ -4704,7 +4704,7 @@
       "id": "554",
       "name": "블랙드래곤",
       "source": "일반페트",
-      "imageLink": "/pets/pet_블랙드래곤.webp",
+      "imageLink": "/pets/pet_beulraekdeuraegon.webp",
       "elementStats": {
         "earth": 0,
         "water": 2,
@@ -4731,7 +4731,7 @@
       "id": "553",
       "name": "크루거(환)",
       "source": "페트환생",
-      "imageLink": "/pets/pet_크루거(환).gif",
+      "imageLink": "/pets/pet_keurugeo_hwan.gif",
       "elementStats": {
         "earth": 0,
         "water": 8,
@@ -4758,7 +4758,7 @@
       "id": "552",
       "name": "이구로스(환)",
       "source": "페트환생",
-      "imageLink": "/pets/pet_이구로스(환).gif",
+      "imageLink": "/pets/pet_iguroseu_hwan.gif",
       "elementStats": {
         "earth": 5,
         "water": 0,
@@ -4785,7 +4785,7 @@
       "id": "551",
       "name": "부루마루(환)",
       "source": "페트환생",
-      "imageLink": "/pets/pet_부루마루(환).gif",
+      "imageLink": "/pets/pet_burumaru_hwan.gif",
       "elementStats": {
         "earth": 0,
         "water": 8,
@@ -4812,7 +4812,7 @@
       "id": "550",
       "name": "하루마루(환)",
       "source": "페트환생",
-      "imageLink": "/pets/pet_하루마루(환).gif",
+      "imageLink": "/pets/pet_harumaru_hwan.gif",
       "elementStats": {
         "earth": 5,
         "water": 0,
@@ -4839,7 +4839,7 @@
       "id": "549",
       "name": "구루마루(환)",
       "source": "페트환생",
-      "imageLink": "/pets/pet_구루마루(환).gif",
+      "imageLink": "/pets/pet_gurumaru_hwan.gif",
       "elementStats": {
         "earth": 6,
         "water": 0,
@@ -4866,7 +4866,7 @@
       "id": "548",
       "name": "아르마루(환)",
       "source": "페트환생",
-      "imageLink": "/pets/pet_아르마루(환).gif",
+      "imageLink": "/pets/pet_areumaru_hwan.gif",
       "elementStats": {
         "earth": 5,
         "water": 5,
@@ -4893,7 +4893,7 @@
       "id": "547",
       "name": "도철(환)",
       "source": "페트환생",
-      "imageLink": "/pets/pet_도철(환).gif",
+      "imageLink": "/pets/pet_docheol_hwan.gif",
       "elementStats": {
         "earth": 0,
         "water": 5,
@@ -4920,7 +4920,7 @@
       "id": "546",
       "name": "흑갈푸스(환)",
       "source": "페트환생",
-      "imageLink": "/pets/pet_흑갈푸스(환).gif",
+      "imageLink": "/pets/pet_heukgalpuseu_hwan.gif",
       "elementStats": {
         "earth": 0,
         "water": 0,
@@ -4947,7 +4947,7 @@
       "id": "545",
       "name": "치크론(환)",
       "source": "페트환생",
-      "imageLink": "/pets/pet_치크론(환).gif",
+      "imageLink": "/pets/pet_chikeuron_hwan.gif",
       "elementStats": {
         "earth": 0,
         "water": 0,
@@ -4974,7 +4974,7 @@
       "id": "544",
       "name": "그란푸스",
       "source": "페트진화",
-      "imageLink": "/pets/pet_그란푸스.gif",
+      "imageLink": "/pets/pet_geuranpuseu.gif",
       "elementStats": {
         "earth": 3,
         "water": 0,
@@ -5001,7 +5001,7 @@
       "id": "543",
       "name": "로즈란스",
       "source": "페트진화",
-      "imageLink": "/pets/pet_로즈란스.gif",
+      "imageLink": "/pets/pet_rojeuranseu.gif",
       "elementStats": {
         "earth": 3,
         "water": 7,
@@ -5028,7 +5028,7 @@
       "id": "542",
       "name": "SD언딘(진)",
       "source": "페트진화",
-      "imageLink": "/pets/pet_SD언딘(진).webp",
+      "imageLink": "/pets/pet_sdeondin_jin.webp",
       "elementStats": {
         "earth": 0,
         "water": 0,
@@ -5055,7 +5055,7 @@
       "id": "541",
       "name": "로즈란",
       "source": "듀얼",
-      "imageLink": "/pets/pet_로즈란.gif",
+      "imageLink": "/pets/pet_rojeuran.gif",
       "elementStats": {
         "earth": 3,
         "water": 7,
@@ -5082,7 +5082,7 @@
       "id": "540",
       "name": "리오다",
       "source": "듀얼",
-      "imageLink": "/pets/pet_리오다.gif",
+      "imageLink": "/pets/pet_rioda.gif",
       "elementStats": {
         "earth": 3,
         "water": 0,
@@ -5109,7 +5109,7 @@
       "id": "539",
       "name": "치크론",
       "source": "금화상점",
-      "imageLink": "/pets/pet_치크론.gif",
+      "imageLink": "/pets/pet_chikeuron.gif",
       "elementStats": {
         "earth": 0,
         "water": 0,
@@ -5136,7 +5136,7 @@
       "id": "538",
       "name": "초크론",
       "source": "금화상점",
-      "imageLink": "/pets/pet_초크론.gif",
+      "imageLink": "/pets/pet_chokeuron.gif",
       "elementStats": {
         "earth": 10,
         "water": 0,
@@ -5163,7 +5163,7 @@
       "id": "537",
       "name": "리어룬",
       "source": "라돈타 80층",
-      "imageLink": "/pets/pet_리어룬.gif",
+      "imageLink": "/pets/pet_rieorun.gif",
       "elementStats": {
         "earth": 0,
         "water": 0,
@@ -5190,7 +5190,7 @@
       "id": "536",
       "name": "시어룬",
       "source": "라돈타 70층",
-      "imageLink": "/pets/pet_시어룬.gif",
+      "imageLink": "/pets/pet_sieorun.gif",
       "elementStats": {
         "earth": 0,
         "water": 9,
@@ -5217,7 +5217,7 @@
       "id": "535",
       "name": "블랙테이노스",
       "source": "맘모스쿠폰 100회",
-      "imageLink": "/pets/pet_블랙테이노스.webp",
+      "imageLink": "/pets/pet_beulraekteinoseu.webp",
       "elementStats": {
         "earth": 0,
         "water": 5,
@@ -5244,7 +5244,7 @@
       "id": "534",
       "name": "어린풍백(환)",
       "source": "어린풍백 환생",
-      "imageLink": "/pets/pet_어린풍백(환).gif",
+      "imageLink": "/pets/pet_eorinpungbaek_hwan.gif",
       "elementStats": {
         "earth": 5,
         "water": 0,
@@ -5271,7 +5271,7 @@
       "id": "533",
       "name": "어린현무",
       "source": "전투포인트상점",
-      "imageLink": "/pets/pet_어린현무.gif",
+      "imageLink": "/pets/pet_eorinhyenmu.gif",
       "elementStats": {
         "earth": 9,
         "water": 1,
@@ -5298,7 +5298,7 @@
       "id": "532",
       "name": "어린현무(환)",
       "source": "어린현무 환생",
-      "imageLink": "/pets/pet_어린현무(환).gif",
+      "imageLink": "/pets/pet_eorinhyenmu_hwan.gif",
       "elementStats": {
         "earth": 9,
         "water": 1,
@@ -5325,7 +5325,7 @@
       "id": "531",
       "name": "메가만모",
       "source": "맘모스쿠폰",
-      "imageLink": "/pets/pet_메가만모.webp",
+      "imageLink": "/pets/pet_megamanmo.webp",
       "elementStats": {
         "earth": 0,
         "water": 10,
@@ -5352,7 +5352,7 @@
       "id": "530",
       "name": "이무기(환)",
       "source": "페트 환생",
-      "imageLink": "/pets/pet_이무기(환).webp",
+      "imageLink": "/pets/pet_imugi_hwan.webp",
       "elementStats": {
         "earth": 0,
         "water": 0,
@@ -5379,7 +5379,7 @@
       "id": "529",
       "name": "이무기",
       "source": "맘모스쿠폰 100회",
-      "imageLink": "/pets/pet_이무기.webp",
+      "imageLink": "/pets/pet_imugi.webp",
       "elementStats": {
         "earth": 0,
         "water": 0,
@@ -5406,7 +5406,7 @@
       "id": "528",
       "name": "메가만모(환)",
       "source": "페트환생",
-      "imageLink": "/pets/pet_메가만모(환).webp",
+      "imageLink": "/pets/pet_megamanmo_hwan.webp",
       "elementStats": {
         "earth": 0,
         "water": 10,
@@ -5433,7 +5433,7 @@
       "id": "527",
       "name": "흑풍(환)",
       "source": "페트 환생",
-      "imageLink": "/pets/pet_흑풍(환).gif",
+      "imageLink": "/pets/pet_heukpung_hwan.gif",
       "elementStats": {
         "earth": 9,
         "water": 0,
@@ -5460,7 +5460,7 @@
       "id": "526",
       "name": "파아란(환)",
       "source": "페트환생",
-      "imageLink": "/pets/pet_파아란(환).gif",
+      "imageLink": "/pets/pet_paaran_hwan.gif",
       "elementStats": {
         "earth": 0,
         "water": 8,
@@ -5487,7 +5487,7 @@
       "id": "525",
       "name": "히파(환)",
       "source": "페트환생",
-      "imageLink": "/pets/pet_히파(환).gif",
+      "imageLink": "/pets/pet_hipa_hwan.gif",
       "elementStats": {
         "earth": 0,
         "water": 0,
@@ -5514,7 +5514,7 @@
       "id": "524",
       "name": "키파(환)",
       "source": "페트환생",
-      "imageLink": "/pets/pet_키파(환).gif",
+      "imageLink": "/pets/pet_kipa_hwan.gif",
       "elementStats": {
         "earth": 8,
         "water": 0,
@@ -5541,7 +5541,7 @@
       "id": "523",
       "name": "테라로스(환)",
       "source": "페트환생",
-      "imageLink": "/pets/pet_테라로스(환).gif",
+      "imageLink": "/pets/pet_teraroseu_hwan.gif",
       "elementStats": {
         "earth": 2,
         "water": 8,
@@ -5568,7 +5568,7 @@
       "id": "522",
       "name": "테라비스(환)",
       "source": "페트환생",
-      "imageLink": "/pets/pet_테라비스(환).gif",
+      "imageLink": "/pets/pet_terabiseu_hwan.gif",
       "elementStats": {
         "earth": 0,
         "water": 0,
@@ -5595,7 +5595,7 @@
       "id": "521",
       "name": "아이스드래곤",
       "source": "페트진화",
-      "imageLink": "/pets/pet_아이스드래곤.gif",
+      "imageLink": "/pets/pet_aiseudeuraegon.gif",
       "elementStats": {
         "earth": 2,
         "water": 8,
@@ -5622,7 +5622,7 @@
       "id": "520",
       "name": "SD언딘(환)",
       "source": "SD언딘 환생",
-      "imageLink": "/pets/pet_SD언딘(환).gif",
+      "imageLink": "/pets/pet_sdeondin_hwan.gif",
       "elementStats": {
         "earth": 0,
         "water": 1,
@@ -5649,7 +5649,7 @@
       "id": "519",
       "name": "SD언딘",
       "source": "충전보상",
-      "imageLink": "/pets/pet_SD언딘.gif",
+      "imageLink": "/pets/pet_sdeondin.gif",
       "elementStats": {
         "earth": 0,
         "water": 1,
@@ -5676,7 +5676,7 @@
       "id": "518",
       "name": "구)청룡",
       "source": "정기듀얼 우승보상",
-      "imageLink": "/pets/pet_구)청룡.webp",
+      "imageLink": "/pets/pet_gu_cheongryong.webp",
       "elementStats": {
         "earth": 0,
         "water": 10,
@@ -5703,7 +5703,7 @@
       "id": "517",
       "name": "테이노스(각)",
       "source": "변종 테이노스에서 각성",
-      "imageLink": "/pets/pet_테이노스(각).webp",
+      "imageLink": "/pets/pet_teinoseu_gak.webp",
       "elementStats": {
         "earth": 5,
         "water": 5,
@@ -5730,7 +5730,7 @@
       "id": "516",
       "name": "지늑인(각)",
       "source": "늑인 각성",
-      "imageLink": "/pets/pet_지늑인(각).gif",
+      "imageLink": "/pets/pet_jineukin_gak.gif",
       "elementStats": {
         "earth": 10,
         "water": 0,
@@ -5757,7 +5757,7 @@
       "id": "515",
       "name": "나비드래곤",
       "source": "후원보상페트",
-      "imageLink": "/pets/pet_나비드래곤.gif",
+      "imageLink": "/pets/pet_nabideuraegon.gif",
       "elementStats": {
         "earth": 0,
         "water": 0,
@@ -5784,7 +5784,7 @@
       "id": "514",
       "name": "싸이클론",
       "source": "금화상점",
-      "imageLink": "/pets/pet_싸이클론.gif",
+      "imageLink": "/pets/pet_ssaikeulron.gif",
       "elementStats": {
         "earth": 8,
         "water": 0,
@@ -5811,7 +5811,7 @@
       "id": "513",
       "name": "푸타카",
       "source": "이상한사랑 (A)보상",
-      "imageLink": "/pets/pet_푸타카.gif",
+      "imageLink": "/pets/pet_putaka.gif",
       "elementStats": {
         "earth": 0,
         "water": 8,
@@ -5838,7 +5838,7 @@
       "id": "512",
       "name": "다크무이",
       "source": "초희귀 페트 필드포획",
-      "imageLink": "/pets/pet_다크무이.gif",
+      "imageLink": "/pets/pet_dakeumui.gif",
       "elementStats": {
         "earth": 0,
         "water": 5,
@@ -5865,7 +5865,7 @@
       "id": "511",
       "name": "아비시니안",
       "source": "샴기르 마을 1등복권 보상",
-      "imageLink": "/pets/pet_아비시니안.gif",
+      "imageLink": "/pets/pet_abisinian.gif",
       "elementStats": {
         "earth": 0,
         "water": 0,
@@ -5892,7 +5892,7 @@
       "id": "510",
       "name": "사르굴",
       "source": "사리온 진화",
-      "imageLink": "/pets/pet_사르굴.gif",
+      "imageLink": "/pets/pet_sareugul.gif",
       "elementStats": {
         "earth": 0,
         "water": 10,
@@ -5919,7 +5919,7 @@
       "id": "509",
       "name": "청룡",
       "source": "전투포인트상점",
-      "imageLink": "/pets/pet_청룡.webp",
+      "imageLink": "/pets/pet_cheongryong.webp",
       "elementStats": {
         "earth": 0,
         "water": 9,
@@ -5946,7 +5946,7 @@
       "id": "508",
       "name": "사리온",
       "source": "라돈타전리품",
-      "imageLink": "/pets/pet_사리온.webp",
+      "imageLink": "/pets/pet_sarion.webp",
       "elementStats": {
         "earth": 0,
         "water": 0,
@@ -5973,7 +5973,7 @@
       "id": "507",
       "name": "금조",
       "source": "페트진화",
-      "imageLink": "/pets/pet_금조.webp",
+      "imageLink": "/pets/pet_geumjo.webp",
       "elementStats": {
         "earth": 0,
         "water": 0,
@@ -6000,7 +6000,7 @@
       "id": "506",
       "name": "어린금조",
       "source": "이벤트페트",
-      "imageLink": "/pets/pet_어린금조.webp",
+      "imageLink": "/pets/pet_eoringeumjo.webp",
       "elementStats": {
         "earth": 0,
         "water": 0,
@@ -6027,7 +6027,7 @@
       "id": "505",
       "name": "실버우리(환)",
       "source": "페트환생",
-      "imageLink": "/pets/pet_실버우리(환).gif",
+      "imageLink": "/pets/pet_silbeouri_hwan.gif",
       "elementStats": {
         "earth": 5,
         "water": 0,
@@ -6054,7 +6054,7 @@
       "id": "504",
       "name": "타이혼(환)",
       "source": "페트환생",
-      "imageLink": "/pets/pet_타이혼(환).webp",
+      "imageLink": "/pets/pet_taihon_hwan.webp",
       "elementStats": {
         "earth": 0,
         "water": 0,
@@ -6081,7 +6081,7 @@
       "id": "503",
       "name": "돌가로스(환)",
       "source": "페트환생",
-      "imageLink": "/pets/pet_돌가로스(환).webp",
+      "imageLink": "/pets/pet_dolgaroseu_hwan.webp",
       "elementStats": {
         "earth": 9,
         "water": 0,
@@ -6108,7 +6108,7 @@
       "id": "502",
       "name": "비트로스(환)",
       "source": "페트환생",
-      "imageLink": "/pets/pet_비트로스(환).webp",
+      "imageLink": "/pets/pet_biteuroseu_hwan.webp",
       "elementStats": {
         "earth": 0,
         "water": 0,
@@ -6135,7 +6135,7 @@
       "id": "501",
       "name": "가가로스(환)",
       "source": "페트환생",
-      "imageLink": "/pets/pet_가가로스(환).webp",
+      "imageLink": "/pets/pet_gagaroseu_hwan.webp",
       "elementStats": {
         "earth": 0,
         "water": 2,
@@ -6162,7 +6162,7 @@
       "id": "500",
       "name": "메가로스(환)",
       "source": "페트환생",
-      "imageLink": "/pets/pet_메가로스(환).webp",
+      "imageLink": "/pets/pet_megaroseu_hwan.webp",
       "elementStats": {
         "earth": 4,
         "water": 6,
@@ -6189,7 +6189,7 @@
       "id": "499",
       "name": "어린풍백",
       "source": "전투포인트상점",
-      "imageLink": "/pets/pet_어린풍백.gif",
+      "imageLink": "/pets/pet_eorinpungbaek.gif",
       "elementStats": {
         "earth": 5,
         "water": 0,
@@ -6216,7 +6216,7 @@
       "id": "498",
       "name": "파이어노르",
       "source": "파이어노르",
-      "imageLink": "/pets/pet_파이어노르.gif",
+      "imageLink": "/pets/pet_paieonoreu.gif",
       "elementStats": {
         "earth": 0,
         "water": 0,
@@ -6243,7 +6243,7 @@
       "id": "497",
       "name": "흑룡(환)",
       "source": "페트환생",
-      "imageLink": "/pets/pet_흑룡(환).gif",
+      "imageLink": "/pets/pet_heukryong_hwan.gif",
       "elementStats": {
         "earth": 5,
         "water": 0,
@@ -6270,7 +6270,7 @@
       "id": "496",
       "name": "테로노돈(환)",
       "source": "페트환생",
-      "imageLink": "/pets/pet_테로노돈(환).gif",
+      "imageLink": "/pets/pet_teronodon_hwan.gif",
       "elementStats": {
         "earth": 0,
         "water": 10,
@@ -6297,7 +6297,7 @@
       "id": "495",
       "name": "베가",
       "source": "영혼석",
-      "imageLink": "/pets/pet_베가.gif",
+      "imageLink": "/pets/pet_bega.gif",
       "elementStats": {
         "earth": 0,
         "water": 10,
@@ -6324,7 +6324,7 @@
       "id": "494",
       "name": "청주작",
       "source": "어린 청주작 진화",
-      "imageLink": "/pets/pet_청주작.gif",
+      "imageLink": "/pets/pet_cheongjujak.gif",
       "elementStats": {
         "earth": 0,
         "water": 9,
@@ -6351,7 +6351,7 @@
       "id": "493",
       "name": "어린 청주작",
       "source": "지원페트",
-      "imageLink": "/pets/pet_어린 청주작.gif",
+      "imageLink": "/pets/pet_eorin_cheongjujak.gif",
       "elementStats": {
         "earth": 0,
         "water": 9,
@@ -6378,7 +6378,7 @@
       "id": "492",
       "name": "아스타로",
       "source": "맘모스 쿠폰 50회차",
-      "imageLink": "/pets/pet_아스타로.gif",
+      "imageLink": "/pets/pet_aseutaro.gif",
       "elementStats": {
         "earth": 0,
         "water": 8,
@@ -6405,7 +6405,7 @@
       "id": "491",
       "name": "메가북이(환)",
       "source": "메가북이 환생",
-      "imageLink": "/pets/pet_메가북이(환).gif",
+      "imageLink": "/pets/pet_megabuki_hwan.gif",
       "elementStats": {
         "earth": 2,
         "water": 0,
@@ -6432,7 +6432,7 @@
       "id": "490",
       "name": "레피온(환)",
       "source": "레피온 환생",
-      "imageLink": "/pets/pet_레피온(환).gif",
+      "imageLink": "/pets/pet_repion_hwan.gif",
       "elementStats": {
         "earth": 0,
         "water": 2,
@@ -6459,7 +6459,7 @@
       "id": "489",
       "name": "라고고(환)",
       "source": "라고고 환생",
-      "imageLink": "/pets/pet_라고고(환).webp",
+      "imageLink": "/pets/pet_ragogo_hwan.webp",
       "elementStats": {
         "earth": 0,
         "water": 0,
@@ -6486,7 +6486,7 @@
       "id": "488",
       "name": "볼케(환)",
       "source": "볼케 환",
-      "imageLink": "/pets/pet_볼케(환).gif",
+      "imageLink": "/pets/pet_bolke_hwan.gif",
       "elementStats": {
         "earth": 0,
         "water": 0,
@@ -6513,7 +6513,7 @@
       "id": "487",
       "name": "신백호(환)",
       "source": "신백호 환",
-      "imageLink": "/pets/pet_신백호(환).gif",
+      "imageLink": "/pets/pet_sinbaekho_hwan.gif",
       "elementStats": {
         "earth": 7,
         "water": 3,
@@ -6540,7 +6540,7 @@
       "id": "486",
       "name": "헤티루SD(환)",
       "source": "헤티루SD환생",
-      "imageLink": "/pets/pet_헤티루SD(환).gif",
+      "imageLink": "/pets/pet_hetirusd_hwan.gif",
       "elementStats": {
         "earth": 0,
         "water": 0,
@@ -6567,7 +6567,7 @@
       "id": "485",
       "name": "헤티소SD(환)",
       "source": "헤티소SD환",
-      "imageLink": "/pets/pet_헤티소SD(환).gif",
+      "imageLink": "/pets/pet_hetisosd_hwan.gif",
       "elementStats": {
         "earth": 0,
         "water": 0,
@@ -6594,7 +6594,7 @@
       "id": "484",
       "name": "헤티아SD(환)",
       "source": "헤티아SD 환생",
-      "imageLink": "/pets/pet_헤티아SD(환).gif",
+      "imageLink": "/pets/pet_hetiasd_hwan.gif",
       "elementStats": {
         "earth": 0,
         "water": 10,
@@ -6621,7 +6621,7 @@
       "id": "483",
       "name": "헤티르SD(환)",
       "source": "헤티르 환생",
-      "imageLink": "/pets/pet_헤티르SD(환).gif",
+      "imageLink": "/pets/pet_hetireusd_hwan.gif",
       "elementStats": {
         "earth": 10,
         "water": 0,
@@ -6648,7 +6648,7 @@
       "id": "482",
       "name": "테르가(환)",
       "source": "테르가 환생",
-      "imageLink": "/pets/pet_테르가(환).gif",
+      "imageLink": "/pets/pet_tereuga_hwan.gif",
       "elementStats": {
         "earth": 0,
         "water": 5,
@@ -6675,7 +6675,7 @@
       "id": "481",
       "name": "호크",
       "source": "호크",
-      "imageLink": "/pets/pet_호크.gif",
+      "imageLink": "/pets/pet_hokeu.gif",
       "elementStats": {
         "earth": 0,
         "water": 0,
@@ -6702,7 +6702,7 @@
       "id": "480",
       "name": "천호(환)",
       "source": "페트환생",
-      "imageLink": "/pets/pet_천호(환).gif",
+      "imageLink": "/pets/pet_cheonho_hwan.gif",
       "elementStats": {
         "earth": 0,
         "water": 10,
@@ -6729,7 +6729,7 @@
       "id": "479",
       "name": "주작(환)",
       "source": "주작 환생",
-      "imageLink": "/pets/pet_주작(환).gif",
+      "imageLink": "/pets/pet_jujak_hwan.gif",
       "elementStats": {
         "earth": 0,
         "water": 0,
@@ -6756,7 +6756,7 @@
       "id": "478",
       "name": "풍백(환)",
       "source": "풍백 환생",
-      "imageLink": "/pets/pet_풍백(환).gif",
+      "imageLink": "/pets/pet_pungbaek_hwan.gif",
       "elementStats": {
         "earth": 5,
         "water": 0,
@@ -6783,7 +6783,7 @@
       "id": "477",
       "name": "볼케",
       "source": "온천랜드퀘스트",
-      "imageLink": "/pets/pet_볼케.gif",
+      "imageLink": "/pets/pet_bolke.gif",
       "elementStats": {
         "earth": 0,
         "water": 0,
@@ -6810,7 +6810,7 @@
       "id": "476",
       "name": "풍운룡",
       "source": "후원보상",
-      "imageLink": "/pets/pet_풍운룡.webp",
+      "imageLink": "/pets/pet_pungunryong.webp",
       "elementStats": {
         "earth": 0,
         "water": 0,
@@ -6837,7 +6837,7 @@
       "id": "475",
       "name": "천 룡",
       "source": "후원보상",
-      "imageLink": "/pets/pet_천 룡.webp",
+      "imageLink": "/pets/pet_cheon_ryong.webp",
       "elementStats": {
         "earth": 0,
         "water": 0,
@@ -6864,7 +6864,7 @@
       "id": "474",
       "name": "실버로스",
       "source": "만모 포획처(희귀)",
-      "imageLink": "/pets/pet_실버로스.gif",
+      "imageLink": "/pets/pet_silbeoroseu.gif",
       "elementStats": {
         "earth": 5,
         "water": 5,
@@ -6891,7 +6891,7 @@
       "id": "473",
       "name": "노라돈",
       "source": "고르돈 포획처(희귀)",
-      "imageLink": "/pets/pet_노라돈.gif",
+      "imageLink": "/pets/pet_noradon.gif",
       "elementStats": {
         "earth": 0,
         "water": 0,
@@ -6918,7 +6918,7 @@
       "id": "472",
       "name": "페루루",
       "source": "금화상점",
-      "imageLink": "/pets/pet_페루루.gif",
+      "imageLink": "/pets/pet_peruru.gif",
       "elementStats": {
         "earth": 0,
         "water": 0,
@@ -6945,7 +6945,7 @@
       "id": "471",
       "name": "고루루",
       "source": "고르고르 포획처(희귀)",
-      "imageLink": "/pets/pet_고루루.gif",
+      "imageLink": "/pets/pet_goruru.gif",
       "elementStats": {
         "earth": 0,
         "water": 5,
@@ -6972,7 +6972,7 @@
       "id": "470",
       "name": "암흑골로스",
       "source": "한정판매",
-      "imageLink": "/pets/pet_암흑골로스.gif",
+      "imageLink": "/pets/pet_amheukgolroseu.gif",
       "elementStats": {
         "earth": 0,
         "water": 0,
@@ -6999,7 +6999,7 @@
       "id": "469",
       "name": "에르모미",
       "source": "레이드보",
-      "imageLink": "/pets/pet_에르모미.gif",
+      "imageLink": "/pets/pet_ereumomi.gif",
       "elementStats": {
         "earth": 0,
         "water": 0,
@@ -7026,7 +7026,7 @@
       "id": "468",
       "name": "흑호",
       "source": "오랑",
-      "imageLink": "/pets/pet_흑호.gif",
+      "imageLink": "/pets/pet_heukho.gif",
       "elementStats": {
         "earth": 0,
         "water": 0,
@@ -7053,7 +7053,7 @@
       "id": "467",
       "name": "이블티거",
       "source": "오랑",
-      "imageLink": "/pets/pet_이블티거.gif",
+      "imageLink": "/pets/pet_ibeultigeo.gif",
       "elementStats": {
         "earth": 0,
         "water": 2,
@@ -7080,7 +7080,7 @@
       "id": "466",
       "name": "청호",
       "source": "오랑",
-      "imageLink": "/pets/pet_청호.gif",
+      "imageLink": "/pets/pet_cheongho.gif",
       "elementStats": {
         "earth": 2,
         "water": 8,
@@ -7107,7 +7107,7 @@
       "id": "465",
       "name": "황호",
       "source": "오랑",
-      "imageLink": "/pets/pet_황호.gif",
+      "imageLink": "/pets/pet_hwangho.gif",
       "elementStats": {
         "earth": 8,
         "water": 0,
@@ -7134,7 +7134,7 @@
       "id": "464",
       "name": "흑풍",
       "source": "맘모스쿠폰",
-      "imageLink": "/pets/pet_흑풍.gif",
+      "imageLink": "/pets/pet_heukpung.gif",
       "elementStats": {
         "earth": 9,
         "water": 0,
@@ -7161,7 +7161,7 @@
       "id": "463",
       "name": "토우트",
       "source": "맘모스쿠폰",
-      "imageLink": "/pets/pet_토우트.gif",
+      "imageLink": "/pets/pet_touteu.gif",
       "elementStats": {
         "earth": 0,
         "water": 9,
@@ -7188,7 +7188,7 @@
       "id": "462",
       "name": "흑우트",
       "source": "맘모스쿠폰",
-      "imageLink": "/pets/pet_흑우트.gif",
+      "imageLink": "/pets/pet_heukuteu.gif",
       "elementStats": {
         "earth": 9,
         "water": 0,
@@ -7215,7 +7215,7 @@
       "id": "461",
       "name": "샤베르(진)",
       "source": "페트진화",
-      "imageLink": "/pets/pet_샤베르(진).gif",
+      "imageLink": "/pets/pet_syabereu_jin.gif",
       "elementStats": {
         "earth": 0,
         "water": 9,
@@ -7242,7 +7242,7 @@
       "id": "460",
       "name": "도철",
       "source": "듀얼상점",
-      "imageLink": "/pets/pet_도철.gif",
+      "imageLink": "/pets/pet_docheol.gif",
       "elementStats": {
         "earth": 0,
         "water": 5,
@@ -7269,7 +7269,7 @@
       "id": "459",
       "name": "파아란",
       "source": "이벤트보상",
-      "imageLink": "/pets/pet_파아란.gif",
+      "imageLink": "/pets/pet_paaran.gif",
       "elementStats": {
         "earth": 0,
         "water": 8,
@@ -7296,7 +7296,7 @@
       "id": "458",
       "name": "풍백",
       "source": "풍백의 영혼석",
-      "imageLink": "/pets/pet_풍백.gif",
+      "imageLink": "/pets/pet_pungbaek.gif",
       "elementStats": {
         "earth": 5,
         "water": 0,
@@ -7323,7 +7323,7 @@
       "id": "457",
       "name": "오시모미",
       "source": "레이드보상",
-      "imageLink": "/pets/pet_오시모미.gif",
+      "imageLink": "/pets/pet_osimomi.gif",
       "elementStats": {
         "earth": 0,
         "water": 9,
@@ -7350,7 +7350,7 @@
       "id": "456",
       "name": "타스무미",
       "source": "레이드보상",
-      "imageLink": "/pets/pet_타스무미.gif",
+      "imageLink": "/pets/pet_taseumumi.gif",
       "elementStats": {
         "earth": 9,
         "water": 1,
@@ -7377,7 +7377,7 @@
       "id": "455",
       "name": "테르가",
       "source": "맘쿠 50회 확정",
-      "imageLink": "/pets/pet_테르가.gif",
+      "imageLink": "/pets/pet_tereuga.gif",
       "elementStats": {
         "earth": 0,
         "water": 5,
@@ -7404,7 +7404,7 @@
       "id": "454",
       "name": "그리스네",
       "source": "레이드획득",
-      "imageLink": "/pets/pet_그리스네.gif",
+      "imageLink": "/pets/pet_geuriseune.gif",
       "elementStats": {
         "earth": 3,
         "water": 7,
@@ -7431,7 +7431,7 @@
       "id": "453",
       "name": "켄타르",
       "source": "레이드보상",
-      "imageLink": "/pets/pet_켄타르.gif",
+      "imageLink": "/pets/pet_kentareu.gif",
       "elementStats": {
         "earth": 0,
         "water": 8,
@@ -7458,7 +7458,7 @@
       "id": "452",
       "name": "환생얼룩우리",
       "source": "환생보상",
-      "imageLink": "/pets/pet_환생얼룩우리.gif",
+      "imageLink": "/pets/pet_hwansaengeolrukuri.gif",
       "elementStats": {
         "earth": 5,
         "water": 0,
@@ -7485,7 +7485,7 @@
       "id": "451",
       "name": "메가로스",
       "source": "+",
-      "imageLink": "/pets/pet_메가로스.gif",
+      "imageLink": "/pets/pet_megaroseu.gif",
       "elementStats": {
         "earth": 4,
         "water": 6,
@@ -7512,7 +7512,7 @@
       "id": "450",
       "name": "도라비스(환)",
       "source": "페트환생",
-      "imageLink": "/pets/pet_도라비스(환).gif",
+      "imageLink": "/pets/pet_dorabiseu_hwan.gif",
       "elementStats": {
         "earth": 0,
         "water": 0,
@@ -7539,7 +7539,7 @@
       "id": "449",
       "name": "우라노스",
       "source": "언딘 전리품 확률 보",
-      "imageLink": "/pets/pet_우라노스.gif",
+      "imageLink": "/pets/pet_uranoseu.gif",
       "elementStats": {
         "earth": 8,
         "water": 0,
@@ -7566,7 +7566,7 @@
       "id": "448",
       "name": "파베로스(환)",
       "source": "페트환생",
-      "imageLink": "/pets/pet_파베로스(환).gif",
+      "imageLink": "/pets/pet_paberoseu_hwan.gif",
       "elementStats": {
         "earth": 0,
         "water": 0,
@@ -7593,7 +7593,7 @@
       "id": "447",
       "name": "바우트(환)",
       "source": "페트환생",
-      "imageLink": "/pets/pet_바우트(환).gif",
+      "imageLink": "/pets/pet_bauteu_hwan.gif",
       "elementStats": {
         "earth": 0,
         "water": 1,
@@ -7620,7 +7620,7 @@
       "id": "446",
       "name": "샤크론(환)",
       "source": "페트환생",
-      "imageLink": "/pets/pet_샤크론(환).gif",
+      "imageLink": "/pets/pet_syakeuron_hwan.gif",
       "elementStats": {
         "earth": 0,
         "water": 10,
@@ -7647,7 +7647,7 @@
       "id": "445",
       "name": "카우거(환)",
       "source": "페트환생",
-      "imageLink": "/pets/pet_카우거(환).gif",
+      "imageLink": "/pets/pet_kaugeo_hwan.gif",
       "elementStats": {
         "earth": 5,
         "water": 0,
@@ -7674,7 +7674,7 @@
       "id": "444",
       "name": "골드테라곤(환)",
       "source": "페트환",
-      "imageLink": "/pets/pet_골드테라곤(환).gif",
+      "imageLink": "/pets/pet_goldeuteragon_hwan.gif",
       "elementStats": {
         "earth": 2,
         "water": 0,
@@ -7701,7 +7701,7 @@
       "id": "443",
       "name": "카르곤(환)",
       "source": "페트환생",
-      "imageLink": "/pets/pet_카르곤(환).gif",
+      "imageLink": "/pets/pet_kareugon_hwan.gif",
       "elementStats": {
         "earth": 0,
         "water": 0,
@@ -7728,7 +7728,7 @@
       "id": "442",
       "name": "카르곤",
       "source": "-",
-      "imageLink": "/pets/pet_카르곤.webp",
+      "imageLink": "/pets/pet_kareugon.webp",
       "elementStats": {
         "earth": 0,
         "water": 0,
@@ -7755,7 +7755,7 @@
       "id": "441",
       "name": "테라곤(환)",
       "source": "페트환생",
-      "imageLink": "/pets/pet_테라곤(환).gif",
+      "imageLink": "/pets/pet_teragon_hwan.gif",
       "elementStats": {
         "earth": 0,
         "water": 0,
@@ -7782,7 +7782,7 @@
       "id": "440",
       "name": "델푸스(환)",
       "source": "페트환생",
-      "imageLink": "/pets/pet_델푸스(환).gif",
+      "imageLink": "/pets/pet_delpuseu_hwan.gif",
       "elementStats": {
         "earth": 9,
         "water": 1,
@@ -7809,7 +7809,7 @@
       "id": "439",
       "name": "울푸스(환)",
       "source": "페트환생",
-      "imageLink": "/pets/pet_울푸스(환).gif",
+      "imageLink": "/pets/pet_ulpuseu_hwan.gif",
       "elementStats": {
         "earth": 0,
         "water": 10,
@@ -7836,7 +7836,7 @@
       "id": "438",
       "name": "갈푸스(환)",
       "source": "페트환생",
-      "imageLink": "/pets/pet_갈푸스(환).gif",
+      "imageLink": "/pets/pet_galpuseu_hwan.gif",
       "elementStats": {
         "earth": 0,
         "water": 0,
@@ -7863,7 +7863,7 @@
       "id": "437",
       "name": "프리토스(환)",
       "source": "페트환생",
-      "imageLink": "/pets/pet_프리토스(환).gif",
+      "imageLink": "/pets/pet_peuritoseu_hwan.gif",
       "elementStats": {
         "earth": 0,
         "water": 0,
@@ -7890,7 +7890,7 @@
       "id": "436",
       "name": "프라키토스(환)",
       "source": "페트환생",
-      "imageLink": "/pets/pet_프라키토스(환).gif",
+      "imageLink": "/pets/pet_peurakitoseu_hwan.gif",
       "elementStats": {
         "earth": 0,
         "water": 2,
@@ -7917,7 +7917,7 @@
       "id": "435",
       "name": "다이노스(환)",
       "source": "페트환생",
-      "imageLink": "/pets/pet_다이노스(환).gif",
+      "imageLink": "/pets/pet_dainoseu_hwan.gif",
       "elementStats": {
         "earth": 3,
         "water": 7,
@@ -7944,7 +7944,7 @@
       "id": "434",
       "name": "다이노(환)",
       "source": "페트환생",
-      "imageLink": "/pets/pet_다이노(환).gif",
+      "imageLink": "/pets/pet_daino_hwan.gif",
       "elementStats": {
         "earth": 8,
         "water": 1,
@@ -7971,7 +7971,7 @@
       "id": "433",
       "name": "마모나스(환)",
       "source": "페트환생",
-      "imageLink": "/pets/pet_마모나스(환).gif",
+      "imageLink": "/pets/pet_mamonaseu_hwan.gif",
       "elementStats": {
         "earth": 7,
         "water": 3,
@@ -7998,7 +7998,7 @@
       "id": "432",
       "name": "만모로스(환)",
       "source": "페트환생",
-      "imageLink": "/pets/pet_만모로스(환).gif",
+      "imageLink": "/pets/pet_manmoroseu_hwan.gif",
       "elementStats": {
         "earth": 0,
         "water": 5,
@@ -8025,7 +8025,7 @@
       "id": "431",
       "name": "만모르(환)",
       "source": "페트환생",
-      "imageLink": "/pets/pet_만모르(환).gif",
+      "imageLink": "/pets/pet_manmoreu_hwan.gif",
       "elementStats": {
         "earth": 0,
         "water": 2,
@@ -8052,7 +8052,7 @@
       "id": "430",
       "name": "만모(환)",
       "source": "페트환생",
-      "imageLink": "/pets/pet_만모(환).gif",
+      "imageLink": "/pets/pet_manmo_hwan.gif",
       "elementStats": {
         "earth": 9,
         "water": 1,
@@ -8079,7 +8079,7 @@
       "id": "429",
       "name": "지가로스(환)",
       "source": "페트환생",
-      "imageLink": "/pets/pet_지가로스(환).gif",
+      "imageLink": "/pets/pet_jigaroseu_hwan.gif",
       "elementStats": {
         "earth": 9,
         "water": 0,
@@ -8106,7 +8106,7 @@
       "id": "428",
       "name": "칼로스(환)",
       "source": "페트환생",
-      "imageLink": "/pets/pet_칼로스(환).gif",
+      "imageLink": "/pets/pet_kalroseu_hwan.gif",
       "elementStats": {
         "earth": 0,
         "water": 1,
@@ -8133,7 +8133,7 @@
       "id": "427",
       "name": "카키(환)",
       "source": "페트환생",
-      "imageLink": "/pets/pet_카키(환).webp",
+      "imageLink": "/pets/pet_kaki_hwan.webp",
       "elementStats": {
         "earth": 0,
         "water": 0,
@@ -8160,7 +8160,7 @@
       "id": "426",
       "name": "호르쿠(환)",
       "source": "페트환생",
-      "imageLink": "/pets/pet_호르쿠(환).webp",
+      "imageLink": "/pets/pet_horeuku_hwan.webp",
       "elementStats": {
         "earth": 3,
         "water": 0,
@@ -8187,7 +8187,7 @@
       "id": "425",
       "name": "쿠쿠(환)",
       "source": "페트환생",
-      "imageLink": "/pets/pet_쿠쿠(환).webp",
+      "imageLink": "/pets/pet_kuku_hwan.webp",
       "elementStats": {
         "earth": 0,
         "water": 0,
@@ -8214,7 +8214,7 @@
       "id": "424",
       "name": "타키(환)",
       "source": "페트환생",
-      "imageLink": "/pets/pet_타키(환).webp",
+      "imageLink": "/pets/pet_taki_hwan.webp",
       "elementStats": {
         "earth": 0,
         "water": 0,
@@ -8241,7 +8241,7 @@
       "id": "423",
       "name": "아마란스",
       "source": "아마란진화",
-      "imageLink": "/pets/pet_아마란스.gif",
+      "imageLink": "/pets/pet_amaranseu.gif",
       "elementStats": {
         "earth": 2,
         "water": 8,
@@ -8268,7 +8268,7 @@
       "id": "422",
       "name": "그리프스",
       "source": "고오다진",
-      "imageLink": "/pets/pet_그리프스.gif",
+      "imageLink": "/pets/pet_geuripeuseu.gif",
       "elementStats": {
         "earth": 2,
         "water": 0,
@@ -8295,7 +8295,7 @@
       "id": "421",
       "name": "풍마(변종)",
       "source": "페트진",
-      "imageLink": "/pets/pet_풍마(변종).gif",
+      "imageLink": "/pets/pet_pungma_byeonjong.gif",
       "elementStats": {
         "earth": 0,
         "water": 0,
@@ -8322,7 +8322,7 @@
       "id": "420",
       "name": "화마(변종)",
       "source": "페트진화",
-      "imageLink": "/pets/pet_화마(변종).gif",
+      "imageLink": "/pets/pet_hwama_byeonjong.gif",
       "elementStats": {
         "earth": 0,
         "water": 0,
@@ -8349,7 +8349,7 @@
       "id": "419",
       "name": "수마(변종)",
       "source": "페트진화",
-      "imageLink": "/pets/pet_수마(변종).gif",
+      "imageLink": "/pets/pet_suma_byeonjong.gif",
       "elementStats": {
         "earth": 1,
         "water": 9,
@@ -8376,7 +8376,7 @@
       "id": "418",
       "name": "지마(변종)",
       "source": "페트진화",
-      "imageLink": "/pets/pet_지마(변종).gif",
+      "imageLink": "/pets/pet_jima_byeonjong.gif",
       "elementStats": {
         "earth": 9,
         "water": 1,
@@ -8403,7 +8403,7 @@
       "id": "417",
       "name": "막쿠마(진)",
       "source": "페트진화",
-      "imageLink": "/pets/pet_막쿠마(진).gif",
+      "imageLink": "/pets/pet_makkuma_jin.gif",
       "elementStats": {
         "earth": 5,
         "water": 0,
@@ -8430,7 +8430,7 @@
       "id": "416",
       "name": "막쿠마",
       "source": "-",
-      "imageLink": "/pets/pet_막쿠마.gif",
+      "imageLink": "/pets/pet_makkuma.gif",
       "elementStats": {
         "earth": 5,
         "water": 0,
@@ -8457,7 +8457,7 @@
       "id": "415",
       "name": "한가름(진)",
       "source": "-",
-      "imageLink": "/pets/pet_한가름(진).gif",
+      "imageLink": "/pets/pet_hangareum_jin.gif",
       "elementStats": {
         "earth": 0,
         "water": 6,
@@ -8484,7 +8484,7 @@
       "id": "414",
       "name": "한가름",
       "source": "-",
-      "imageLink": "/pets/pet_한가름.gif",
+      "imageLink": "/pets/pet_hangareum.gif",
       "elementStats": {
         "earth": 0,
         "water": 6,
@@ -8511,7 +8511,7 @@
       "id": "413",
       "name": "설표",
       "source": "금화상점",
-      "imageLink": "/pets/pet_설표.gif",
+      "imageLink": "/pets/pet_seolpyo.gif",
       "elementStats": {
         "earth": 7,
         "water": 0,
@@ -8538,7 +8538,7 @@
       "id": "412",
       "name": "설표(환)",
       "source": "페트환",
-      "imageLink": "/pets/pet_설표(환).gif",
+      "imageLink": "/pets/pet_seolpyo_hwan.gif",
       "elementStats": {
         "earth": 7,
         "water": 0,
@@ -8565,7 +8565,7 @@
       "id": "411",
       "name": "도르도르(진)",
       "source": "페트진화",
-      "imageLink": "/pets/pet_도르도르(진).gif",
+      "imageLink": "/pets/pet_doreudoreu_jin.gif",
       "elementStats": {
         "earth": 3,
         "water": 7,
@@ -8592,7 +8592,7 @@
       "id": "410",
       "name": "고르고르(진)",
       "source": "페트진화",
-      "imageLink": "/pets/pet_고르고르(진).gif",
+      "imageLink": "/pets/pet_goreugoreu_jin.gif",
       "elementStats": {
         "earth": 0,
         "water": 0,
@@ -8619,7 +8619,7 @@
       "id": "409",
       "name": "골드 골로스",
       "source": "맘모스쿠폰",
-      "imageLink": "/pets/pet_골드 골로스.gif",
+      "imageLink": "/pets/pet_goldeu_golroseu.gif",
       "elementStats": {
         "earth": 0,
         "water": 0,
@@ -8646,7 +8646,7 @@
       "id": "408",
       "name": "메가고르돈",
       "source": "헤메라의 파편 진화",
-      "imageLink": "/pets/pet_메가고르돈.webp",
+      "imageLink": "/pets/pet_megagoreudon.webp",
       "elementStats": {
         "earth": 10,
         "water": 0,
@@ -8673,7 +8673,7 @@
       "id": "407",
       "name": "지옥갈푸스",
       "source": "헤메라의 파편 진화",
-      "imageLink": "/pets/pet_지옥갈푸스.webp",
+      "imageLink": "/pets/pet_jiokgalpuseu.webp",
       "elementStats": {
         "earth": 0,
         "water": 0,
@@ -8700,7 +8700,7 @@
       "id": "406",
       "name": "지마(진)",
       "source": "페트진화",
-      "imageLink": "/pets/pet_지마(진).gif",
+      "imageLink": "/pets/pet_jima_jin.gif",
       "elementStats": {
         "earth": 8,
         "water": 2,
@@ -8727,7 +8727,7 @@
       "id": "405",
       "name": "화마(진)",
       "source": "페트진화",
-      "imageLink": "/pets/pet_화마(진).gif",
+      "imageLink": "/pets/pet_hwama_jin.gif",
       "elementStats": {
         "earth": 0,
         "water": 0,
@@ -8754,7 +8754,7 @@
       "id": "404",
       "name": "수마(진)",
       "source": "페트진화",
-      "imageLink": "/pets/pet_수마(진).gif",
+      "imageLink": "/pets/pet_suma_jin.gif",
       "elementStats": {
         "earth": 2,
         "water": 8,
@@ -8781,7 +8781,7 @@
       "id": "403",
       "name": "풍마(진)",
       "source": "페트진화",
-      "imageLink": "/pets/pet_풍마(진).gif",
+      "imageLink": "/pets/pet_pungma_jin.gif",
       "elementStats": {
         "earth": 0,
         "water": 0,
@@ -8808,7 +8808,7 @@
       "id": "402",
       "name": "풍마",
       "source": "맘모스쿠폰",
-      "imageLink": "/pets/pet_풍마.gif",
+      "imageLink": "/pets/pet_pungma.gif",
       "elementStats": {
         "earth": 0,
         "water": 0,
@@ -8835,7 +8835,7 @@
       "id": "401",
       "name": "수마",
       "source": "맘모스쿠폰",
-      "imageLink": "/pets/pet_수마.gif",
+      "imageLink": "/pets/pet_suma.gif",
       "elementStats": {
         "earth": 2,
         "water": 8,
@@ -8862,7 +8862,7 @@
       "id": "400",
       "name": "지마",
       "source": "맘모스쿠폰",
-      "imageLink": "/pets/pet_지마.gif",
+      "imageLink": "/pets/pet_jima.gif",
       "elementStats": {
         "earth": 8,
         "water": 2,
@@ -8889,7 +8889,7 @@
       "id": "399",
       "name": "화마",
       "source": "맘모스쿠폰",
-      "imageLink": "/pets/pet_화마.gif",
+      "imageLink": "/pets/pet_hwama.gif",
       "elementStats": {
         "earth": 0,
         "water": 0,
@@ -8916,7 +8916,7 @@
       "id": "398",
       "name": "파이어 킹 드래곤",
       "source": "후원보상",
-      "imageLink": "/pets/pet_파이어 킹 드래곤.gif",
+      "imageLink": "/pets/pet_paieo_king_deuraegon.gif",
       "elementStats": {
         "earth": 0,
         "water": 0,
@@ -8943,7 +8943,7 @@
       "id": "397",
       "name": "레드 드래곤",
       "source": "후원보상",
-      "imageLink": "/pets/pet_레드 드래곤.gif",
+      "imageLink": "/pets/pet_redeu_deuraegon.gif",
       "elementStats": {
         "earth": 0,
         "water": 2,
@@ -8970,7 +8970,7 @@
       "id": "396",
       "name": "어린 레드 드래곤",
       "source": "후원보상페트",
-      "imageLink": "/pets/pet_어린 레드 드래곤.gif",
+      "imageLink": "/pets/pet_eorin_redeu_deuraegon.gif",
       "elementStats": {
         "earth": 0,
         "water": 2,
@@ -8997,7 +8997,7 @@
       "id": "395",
       "name": "고로",
       "source": "환수강림 랜덤주머니",
-      "imageLink": "/pets/pet_고로.gif",
+      "imageLink": "/pets/pet_goro.gif",
       "elementStats": {
         "earth": 0,
         "water": 0,
@@ -9024,7 +9024,7 @@
       "id": "394",
       "name": "로코",
       "source": "환수강림 랜덤주머니",
-      "imageLink": "/pets/pet_로코.gif",
+      "imageLink": "/pets/pet_roko.gif",
       "elementStats": {
         "earth": 0,
         "water": 1,
@@ -9051,7 +9051,7 @@
       "id": "393",
       "name": "키로",
       "source": "환수강림 랜덤주머니",
-      "imageLink": "/pets/pet_키로.gif",
+      "imageLink": "/pets/pet_kiro.gif",
       "elementStats": {
         "earth": 1,
         "water": 9,
@@ -9078,7 +9078,7 @@
       "id": "392",
       "name": "크루거",
       "source": "환수강림 랜덤주머니",
-      "imageLink": "/pets/pet_크루거.gif",
+      "imageLink": "/pets/pet_keurugeo.gif",
       "elementStats": {
         "earth": 0,
         "water": 8,
@@ -9105,7 +9105,7 @@
       "id": "391",
       "name": "샤우트",
       "source": "환수강림 랜덤주머니",
-      "imageLink": "/pets/pet_샤우트.gif",
+      "imageLink": "/pets/pet_syauteu.gif",
       "elementStats": {
         "earth": 5,
         "water": 0,
@@ -9132,7 +9132,7 @@
       "id": "390",
       "name": "레오딘",
       "source": "재활용상점",
-      "imageLink": "/pets/pet_레오딘.webp",
+      "imageLink": "/pets/pet_reodin.webp",
       "elementStats": {
         "earth": 8,
         "water": 2,
@@ -9159,7 +9159,7 @@
       "id": "389",
       "name": "메가북이",
       "source": "맘모스쿠폰 50회 확정",
-      "imageLink": "/pets/pet_메가북이.gif",
+      "imageLink": "/pets/pet_megabuki.gif",
       "elementStats": {
         "earth": 2,
         "water": 0,
@@ -9186,7 +9186,7 @@
       "id": "388",
       "name": "카가로스",
       "source": "스톤 상점",
-      "imageLink": "/pets/pet_카가로스.gif",
+      "imageLink": "/pets/pet_kagaroseu.gif",
       "elementStats": {
         "earth": 0,
         "water": 3,
@@ -9213,7 +9213,7 @@
       "id": "387",
       "name": "초르초르(환)",
       "source": "페트환생",
-      "imageLink": "/pets/pet_초르초르(환).gif",
+      "imageLink": "/pets/pet_choreuchoreu_hwan.gif",
       "elementStats": {
         "earth": 8,
         "water": 0,
@@ -9240,7 +9240,7 @@
       "id": "386",
       "name": "초르초르(진)",
       "source": "페트진화",
-      "imageLink": "/pets/pet_초르초르(진).gif",
+      "imageLink": "/pets/pet_choreuchoreu_jin.gif",
       "elementStats": {
         "earth": 8,
         "water": 0,
@@ -9267,7 +9267,7 @@
       "id": "385",
       "name": "베라라(환)",
       "source": "페트환생",
-      "imageLink": "/pets/pet_베라라(환).gif",
+      "imageLink": "/pets/pet_berara_hwan.gif",
       "elementStats": {
         "earth": 0,
         "water": 0,
@@ -9294,7 +9294,7 @@
       "id": "384",
       "name": "베라라(진)",
       "source": "페트진화",
-      "imageLink": "/pets/pet_베라라(진).gif",
+      "imageLink": "/pets/pet_berara_jin.gif",
       "elementStats": {
         "earth": 0,
         "water": 0,
@@ -9321,7 +9321,7 @@
       "id": "383",
       "name": "페트(환)",
       "source": "페트환생",
-      "imageLink": "/pets/pet_페트(환).gif",
+      "imageLink": "/pets/pet_peteu_hwan.gif",
       "elementStats": {
         "earth": 7,
         "water": 0,
@@ -9348,7 +9348,7 @@
       "id": "382",
       "name": "설표(진)",
       "source": "페트진화",
-      "imageLink": "/pets/pet_설표(진).gif",
+      "imageLink": "/pets/pet_seolpyo_jin.gif",
       "elementStats": {
         "earth": 7,
         "water": 0,
@@ -9375,7 +9375,7 @@
       "id": "381",
       "name": "도르도르(환)",
       "source": "페트환생",
-      "imageLink": "/pets/pet_도르도르(환).gif",
+      "imageLink": "/pets/pet_doreudoreu_hwan.gif",
       "elementStats": {
         "earth": 3,
         "water": 7,
@@ -9402,7 +9402,7 @@
       "id": "380",
       "name": "골로스(환)",
       "source": "페트환생",
-      "imageLink": "/pets/pet_골로스(환).gif",
+      "imageLink": "/pets/pet_golroseu_hwan.gif",
       "elementStats": {
         "earth": 0,
         "water": 0,
@@ -9429,7 +9429,7 @@
       "id": "379",
       "name": "골로스(진)",
       "source": "페트진화",
-      "imageLink": "/pets/pet_골로스(진).gif",
+      "imageLink": "/pets/pet_golroseu_jin.gif",
       "elementStats": {
         "earth": 0,
         "water": 0,
@@ -9456,7 +9456,7 @@
       "id": "378",
       "name": "골로스",
       "source": "보상페트",
-      "imageLink": "/pets/pet_골로스.webp",
+      "imageLink": "/pets/pet_golroseu.webp",
       "elementStats": {
         "earth": 0,
         "water": 0,
@@ -9483,7 +9483,7 @@
       "id": "377",
       "name": "검호(진)",
       "source": "페트진화",
-      "imageLink": "/pets/pet_검호(진).gif",
+      "imageLink": "/pets/pet_geomho_jin.gif",
       "elementStats": {
         "earth": 0,
         "water": 0,
@@ -9510,7 +9510,7 @@
       "id": "376",
       "name": "검호(환)",
       "source": "페트환생",
-      "imageLink": "/pets/pet_검호(환).gif",
+      "imageLink": "/pets/pet_geomho_hwan.gif",
       "elementStats": {
         "earth": 0,
         "water": 0,
@@ -9537,7 +9537,7 @@
       "id": "375",
       "name": "검호",
       "source": "'",
-      "imageLink": "/pets/pet_검호.gif",
+      "imageLink": "/pets/pet_geomho.gif",
       "elementStats": {
         "earth": 0,
         "water": 0,
@@ -9564,7 +9564,7 @@
       "id": "374",
       "name": "모가로스(환)",
       "source": "페트환생",
-      "imageLink": "/pets/pet_모가로스(환).gif",
+      "imageLink": "/pets/pet_mogaroseu_hwan.gif",
       "elementStats": {
         "earth": 0,
         "water": 2,
@@ -9591,7 +9591,7 @@
       "id": "373",
       "name": "모가로스(진)",
       "source": "페트진화",
-      "imageLink": "/pets/pet_모가로스(진).gif",
+      "imageLink": "/pets/pet_mogaroseu_jin.gif",
       "elementStats": {
         "earth": 0,
         "water": 2,
@@ -9618,7 +9618,7 @@
       "id": "372",
       "name": "오르곤(환)",
       "source": "페트환생",
-      "imageLink": "/pets/pet_오르곤(환).gif",
+      "imageLink": "/pets/pet_oreugon_hwan.gif",
       "elementStats": {
         "earth": 0,
         "water": 8,
@@ -9645,7 +9645,7 @@
       "id": "371",
       "name": "오르곤(진)",
       "source": "페트진화",
-      "imageLink": "/pets/pet_오르곤(진).gif",
+      "imageLink": "/pets/pet_oreugon_jin.gif",
       "elementStats": {
         "earth": 0,
         "water": 8,
@@ -9672,7 +9672,7 @@
       "id": "370",
       "name": "오가로스(환)",
       "source": "페트환생",
-      "imageLink": "/pets/pet_오가로스(환).gif",
+      "imageLink": "/pets/pet_ogaroseu_hwan.gif",
       "elementStats": {
         "earth": 6,
         "water": 4,
@@ -9699,7 +9699,7 @@
       "id": "369",
       "name": "오가로스(진)",
       "source": "페트진화",
-      "imageLink": "/pets/pet_오가로스(진).gif",
+      "imageLink": "/pets/pet_ogaroseu_jin.gif",
       "elementStats": {
         "earth": 6,
         "water": 4,
@@ -9726,7 +9726,7 @@
       "id": "368",
       "name": "고르고르(환)",
       "source": "페트환생",
-      "imageLink": "/pets/pet_고르고르(환).webp",
+      "imageLink": "/pets/pet_goreugoreu_hwan.webp",
       "elementStats": {
         "earth": 0,
         "water": 0,
@@ -9753,7 +9753,7 @@
       "id": "367",
       "name": "오투투(환)",
       "source": "페트환생",
-      "imageLink": "/pets/pet_오투투(환).webp",
+      "imageLink": "/pets/pet_otutu_hwan.webp",
       "elementStats": {
         "earth": 6,
         "water": 0,
@@ -9780,7 +9780,7 @@
       "id": "366",
       "name": "오투투(진)",
       "source": "페트진화",
-      "imageLink": "/pets/pet_오투투(진).gif",
+      "imageLink": "/pets/pet_otutu_jin.gif",
       "elementStats": {
         "earth": 6,
         "water": 0,
@@ -9807,7 +9807,7 @@
       "id": "365",
       "name": "투투(환)",
       "source": "페트환생",
-      "imageLink": "/pets/pet_투투(환).webp",
+      "imageLink": "/pets/pet_tutu_hwan.webp",
       "elementStats": {
         "earth": 3,
         "water": 7,
@@ -9834,7 +9834,7 @@
       "id": "364",
       "name": "투투(진)",
       "source": "페트진화",
-      "imageLink": "/pets/pet_투투(진).gif",
+      "imageLink": "/pets/pet_tutu_jin.gif",
       "elementStats": {
         "earth": 3,
         "water": 7,
@@ -9861,7 +9861,7 @@
       "id": "363",
       "name": "우푸(환)",
       "source": "페트환생",
-      "imageLink": "/pets/pet_우푸(환).gif",
+      "imageLink": "/pets/pet_upu_hwan.gif",
       "elementStats": {
         "earth": 0,
         "water": 0,
@@ -9888,7 +9888,7 @@
       "id": "362",
       "name": "우푸(진)",
       "source": "페트진화",
-      "imageLink": "/pets/pet_우푸(진).webp",
+      "imageLink": "/pets/pet_upu_jin.webp",
       "elementStats": {
         "earth": 0,
         "water": 0,
@@ -9915,7 +9915,7 @@
       "id": "361",
       "name": "푸푸(환)",
       "source": "페트환생",
-      "imageLink": "/pets/pet_푸푸(환).webp",
+      "imageLink": "/pets/pet_pupu_hwan.webp",
       "elementStats": {
         "earth": 3,
         "water": 0,
@@ -9942,7 +9942,7 @@
       "id": "360",
       "name": "푸푸(진)",
       "source": "페트진화",
-      "imageLink": "/pets/pet_푸푸(진).gif",
+      "imageLink": "/pets/pet_pupu_jin.gif",
       "elementStats": {
         "earth": 3,
         "water": 0,
@@ -9969,7 +9969,7 @@
       "id": "359",
       "name": "해룡",
       "source": "재활용상점",
-      "imageLink": "/pets/pet_해룡.gif",
+      "imageLink": "/pets/pet_haeryong.gif",
       "elementStats": {
         "earth": 0,
         "water": 9,
@@ -9996,7 +9996,7 @@
       "id": "358",
       "name": "사이록스",
       "source": "금화상점",
-      "imageLink": "/pets/pet_사이록스.gif",
+      "imageLink": "/pets/pet_sairokseu.gif",
       "elementStats": {
         "earth": 0,
         "water": 0,
@@ -10023,7 +10023,7 @@
       "id": "357",
       "name": "크루저",
       "source": "재활용상점",
-      "imageLink": "/pets/pet_크루저.gif",
+      "imageLink": "/pets/pet_keurujeo.gif",
       "elementStats": {
         "earth": 1,
         "water": 9,
@@ -10050,7 +10050,7 @@
       "id": "356",
       "name": "카이저",
       "source": "재활용상점",
-      "imageLink": "/pets/pet_카이저.gif",
+      "imageLink": "/pets/pet_kaijeo.gif",
       "elementStats": {
         "earth": 0,
         "water": 0,
@@ -10077,7 +10077,7 @@
       "id": "355",
       "name": "봉봉",
       "source": "재활용상점",
-      "imageLink": "/pets/pet_봉봉.gif",
+      "imageLink": "/pets/pet_bongbong.gif",
       "elementStats": {
         "earth": 0,
         "water": 0,
@@ -10104,7 +10104,7 @@
       "id": "354",
       "name": "티렉스",
       "source": "재활용상점",
-      "imageLink": "/pets/pet_티렉스.gif",
+      "imageLink": "/pets/pet_tirekseu.gif",
       "elementStats": {
         "earth": 8,
         "water": 2,
@@ -10131,7 +10131,7 @@
       "id": "353",
       "name": "쿠오코마",
       "source": "재활용상점",
-      "imageLink": "/pets/pet_쿠오코마.gif",
+      "imageLink": "/pets/pet_kuokoma.gif",
       "elementStats": {
         "earth": 10,
         "water": 0,
@@ -10158,7 +10158,7 @@
       "id": "352",
       "name": "하루마루",
       "source": "재활용상점",
-      "imageLink": "/pets/pet_하루마루.gif",
+      "imageLink": "/pets/pet_harumaru.gif",
       "elementStats": {
         "earth": 5,
         "water": 0,
@@ -10185,7 +10185,7 @@
       "id": "351",
       "name": "고르가르",
       "source": "재활용상점",
-      "imageLink": "/pets/pet_고르가르.gif",
+      "imageLink": "/pets/pet_goreugareu.gif",
       "elementStats": {
         "earth": 0,
         "water": 0,
@@ -10212,7 +10212,7 @@
       "id": "350",
       "name": "베르가르",
       "source": "재활용상점",
-      "imageLink": "/pets/pet_베르가르.gif",
+      "imageLink": "/pets/pet_bereugareu.gif",
       "elementStats": {
         "earth": 8,
         "water": 2,
@@ -10239,7 +10239,7 @@
       "id": "349",
       "name": "파르곤",
       "source": "재활용상점",
-      "imageLink": "/pets/pet_파르곤.gif",
+      "imageLink": "/pets/pet_pareugon.gif",
       "elementStats": {
         "earth": 0,
         "water": 9,
@@ -10266,7 +10266,7 @@
       "id": "348",
       "name": "지가로스",
       "source": "재활용상점",
-      "imageLink": "/pets/pet_지가로스.gif",
+      "imageLink": "/pets/pet_jigaroseu.gif",
       "elementStats": {
         "earth": 9,
         "water": 0,
@@ -10293,7 +10293,7 @@
       "id": "347",
       "name": "칼로스",
       "source": "재활용상점",
-      "imageLink": "/pets/pet_칼로스.gif",
+      "imageLink": "/pets/pet_kalroseu.gif",
       "elementStats": {
         "earth": 0,
         "water": 1,
@@ -10320,7 +10320,7 @@
       "id": "346",
       "name": "블루문",
       "source": "재활용상점",
-      "imageLink": "/pets/pet_블루문.gif",
+      "imageLink": "/pets/pet_beulrumun.gif",
       "elementStats": {
         "earth": 1,
         "water": 9,
@@ -10347,7 +10347,7 @@
       "id": "345",
       "name": "백여우",
       "source": "재활용상점",
-      "imageLink": "/pets/pet_백여우.gif",
+      "imageLink": "/pets/pet_baekyeu.gif",
       "elementStats": {
         "earth": 0,
         "water": 0,
@@ -10374,7 +10374,7 @@
       "id": "344",
       "name": "블랙펄",
       "source": "재활용상점",
-      "imageLink": "/pets/pet_블랙펄.gif",
+      "imageLink": "/pets/pet_beulraekpeol.gif",
       "elementStats": {
         "earth": 0,
         "water": 0,
@@ -10401,7 +10401,7 @@
       "id": "343",
       "name": "핑코",
       "source": "재활용상점",
-      "imageLink": "/pets/pet_핑코.gif",
+      "imageLink": "/pets/pet_pingko.gif",
       "elementStats": {
         "earth": 0,
         "water": 2,
@@ -10428,7 +10428,7 @@
       "id": "342",
       "name": "샤크라이",
       "source": "재활용상점",
-      "imageLink": "/pets/pet_샤크라이.gif",
+      "imageLink": "/pets/pet_syakeurai.gif",
       "elementStats": {
         "earth": 5,
         "water": 5,
@@ -10455,7 +10455,7 @@
       "id": "341",
       "name": "샤크라",
       "source": "재활용상점",
-      "imageLink": "/pets/pet_샤크라.gif",
+      "imageLink": "/pets/pet_syakeura.gif",
       "elementStats": {
         "earth": 0,
         "water": 0,
@@ -10482,7 +10482,7 @@
       "id": "340",
       "name": "파피온",
       "source": "재활용상점",
-      "imageLink": "/pets/pet_파피온.gif",
+      "imageLink": "/pets/pet_papion.gif",
       "elementStats": {
         "earth": 0,
         "water": 0,
@@ -10509,7 +10509,7 @@
       "id": "339",
       "name": "데빌바로스",
       "source": "재활용상점",
-      "imageLink": "/pets/pet_데빌바로스.gif",
+      "imageLink": "/pets/pet_debilbaroseu.gif",
       "elementStats": {
         "earth": 0,
         "water": 2,
@@ -10536,7 +10536,7 @@
       "id": "338",
       "name": "다크론",
       "source": "재활용상점",
-      "imageLink": "/pets/pet_다크론.gif",
+      "imageLink": "/pets/pet_dakeuron.gif",
       "elementStats": {
         "earth": 0,
         "water": 5,
@@ -10563,7 +10563,7 @@
       "id": "337",
       "name": "레피온",
       "source": "재활용상점",
-      "imageLink": "/pets/pet_레피온.gif",
+      "imageLink": "/pets/pet_repion.gif",
       "elementStats": {
         "earth": 0,
         "water": 2,
@@ -10590,7 +10590,7 @@
       "id": "336",
       "name": "이구로스",
       "source": "재활용상점",
-      "imageLink": "/pets/pet_이구로스.gif",
+      "imageLink": "/pets/pet_iguroseu.gif",
       "elementStats": {
         "earth": 5,
         "water": 0,
@@ -10617,7 +10617,7 @@
       "id": "335",
       "name": "구루마루",
       "source": "재활용상점",
-      "imageLink": "/pets/pet_구루마루.gif",
+      "imageLink": "/pets/pet_gurumaru.gif",
       "elementStats": {
         "earth": 6,
         "water": 0,
@@ -10644,7 +10644,7 @@
       "id": "334",
       "name": "팔케온",
       "source": "재활용상점",
-      "imageLink": "/pets/pet_팔케온.gif",
+      "imageLink": "/pets/pet_palkeon.gif",
       "elementStats": {
         "earth": 0,
         "water": 0,
@@ -10671,7 +10671,7 @@
       "id": "333",
       "name": "마그북",
       "source": "금화페트",
-      "imageLink": "/pets/pet_마그북.gif",
+      "imageLink": "/pets/pet_mageubuk.gif",
       "elementStats": {
         "earth": 0,
         "water": 2,
@@ -10698,7 +10698,7 @@
       "id": "332",
       "name": "천호",
       "source": "통합 듀얼 1등 보상",
-      "imageLink": "/pets/pet_천호.gif",
+      "imageLink": "/pets/pet_cheonho.gif",
       "elementStats": {
         "earth": 0,
         "water": 10,
@@ -10725,7 +10725,7 @@
       "id": "331",
       "name": "테라로스",
       "source": "기간한정",
-      "imageLink": "/pets/pet_테라로스.gif",
+      "imageLink": "/pets/pet_teraroseu.gif",
       "elementStats": {
         "earth": 2,
         "water": 8,
@@ -10752,7 +10752,7 @@
       "id": "330",
       "name": "테라비스",
       "source": "기간한정",
-      "imageLink": "/pets/pet_테라비스.gif",
+      "imageLink": "/pets/pet_terabiseu.gif",
       "elementStats": {
         "earth": 0,
         "water": 0,
@@ -10779,7 +10779,7 @@
       "id": "329",
       "name": "헤티르SD",
       "source": "오류 보상",
-      "imageLink": "/pets/pet_헤티르SD.gif",
+      "imageLink": "/pets/pet_hetireusd.gif",
       "elementStats": {
         "earth": 10,
         "water": 0,
@@ -10806,7 +10806,7 @@
       "id": "328",
       "name": "헤티아SD",
       "source": "오류 보상",
-      "imageLink": "/pets/pet_헤티아SD.gif",
+      "imageLink": "/pets/pet_hetiasd.gif",
       "elementStats": {
         "earth": 0,
         "water": 10,
@@ -10833,7 +10833,7 @@
       "id": "327",
       "name": "헤티소SD",
       "source": "오류 보상",
-      "imageLink": "/pets/pet_헤티소SD.gif",
+      "imageLink": "/pets/pet_hetisosd.gif",
       "elementStats": {
         "earth": 0,
         "water": 0,
@@ -10860,7 +10860,7 @@
       "id": "326",
       "name": "헤티루SD",
       "source": "오류 보상",
-      "imageLink": "/pets/pet_헤티루SD.gif",
+      "imageLink": "/pets/pet_hetirusd.gif",
       "elementStats": {
         "earth": 0,
         "water": 0,
@@ -10887,7 +10887,7 @@
       "id": "325",
       "name": "노르",
       "source": "페트진화(변종)",
-      "imageLink": "/pets/pet_노르.webp",
+      "imageLink": "/pets/pet_noreu.webp",
       "elementStats": {
         "earth": 1,
         "water": 0,
@@ -10914,7 +10914,7 @@
       "id": "324",
       "name": "노르가르",
       "source": "재활용상점",
-      "imageLink": "/pets/pet_노르가르.gif",
+      "imageLink": "/pets/pet_noreugareu.gif",
       "elementStats": {
         "earth": 2,
         "water": 0,
@@ -10941,7 +10941,7 @@
       "id": "323",
       "name": "노르노르(환)",
       "source": "페트환생",
-      "imageLink": "/pets/pet_노르노르(환).webp",
+      "imageLink": "/pets/pet_noreunoreu_hwan.webp",
       "elementStats": {
         "earth": 3,
         "water": 0,
@@ -10968,7 +10968,7 @@
       "id": "322",
       "name": "노르노르(진)",
       "source": "페트진화",
-      "imageLink": "/pets/pet_노르노르(진).gif",
+      "imageLink": "/pets/pet_noreunoreu_jin.gif",
       "elementStats": {
         "earth": 3,
         "water": 0,
@@ -10995,7 +10995,7 @@
       "id": "321",
       "name": "노르곤(환)",
       "source": "페트환생",
-      "imageLink": "/pets/pet_노르곤(환).gif",
+      "imageLink": "/pets/pet_noreugon_hwan.gif",
       "elementStats": {
         "earth": 0,
         "water": 0,
@@ -11022,7 +11022,7 @@
       "id": "320",
       "name": "카르노스",
       "source": "접속,레벨보상",
-      "imageLink": "/pets/pet_카르노스.gif",
+      "imageLink": "/pets/pet_kareunoseu.gif",
       "elementStats": {
         "earth": 8,
         "water": 0,
@@ -11049,7 +11049,7 @@
       "id": "319",
       "name": "카루(변종)",
       "source": "진화의 열매(카루)",
-      "imageLink": "/pets/pet_카루(변종).gif",
+      "imageLink": "/pets/pet_karu_byeonjong.gif",
       "elementStats": {
         "earth": 10,
         "water": 0,
@@ -11076,7 +11076,7 @@
       "id": "318",
       "name": "카루(진)",
       "source": "진화의 열매(카루)",
-      "imageLink": "/pets/pet_카루(진).gif",
+      "imageLink": "/pets/pet_karu_jin.gif",
       "elementStats": {
         "earth": 9,
         "water": 0,
@@ -11103,7 +11103,7 @@
       "id": "317",
       "name": "그루(변종)",
       "source": "진화의 열매(그루)",
-      "imageLink": "/pets/pet_그루(변종).gif",
+      "imageLink": "/pets/pet_geuru_byeonjong.gif",
       "elementStats": {
         "earth": 0,
         "water": 0,
@@ -11130,7 +11130,7 @@
       "id": "316",
       "name": "그루(진)",
       "source": "진화의 열매(그루)",
-      "imageLink": "/pets/pet_그루(진).gif",
+      "imageLink": "/pets/pet_geuru_jin.gif",
       "elementStats": {
         "earth": 0,
         "water": 0,
@@ -11157,7 +11157,7 @@
       "id": "315",
       "name": "이루(변종)",
       "source": "진화의 열매(이루)",
-      "imageLink": "/pets/pet_이루(변종).gif",
+      "imageLink": "/pets/pet_iru_byeonjong.gif",
       "elementStats": {
         "earth": 0,
         "water": 0,
@@ -11184,7 +11184,7 @@
       "id": "314",
       "name": "이루(진)",
       "source": "진화의 열매(이루)",
-      "imageLink": "/pets/pet_이루(진).gif",
+      "imageLink": "/pets/pet_iru_jin.gif",
       "elementStats": {
         "earth": 0,
         "water": 0,
@@ -11211,7 +11211,7 @@
       "id": "313",
       "name": "요루(변종)",
       "source": "진화의 열매(요루)",
-      "imageLink": "/pets/pet_요루(변종).gif",
+      "imageLink": "/pets/pet_yoru_byeonjong.gif",
       "elementStats": {
         "earth": 0,
         "water": 10,
@@ -11238,7 +11238,7 @@
       "id": "312",
       "name": "요루(진)",
       "source": "진화의 열매(요루)",
-      "imageLink": "/pets/pet_요루(진).gif",
+      "imageLink": "/pets/pet_yoru_jin.gif",
       "elementStats": {
         "earth": 1,
         "water": 9,
@@ -11265,7 +11265,7 @@
       "id": "311",
       "name": "베르푸스(환)",
       "source": "페트환생",
-      "imageLink": "/pets/pet_베르푸스(환).gif",
+      "imageLink": "/pets/pet_bereupuseu_hwan.gif",
       "elementStats": {
         "earth": 0,
         "water": 0,
@@ -11292,7 +11292,7 @@
       "id": "310",
       "name": "샤베르(환)",
       "source": "페트환생",
-      "imageLink": "/pets/pet_샤베르(환).gif",
+      "imageLink": "/pets/pet_syabereu_hwan.gif",
       "elementStats": {
         "earth": 0,
         "water": 9,
@@ -11319,7 +11319,7 @@
       "id": "309",
       "name": "베르",
       "source": "페트진화(변종)",
-      "imageLink": "/pets/pet_베르.gif",
+      "imageLink": "/pets/pet_bereu.gif",
       "elementStats": {
         "earth": 7,
         "water": 3,
@@ -11346,7 +11346,7 @@
       "id": "308",
       "name": "베르가(진)",
       "source": "페트진화",
-      "imageLink": "/pets/pet_베르가(진).gif",
+      "imageLink": "/pets/pet_bereuga_jin.gif",
       "elementStats": {
         "earth": 6,
         "water": 4,
@@ -11373,7 +11373,7 @@
       "id": "307",
       "name": "베르가(환)",
       "source": "페트환생",
-      "imageLink": "/pets/pet_베르가(환).webp",
+      "imageLink": "/pets/pet_bereuga_hwan.webp",
       "elementStats": {
         "earth": 6,
         "water": 4,
@@ -11400,7 +11400,7 @@
       "id": "306",
       "name": "베루루르",
       "source": "재활용상점",
-      "imageLink": "/pets/pet_베루루르.gif",
+      "imageLink": "/pets/pet_berurureu.gif",
       "elementStats": {
         "earth": 0,
         "water": 0,
@@ -11427,7 +11427,7 @@
       "id": "305",
       "name": "베루루(환)",
       "source": "페트환생",
-      "imageLink": "/pets/pet_베루루(환).gif",
+      "imageLink": "/pets/pet_beruru_hwan.gif",
       "elementStats": {
         "earth": 0,
         "water": 0,
@@ -11454,7 +11454,7 @@
       "id": "304",
       "name": "베루루(진)",
       "source": "페트진화",
-      "imageLink": "/pets/pet_베루루(진).gif",
+      "imageLink": "/pets/pet_beruru_jin.gif",
       "elementStats": {
         "earth": 0,
         "water": 0,
@@ -11481,7 +11481,7 @@
       "id": "303",
       "name": "베루",
       "source": "페트진화(변종)",
-      "imageLink": "/pets/pet_베루.gif",
+      "imageLink": "/pets/pet_beru.gif",
       "elementStats": {
         "earth": 0,
         "water": 0,
@@ -11508,7 +11508,7 @@
       "id": "302",
       "name": "반보로(환)",
       "source": "페트 환생",
-      "imageLink": "/pets/pet_반보로(환).webp",
+      "imageLink": "/pets/pet_banboro_hwan.webp",
       "elementStats": {
         "earth": 0,
         "water": 0,
@@ -11535,7 +11535,7 @@
       "id": "301",
       "name": "반보로(진)",
       "source": "페트 진화",
-      "imageLink": "/pets/pet_반보로(진).gif",
+      "imageLink": "/pets/pet_banboro_jin.gif",
       "elementStats": {
         "earth": 0,
         "water": 0,
@@ -11562,7 +11562,7 @@
       "id": "300",
       "name": "보로",
       "source": "페트 진화(변종)",
-      "imageLink": "/pets/pet_보로.gif",
+      "imageLink": "/pets/pet_boro.gif",
       "elementStats": {
         "earth": 0,
         "water": 0,
@@ -11589,7 +11589,7 @@
       "id": "299",
       "name": "기로",
       "source": "페트 진화(변종)",
-      "imageLink": "/pets/pet_기로.gif",
+      "imageLink": "/pets/pet_giro.gif",
       "elementStats": {
         "earth": 0,
         "water": 9,
@@ -11616,7 +11616,7 @@
       "id": "298",
       "name": "반기노(환)",
       "source": "페트 환생",
-      "imageLink": "/pets/pet_반기노(환).gif",
+      "imageLink": "/pets/pet_bangino_hwan.gif",
       "elementStats": {
         "earth": 0,
         "water": 0,
@@ -11643,7 +11643,7 @@
       "id": "297",
       "name": "반기노(진)",
       "source": "페트 진화",
-      "imageLink": "/pets/pet_반기노(진).gif",
+      "imageLink": "/pets/pet_bangino_jin.gif",
       "elementStats": {
         "earth": 0,
         "water": 0,
@@ -11670,7 +11670,7 @@
       "id": "296",
       "name": "기노",
       "source": "페트 진화(변종)",
-      "imageLink": "/pets/pet_기노.gif",
+      "imageLink": "/pets/pet_gino.gif",
       "elementStats": {
         "earth": 0,
         "water": 0,
@@ -11697,7 +11697,7 @@
       "id": "295",
       "name": "리비노(환)",
       "source": "페트 환생",
-      "imageLink": "/pets/pet_리비노(환).webp",
+      "imageLink": "/pets/pet_ribino_hwan.webp",
       "elementStats": {
         "earth": 10,
         "water": 0,
@@ -11724,7 +11724,7 @@
       "id": "294",
       "name": "리비노(진)",
       "source": "페트 진화",
-      "imageLink": "/pets/pet_리비노(진).gif",
+      "imageLink": "/pets/pet_ribino_jin.gif",
       "elementStats": {
         "earth": 10,
         "water": 0,
@@ -11751,7 +11751,7 @@
       "id": "293",
       "name": "비노",
       "source": "페트 진화(변종)",
-      "imageLink": "/pets/pet_비노.gif",
+      "imageLink": "/pets/pet_bino.gif",
       "elementStats": {
         "earth": 10,
         "water": 0,
@@ -11778,7 +11778,7 @@
       "id": "292",
       "name": "부르돈(환)",
       "source": "페트 환생",
-      "imageLink": "/pets/pet_부르돈(환).webp",
+      "imageLink": "/pets/pet_bureudon_hwan.webp",
       "elementStats": {
         "earth": 0,
         "water": 0,
@@ -11805,7 +11805,7 @@
       "id": "291",
       "name": "부르돈(진)",
       "source": "페트 진화",
-      "imageLink": "/pets/pet_부르돈(진).gif",
+      "imageLink": "/pets/pet_bureudon_jin.gif",
       "elementStats": {
         "earth": 0,
         "water": 0,
@@ -11832,7 +11832,7 @@
       "id": "290",
       "name": "르돈",
       "source": "페트 진화(변종)",
-      "imageLink": "/pets/pet_르돈.gif",
+      "imageLink": "/pets/pet_reudon.gif",
       "elementStats": {
         "earth": 0,
         "water": 0,
@@ -11859,7 +11859,7 @@
       "id": "289",
       "name": "디어룬",
       "source": "맘모스쿠폰 2회차(50회 확정보상)",
-      "imageLink": "/pets/pet_디어룬.gif",
+      "imageLink": "/pets/pet_dieorun.gif",
       "elementStats": {
         "earth": 9,
         "water": 0,
@@ -11886,7 +11886,7 @@
       "id": "288",
       "name": "테이노스(변종)",
       "source": "테이노스 진화",
-      "imageLink": "/pets/pet_테이노스(변종).gif",
+      "imageLink": "/pets/pet_teinoseu_byeonjong.gif",
       "elementStats": {
         "earth": 5,
         "water": 0,
@@ -11913,7 +11913,7 @@
       "id": "287",
       "name": "테이노스(진)",
       "source": "테이노스 진화",
-      "imageLink": "/pets/pet_테이노스(진).gif",
+      "imageLink": "/pets/pet_teinoseu_jin.gif",
       "elementStats": {
         "earth": 0,
         "water": 5,
@@ -11940,7 +11940,7 @@
       "id": "286",
       "name": "테이노스",
       "source": "후원 보상 페트",
-      "imageLink": "/pets/pet_테이노스.gif",
+      "imageLink": "/pets/pet_teinoseu.gif",
       "elementStats": {
         "earth": 0,
         "water": 5,
@@ -11967,7 +11967,7 @@
       "id": "285",
       "name": "얀기로(환)",
       "source": "얀기로 환생",
-      "imageLink": "/pets/pet_얀기로(환).webp",
+      "imageLink": "/pets/pet_yangiro_hwan.webp",
       "elementStats": {
         "earth": 0,
         "water": 3,
@@ -11994,7 +11994,7 @@
       "id": "284",
       "name": "메가호크",
       "source": "금화 보상",
-      "imageLink": "/pets/pet_메가호크.webp",
+      "imageLink": "/pets/pet_megahokeu.webp",
       "elementStats": {
         "earth": 0,
         "water": 0,
@@ -12021,7 +12021,7 @@
       "id": "283",
       "name": "그램고르",
       "source": "얼음성 포인트 상점",
-      "imageLink": "/pets/pet_그램고르.gif",
+      "imageLink": "/pets/pet_geuraemgoreu.gif",
       "elementStats": {
         "earth": 4,
         "water": 6,
@@ -12048,7 +12048,7 @@
       "id": "282",
       "name": "그루",
       "source": "후원 보상",
-      "imageLink": "/pets/pet_그루.gif",
+      "imageLink": "/pets/pet_geuru.gif",
       "elementStats": {
         "earth": 0,
         "water": 0,
@@ -12075,7 +12075,7 @@
       "id": "281",
       "name": "이루",
       "source": "후원 보상",
-      "imageLink": "/pets/pet_이루.gif",
+      "imageLink": "/pets/pet_iru.gif",
       "elementStats": {
         "earth": 0,
         "water": 0,
@@ -12102,7 +12102,7 @@
       "id": "280",
       "name": "요루",
       "source": "후원 보상",
-      "imageLink": "/pets/pet_요루.gif",
+      "imageLink": "/pets/pet_yoru.gif",
       "elementStats": {
         "earth": 1,
         "water": 9,
@@ -12129,7 +12129,7 @@
       "id": "279",
       "name": "카루",
       "source": "후원 보상",
-      "imageLink": "/pets/pet_카루.gif",
+      "imageLink": "/pets/pet_karu.gif",
       "elementStats": {
         "earth": 9,
         "water": 0,
@@ -12156,7 +12156,7 @@
       "id": "278",
       "name": "토라",
       "source": "공간의 탑",
-      "imageLink": "/pets/pet_토라.gif",
+      "imageLink": "/pets/pet_tora.gif",
       "elementStats": {
         "earth": 0,
         "water": 0,
@@ -12183,7 +12183,7 @@
       "id": "277",
       "name": "골드로비",
       "source": "마함마의 트로피",
-      "imageLink": "/pets/pet_골드로비.gif",
+      "imageLink": "/pets/pet_goldeurobi.gif",
       "elementStats": {
         "earth": 0,
         "water": 0,
@@ -12210,7 +12210,7 @@
       "id": "276",
       "name": "기로아치",
       "source": "필드 포획",
-      "imageLink": "/pets/pet_기로아치.gif",
+      "imageLink": "/pets/pet_giroachi.gif",
       "elementStats": {
         "earth": 0,
         "water": 7,
@@ -12237,7 +12237,7 @@
       "id": "275",
       "name": "주작",
       "source": "주작의 영혼석 20개",
-      "imageLink": "/pets/pet_주작.gif",
+      "imageLink": "/pets/pet_jujak.gif",
       "elementStats": {
         "earth": 0,
         "water": 0,
@@ -12264,7 +12264,7 @@
       "id": "274",
       "name": "프로돈",
       "source": "필드 포획",
-      "imageLink": "/pets/pet_프로돈.gif",
+      "imageLink": "/pets/pet_peurodon.gif",
       "elementStats": {
         "earth": 0,
         "water": 10,
@@ -12291,7 +12291,7 @@
       "id": "273",
       "name": "기비노",
       "source": "필드 포획",
-      "imageLink": "/pets/pet_기비노.gif",
+      "imageLink": "/pets/pet_gibino.gif",
       "elementStats": {
         "earth": 0,
         "water": 2,
@@ -12318,7 +12318,7 @@
       "id": "272",
       "name": "샤베르",
       "source": "스톤 상점",
-      "imageLink": "/pets/pet_샤베르.gif",
+      "imageLink": "/pets/pet_syabereu.gif",
       "elementStats": {
         "earth": 0,
         "water": 9,
@@ -12345,7 +12345,7 @@
       "id": "271",
       "name": "바로스",
       "source": "도티의 눈을 뜨게 하자",
-      "imageLink": "/pets/pet_바로스.gif",
+      "imageLink": "/pets/pet_baroseu.gif",
       "elementStats": {
         "earth": 2,
         "water": 0,
@@ -12372,7 +12372,7 @@
       "id": "270",
       "name": "기린",
       "source": "스톤 상점",
-      "imageLink": "/pets/pet_기린.gif",
+      "imageLink": "/pets/pet_girin.gif",
       "elementStats": {
         "earth": 9,
         "water": 0,
@@ -12399,7 +12399,7 @@
       "id": "269",
       "name": "부루마루",
       "source": "이벤트 듀얼 보상",
-      "imageLink": "/pets/pet_부루마루.gif",
+      "imageLink": "/pets/pet_burumaru.gif",
       "elementStats": {
         "earth": 0,
         "water": 8,
@@ -12426,7 +12426,7 @@
       "id": "268",
       "name": "아코로비",
       "source": "필드 포획",
-      "imageLink": "/pets/pet_아코로비.gif",
+      "imageLink": "/pets/pet_akorobi.gif",
       "elementStats": {
         "earth": 1,
         "water": 9,
@@ -12453,7 +12453,7 @@
       "id": "267",
       "name": "그린고르",
       "source": "하이하모 신전 진입",
-      "imageLink": "/pets/pet_그린고르.gif",
+      "imageLink": "/pets/pet_geuringoreu.gif",
       "elementStats": {
         "earth": 10,
         "water": 0,
@@ -12480,7 +12480,7 @@
       "id": "266",
       "name": "키파",
       "source": "포우렌 섬의 황금나무",
-      "imageLink": "/pets/pet_키파.gif",
+      "imageLink": "/pets/pet_kipa.gif",
       "elementStats": {
         "earth": 8,
         "water": 0,
@@ -12507,7 +12507,7 @@
       "id": "265",
       "name": "초르초르",
       "source": "홍보 이벤트",
-      "imageLink": "/pets/pet_초르초르.gif",
+      "imageLink": "/pets/pet_choreuchoreu.gif",
       "elementStats": {
         "earth": 8,
         "water": 0,
@@ -12534,7 +12534,7 @@
       "id": "264",
       "name": "스노밍코",
       "source": "필드 포획",
-      "imageLink": "/pets/pet_스노밍코.gif",
+      "imageLink": "/pets/pet_seunomingko.gif",
       "elementStats": {
         "earth": 3,
         "water": 7,
@@ -12561,7 +12561,7 @@
       "id": "263",
       "name": "킹크랩",
       "source": "필드 포획",
-      "imageLink": "/pets/pet_킹크랩.gif",
+      "imageLink": "/pets/pet_kingkeuraep.gif",
       "elementStats": {
         "earth": 0,
         "water": 0,
@@ -12588,7 +12588,7 @@
       "id": "262",
       "name": "크랩",
       "source": "필드 포획",
-      "imageLink": "/pets/pet_크랩.gif",
+      "imageLink": "/pets/pet_keuraep.gif",
       "elementStats": {
         "earth": 0,
         "water": 10,
@@ -12615,7 +12615,7 @@
       "id": "261",
       "name": "쿠로로",
       "source": "초기 지원 페트",
-      "imageLink": "/pets/pet_쿠로로.gif",
+      "imageLink": "/pets/pet_kuroro.gif",
       "elementStats": {
         "earth": 4,
         "water": 6,
@@ -12642,7 +12642,7 @@
       "id": "260",
       "name": "해치",
       "source": "전투 포인트 상점",
-      "imageLink": "/pets/pet_해치.gif",
+      "imageLink": "/pets/pet_haechi.gif",
       "elementStats": {
         "earth": 0,
         "water": 0,
@@ -12669,7 +12669,7 @@
       "id": "259",
       "name": "해태",
       "source": "전투 포인트 상점",
-      "imageLink": "/pets/pet_해태.gif",
+      "imageLink": "/pets/pet_haetae.gif",
       "elementStats": {
         "earth": 5,
         "water": 5,
@@ -12696,7 +12696,7 @@
       "id": "258",
       "name": "흑룡",
       "source": "얼음성 상점",
-      "imageLink": "/pets/pet_흑룡.gif",
+      "imageLink": "/pets/pet_heukryong.gif",
       "elementStats": {
         "earth": 5,
         "water": 0,
@@ -12723,7 +12723,7 @@
       "id": "257",
       "name": "흑기린",
       "source": "얼음성 상점",
-      "imageLink": "/pets/pet_흑기린.gif",
+      "imageLink": "/pets/pet_heukgirin.gif",
       "elementStats": {
         "earth": 0,
         "water": 1,
@@ -12750,7 +12750,7 @@
       "id": "256",
       "name": "피피아",
       "source": "필드 포획",
-      "imageLink": "/pets/pet_피피아.gif",
+      "imageLink": "/pets/pet_pipia.gif",
       "elementStats": {
         "earth": 5,
         "water": 5,
@@ -12777,7 +12777,7 @@
       "id": "255",
       "name": "포루나",
       "source": "필드 포획",
-      "imageLink": "/pets/pet_포루나.gif",
+      "imageLink": "/pets/pet_poruna.gif",
       "elementStats": {
         "earth": 4,
         "water": 6,
@@ -12804,7 +12804,7 @@
       "id": "254",
       "name": "포레스트크랩",
       "source": "필드 포획",
-      "imageLink": "/pets/pet_포레스트크랩.gif",
+      "imageLink": "/pets/pet_poreseuteukeuraep.gif",
       "elementStats": {
         "earth": 5,
         "water": 5,
@@ -12831,7 +12831,7 @@
       "id": "253",
       "name": "호르카",
       "source": "얼음성 포인트 상점",
-      "imageLink": "/pets/pet_호르카.gif",
+      "imageLink": "/pets/pet_horeuka.gif",
       "elementStats": {
         "earth": 2,
         "water": 8,
@@ -12858,7 +12858,7 @@
       "id": "252",
       "name": "타키온",
       "source": "얼음성 포인트 상점",
-      "imageLink": "/pets/pet_타키온.gif",
+      "imageLink": "/pets/pet_takion.gif",
       "elementStats": {
         "earth": 1,
         "water": 9,
@@ -12885,7 +12885,7 @@
       "id": "251",
       "name": "라이쿠스",
       "source": "얼음성 포인트 상점",
-      "imageLink": "/pets/pet_라이쿠스.gif",
+      "imageLink": "/pets/pet_raikuseu.gif",
       "elementStats": {
         "earth": 2,
         "water": 8,
@@ -12912,7 +12912,7 @@
       "id": "250",
       "name": "메피노",
       "source": "얼음성 포인트 상점",
-      "imageLink": "/pets/pet_메피노.gif",
+      "imageLink": "/pets/pet_mepino.gif",
       "elementStats": {
         "earth": 0,
         "water": 7,
@@ -12939,7 +12939,7 @@
       "id": "249",
       "name": "아르마루",
       "source": "얼음성 포인트 상점",
-      "imageLink": "/pets/pet_아르마루.gif",
+      "imageLink": "/pets/pet_areumaru.gif",
       "elementStats": {
         "earth": 5,
         "water": 5,
@@ -12966,7 +12966,7 @@
       "id": "248",
       "name": "테로노돈",
       "source": "얼음성 포인트 상점",
-      "imageLink": "/pets/pet_테로노돈.gif",
+      "imageLink": "/pets/pet_teronodon.gif",
       "elementStats": {
         "earth": 0,
         "water": 10,
@@ -12993,7 +12993,7 @@
       "id": "247",
       "name": "크로아치",
       "source": "얼음성 포인트 상점",
-      "imageLink": "/pets/pet_크로아치.gif",
+      "imageLink": "/pets/pet_keuroachi.gif",
       "elementStats": {
         "earth": 7,
         "water": 3,
@@ -13020,7 +13020,7 @@
       "id": "246",
       "name": "킹고르",
       "source": "재활용상점, 금화상점",
-      "imageLink": "/pets/pet_킹고르.gif",
+      "imageLink": "/pets/pet_kinggoreu.gif",
       "elementStats": {
         "earth": 0,
         "water": 8,
@@ -13047,7 +13047,7 @@
       "id": "245",
       "name": "본드래곤",
       "source": "재활용상점",
-      "imageLink": "/pets/pet_본드래곤.gif",
+      "imageLink": "/pets/pet_bondeuraegon.gif",
       "elementStats": {
         "earth": 8,
         "water": 0,
@@ -13074,7 +13074,7 @@
       "id": "244",
       "name": "스피노",
       "source": "재활용상점",
-      "imageLink": "/pets/pet_스피노.gif",
+      "imageLink": "/pets/pet_seupino.gif",
       "elementStats": {
         "earth": 0,
         "water": 0,
@@ -13101,7 +13101,7 @@
       "id": "243",
       "name": "마루아치",
       "source": "재활용상점",
-      "imageLink": "/pets/pet_마루아치.gif",
+      "imageLink": "/pets/pet_maruachi.gif",
       "elementStats": {
         "earth": 5,
         "water": 0,
@@ -13128,7 +13128,7 @@
       "id": "242",
       "name": "흑주작",
       "source": "-",
-      "imageLink": "/pets/pet_흑주작.gif",
+      "imageLink": "/pets/pet_heukjujak.gif",
       "elementStats": {
         "earth": 0,
         "water": 0,
@@ -13155,7 +13155,7 @@
       "id": "241",
       "name": "라그노스",
       "source": "스톤 상점",
-      "imageLink": "/pets/pet_라그노스.gif",
+      "imageLink": "/pets/pet_rageunoseu.gif",
       "elementStats": {
         "earth": 8,
         "water": 2,
@@ -13182,7 +13182,7 @@
       "id": "240",
       "name": "크로톤",
       "source": "스톤 상점",
-      "imageLink": "/pets/pet_크로톤.gif",
+      "imageLink": "/pets/pet_keuroton.gif",
       "elementStats": {
         "earth": 0,
         "water": 7,
@@ -13209,7 +13209,7 @@
       "id": "239",
       "name": "백호",
       "source": "백호의 영혼석 20개",
-      "imageLink": "/pets/pet_백호.gif",
+      "imageLink": "/pets/pet_baekho.gif",
       "elementStats": {
         "earth": 0,
         "water": 10,
@@ -13236,7 +13236,7 @@
       "id": "238",
       "name": "흑갈푸스",
       "source": "레이드 보상",
-      "imageLink": "/pets/pet_흑갈푸스.gif",
+      "imageLink": "/pets/pet_heukgalpuseu.gif",
       "elementStats": {
         "earth": 0,
         "water": 0,
@@ -13263,7 +13263,7 @@
       "id": "237",
       "name": "브라키우스",
       "source": "필드 포획",
-      "imageLink": "/pets/pet_브라키우스.gif",
+      "imageLink": "/pets/pet_beurakiuseu.gif",
       "elementStats": {
         "earth": 0,
         "water": 0,
@@ -13290,7 +13290,7 @@
       "id": "236",
       "name": "화이트링",
       "source": "필드 포획",
-      "imageLink": "/pets/pet_화이트링.gif",
+      "imageLink": "/pets/pet_hwaiteuring.gif",
       "elementStats": {
         "earth": 4,
         "water": 6,
@@ -13317,7 +13317,7 @@
       "id": "235",
       "name": "하트링",
       "source": "필드 포획",
-      "imageLink": "/pets/pet_하트링.gif",
+      "imageLink": "/pets/pet_hateuring.gif",
       "elementStats": {
         "earth": 0,
         "water": 0,
@@ -13344,7 +13344,7 @@
       "id": "234",
       "name": "페가수스",
       "source": "듀얼 상점",
-      "imageLink": "/pets/pet_페가수스.gif",
+      "imageLink": "/pets/pet_pegasuseu.gif",
       "elementStats": {
         "earth": 0,
         "water": 0,
@@ -13371,7 +13371,7 @@
       "id": "233",
       "name": "가스트",
       "source": "듀얼 상점",
-      "imageLink": "/pets/pet_가스트.gif",
+      "imageLink": "/pets/pet_gaseuteu.gif",
       "elementStats": {
         "earth": 5,
         "water": 0,
@@ -13398,7 +13398,7 @@
       "id": "232",
       "name": "게이블",
       "source": "듀얼 상점",
-      "imageLink": "/pets/pet_게이블.gif",
+      "imageLink": "/pets/pet_geibeul.gif",
       "elementStats": {
         "earth": 2,
         "water": 8,
@@ -13425,7 +13425,7 @@
       "id": "231",
       "name": "테라탄",
       "source": "듀얼 상점",
-      "imageLink": "/pets/pet_테라탄.gif",
+      "imageLink": "/pets/pet_teratan.gif",
       "elementStats": {
         "earth": 0,
         "water": 0,
@@ -13452,7 +13452,7 @@
       "id": "230",
       "name": "복우리",
       "source": "스톤 상점",
-      "imageLink": "/pets/pet_복우리.gif",
+      "imageLink": "/pets/pet_bokuri.gif",
       "elementStats": {
         "earth": 2,
         "water": 0,
@@ -13479,7 +13479,7 @@
       "id": "229",
       "name": "히파",
       "source": "재활용상점, 금화상점",
-      "imageLink": "/pets/pet_히파.gif",
+      "imageLink": "/pets/pet_hipa.gif",
       "elementStats": {
         "earth": 0,
         "water": 0,
@@ -13506,7 +13506,7 @@
       "id": "228",
       "name": "아이스만모",
       "source": "재활용상점, 금화상점",
-      "imageLink": "/pets/pet_아이스만모.gif",
+      "imageLink": "/pets/pet_aiseumanmo.gif",
       "elementStats": {
         "earth": 3,
         "water": 7,
@@ -13533,7 +13533,7 @@
       "id": "227",
       "name": "베라라",
       "source": "필드 포획",
-      "imageLink": "/pets/pet_베라라.gif",
+      "imageLink": "/pets/pet_berara.gif",
       "elementStats": {
         "earth": 0,
         "water": 0,
@@ -13560,7 +13560,7 @@
       "id": "226",
       "name": "펠타리오",
       "source": "퀘스트",
-      "imageLink": "/pets/pet_펠타리오.gif",
+      "imageLink": "/pets/pet_peltario.gif",
       "elementStats": {
         "earth": 8,
         "water": 0,
@@ -13587,7 +13587,7 @@
       "id": "225",
       "name": "도르도르",
       "source": "필드 포획",
-      "imageLink": "/pets/pet_도르도르.gif",
+      "imageLink": "/pets/pet_doreudoreu.gif",
       "elementStats": {
         "earth": 3,
         "water": 7,
@@ -13614,7 +13614,7 @@
       "id": "224",
       "name": "바우트",
       "source": "재활용상점, 금화상점",
-      "imageLink": "/pets/pet_바우트.gif",
+      "imageLink": "/pets/pet_bauteu.gif",
       "elementStats": {
         "earth": 0,
         "water": 1,
@@ -13641,7 +13641,7 @@
       "id": "223",
       "name": "샤크론",
       "source": "재활용상점, 금화상점",
-      "imageLink": "/pets/pet_샤크론.gif",
+      "imageLink": "/pets/pet_syakeuron.gif",
       "elementStats": {
         "earth": 0,
         "water": 10,
@@ -13668,7 +13668,7 @@
       "id": "222",
       "name": "파베로스",
       "source": "재활용상점",
-      "imageLink": "/pets/pet_파베로스.gif",
+      "imageLink": "/pets/pet_paberoseu.gif",
       "elementStats": {
         "earth": 0,
         "water": 0,
@@ -13695,7 +13695,7 @@
       "id": "221",
       "name": "카우거",
       "source": "재활용상점, 금화상점",
-      "imageLink": "/pets/pet_카우거.gif",
+      "imageLink": "/pets/pet_kaugeo.gif",
       "elementStats": {
         "earth": 5,
         "water": 0,
@@ -13722,7 +13722,7 @@
       "id": "220",
       "name": "베르푸스",
       "source": "일일 레이드 보상",
-      "imageLink": "/pets/pet_베르푸스.gif",
+      "imageLink": "/pets/pet_bereupuseu.gif",
       "elementStats": {
         "earth": 0,
         "water": 0,
@@ -13749,7 +13749,7 @@
       "id": "219",
       "name": "델푸스",
       "source": "일일 레이드 보상",
-      "imageLink": "/pets/pet_델푸스.gif",
+      "imageLink": "/pets/pet_delpuseu.gif",
       "elementStats": {
         "earth": 9,
         "water": 1,
@@ -13776,7 +13776,7 @@
       "id": "218",
       "name": "울푸스",
       "source": "일일 레이드 보상",
-      "imageLink": "/pets/pet_울푸스.gif",
+      "imageLink": "/pets/pet_ulpuseu.gif",
       "elementStats": {
         "earth": 0,
         "water": 10,
@@ -13803,7 +13803,7 @@
       "id": "217",
       "name": "갈푸스",
       "source": "일일 레이드 보상",
-      "imageLink": "/pets/pet_갈푸스.gif",
+      "imageLink": "/pets/pet_galpuseu.gif",
       "elementStats": {
         "earth": 0,
         "water": 0,
@@ -13830,7 +13830,7 @@
       "id": "216",
       "name": "부르보",
       "source": "필드 포획",
-      "imageLink": "/pets/pet_부르보.gif",
+      "imageLink": "/pets/pet_bureubo.gif",
       "elementStats": {
         "earth": 0,
         "water": 0,
@@ -13857,7 +13857,7 @@
       "id": "215",
       "name": "타르노로스",
       "source": "필드 포획",
-      "imageLink": "/pets/pet_타르노로스.gif",
+      "imageLink": "/pets/pet_tareunoroseu.gif",
       "elementStats": {
         "earth": 0,
         "water": 7,
@@ -13884,7 +13884,7 @@
       "id": "214",
       "name": "다이노로스",
       "source": "필드 포획",
-      "imageLink": "/pets/pet_다이노로스.gif",
+      "imageLink": "/pets/pet_dainoroseu.gif",
       "elementStats": {
         "earth": 0,
         "water": 5,
@@ -13911,7 +13911,7 @@
       "id": "213",
       "name": "아리노스",
       "source": "필드 포획",
-      "imageLink": "/pets/pet_아리노스.gif",
+      "imageLink": "/pets/pet_arinoseu.gif",
       "elementStats": {
         "earth": 5,
         "water": 5,
@@ -13938,7 +13938,7 @@
       "id": "212",
       "name": "아토라지",
       "source": "필드 포획",
-      "imageLink": "/pets/pet_아토라지.gif",
+      "imageLink": "/pets/pet_atoraji.gif",
       "elementStats": {
         "earth": 0,
         "water": 10,
@@ -13965,7 +13965,7 @@
       "id": "211",
       "name": "스토라지",
       "source": "필드 포획",
-      "imageLink": "/pets/pet_스토라지.gif",
+      "imageLink": "/pets/pet_seutoraji.gif",
       "elementStats": {
         "earth": 2,
         "water": 8,
@@ -13992,7 +13992,7 @@
       "id": "210",
       "name": "반기노",
       "source": "오형제 / 필드 포획",
-      "imageLink": "/pets/pet_반기노.gif",
+      "imageLink": "/pets/pet_bangino.gif",
       "elementStats": {
         "earth": 0,
         "water": 0,
@@ -14019,7 +14019,7 @@
       "id": "209",
       "name": "노르곤",
       "source": "금화상점",
-      "imageLink": "/pets/pet_노르곤.gif",
+      "imageLink": "/pets/pet_noreugon.gif",
       "elementStats": {
         "earth": 0,
         "water": 0,
@@ -14046,7 +14046,7 @@
       "id": "208",
       "name": "문울프",
       "source": "접속,레벨보상",
-      "imageLink": "/pets/pet_문울프.webp",
+      "imageLink": "/pets/pet_munulpeu.webp",
       "elementStats": {
         "earth": 0,
         "water": 5,
@@ -14073,7 +14073,7 @@
       "id": "207",
       "name": "코리토르스",
       "source": "필드 포획",
-      "imageLink": "/pets/pet_코리토르스.webp",
+      "imageLink": "/pets/pet_koritoreuseu.webp",
       "elementStats": {
         "earth": 7,
         "water": 3,
@@ -14100,7 +14100,7 @@
       "id": "206",
       "name": "란베르스",
       "source": "필드 포획",
-      "imageLink": "/pets/pet_란베르스.webp",
+      "imageLink": "/pets/pet_ranbereuseu.webp",
       "elementStats": {
         "earth": 0,
         "water": 7,
@@ -14127,7 +14127,7 @@
       "id": "205",
       "name": "바로로크스",
       "source": "필드 포획",
-      "imageLink": "/pets/pet_바로로크스.webp",
+      "imageLink": "/pets/pet_barorokeuseu.webp",
       "elementStats": {
         "earth": 4,
         "water": 6,
@@ -14154,7 +14154,7 @@
       "id": "204",
       "name": "타이혼",
       "source": "샴기르 복권 1등",
-      "imageLink": "/pets/pet_타이혼.webp",
+      "imageLink": "/pets/pet_taihon.webp",
       "elementStats": {
         "earth": 0,
         "water": 0,
@@ -14181,7 +14181,7 @@
       "id": "203",
       "name": "라이혼",
       "source": "A코스 랜덤 획득",
-      "imageLink": "/pets/pet_라이혼.webp",
+      "imageLink": "/pets/pet_raihon.webp",
       "elementStats": {
         "earth": 5,
         "water": 5,
@@ -14208,7 +14208,7 @@
       "id": "202",
       "name": "라나프",
       "source": "D코스 랜덤 획득",
-      "imageLink": "/pets/pet_라나프.webp",
+      "imageLink": "/pets/pet_ranapeu.webp",
       "elementStats": {
         "earth": 0,
         "water": 0,
@@ -14235,7 +14235,7 @@
       "id": "201",
       "name": "모나시프",
       "source": "채석장의 비밀",
-      "imageLink": "/pets/pet_모나시프.webp",
+      "imageLink": "/pets/pet_monasipeu.webp",
       "elementStats": {
         "earth": 0,
         "water": 0,
@@ -14262,7 +14262,7 @@
       "id": "200",
       "name": "모가로스",
       "source": "퀴즈 마스터 이벤트",
-      "imageLink": "/pets/pet_모가로스.webp",
+      "imageLink": "/pets/pet_mogaroseu.webp",
       "elementStats": {
         "earth": 0,
         "water": 2,
@@ -14289,7 +14289,7 @@
       "id": "199",
       "name": "오르곤",
       "source": "용왕 모가로스 퀘스트",
-      "imageLink": "/pets/pet_오르곤.webp",
+      "imageLink": "/pets/pet_oreugon.webp",
       "elementStats": {
         "earth": 0,
         "water": 8,
@@ -14316,7 +14316,7 @@
       "id": "198",
       "name": "오가로스",
       "source": "필드 포획",
-      "imageLink": "/pets/pet_오가로스.webp",
+      "imageLink": "/pets/pet_ogaroseu.webp",
       "elementStats": {
         "earth": 6,
         "water": 4,
@@ -14343,7 +14343,7 @@
       "id": "197",
       "name": "쥬키",
       "source": "B코스 랜덤 획득",
-      "imageLink": "/pets/pet_쥬키.webp",
+      "imageLink": "/pets/pet_jyuki.webp",
       "elementStats": {
         "earth": 0,
         "water": 0,
@@ -14370,7 +14370,7 @@
       "id": "196",
       "name": "카키",
       "source": "필드 포획",
-      "imageLink": "/pets/pet_카키.webp",
+      "imageLink": "/pets/pet_kaki.webp",
       "elementStats": {
         "earth": 0,
         "water": 0,
@@ -14397,7 +14397,7 @@
       "id": "195",
       "name": "호르쿠",
       "source": "필드 포획",
-      "imageLink": "/pets/pet_호르쿠.webp",
+      "imageLink": "/pets/pet_horeuku.webp",
       "elementStats": {
         "earth": 3,
         "water": 0,
@@ -14424,7 +14424,7 @@
       "id": "194",
       "name": "쿠쿠",
       "source": "필드 포획",
-      "imageLink": "/pets/pet_쿠쿠.webp",
+      "imageLink": "/pets/pet_kuku.webp",
       "elementStats": {
         "earth": 0,
         "water": 0,
@@ -14451,7 +14451,7 @@
       "id": "193",
       "name": "타키",
       "source": "필드 포획",
-      "imageLink": "/pets/pet_타키.webp",
+      "imageLink": "/pets/pet_taki.webp",
       "elementStats": {
         "earth": 0,
         "water": 0,
@@ -14478,7 +14478,7 @@
       "id": "192",
       "name": "골드테라곤",
       "source": "A코스 랜덤 획득",
-      "imageLink": "/pets/pet_골드테라곤.webp",
+      "imageLink": "/pets/pet_goldeuteragon.webp",
       "elementStats": {
         "earth": 2,
         "water": 0,
@@ -14505,7 +14505,7 @@
       "id": "191",
       "name": "푸테라",
       "source": "A코스 확률 획득",
-      "imageLink": "/pets/pet_푸테라.webp",
+      "imageLink": "/pets/pet_putera.webp",
       "elementStats": {
         "earth": 0,
         "water": 8,
@@ -14532,7 +14532,7 @@
       "id": "190",
       "name": "도라비스",
       "source": "카난 이벤트",
-      "imageLink": "/pets/pet_도라비스.webp",
+      "imageLink": "/pets/pet_dorabiseu.webp",
       "elementStats": {
         "earth": 0,
         "water": 0,
@@ -14559,7 +14559,7 @@
       "id": "189",
       "name": "포이비스",
       "source": "필드 포획",
-      "imageLink": "/pets/pet_포이비스.webp",
+      "imageLink": "/pets/pet_poibiseu.webp",
       "elementStats": {
         "earth": 5,
         "water": 0,
@@ -14586,7 +14586,7 @@
       "id": "188",
       "name": "테라곤",
       "source": "C코스 랜덤 획득",
-      "imageLink": "/pets/pet_테라곤.webp",
+      "imageLink": "/pets/pet_teragon.webp",
       "elementStats": {
         "earth": 0,
         "water": 0,
@@ -14613,7 +14613,7 @@
       "id": "187",
       "name": "만모로스",
       "source": "필드 포획",
-      "imageLink": "/pets/pet_만모로스.webp",
+      "imageLink": "/pets/pet_manmoroseu.webp",
       "elementStats": {
         "earth": 0,
         "water": 5,
@@ -14640,7 +14640,7 @@
       "id": "186",
       "name": "마모나스",
       "source": "필드 포획",
-      "imageLink": "/pets/pet_마모나스.webp",
+      "imageLink": "/pets/pet_mamonaseu.webp",
       "elementStats": {
         "earth": 7,
         "water": 3,
@@ -14667,7 +14667,7 @@
       "id": "185",
       "name": "만모르",
       "source": "필드 포획",
-      "imageLink": "/pets/pet_만모르.webp",
+      "imageLink": "/pets/pet_manmoreu.webp",
       "elementStats": {
         "earth": 0,
         "water": 2,
@@ -14694,7 +14694,7 @@
       "id": "184",
       "name": "만모",
       "source": "필드 포획",
-      "imageLink": "/pets/pet_만모.webp",
+      "imageLink": "/pets/pet_manmo.webp",
       "elementStats": {
         "earth": 9,
         "water": 1,
@@ -14721,7 +14721,7 @@
       "id": "183",
       "name": "노라키토스",
       "source": "C코스 랜덤 획득",
-      "imageLink": "/pets/pet_노라키토스.webp",
+      "imageLink": "/pets/pet_norakitoseu.webp",
       "elementStats": {
         "earth": 5,
         "water": 0,
@@ -14748,7 +14748,7 @@
       "id": "182",
       "name": "푸비토스",
       "source": "C코스 랜덤 획득",
-      "imageLink": "/pets/pet_푸비토스.webp",
+      "imageLink": "/pets/pet_pubitoseu.webp",
       "elementStats": {
         "earth": 5,
         "water": 5,
@@ -14775,7 +14775,7 @@
       "id": "181",
       "name": "프리토스",
       "source": "후르도 복권 1등",
-      "imageLink": "/pets/pet_프리토스.webp",
+      "imageLink": "/pets/pet_peuritoseu.webp",
       "elementStats": {
         "earth": 0,
         "water": 0,
@@ -14802,7 +14802,7 @@
       "id": "180",
       "name": "프라키토스",
       "source": "필드 포획",
-      "imageLink": "/pets/pet_프라키토스.webp",
+      "imageLink": "/pets/pet_peurakitoseu.webp",
       "elementStats": {
         "earth": 0,
         "water": 2,
@@ -14829,7 +14829,7 @@
       "id": "179",
       "name": "다이노스",
       "source": "필드 포획",
-      "imageLink": "/pets/pet_다이노스.webp",
+      "imageLink": "/pets/pet_dainoseu.webp",
       "elementStats": {
         "earth": 3,
         "water": 7,
@@ -14856,7 +14856,7 @@
       "id": "178",
       "name": "다이노",
       "source": "C코스 랜덤 보상",
-      "imageLink": "/pets/pet_다이노.webp",
+      "imageLink": "/pets/pet_daino.webp",
       "elementStats": {
         "earth": 9,
         "water": 1,
@@ -14883,7 +14883,7 @@
       "id": "177",
       "name": "루보스",
       "source": "A코스 랜덤 보상",
-      "imageLink": "/pets/pet_루보스.webp",
+      "imageLink": "/pets/pet_ruboseu.webp",
       "elementStats": {
         "earth": 7,
         "water": 3,
@@ -14910,7 +14910,7 @@
       "id": "176",
       "name": "씨보스",
       "source": "필드 포획",
-      "imageLink": "/pets/pet_씨보스.webp",
+      "imageLink": "/pets/pet_ssiboseu.webp",
       "elementStats": {
         "earth": 2,
         "water": 8,
@@ -14937,7 +14937,7 @@
       "id": "175",
       "name": "무이",
       "source": "필드포획",
-      "imageLink": "/pets/pet_무이.webp",
+      "imageLink": "/pets/pet_mui.webp",
       "elementStats": {
         "earth": 0,
         "water": 10,
@@ -14964,7 +14964,7 @@
       "id": "174",
       "name": "루이",
       "source": "필드 포획",
-      "imageLink": "/pets/pet_루이.webp",
+      "imageLink": "/pets/pet_rui.webp",
       "elementStats": {
         "earth": 0,
         "water": 8,
@@ -14991,7 +14991,7 @@
       "id": "173",
       "name": "돌가로스",
       "source": "B코스 랜덤 보상",
-      "imageLink": "/pets/pet_돌가로스.webp",
+      "imageLink": "/pets/pet_dolgaroseu.webp",
       "elementStats": {
         "earth": 9,
         "water": 0,
@@ -15018,7 +15018,7 @@
       "id": "172",
       "name": "가가로스",
       "source": "필드 포획",
-      "imageLink": "/pets/pet_가가로스.webp",
+      "imageLink": "/pets/pet_gagaroseu.webp",
       "elementStats": {
         "earth": 0,
         "water": 2,
@@ -15045,7 +15045,7 @@
       "id": "171",
       "name": "비트로스",
       "source": "필드 포획",
-      "imageLink": "/pets/pet_비트로스.webp",
+      "imageLink": "/pets/pet_biteuroseu.webp",
       "elementStats": {
         "earth": 0,
         "water": 0,
@@ -15072,7 +15072,7 @@
       "id": "170",
       "name": "기가로스",
       "source": "미정",
-      "imageLink": "/pets/pet_기가로스.webp",
+      "imageLink": "/pets/pet_gigaroseu.webp",
       "elementStats": {
         "earth": 3,
         "water": 0,
@@ -15099,7 +15099,7 @@
       "id": "169",
       "name": "쟈하드",
       "source": "쟈쟈 복권 1등",
-      "imageLink": "/pets/pet_쟈하드.webp",
+      "imageLink": "/pets/pet_jyahadeu.webp",
       "elementStats": {
         "earth": 0,
         "water": 0,
@@ -15126,7 +15126,7 @@
       "id": "168",
       "name": "판지",
       "source": "필드 포획",
-      "imageLink": "/pets/pet_판지.webp",
+      "imageLink": "/pets/pet_panji.webp",
       "elementStats": {
         "earth": 2,
         "water": 8,
@@ -15153,7 +15153,7 @@
       "id": "167",
       "name": "쟈그",
       "source": "필드 포획",
-      "imageLink": "/pets/pet_쟈그.webp",
+      "imageLink": "/pets/pet_jyageu.webp",
       "elementStats": {
         "earth": 0,
         "water": 10,
@@ -15180,7 +15180,7 @@
       "id": "166",
       "name": "쟈그라",
       "source": "필드 포획",
-      "imageLink": "/pets/pet_쟈그라.webp",
+      "imageLink": "/pets/pet_jyageura.webp",
       "elementStats": {
         "earth": 0,
         "water": 5,
@@ -15207,7 +15207,7 @@
       "id": "165",
       "name": "고반케스",
       "source": "필드 포획",
-      "imageLink": "/pets/pet_고반케스.webp",
+      "imageLink": "/pets/pet_gobankeseu.webp",
       "elementStats": {
         "earth": 4,
         "water": 6,
@@ -15234,7 +15234,7 @@
       "id": "164",
       "name": "코발스",
       "source": "B코스 랜덤 보상",
-      "imageLink": "/pets/pet_코발스.webp",
+      "imageLink": "/pets/pet_kobalseu.webp",
       "elementStats": {
         "earth": 0,
         "water": 10,
@@ -15261,7 +15261,7 @@
       "id": "163",
       "name": "토르프스",
       "source": "A코스 랜덤 보상",
-      "imageLink": "/pets/pet_토르프스.webp",
+      "imageLink": "/pets/pet_toreupeuseu.webp",
       "elementStats": {
         "earth": 10,
         "water": 0,
@@ -15288,7 +15288,7 @@
       "id": "162",
       "name": "토리케라",
       "source": "필드 포획",
-      "imageLink": "/pets/pet_토리케라.webp",
+      "imageLink": "/pets/pet_torikera.webp",
       "elementStats": {
         "earth": 7,
         "water": 3,
@@ -15315,7 +15315,7 @@
       "id": "161",
       "name": "펜타스",
       "source": "필드 포획",
-      "imageLink": "/pets/pet_펜타스.webp",
+      "imageLink": "/pets/pet_pentaseu.webp",
       "elementStats": {
         "earth": 2,
         "water": 8,
@@ -15342,7 +15342,7 @@
       "id": "160",
       "name": "토리노프스",
       "source": "필드 포획",
-      "imageLink": "/pets/pet_토리노프스.webp",
+      "imageLink": "/pets/pet_torinopeuseu.webp",
       "elementStats": {
         "earth": 0,
         "water": 3,
@@ -15369,7 +15369,7 @@
       "id": "159",
       "name": "노르노르",
       "source": "마리너스 복권 1등",
-      "imageLink": "/pets/pet_노르노르.webp",
+      "imageLink": "/pets/pet_noreunoreu.webp",
       "elementStats": {
         "earth": 3,
         "water": 0,
@@ -15396,7 +15396,7 @@
       "id": "158",
       "name": "고르고르",
       "source": "필드 포획",
-      "imageLink": "/pets/pet_고르고르.webp",
+      "imageLink": "/pets/pet_goreugoreu.webp",
       "elementStats": {
         "earth": 0,
         "water": 0,
@@ -15423,7 +15423,7 @@
       "id": "157",
       "name": "베루루",
       "source": "필드 포획",
-      "imageLink": "/pets/pet_베루루.webp",
+      "imageLink": "/pets/pet_beruru.webp",
       "elementStats": {
         "earth": 0,
         "water": 0,
@@ -15450,7 +15450,7 @@
       "id": "156",
       "name": "베르가",
       "source": "필드 포획",
-      "imageLink": "/pets/pet_베르가.webp",
+      "imageLink": "/pets/pet_bereuga.webp",
       "elementStats": {
         "earth": 6,
         "water": 4,
@@ -15477,7 +15477,7 @@
       "id": "155",
       "name": "카우",
       "source": "필드 포획",
-      "imageLink": "/pets/pet_카우.webp",
+      "imageLink": "/pets/pet_kau.webp",
       "elementStats": {
         "earth": 7,
         "water": 0,
@@ -15504,7 +15504,7 @@
       "id": "154",
       "name": "바우",
       "source": "필드 포획",
-      "imageLink": "/pets/pet_바우.webp",
+      "imageLink": "/pets/pet_bau.webp",
       "elementStats": {
         "earth": 2,
         "water": 0,
@@ -15531,7 +15531,7 @@
       "id": "153",
       "name": "바카",
       "source": "필드 포획",
-      "imageLink": "/pets/pet_바카.webp",
+      "imageLink": "/pets/pet_baka.webp",
       "elementStats": {
         "earth": 0,
         "water": 0,
@@ -15558,7 +15558,7 @@
       "id": "152",
       "name": "카쿠",
       "source": "필드 포획",
-      "imageLink": "/pets/pet_카쿠.webp",
+      "imageLink": "/pets/pet_kaku.webp",
       "elementStats": {
         "earth": 3,
         "water": 7,
@@ -15585,7 +15585,7 @@
       "id": "151",
       "name": "토로쟈",
       "source": "필드 포획",
-      "imageLink": "/pets/pet_토로쟈.webp",
+      "imageLink": "/pets/pet_torojya.webp",
       "elementStats": {
         "earth": 0,
         "water": 3,
@@ -15612,7 +15612,7 @@
       "id": "150",
       "name": "쿠보",
       "source": "쿠오산 공룡박사",
-      "imageLink": "/pets/pet_쿠보.webp",
+      "imageLink": "/pets/pet_kubo.webp",
       "elementStats": {
         "earth": 0,
         "water": 5,
@@ -15639,7 +15639,7 @@
       "id": "149",
       "name": "포보",
       "source": "필드 포획",
-      "imageLink": "/pets/pet_포보.webp",
+      "imageLink": "/pets/pet_pobo.webp",
       "elementStats": {
         "earth": 3,
         "water": 7,
@@ -15666,7 +15666,7 @@
       "id": "148",
       "name": "휴보",
       "source": "황금색 페트(카난)",
-      "imageLink": "/pets/pet_휴보.webp",
+      "imageLink": "/pets/pet_hyubo.webp",
       "elementStats": {
         "earth": 8,
         "water": 2,
@@ -15693,7 +15693,7 @@
       "id": "147",
       "name": "고르고",
       "source": "필드 포획",
-      "imageLink": "/pets/pet_고르고.webp",
+      "imageLink": "/pets/pet_goreugo.webp",
       "elementStats": {
         "earth": 0,
         "water": 0,
@@ -15720,7 +15720,7 @@
       "id": "146",
       "name": "투르돈",
       "source": "B코스 / 필드",
-      "imageLink": "/pets/pet_투르돈.webp",
+      "imageLink": "/pets/pet_tureudon.webp",
       "elementStats": {
         "earth": 0,
         "water": 3,
@@ -15747,7 +15747,7 @@
       "id": "145",
       "name": "기라돈",
       "source": "필드 포획",
-      "imageLink": "/pets/pet_기라돈.webp",
+      "imageLink": "/pets/pet_giradon.webp",
       "elementStats": {
         "earth": 8,
         "water": 2,
@@ -15774,7 +15774,7 @@
       "id": "144",
       "name": "고르돈",
       "source": "필드 포획",
-      "imageLink": "/pets/pet_고르돈.webp",
+      "imageLink": "/pets/pet_goreudon.webp",
       "elementStats": {
         "earth": 10,
         "water": 0,
@@ -15801,7 +15801,7 @@
       "id": "143",
       "name": "골드카비트",
       "source": "필드 포획",
-      "imageLink": "/pets/pet_골드카비트.webp",
+      "imageLink": "/pets/pet_goldeukabiteu.webp",
       "elementStats": {
         "earth": 0,
         "water": 0,
@@ -15828,7 +15828,7 @@
       "id": "142",
       "name": "큐이",
       "source": "필드 포획",
-      "imageLink": "/pets/pet_큐이.webp",
+      "imageLink": "/pets/pet_kyui.webp",
       "elementStats": {
         "earth": 0,
         "water": 0,
@@ -15855,7 +15855,7 @@
       "id": "141",
       "name": "케이비",
       "source": "초기 지원",
-      "imageLink": "/pets/pet_케이비.webp",
+      "imageLink": "/pets/pet_keibi.webp",
       "elementStats": {
         "earth": 2,
         "water": 0,
@@ -15882,7 +15882,7 @@
       "id": "140",
       "name": "카비트",
       "source": "필드 포획",
-      "imageLink": "/pets/pet_카비트.webp",
+      "imageLink": "/pets/pet_kabiteu.webp",
       "elementStats": {
         "earth": 0,
         "water": 0,
@@ -15909,7 +15909,7 @@
       "id": "139",
       "name": "리스키",
       "source": "필드 포획",
-      "imageLink": "/pets/pet_리스키.webp",
+      "imageLink": "/pets/pet_riseuki.webp",
       "elementStats": {
         "earth": 2,
         "water": 8,
@@ -15936,7 +15936,7 @@
       "id": "138",
       "name": "포링",
       "source": "필드 포획",
-      "imageLink": "/pets/pet_포링.webp",
+      "imageLink": "/pets/pet_poring.webp",
       "elementStats": {
         "earth": 0,
         "water": 4,
@@ -15963,7 +15963,7 @@
       "id": "137",
       "name": "쿠쿠르",
       "source": "초기 지원",
-      "imageLink": "/pets/pet_쿠쿠르.webp",
+      "imageLink": "/pets/pet_kukureu.webp",
       "elementStats": {
         "earth": 0,
         "water": 7,
@@ -15990,7 +15990,7 @@
       "id": "136",
       "name": "쿠링",
       "source": "필드 포획",
-      "imageLink": "/pets/pet_쿠링.webp",
+      "imageLink": "/pets/pet_kuring.webp",
       "elementStats": {
         "earth": 6,
         "water": 4,
@@ -16017,7 +16017,7 @@
       "id": "135",
       "name": "부르돈",
       "source": "오형제 / 필드",
-      "imageLink": "/pets/pet_부르돈.webp",
+      "imageLink": "/pets/pet_bureudon.webp",
       "elementStats": {
         "earth": 0,
         "water": 0,
@@ -16044,7 +16044,7 @@
       "id": "134",
       "name": "반보로",
       "source": "오형제 / 필드",
-      "imageLink": "/pets/pet_반보로.webp",
+      "imageLink": "/pets/pet_banboro.webp",
       "elementStats": {
         "earth": 0,
         "water": 0,
@@ -16071,7 +16071,7 @@
       "id": "133",
       "name": "얀기로",
       "source": "오형제 / 필드",
-      "imageLink": "/pets/pet_얀기로.webp",
+      "imageLink": "/pets/pet_yangiro.webp",
       "elementStats": {
         "earth": 0,
         "water": 3,
@@ -16098,7 +16098,7 @@
       "id": "132",
       "name": "리비노",
       "source": "오형제 / 필드",
-      "imageLink": "/pets/pet_리비노.webp",
+      "imageLink": "/pets/pet_ribino.webp",
       "elementStats": {
         "earth": 10,
         "water": 0,
@@ -16125,7 +16125,7 @@
       "id": "131",
       "name": "카르기안",
       "source": "필드 포획",
-      "imageLink": "/pets/pet_카르기안.webp",
+      "imageLink": "/pets/pet_kareugian.webp",
       "elementStats": {
         "earth": 2,
         "water": 0,
@@ -16152,7 +16152,7 @@
       "id": "130",
       "name": "쿠타스",
       "source": "D코스 , 필드 포획",
-      "imageLink": "/pets/pet_쿠타스.webp",
+      "imageLink": "/pets/pet_kutaseu.webp",
       "elementStats": {
         "earth": 0,
         "water": 6,
@@ -16179,7 +16179,7 @@
       "id": "129",
       "name": "아이카스",
       "source": "필드 포획",
-      "imageLink": "/pets/pet_아이카스.webp",
+      "imageLink": "/pets/pet_aikaseu.webp",
       "elementStats": {
         "earth": 5,
         "water": 5,
@@ -16206,7 +16206,7 @@
       "id": "128",
       "name": "램가스",
       "source": "C코스 랜덤 보상",
-      "imageLink": "/pets/pet_램가스.webp",
+      "imageLink": "/pets/pet_raemgaseu.webp",
       "elementStats": {
         "earth": 5,
         "water": 0,
@@ -16233,7 +16233,7 @@
       "id": "127",
       "name": "로기안",
       "source": "필드 포획",
-      "imageLink": "/pets/pet_로기안.webp",
+      "imageLink": "/pets/pet_rogian.webp",
       "elementStats": {
         "earth": 8,
         "water": 0,
@@ -16260,7 +16260,7 @@
       "id": "126",
       "name": "코로카스",
       "source": "필드 포획",
-      "imageLink": "/pets/pet_코로카스.webp",
+      "imageLink": "/pets/pet_korokaseu.webp",
       "elementStats": {
         "earth": 0,
         "water": 4,
@@ -16287,7 +16287,7 @@
       "id": "125",
       "name": "쿠카스",
       "source": "필드 포획",
-      "imageLink": "/pets/pet_쿠카스.webp",
+      "imageLink": "/pets/pet_kukaseu.webp",
       "elementStats": {
         "earth": 8,
         "water": 2,
@@ -16314,7 +16314,7 @@
       "id": "124",
       "name": "카타르카스",
       "source": "필드 포획",
-      "imageLink": "/pets/pet_카타르카스.webp",
+      "imageLink": "/pets/pet_katareukaseu.webp",
       "elementStats": {
         "earth": 10,
         "water": 0,
@@ -16341,7 +16341,7 @@
       "id": "123",
       "name": "루니",
       "source": "필드 포획",
-      "imageLink": "/pets/pet_루니.webp",
+      "imageLink": "/pets/pet_runi.webp",
       "elementStats": {
         "earth": 10,
         "water": 0,
@@ -16368,7 +16368,7 @@
       "id": "122",
       "name": "후바바",
       "source": "필드 포획",
-      "imageLink": "/pets/pet_후바바.webp",
+      "imageLink": "/pets/pet_hubaba.webp",
       "elementStats": {
         "earth": 0,
         "water": 0,
@@ -16395,7 +16395,7 @@
       "id": "121",
       "name": "라고고",
       "source": "필드 포획",
-      "imageLink": "/pets/pet_라고고.webp",
+      "imageLink": "/pets/pet_ragogo.webp",
       "elementStats": {
         "earth": 0,
         "water": 0,
@@ -16422,7 +16422,7 @@
       "id": "120",
       "name": "보크곤",
       "source": "필드 포획",
-      "imageLink": "/pets/pet_보크곤.webp",
+      "imageLink": "/pets/pet_bokeugon.webp",
       "elementStats": {
         "earth": 2,
         "water": 0,
@@ -16449,7 +16449,7 @@
       "id": "119",
       "name": "다고스",
       "source": "필드 포획",
-      "imageLink": "/pets/pet_다고스.webp",
+      "imageLink": "/pets/pet_dagoseu.webp",
       "elementStats": {
         "earth": 0,
         "water": 8,
@@ -16476,7 +16476,7 @@
       "id": "118",
       "name": "타로곤",
       "source": "필드 포획",
-      "imageLink": "/pets/pet_타로곤.webp",
+      "imageLink": "/pets/pet_tarogon.webp",
       "elementStats": {
         "earth": 0,
         "water": 0,
@@ -16503,7 +16503,7 @@
       "id": "117",
       "name": "네고스",
       "source": "필드 포획",
-      "imageLink": "/pets/pet_네고스.webp",
+      "imageLink": "/pets/pet_negoseu.webp",
       "elementStats": {
         "earth": 4,
         "water": 6,
@@ -16530,7 +16530,7 @@
       "id": "116",
       "name": "아고아",
       "source": "필드 포획",
-      "imageLink": "/pets/pet_아고아.webp",
+      "imageLink": "/pets/pet_agoa.webp",
       "elementStats": {
         "earth": 0,
         "water": 3,
@@ -16557,7 +16557,7 @@
       "id": "115",
       "name": "돌북이",
       "source": "필드 포획",
-      "imageLink": "/pets/pet_돌북이.webp",
+      "imageLink": "/pets/pet_dolbuki.webp",
       "elementStats": {
         "earth": 9,
         "water": 0,
@@ -16584,7 +16584,7 @@
       "id": "114",
       "name": "깡북이",
       "source": "필드 포획",
-      "imageLink": "/pets/pet_깡북이.webp",
+      "imageLink": "/pets/pet_kkangbuki.webp",
       "elementStats": {
         "earth": 0,
         "water": 0,
@@ -16611,7 +16611,7 @@
       "id": "113",
       "name": "북이",
       "source": "필드 포획",
-      "imageLink": "/pets/pet_북이.webp",
+      "imageLink": "/pets/pet_buki.webp",
       "elementStats": {
         "earth": 6,
         "water": 0,
@@ -16638,7 +16638,7 @@
       "id": "112",
       "name": "노북이",
       "source": "필드 포획",
-      "imageLink": "/pets/pet_노북이.webp",
+      "imageLink": "/pets/pet_nobuki.webp",
       "elementStats": {
         "earth": 3,
         "water": 0,
@@ -16665,7 +16665,7 @@
       "id": "111",
       "name": "베로포리",
       "source": "필드 포획",
-      "imageLink": "/pets/pet_베로포리.webp",
+      "imageLink": "/pets/pet_beropori.webp",
       "elementStats": {
         "earth": 0,
         "water": 3,
@@ -16692,7 +16692,7 @@
       "id": "110",
       "name": "베로보크",
       "source": "필드 포획",
-      "imageLink": "/pets/pet_베로보크.webp",
+      "imageLink": "/pets/pet_berobokeu.webp",
       "elementStats": {
         "earth": 3,
         "water": 7,
@@ -16719,7 +16719,7 @@
       "id": "109",
       "name": "베로로크",
       "source": "필드 포획",
-      "imageLink": "/pets/pet_베로로크.webp",
+      "imageLink": "/pets/pet_berorokeu.webp",
       "elementStats": {
         "earth": 7,
         "water": 3,
@@ -16746,7 +16746,7 @@
       "id": "108",
       "name": "베론",
       "source": "필드 포획",
-      "imageLink": "/pets/pet_베론.webp",
+      "imageLink": "/pets/pet_beron.webp",
       "elementStats": {
         "earth": 0,
         "water": 10,
@@ -16773,7 +16773,7 @@
       "id": "107",
       "name": "노투투",
       "source": "D코스 랜덤 보상",
-      "imageLink": "/pets/pet_노투투.webp",
+      "imageLink": "/pets/pet_notutu.webp",
       "elementStats": {
         "earth": 0,
         "water": 0,
@@ -16800,7 +16800,7 @@
       "id": "106",
       "name": "오투투",
       "source": "초기 지원",
-      "imageLink": "/pets/pet_오투투.webp",
+      "imageLink": "/pets/pet_otutu.webp",
       "elementStats": {
         "earth": 6,
         "water": 0,
@@ -16827,7 +16827,7 @@
       "id": "105",
       "name": "투투",
       "source": "필드 포획",
-      "imageLink": "/pets/pet_투투.webp",
+      "imageLink": "/pets/pet_tutu.webp",
       "elementStats": {
         "earth": 3,
         "water": 7,
@@ -16854,7 +16854,7 @@
       "id": "104",
       "name": "우푸",
       "source": "필드 포획",
-      "imageLink": "/pets/pet_우푸.webp",
+      "imageLink": "/pets/pet_upu.webp",
       "elementStats": {
         "earth": 0,
         "water": 0,
@@ -16881,7 +16881,7 @@
       "id": "103",
       "name": "푸푸",
       "source": "필드 포획",
-      "imageLink": "/pets/pet_푸푸.webp",
+      "imageLink": "/pets/pet_pupu.webp",
       "elementStats": {
         "earth": 3,
         "water": 0,
@@ -16908,7 +16908,7 @@
       "id": "102",
       "name": "돌꼬비",
       "source": "D코스 랜덤 보상",
-      "imageLink": "/pets/pet_돌꼬비.webp",
+      "imageLink": "/pets/pet_dolkkobi.webp",
       "elementStats": {
         "earth": 8,
         "water": 0,
@@ -16935,7 +16935,7 @@
       "id": "101",
       "name": "꼬꼬비",
       "source": "필드 포획",
-      "imageLink": "/pets/pet_꼬꼬비.webp",
+      "imageLink": "/pets/pet_kkokkobi.webp",
       "elementStats": {
         "earth": 0,
         "water": 0,
@@ -16962,7 +16962,7 @@
       "id": "100",
       "name": "꼬비오",
       "source": "필드 포획",
-      "imageLink": "/pets/pet_꼬비오.webp",
+      "imageLink": "/pets/pet_kkobio.webp",
       "elementStats": {
         "earth": 0,
         "water": 0,
@@ -16989,7 +16989,7 @@
       "id": "99",
       "name": "꼬비",
       "source": "필드 포획",
-      "imageLink": "/pets/pet_꼬비.webp",
+      "imageLink": "/pets/pet_kkobi.webp",
       "elementStats": {
         "earth": 5,
         "water": 0,
@@ -17016,7 +17016,7 @@
       "id": "98",
       "name": "꼬미",
       "source": "필드 포획",
-      "imageLink": "/pets/pet_꼬미.webp",
+      "imageLink": "/pets/pet_kkomi.webp",
       "elementStats": {
         "earth": 0,
         "water": 0,
@@ -17043,7 +17043,7 @@
       "id": "97",
       "name": "푸비",
       "source": "D코스 랜덤 보상",
-      "imageLink": "/pets/pet_푸비.webp",
+      "imageLink": "/pets/pet_pubi.webp",
       "elementStats": {
         "earth": 3,
         "water": 7,
@@ -17070,7 +17070,7 @@
       "id": "96",
       "name": "부이비",
       "source": "필드 포획",
-      "imageLink": "/pets/pet_부이비.webp",
+      "imageLink": "/pets/pet_buibi.webp",
       "elementStats": {
         "earth": 0,
         "water": 4,
@@ -17097,7 +17097,7 @@
       "id": "95",
       "name": "골드부비",
       "source": "퀴즈 삼형제",
-      "imageLink": "/pets/pet_골드부비.webp",
+      "imageLink": "/pets/pet_goldeububi.webp",
       "elementStats": {
         "earth": 0,
         "water": 0,
@@ -17124,7 +17124,7 @@
       "id": "94",
       "name": "부비",
       "source": "필드 포획",
-      "imageLink": "/pets/pet_부비.webp",
+      "imageLink": "/pets/pet_bubi.webp",
       "elementStats": {
         "earth": 8,
         "water": 2,
@@ -17151,7 +17151,7 @@
       "id": "93",
       "name": "부이",
       "source": "필드 포획",
-      "imageLink": "/pets/pet_부이.webp",
+      "imageLink": "/pets/pet_bui.webp",
       "elementStats": {
         "earth": 6,
         "water": 4,
@@ -17178,7 +17178,7 @@
       "id": "92",
       "name": "실버우리",
       "source": "카루타나 복권 1등",
-      "imageLink": "/pets/pet_실버우리.gif",
+      "imageLink": "/pets/pet_silbeouri.gif",
       "elementStats": {
         "earth": 5,
         "water": 0,
@@ -17205,7 +17205,7 @@
       "id": "91",
       "name": "불그리",
       "source": "B코스 랜덤 보상",
-      "imageLink": "/pets/pet_불그리.gif",
+      "imageLink": "/pets/pet_bulgeuri.gif",
       "elementStats": {
         "earth": 0,
         "water": 0,
@@ -17232,7 +17232,7 @@
       "id": "90",
       "name": "얼룩우리",
       "source": "필드 포획",
-      "imageLink": "/pets/pet_얼룩우리.gif",
+      "imageLink": "/pets/pet_eolrukuri.gif",
       "elementStats": {
         "earth": 10,
         "water": 0,
@@ -17259,7 +17259,7 @@
       "id": "89",
       "name": "두리",
       "source": "초기 지원",
-      "imageLink": "/pets/pet_두리.gif",
+      "imageLink": "/pets/pet_duri.gif",
       "elementStats": {
         "earth": 0,
         "water": 4,
@@ -17286,7 +17286,7 @@
       "id": "88",
       "name": "우리",
       "source": "필드 포획",
-      "imageLink": "/pets/pet_우리.gif",
+      "imageLink": "/pets/pet_uri.gif",
       "elementStats": {
         "earth": 8,
         "water": 2,
