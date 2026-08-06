@@ -1,5 +1,4 @@
-import React, { useMemo, useEffect, useRef, useState } from 'react';
-import { useWindowVirtualizer } from '@tanstack/react-virtual';
+import React, { useMemo, useEffect, useRef, useState, useCallback } from 'react';
 import type { Pet } from '@/shared/types';
 import type { ElementFilterItem } from '@/shared/components/filters/ElementFilter';
 import type { GradeType } from '@/shared/components/filters/GradeFilter';
@@ -142,7 +141,7 @@ const PetGrid: React.FC<PetGridProps> = React.memo(
       return result;
     }, [pets, debouncedSearchTerm, elementFilters, gradeFilters, statFilters, showFavoritesOnly, sortOption]);
 
-    // 4. 가상화 로우 배열 가공
+    // 4. 컬럼 수에 맞춰 가상화 로우 배열 생성
     const rows = useMemo(() => {
       const result: Pet[][] = [];
       for (let i = 0; i < filteredPets.length; i += columnCount) {
@@ -151,18 +150,67 @@ const PetGrid: React.FC<PetGridProps> = React.memo(
       return result;
     }, [filteredPets, columnCount]);
 
-    const isTyping = searchTerm !== debouncedSearchTerm;
+    // 5. React 19 전용 100% 호환 순수 Window Scroll 가상화 엔진
+    const containerRef = useRef<HTMLDivElement | null>(null);
+    const [scrollTop, setScrollTop] = useState(0);
+    const [viewportHeight, setViewportHeight] = useState(800);
 
-    // 5. TanStack React Virtual 가상화 스크롤 리스너
-    const parentRef = useRef<HTMLDivElement | null>(null);
+    const updateScrollState = useCallback(() => {
+      if (typeof window === 'undefined') return;
+      
+      const currentScrollY = window.scrollY;
+      const currentHeight = window.innerHeight;
+      
+      if (containerRef.current) {
+        const rect = containerRef.current.getBoundingClientRect();
+        const containerTop = currentScrollY + rect.top;
+        const relativeScroll = Math.max(0, currentScrollY - containerTop);
+        setScrollTop(relativeScroll);
+      } else {
+        setScrollTop(currentScrollY);
+      }
+      setViewportHeight(currentHeight);
+    }, []);
 
-    const virtualizer = useWindowVirtualizer({
-      count: rows.length,
-      estimateSize: () => 500, // 카드 평균 높이 추정
-      overscan: 2, // 화면 앞뒤로 예비 2개 로우만 프리렌더링
-    });
+    useEffect(() => {
+      updateScrollState();
+      
+      let ticking = false;
+      const handleScroll = () => {
+        if (!ticking) {
+          window.requestAnimationFrame(() => {
+            updateScrollState();
+            ticking = false;
+          });
+          ticking = true;
+        }
+      };
 
-    // 특정 펫 이동 (scrollToId)
+      window.addEventListener('scroll', handleScroll, { passive: true });
+      window.addEventListener('resize', handleScroll);
+
+      return () => {
+        window.removeEventListener('scroll', handleScroll);
+        window.removeEventListener('resize', handleScroll);
+      };
+    }, [updateScrollState]);
+
+    // 가상화 로우 높이 추정 (px)
+    const ESTIMATED_ROW_HEIGHT = 480;
+    const OVERSCAN_ROWS = 3; // 화면 위아래로 예비 3개 로우만 프리렌더링
+
+    const startIndex = Math.max(0, Math.floor(scrollTop / ESTIMATED_ROW_HEIGHT) - OVERSCAN_ROWS);
+    const endIndex = Math.min(
+      rows.length,
+      Math.ceil((scrollTop + viewportHeight) / ESTIMATED_ROW_HEIGHT) + OVERSCAN_ROWS
+    );
+
+    const visibleRows = rows.slice(startIndex, endIndex);
+
+    const paddingTop = startIndex * ESTIMATED_ROW_HEIGHT;
+    const paddingBottom = Math.max(0, (rows.length - endIndex) * ESTIMATED_ROW_HEIGHT);
+
+    // 6. 특정 펫 이동 (scrollToId)
     const [highlightedId, setHighlightedId] = useState<string | null>(null);
     useEffect(() => {
       if (!scrollToId) return;
@@ -171,12 +219,20 @@ const PetGrid: React.FC<PetGridProps> = React.memo(
       if (petIndex === -1) return;
 
       const rowIndex = Math.floor(petIndex / columnCount);
-      virtualizer.scrollToIndex(rowIndex, { align: 'center' });
+      const targetY = rowIndex * ESTIMATED_ROW_HEIGHT;
+
+      if (containerRef.current) {
+        const rect = containerRef.current.getBoundingClientRect();
+        const absoluteY = window.scrollY + rect.top + targetY;
+        window.scrollTo({ top: absoluteY, behavior: 'smooth' });
+      }
 
       setHighlightedId(scrollToId);
       const timer = setTimeout(() => setHighlightedId(null), 2000);
       return () => clearTimeout(timer);
-    }, [scrollToId, filteredPets, columnCount, virtualizer]);
+    }, [scrollToId, filteredPets, columnCount]);
+
+    const isTyping = searchTerm !== debouncedSearchTerm;
 
     // 검색 타이핑 중 표시
     if (isTyping && searchTerm.trim()) {
@@ -289,44 +345,35 @@ const PetGrid: React.FC<PetGridProps> = React.memo(
           <SortDropdown currentSort={sortOption} onSortChange={onSortChange} />
         </div>
 
-        {/* TanStack Virtualized Virtual List Engine */}
-        <div ref={parentRef} className="relative w-full">
+        {/* React 19 Pure Virtualized Grid Container */}
+        <div ref={containerRef} className="w-full">
           <div
             style={{
-              height: `${virtualizer.getTotalSize()}px`,
-              width: '100%',
-              position: 'relative',
+              paddingTop: `${paddingTop}px`,
+              paddingBottom: `${paddingBottom}px`,
             }}
           >
-            {virtualizer.getVirtualItems().map(virtualRow => {
-              const rowPets = rows[virtualRow.index];
-              if (!rowPets) return null;
+            {visibleRows.map((rowPets, rowIndexOffset) => {
+              const rowIndex = startIndex + rowIndexOffset;
 
               return (
                 <div
-                  key={virtualRow.key}
-                  data-index={virtualRow.index}
-                  ref={virtualizer.measureElement}
-                  className="absolute top-0 left-0 w-full"
-                  style={{
-                    transform: `translateY(${virtualRow.start}px)`,
-                  }}
+                  key={`row-${rowIndex}`}
+                  className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-4 iphone16:gap-4 pb-6"
                 >
-                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-4 iphone16:gap-4 pb-6">
-                    {rowPets.map((pet, index) => (
-                      <div
-                        key={`${pet.id || pet.name}-${index}`}
-                        id={`pet-${pet.id}`}
-                        className={
-                          highlightedId === pet.id
-                            ? 'rounded-[24px] ring-2 ring-accent ring-offset-2 ring-offset-bg-primary shadow-glow transition-all duration-300'
-                            : undefined
-                        }
-                      >
-                        <PetCard pet={pet} />
-                      </div>
-                    ))}
-                  </div>
+                  {rowPets.map((pet, index) => (
+                    <div
+                      key={`${pet.id || pet.name}-${index}`}
+                      id={`pet-${pet.id}`}
+                      className={
+                        highlightedId === pet.id
+                          ? 'rounded-[24px] ring-2 ring-accent ring-offset-2 ring-offset-bg-primary shadow-glow transition-all duration-300'
+                          : undefined
+                      }
+                    >
+                      <PetCard pet={pet} />
+                    </div>
+                  ))}
                 </div>
               );
             })}
