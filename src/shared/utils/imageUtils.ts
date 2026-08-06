@@ -12,8 +12,14 @@ export const getAssetUrl = (url?: string): string => {
     return url;
   }
 
-  // 로컬 정적 이미지인 경우 Vite import.meta.env.BASE_URL 접두어 자동 연결
+  // 앞쪽 슬래시 정규화
   const cleanPath = url.startsWith('/') ? url.slice(1) : url;
+
+  // 이미 stoneage-light/ 접두어가 붙어있는 경우 중복 적용 방지
+  if (cleanPath.startsWith('stoneage-light/')) {
+    return `/${cleanPath}`;
+  }
+
   const baseUrl = import.meta.env.BASE_URL || '/';
   const prefix = baseUrl.endsWith('/') ? baseUrl : `${baseUrl}/`;
 
