@@ -1,8 +1,15 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, forwardRef } from 'react';
 import { createPortal } from 'react-dom';
+import DatePicker, { registerLocale } from 'react-datepicker';
+import { ko } from 'date-fns/locale/ko';
+import { format, parseISO } from 'date-fns';
+import 'react-datepicker/dist/react-datepicker.css';
+
 import { EventTracker } from '@/shared/utils/eventTracker';
-import { X, Search, Activity, MousePointerClick, AppWindow, MonitorSmartphone, Eye } from 'lucide-react';
+import { X, Search, Activity, MousePointerClick, AppWindow, MonitorSmartphone, Eye, Calendar as CalendarIcon } from 'lucide-react';
 import { cn } from '@/lib/utils';
+
+registerLocale('ko', ko);
 
 interface AdminEventStatsModalProps {
   isOpen: boolean;
@@ -17,6 +24,24 @@ interface StatCategoryCardProps {
   items: [string, number][];
   renderItem: (item: [string, number]) => React.ReactNode;
 }
+
+// Custom DatePicker Button Component
+const CustomDateInput = forwardRef<
+  HTMLButtonElement,
+  { value?: string; onClick?: () => void }
+>(({ value, onClick }, ref) => (
+  <button
+    type="button"
+    onClick={onClick}
+    ref={ref}
+    className="flex items-center gap-2 bg-bg-secondary border border-border hover:border-accent/80 rounded-lg px-2.5 py-1.5 text-xs md:text-sm font-medium transition-colors text-text-primary focus:outline-none focus:ring-2 focus:ring-accent/50 shadow-sm"
+  >
+    <CalendarIcon className="w-3.5 h-3.5 md:w-4 md:h-4 text-accent shrink-0" />
+    <span>{value}</span>
+  </button>
+));
+
+CustomDateInput.displayName = 'CustomDateInput';
 
 const StatCategoryCard: React.FC<StatCategoryCardProps> = ({
   title,
@@ -37,7 +62,7 @@ const StatCategoryCard: React.FC<StatCategoryCardProps> = ({
         </span>
       </h3>
 
-      {/* 모바일 및 PC 대응 카드 고정 높이 및 부드러운 내부 터치 스크롤 */}
+      {/* 고정 높이 및 부드러운 터치 스크롤 */}
       <div className="space-y-2 flex-1 max-h-56 md:max-h-72 overflow-y-auto pr-1 text-xs md:text-sm touch-pan-y overscroll-contain">
         {items.length > 0 ? (
           items.map(item => renderItem(item))
@@ -50,19 +75,30 @@ const StatCategoryCard: React.FC<StatCategoryCardProps> = ({
 };
 
 const AdminEventStatsModal: React.FC<AdminEventStatsModalProps> = ({ isOpen, onClose, initialDateStr }) => {
-  const today = new Date().toLocaleDateString('en-CA', { timeZone: 'Asia/Seoul' });
-  const [startDate, setStartDate] = useState(initialDateStr || today);
-  const [endDate, setEndDate] = useState(initialDateStr || today);
+  const todayStr = new Date().toLocaleDateString('en-CA', { timeZone: 'Asia/Seoul' });
+  
+  const parseDateStr = (dateStr?: string): Date => {
+    if (!dateStr) return new Date();
+    try {
+      return parseISO(dateStr);
+    } catch {
+      return new Date();
+    }
+  };
+
+  const [startDate, setStartDate] = useState<Date>(parseDateStr(initialDateStr || todayStr));
+  const [endDate, setEndDate] = useState<Date>(parseDateStr(initialDateStr || todayStr));
   const [stats, setStats] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     if (isOpen) {
-      if (initialDateStr) {
-        setStartDate(initialDateStr);
-        setEndDate(initialDateStr);
-      }
-      fetchStats(initialDateStr || today, initialDateStr || today);
+      const initialDate = parseDateStr(initialDateStr || todayStr);
+      setStartDate(initialDate);
+      setEndDate(initialDate);
+
+      const formattedStart = format(initialDate, 'yyyy-MM-dd');
+      fetchStats(formattedStart, formattedStart);
 
       const handleKeyDown = (e: KeyboardEvent) => {
         if (e.key === 'Escape') {
@@ -74,11 +110,17 @@ const AdminEventStatsModal: React.FC<AdminEventStatsModalProps> = ({ isOpen, onC
     }
   }, [isOpen, initialDateStr]);
 
-  const fetchStats = async (start: string, end: string) => {
+  const fetchStats = async (startStr: string, endStr: string) => {
     setIsLoading(true);
-    const data = await EventTracker.getEventStats(start, end);
+    const data = await EventTracker.getEventStats(startStr, endStr);
     setStats(data);
     setIsLoading(false);
+  };
+
+  const handleSearch = () => {
+    const formattedStart = format(startDate, 'yyyy-MM-dd');
+    const formattedEnd = format(endDate, 'yyyy-MM-dd');
+    fetchStats(formattedStart, formattedEnd);
   };
 
   if (!isOpen) return null;
@@ -139,26 +181,35 @@ const AdminEventStatsModal: React.FC<AdminEventStatsModalProps> = ({ isOpen, onC
         {/* Date Picker Area */}
         <div className="p-3 md:p-4 border-b border-border flex flex-wrap items-center gap-2 md:gap-3 bg-bg-primary/50 shrink-0 text-xs md:text-sm">
           <div className="flex items-center gap-1.5">
-            <label className="font-medium shrink-0">시작일:</label>
-            <input 
-              type="date" 
-              value={startDate} 
-              onChange={e => setStartDate(e.target.value)}
-              className="bg-bg-secondary border border-border rounded px-2 py-1 focus:outline-none focus:border-accent text-xs md:text-sm"
+            <label className="font-medium shrink-0 text-text-secondary">시작일:</label>
+            <DatePicker
+              selected={startDate}
+              onChange={(date: Date | null) => date && setStartDate(date)}
+              selectsStart
+              startDate={startDate}
+              endDate={endDate}
+              dateFormat="yyyy-MM-dd"
+              locale="ko"
+              customInput={<CustomDateInput />}
             />
           </div>
           <div className="flex items-center gap-1.5">
-            <label className="font-medium shrink-0">종료일:</label>
-            <input 
-              type="date" 
-              value={endDate} 
-              onChange={e => setEndDate(e.target.value)}
-              className="bg-bg-secondary border border-border rounded px-2 py-1 focus:outline-none focus:border-accent text-xs md:text-sm"
+            <label className="font-medium shrink-0 text-text-secondary">종료일:</label>
+            <DatePicker
+              selected={endDate}
+              onChange={(date: Date | null) => date && setEndDate(date)}
+              selectsEnd
+              startDate={startDate}
+              endDate={endDate}
+              minDate={startDate}
+              dateFormat="yyyy-MM-dd"
+              locale="ko"
+              customInput={<CustomDateInput />}
             />
           </div>
           <button 
-            onClick={() => fetchStats(startDate, endDate)}
-            className="flex items-center gap-1 bg-accent text-white px-3 py-1 rounded-md hover:bg-accent/90 transition-colors font-medium shrink-0 ml-auto md:ml-0"
+            onClick={handleSearch}
+            className="flex items-center gap-1 bg-accent text-black font-bold px-3 py-1.5 rounded-lg hover:bg-accent/90 transition-all font-medium shrink-0 ml-auto md:ml-2 shadow-sm active:scale-95"
           >
             <Search className="w-3.5 h-3.5 md:w-4 md:h-4" /> 조회
           </button>
