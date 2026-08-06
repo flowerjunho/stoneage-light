@@ -1,6 +1,6 @@
 {
-  "lastUpdated": "2026-08-06T07:13:44.684Z",
-  "totalCount": 730,
+  "lastUpdated": "2025-09-18T03:55:09.699Z",
+  "totalCount": 622,
   "pets": [
     {
       "id": "978",
@@ -74,8 +74,8 @@
         "vitality": 63
       },
       "growthStats": {
-        "attack": 2.49,
-        "defense": 1.51,
+        "attack": 2.490,
+        "defense": 1.510,
         "agility": 1.395,
         "vitality": 11.143
       },
@@ -103,8 +103,8 @@
       "growthStats": {
         "attack": 2.381,
         "defense": 1.612,
-        "agility": 1.15,
-        "vitality": 10.19
+        "agility": 1.150,
+        "vitality": 10.190
       },
       "rideable": "탑승가능",
       "totalGrowth": "5.143",
@@ -129,8 +129,8 @@
       },
       "growthStats": {
         "attack": 2.374,
-        "defense": 1.17,
-        "agility": 1.68,
+        "defense": 1.170,
+        "agility": 1.680,
         "vitality": 10.789
       },
       "rideable": "탑승불가",
@@ -182,7 +182,7 @@
         "vitality": 52
       },
       "growthStats": {
-        "attack": 2.19,
+        "attack": 2.190,
         "defense": 1.381,
         "agility": 1.578,
         "vitality": 10.367
@@ -318,7 +318,7 @@
       },
       "growthStats": {
         "attack": 2.211,
-        "defense": 2.21,
+        "defense": 2.210,
         "agility": 0.442,
         "vitality": 13.558
       },
@@ -344,7 +344,7 @@
         "vitality": 56
       },
       "growthStats": {
-        "attack": 2.32,
+        "attack": 2.320,
         "defense": 1.721,
         "agility": 1.197,
         "vitality": 11.177
@@ -400,7 +400,7 @@
       "growthStats": {
         "attack": 2.333,
         "defense": 1.435,
-        "agility": 1.49,
+        "agility": 1.490,
         "vitality": 10.463
       },
       "rideable": "탑승불가",
@@ -479,7 +479,7 @@
         "vitality": 64
       },
       "growthStats": {
-        "attack": 2.51,
+        "attack": 2.510,
         "defense": 1.571,
         "agility": 1.388,
         "vitality": 11.741
@@ -725,7 +725,7 @@
         "attack": 2.422,
         "defense": 1.653,
         "agility": 1.299,
-        "vitality": 11.85
+        "vitality": 11.850
       },
       "rideable": "탑승불가",
       "totalGrowth": "5.374",
@@ -750,7 +750,7 @@
       },
       "growthStats": {
         "attack": 2.469,
-        "defense": 1.66,
+        "defense": 1.660,
         "agility": 1.197,
         "vitality": 11.986
       },
@@ -833,7 +833,7 @@
         "attack": 2.422,
         "defense": 1.653,
         "agility": 1.299,
-        "vitality": 11.85
+        "vitality": 11.850
       },
       "rideable": "탑승불가",
       "totalGrowth": "5.374",
@@ -885,7 +885,7 @@
       },
       "growthStats": {
         "attack": 2.469,
-        "defense": 1.66,
+        "defense": 1.660,
         "agility": 1.197,
         "vitality": 11.986
       },
@@ -1048,7 +1048,7 @@
       "growthStats": {
         "attack": 2.389,
         "defense": 1.576,
-        "agility": 1.16,
+        "agility": 1.160,
         "vitality": 10.903
       },
       "rideable": "탑승불가",
@@ -1238,7 +1238,7 @@
         "attack": 2.486,
         "defense": 2.056,
         "agility": 1.063,
-        "vitality": 11.34
+        "vitality": 11.340
       },
       "rideable": "탑승가능",
       "totalGrowth": "5.604",
@@ -1454,7 +1454,7 @@
         "attack": 2.361,
         "defense": 2.313,
         "agility": 0.438,
-        "vitality": 13.59
+        "vitality": 13.590
       },
       "rideable": "탑승가능",
       "totalGrowth": "5.111",
@@ -1478,7 +1478,7 @@
         "vitality": 67
       },
       "growthStats": {
-        "attack": 2.25,
+        "attack": 2.250,
         "defense": 1.271,
         "agility": 1.674,
         "vitality": 13.313
@@ -1506,7 +1506,7 @@
       },
       "growthStats": {
         "attack": 2.396,
-        "defense": 1.16,
+        "defense": 1.160,
         "agility": 1.674,
         "vitality": 10.083
       },
@@ -1533,7 +1533,7 @@
       },
       "growthStats": {
         "attack": 2.361,
-        "defense": 1.16,
+        "defense": 1.160,
         "agility": 1.674,
         "vitality": 10.236
       },
@@ -1562,7 +1562,7 @@
         "attack": 2.368,
         "defense": 1.132,
         "agility": 1.958,
-        "vitality": 10.66
+        "vitality": 10.660
       },
       "rideable": "탑승가능",
       "totalGrowth": "5.458",
@@ -1964,7 +1964,7 @@
         "vitality": 54
       },
       "growthStats": {
-        "attack": 2.34,
+        "attack": 2.340,
         "defense": 1.396,
         "agility": 1.576,
         "vitality": 10.722
@@ -2019,7 +2019,7 @@
       },
       "growthStats": {
         "attack": 1.722,
-        "defense": 2.75,
+        "defense": 2.750,
         "agility": 0.528,
         "vitality": 10.146
       },
@@ -2207,7 +2207,7 @@
         "vitality": 61
       },
       "growthStats": {
-        "attack": 2.41,
+        "attack": 2.410,
         "defense": 1.132,
         "agility": 1.861,
         "vitality": 10.479
@@ -2235,7 +2235,7 @@
       },
       "growthStats": {
         "attack": 2.201,
-        "defense": 1,
+        "defense": 1.000,
         "agility": 1.722,
         "vitality": 9.639
       },
@@ -2290,7 +2290,7 @@
       "growthStats": {
         "attack": 2.326,
         "defense": 1.177,
-        "agility": 1.68,
+        "agility": 1.680,
         "vitality": 10.763
       },
       "rideable": "탑승가능",
@@ -2315,9 +2315,9 @@
         "vitality": 66
       },
       "growthStats": {
-        "attack": 2.18,
+        "attack": 2.180,
         "defense": 1.328,
-        "agility": 1.68,
+        "agility": 1.680,
         "vitality": 11.851
       },
       "rideable": "탑승불가",
@@ -2343,7 +2343,7 @@
       },
       "growthStats": {
         "attack": 2.319,
-        "defense": 1.34,
+        "defense": 1.340,
         "agility": 1.821,
         "vitality": 11.757
       },
@@ -2453,7 +2453,7 @@
         "attack": 2.428,
         "defense": 1.193,
         "agility": 1.821,
-        "vitality": 11
+        "vitality": 11.000
       },
       "rideable": "탑승불가",
       "totalGrowth": "5.443",
@@ -2723,7 +2723,7 @@
         "attack": 2.352,
         "defense": 1.458,
         "agility": 1.632,
-        "vitality": 11
+        "vitality": 11.0
       },
       "rideable": "탑승불가",
       "totalGrowth": "5.443",
@@ -3101,7 +3101,7 @@
         "attack": 2.125,
         "defense": 1.014,
         "agility": 2.104,
-        "vitality": 10.09
+        "vitality": 10.090
       },
       "rideable": "탑승가능",
       "totalGrowth": "5.243",
@@ -3209,7 +3209,7 @@
         "attack": 2.158,
         "defense": 2.029,
         "agility": 1.252,
-        "vitality": 11
+        "vitality": 11.0
       },
       "rideable": "탑승불가",
       "totalGrowth": "5.439",
@@ -3290,7 +3290,7 @@
         "attack": 2.397,
         "defense": 1.546,
         "agility": 1.301,
-        "vitality": 11
+        "vitality": 11.0
       },
       "rideable": "탑승가능",
       "totalGrowth": "5.244",
@@ -4667,7 +4667,7 @@
         "attack": 2.076,
         "defense": 2.417,
         "agility": 0.438,
-        "vitality": 12.91
+        "vitality": 12.910
       },
       "rideable": "탑승불가",
       "totalGrowth": "4.931",
@@ -18083,7 +18083,7 @@
         "vitality": 53
       },
       "growthStats": {
-        "attack": 2.34,
+        "attack": 2.340,
         "defense": 1.479,
         "agility": 1.111,
         "vitality": 10.563
