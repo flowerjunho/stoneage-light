@@ -4,6 +4,7 @@ import { Card } from '@/components/ui/card';
 import { cn } from '@/lib/utils';
 import SectionHeader from './SectionHeader';
 import rightItems from '@/data/right_items.json';
+import { getAssetUrl } from '@/shared/utils/imageUtils';
 
 const ItemSection = () => {
   const latestItems = rightItems.slice(0, 5);
@@ -33,7 +34,7 @@ const ItemSection = () => {
             {item.imageUrl && (
               <div className="relative w-10 h-10 rounded-lg overflow-hidden bg-bg-tertiary/50 flex-shrink-0">
                 <img
-                  src={item.imageUrl}
+                  src={getAssetUrl(item.imageUrl)}
                   alt={item.name}
                   className="w-full h-full object-contain transition-transform duration-300 group-hover:scale-110"
                   loading="lazy"

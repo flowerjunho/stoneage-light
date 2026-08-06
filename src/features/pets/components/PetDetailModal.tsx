@@ -1,6 +1,6 @@
 import React, { useMemo, useEffect } from 'react';
 import type { Pet } from '@/shared/types';
-import { handleImageErrorWithFallback, getPetImageUrl } from '@/shared/utils/imageUtils';
+import { handleImageErrorWithFallback, getPetImageUrl, getAssetUrl } from '@/shared/utils/imageUtils';
 
 interface PetDetailModalProps {
   isOpen: boolean;
@@ -228,7 +228,7 @@ const PetDetailModal: React.FC<PetDetailModalProps> = ({ isOpen, onClose, pet, r
                       <div>
                         <div className="text-xs text-text-secondary mb-1">탑승</div>
                         <img
-                          src={ridingImageUrl}
+                          src={getAssetUrl(ridingImageUrl)}
                           alt={`${pet.name} 탑승`}
                           className="w-16 h-16 object-contain rounded bg-bg-tertiary p-1"
                           loading="lazy"

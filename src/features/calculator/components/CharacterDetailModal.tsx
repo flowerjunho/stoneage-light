@@ -1,4 +1,5 @@
 import React, { useEffect } from 'react';
+import { getAssetUrl } from '@/shared/utils/imageUtils';
 
 interface Character {
   id: string;
@@ -77,7 +78,7 @@ const CharacterDetailModal: React.FC<CharacterDetailModalProps> = ({ isOpen, onC
               {character.colors.map((colorUrl, index) => (
                 <div key={index} className="flex flex-col items-center">
                   <img
-                    src={colorUrl}
+                    src={getAssetUrl(colorUrl)}
                     alt={`${character.name} 색상 ${index + 1}`}
                     className="w-28 h-28 object-contain rounded bg-bg-tertiary p-3 border border-border-primary hover:border-accent/50 transition-colors"
                     loading="lazy"
@@ -99,7 +100,7 @@ const CharacterDetailModal: React.FC<CharacterDetailModalProps> = ({ isOpen, onC
               {character.weapons.map((weapon, index) => (
                 <div key={`first-${index}`} className="flex flex-col items-center">
                   <img
-                    src={Array.isArray(weapon.image) ? weapon.image[0] : weapon.image}
+                    src={getAssetUrl(Array.isArray(weapon.image) ? weapon.image[0] : weapon.image)}
                     alt={weapon.type}
                     className="w-24 h-24 object-contain rounded bg-bg-tertiary p-3 border border-border-primary hover:border-accent/50 transition-colors"
                     loading="lazy"
@@ -121,7 +122,7 @@ const CharacterDetailModal: React.FC<CharacterDetailModalProps> = ({ isOpen, onC
                     Array.isArray(weapon.image) && weapon.image.length > 1 ? (
                       <div key={`second-${index}`} className="flex flex-col items-center">
                         <img
-                          src={weapon.image[1]}
+                          src={getAssetUrl(weapon.image[1])}
                           alt={`${weapon.type} 추가`}
                           className="w-24 h-24 object-contain rounded bg-bg-tertiary p-3 border border-border-primary hover:border-accent/50 transition-colors"
                           loading="lazy"
