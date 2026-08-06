@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import { EventTracker } from '@/shared/utils/eventTracker';
-import { X, Search, Activity, MousePointerClick, AppWindow, MonitorSmartphone, Eye, ChevronDown, ChevronUp } from 'lucide-react';
+import { X, Search, Activity, MousePointerClick, AppWindow, MonitorSmartphone, Eye } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 interface AdminEventStatsModalProps {
@@ -25,45 +25,26 @@ const StatCategoryCard: React.FC<StatCategoryCardProps> = ({
   items,
   renderItem,
 }) => {
-  const [isExpanded, setIsExpanded] = useState(false);
-  const INITIAL_LIMIT = 10;
-  const hasMore = items.length > INITIAL_LIMIT;
-  const displayItems = isExpanded ? items : items.slice(0, INITIAL_LIMIT);
-
   return (
-    <div className="bg-bg-tertiary rounded-lg border border-border p-4 flex flex-col h-full">
-      <h3 className={cn("font-bold flex items-center justify-between border-b border-border pb-2 mb-3 text-sm md:text-base", headerColorClass)}>
-        <span className="flex items-center gap-2">
+    <div className="bg-bg-tertiary rounded-lg border border-border p-3 md:p-4 flex flex-col h-full shadow-sm">
+      <h3 className={cn("font-bold flex items-center justify-between border-b border-border pb-2 mb-3 text-xs md:text-sm", headerColorClass)}>
+        <span className="flex items-center gap-1.5 truncate">
           {icon}
           {title}
         </span>
-        <span className="text-xs font-normal text-text-muted">
+        <span className="text-[11px] font-normal text-text-muted shrink-0 ml-1">
           (총 {items.length}개)
         </span>
       </h3>
 
-      {/* 내부 스크롤 및 고정 높이 지정 */}
-      <div className="space-y-2 flex-1 max-h-72 overflow-y-auto pr-1">
+      {/* 모바일 및 PC 대응 카드 고정 높이 및 부드러운 내부 터치 스크롤 */}
+      <div className="space-y-2 flex-1 max-h-56 md:max-h-72 overflow-y-auto pr-1 text-xs md:text-sm touch-pan-y overscroll-contain">
         {items.length > 0 ? (
-          displayItems.map(item => renderItem(item))
+          items.map(item => renderItem(item))
         ) : (
           <div className="text-xs text-text-muted text-center py-6">데이터 없음</div>
         )}
       </div>
-
-      {/* 10개 초과 시 더보기 / 접기 토글 버튼 */}
-      {hasMore && (
-        <button
-          onClick={() => setIsExpanded(prev => !prev)}
-          className="mt-3 pt-2 border-t border-border/50 text-xs font-semibold text-accent hover:text-accent/80 flex items-center justify-center gap-1 transition-colors w-full shrink-0"
-        >
-          {isExpanded ? (
-            <>접기 <ChevronUp className="w-3.5 h-3.5" /></>
-          ) : (
-            <>+{items.length - INITIAL_LIMIT}개 더보기 <ChevronDown className="w-3.5 h-3.5" /></>
-          )}
-        </button>
-      )}
     </div>
   );
 };
@@ -136,7 +117,7 @@ const AdminEventStatsModal: React.FC<AdminEventStatsModalProps> = ({ isOpen, onC
       onClick={onClose}
     >
       <div 
-        className="bg-bg-secondary w-full max-w-5xl h-[85vh] md:h-auto md:max-h-[90vh] rounded-t-2xl md:rounded-xl border border-border shadow-2xl flex flex-col overflow-hidden animate-in slide-in-from-bottom-8 md:slide-in-from-bottom-0 md:zoom-in-95 duration-300"
+        className="bg-bg-secondary w-full max-w-5xl h-[88vh] md:h-auto md:max-h-[90vh] rounded-t-2xl md:rounded-xl border border-border shadow-2xl flex flex-col overflow-hidden animate-in slide-in-from-bottom-8 md:slide-in-from-bottom-0 md:zoom-in-95 duration-300"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Mobile handle */}
@@ -145,8 +126,8 @@ const AdminEventStatsModal: React.FC<AdminEventStatsModalProps> = ({ isOpen, onC
         </div>
         
         {/* Header */}
-        <div className="flex items-center justify-between p-4 border-b border-border bg-bg-tertiary shrink-0">
-          <h2 className="text-lg font-bold flex items-center gap-2">
+        <div className="flex items-center justify-between p-3.5 md:p-4 border-b border-border bg-bg-tertiary shrink-0">
+          <h2 className="text-base md:text-lg font-bold flex items-center gap-2">
             <Activity className="w-5 h-5 text-accent" />
             상세 이벤트 통계
           </h2>
@@ -156,41 +137,41 @@ const AdminEventStatsModal: React.FC<AdminEventStatsModalProps> = ({ isOpen, onC
         </div>
 
         {/* Date Picker Area */}
-        <div className="p-4 border-b border-border flex flex-wrap items-center gap-3 bg-bg-primary/50 shrink-0">
-          <div className="flex items-center gap-2">
-            <label className="text-sm font-medium">시작일:</label>
+        <div className="p-3 md:p-4 border-b border-border flex flex-wrap items-center gap-2 md:gap-3 bg-bg-primary/50 shrink-0 text-xs md:text-sm">
+          <div className="flex items-center gap-1.5">
+            <label className="font-medium shrink-0">시작일:</label>
             <input 
               type="date" 
               value={startDate} 
               onChange={e => setStartDate(e.target.value)}
-              className="bg-bg-secondary border border-border rounded px-2 py-1 text-sm focus:outline-none focus:border-accent"
+              className="bg-bg-secondary border border-border rounded px-2 py-1 focus:outline-none focus:border-accent text-xs md:text-sm"
             />
           </div>
-          <div className="flex items-center gap-2">
-            <label className="text-sm font-medium">종료일:</label>
+          <div className="flex items-center gap-1.5">
+            <label className="font-medium shrink-0">종료일:</label>
             <input 
               type="date" 
               value={endDate} 
               onChange={e => setEndDate(e.target.value)}
-              className="bg-bg-secondary border border-border rounded px-2 py-1 text-sm focus:outline-none focus:border-accent"
+              className="bg-bg-secondary border border-border rounded px-2 py-1 focus:outline-none focus:border-accent text-xs md:text-sm"
             />
           </div>
           <button 
             onClick={() => fetchStats(startDate, endDate)}
-            className="flex items-center gap-1 bg-accent text-white px-3 py-1.5 rounded-md hover:bg-accent/90 transition-colors text-sm font-medium"
+            className="flex items-center gap-1 bg-accent text-white px-3 py-1 rounded-md hover:bg-accent/90 transition-colors font-medium shrink-0 ml-auto md:ml-0"
           >
-            <Search className="w-4 h-4" /> 조회
+            <Search className="w-3.5 h-3.5 md:w-4 md:h-4" /> 조회
           </button>
         </div>
 
         {/* Content */}
-        <div className="flex-1 overflow-y-auto p-4 space-y-6">
+        <div className="flex-1 overflow-y-auto p-3 md:p-4 space-y-4 md:space-y-6 touch-pan-y">
           {isLoading ? (
             <div className="flex items-center justify-center h-32">
               <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-accent"></div>
             </div>
           ) : stats.length === 0 ? (
-            <div className="text-center text-text-secondary py-12">
+            <div className="text-center text-text-secondary py-12 text-xs md:text-sm">
               해당 기간의 데이터가 없습니다.
             </div>
           ) : (
@@ -212,17 +193,17 @@ const AdminEventStatsModal: React.FC<AdminEventStatsModalProps> = ({ isOpen, onC
                 if (totalDevice === 0 && totalOs === 0) return null;
 
                 return (
-                  <div className="bg-bg-tertiary rounded-lg border border-border p-4 mb-4 grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div className="bg-bg-tertiary rounded-lg border border-border p-3 md:p-4 mb-4 grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6 shadow-sm">
                     {/* Device Form Factor */}
                     <div>
-                      <h3 className="font-bold flex items-center gap-2 border-b border-border pb-2 mb-3 text-orange-400">
+                      <h3 className="font-bold flex items-center gap-1.5 border-b border-border pb-2 mb-2.5 text-orange-400 text-xs md:text-sm">
                         <MonitorSmartphone className="w-4 h-4" /> 기기 접속 현황 (비율)
                       </h3>
-                      <div className="flex flex-col items-start gap-3">
-                        <div className="w-full bg-bg-secondary rounded-full h-5 overflow-hidden flex ring-1 ring-border">
+                      <div className="flex flex-col items-start gap-2.5">
+                        <div className="w-full bg-bg-secondary rounded-full h-4 md:h-5 overflow-hidden flex ring-1 ring-border">
                           {pcCount > 0 && (
                             <div 
-                              className="bg-blue-500 h-full flex items-center justify-center text-[11px] text-white font-bold transition-all duration-500" 
+                              className="bg-blue-500 h-full flex items-center justify-center text-[10px] md:text-[11px] text-white font-bold transition-all duration-500" 
                               style={{ width: `${pcRatio}%` }}
                               title={`PC: ${pcCount}명`}
                             >
@@ -231,7 +212,7 @@ const AdminEventStatsModal: React.FC<AdminEventStatsModalProps> = ({ isOpen, onC
                           )}
                           {mobileCount > 0 && (
                             <div 
-                              className="bg-green-500 h-full flex items-center justify-center text-[11px] text-white font-bold transition-all duration-500" 
+                              className="bg-green-500 h-full flex items-center justify-center text-[10px] md:text-[11px] text-white font-bold transition-all duration-500" 
                               style={{ width: `${mobileRatio}%` }}
                               title={`Mobile: ${mobileCount}명`}
                             >
@@ -239,13 +220,13 @@ const AdminEventStatsModal: React.FC<AdminEventStatsModalProps> = ({ isOpen, onC
                             </div>
                           )}
                         </div>
-                        <div className="flex gap-4 text-sm whitespace-nowrap w-full justify-start">
+                        <div className="flex gap-4 text-xs md:text-sm whitespace-nowrap w-full justify-start">
                           <div className="flex items-center gap-1.5 font-medium">
-                            <div className="w-3 h-3 bg-blue-500 rounded-sm"></div> 
+                            <div className="w-2.5 h-2.5 bg-blue-500 rounded-sm"></div> 
                             PC: <span className="font-mono text-accent">{pcCount.toLocaleString()}</span>
                           </div>
                           <div className="flex items-center gap-1.5 font-medium">
-                            <div className="w-3 h-3 bg-green-500 rounded-sm"></div> 
+                            <div className="w-2.5 h-2.5 bg-green-500 rounded-sm"></div> 
                             모바일: <span className="font-mono text-accent">{mobileCount.toLocaleString()}</span>
                           </div>
                         </div>
@@ -254,20 +235,20 @@ const AdminEventStatsModal: React.FC<AdminEventStatsModalProps> = ({ isOpen, onC
 
                     {/* Detailed OS */}
                     <div>
-                      <h3 className="font-bold flex items-center gap-2 border-b border-border pb-2 mb-3 text-pink-400">
+                      <h3 className="font-bold flex items-center gap-1.5 border-b border-border pb-2 mb-2.5 text-pink-400 text-xs md:text-sm">
                         <MonitorSmartphone className="w-4 h-4" /> OS 및 상세 기기
                       </h3>
-                      <div className="flex flex-col gap-3">
-                        <div className="flex gap-4 text-sm flex-wrap items-center bg-bg-secondary p-3 rounded-md border border-border/50">
-                          <div className="flex flex-col gap-2 min-w-[120px]">
-                            <span className="text-xs text-text-muted">모바일 OS</span>
+                      <div className="flex flex-col gap-2.5">
+                        <div className="flex gap-3 md:gap-4 text-xs md:text-sm flex-wrap items-center bg-bg-secondary p-2.5 md:p-3 rounded-md border border-border/50">
+                          <div className="flex flex-col gap-1.5 min-w-[100px] md:min-w-[120px]">
+                            <span className="text-[10px] md:text-xs text-text-muted">모바일 OS</span>
                             {androidCount > 0 && <div className="flex justify-between items-center gap-2"><span className="text-green-500">Android:</span> <span className="font-mono">{androidCount}</span></div>}
                             {iosCount > 0 && <div className="flex justify-between items-center gap-2"><span className="text-gray-300">iOS:</span> <span className="font-mono">{iosCount}</span></div>}
                             {androidCount === 0 && iosCount === 0 && <span className="text-xs text-text-secondary">-</span>}
                           </div>
-                          <div className="w-px h-12 bg-border/50 hidden sm:block"></div>
-                          <div className="flex flex-col gap-2 min-w-[120px]">
-                            <span className="text-xs text-text-muted">데스크톱 OS</span>
+                          <div className="w-px h-10 bg-border/50 hidden sm:block"></div>
+                          <div className="flex flex-col gap-1.5 min-w-[100px] md:min-w-[120px]">
+                            <span className="text-[10px] md:text-xs text-text-muted">데스크톱 OS</span>
                             {winCount > 0 && <div className="flex justify-between items-center gap-2"><span className="text-blue-400">Windows:</span> <span className="font-mono">{winCount}</span></div>}
                             {macCount > 0 && <div className="flex justify-between items-center gap-2"><span className="text-gray-300">macOS:</span> <span className="font-mono">{macCount}</span></div>}
                             {winCount === 0 && macCount === 0 && <span className="text-xs text-text-secondary">-</span>}
@@ -279,7 +260,7 @@ const AdminEventStatsModal: React.FC<AdminEventStatsModalProps> = ({ isOpen, onC
                 );
               })()}
 
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 md:gap-4">
                 {/* PAGE VIEWS */}
                 <StatCategoryCard
                   title="페이지 뷰"
@@ -287,9 +268,9 @@ const AdminEventStatsModal: React.FC<AdminEventStatsModalProps> = ({ isOpen, onC
                   headerColorClass="text-blue-400"
                   items={sortStats(aggregated.PAGE_VIEW)}
                   renderItem={([path, count]) => (
-                    <div key={path} className="flex justify-between items-center text-sm py-0.5">
+                    <div key={path} className="flex justify-between items-center text-xs md:text-sm py-1 border-b border-border/30 last:border-none">
                       <span className="truncate pr-2 text-text-secondary" title={path}>{path}</span>
-                      <span className="font-mono text-accent shrink-0">{count.toLocaleString()}</span>
+                      <span className="font-mono text-accent shrink-0 font-medium">{count.toLocaleString()}</span>
                     </div>
                   )}
                 />
@@ -303,12 +284,12 @@ const AdminEventStatsModal: React.FC<AdminEventStatsModalProps> = ({ isOpen, onC
                   renderItem={([key, count]) => {
                     const [path, action] = key.split('::');
                     return (
-                      <div key={key} className="flex justify-between items-center text-sm py-0.5">
+                      <div key={key} className="flex justify-between items-center text-xs md:text-sm py-1 border-b border-border/30 last:border-none">
                         <div className="flex flex-col truncate pr-2">
-                          <span className="text-text-primary truncate" title={action}>{action || '알수없음'}</span>
+                          <span className="text-text-primary truncate font-medium" title={action}>{action || '알수없음'}</span>
                           <span className="text-[10px] text-text-muted truncate">{path}</span>
                         </div>
-                        <span className="font-mono text-accent shrink-0">{count.toLocaleString()}</span>
+                        <span className="font-mono text-accent shrink-0 font-medium">{count.toLocaleString()}</span>
                       </div>
                     );
                   }}
@@ -323,12 +304,12 @@ const AdminEventStatsModal: React.FC<AdminEventStatsModalProps> = ({ isOpen, onC
                   renderItem={([key, count]) => {
                     const [path, action] = key.split('::');
                     return (
-                      <div key={key} className="flex justify-between items-center text-sm py-0.5">
+                      <div key={key} className="flex justify-between items-center text-xs md:text-sm py-1 border-b border-border/30 last:border-none">
                         <div className="flex flex-col truncate pr-2">
-                          <span className="text-text-primary truncate" title={action}>{action || '알수없음'}</span>
+                          <span className="text-text-primary truncate font-medium" title={action}>{action || '알수없음'}</span>
                           <span className="text-[10px] text-text-muted truncate">{path}</span>
                         </div>
-                        <span className="font-mono text-accent shrink-0">{count.toLocaleString()}</span>
+                        <span className="font-mono text-accent shrink-0 font-medium">{count.toLocaleString()}</span>
                       </div>
                     );
                   }}
@@ -343,12 +324,12 @@ const AdminEventStatsModal: React.FC<AdminEventStatsModalProps> = ({ isOpen, onC
                   renderItem={([key, count]) => {
                     const [path, action] = key.split('::');
                     return (
-                      <div key={key} className="flex justify-between items-center text-sm py-0.5">
+                      <div key={key} className="flex justify-between items-center text-xs md:text-sm py-1 border-b border-border/30 last:border-none">
                         <div className="flex flex-col truncate pr-2">
-                          <span className="text-text-primary truncate" title={action}>{action || '알수없음'}</span>
+                          <span className="text-text-primary truncate font-medium" title={action}>{action || '알수없음'}</span>
                           <span className="text-[10px] text-text-muted truncate">{path}</span>
                         </div>
-                        <span className="font-mono text-accent shrink-0">{count.toLocaleString()}</span>
+                        <span className="font-mono text-accent shrink-0 font-medium">{count.toLocaleString()}</span>
                       </div>
                     );
                   }}
@@ -363,12 +344,12 @@ const AdminEventStatsModal: React.FC<AdminEventStatsModalProps> = ({ isOpen, onC
                   renderItem={([key, count]) => {
                     const [path, action] = key.split('::');
                     return (
-                      <div key={key} className="flex justify-between items-center text-sm py-0.5">
+                      <div key={key} className="flex justify-between items-center text-xs md:text-sm py-1 border-b border-border/30 last:border-none">
                         <div className="flex flex-col truncate pr-2">
-                          <span className="text-text-primary truncate" title={action}>{action || '알수없음'}</span>
+                          <span className="text-text-primary truncate font-medium" title={action}>{action || '알수없음'}</span>
                           <span className="text-[10px] text-text-muted truncate">{path}</span>
                         </div>
-                        <span className="font-mono text-accent shrink-0">{count.toLocaleString()}</span>
+                        <span className="font-mono text-accent shrink-0 font-medium">{count.toLocaleString()}</span>
                       </div>
                     );
                   }}
