@@ -5,7 +5,7 @@ import ScrollToTopButton from '@/shared/components/ui/ScrollToTopButton';
 import PageShareButton from '@/shared/components/ui/PageShareButton';
 import PWAUpdatePrompt from '@/shared/components/ui/PWAUpdatePrompt';
 import TabNavigation from '@/shared/components/layout/TabNavigation';
-import MusicPlayer from '@/features/music/components/MusicPlayer';
+import MusicFloatingPlayer from '@/shared/components/ui/MusicFloatingPlayer';
 import { MusicPlayerProvider } from '@/contexts/MusicPlayerContext';
 import PetsPage from '@/features/pets/pages/PetsPage';
 import BoardingPage from '@/features/boarding/pages/BoardingPage';
@@ -181,7 +181,7 @@ function App() {
       <Router>
         <PasswordGate>
           <AppContent />
-          <MusicPlayer />
+          <MusicFloatingPlayer />
           <PWAUpdatePrompt />
         </PasswordGate>
       </Router>
