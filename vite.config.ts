@@ -10,8 +10,8 @@ export default defineConfig({
   plugins: [
     react(),
     VitePWA({
-      registerType: 'prompt', // 사용자에게 업데이트 알림 표시
-      includeAssets: ['images/**/*', 'sa.jpg', 'myungga.png', 'sw-custom.js'],
+      registerType: 'autoUpdate', // PWA 서비스 워커 자동 업데이트
+      includeAssets: ['images/**/*', 'pets/**/*', 'sa.jpg', 'myungga.png', 'sw-custom.js'],
       injectRegister: 'auto',
       manifest: {
         name: '스톤에이지 환수강림 라이트',
@@ -43,7 +43,9 @@ export default defineConfig({
         ],
       },
       workbox: {
-        globPatterns: ['**/*.{js,css,html,ico,png,jpg,svg,woff,woff2}'],
+        skipWaiting: true,
+        clientsClaim: true,
+        globPatterns: ['**/*.{js,css,html,ico,png,jpg,jpeg,svg,webp,gif,woff,woff2}'],
         maximumFileSizeToCacheInBytes: 10 * 1024 * 1024, // 10MB로 증가
         // 커스텀 SW 코드를 메인 SW에 추가
         importScripts: ['sw-custom.js'],
