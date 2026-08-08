@@ -3,6 +3,33 @@
   "totalCount": 723,
   "pets": [
     {
+      "id": "724",
+      "name": "타르톤",
+      "source": "지옥문",
+      "imageLink": "https://www.hwansoo.top/data/file/pets/85a56f4d400023ca1e191076820834a6_Ao96CiVx_28958399f3c5c13aff4f5cd4ac20042ee2e138b2.webp",
+      "elementStats": {
+        "earth": 7,
+        "water": 3,
+        "fire": 0,
+        "wind": 0
+      },
+      "baseStats": {
+        "attack": 12,
+        "defense": 12,
+        "agility": 3,
+        "vitality": 65
+      },
+      "growthStats": {
+        "attack": "2.122",
+        "defense": "2.211",
+        "agility": "0.680",
+        "vitality": "11.524"
+      },
+      "rideable": "탑승불가",
+      "totalGrowth": "5.014",
+      "grade": "일반등급"
+    },
+    {
       "id": "723",
       "name": "카르벤",
       "source": "후원",
