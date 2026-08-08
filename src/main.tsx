@@ -4,14 +4,22 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import './index.css';
 import App from './App.tsx';
 
-// 구버전 잘못된 root Service Worker 자동 감지 및 제거
 if (typeof window !== 'undefined' && 'serviceWorker' in navigator) {
+  // 새 SW가 control을 가져가는 순간 페이지 reload
+  // → 새 index.html(새 JS 해시)을 즉시 서빙하여 "구버전 해시 404" 문제 원천 차단
+  let refreshing = false;
+  navigator.serviceWorker.addEventListener('controllerchange', () => {
+    if (!refreshing) {
+      refreshing = true;
+      window.location.reload();
+    }
+  });
+
+  // 잘못된 scope의 구버전 SW 제거 (루트 '/' scope 등)
   navigator.serviceWorker.getRegistrations().then((registrations) => {
     for (const registration of registrations) {
       if (!registration.scope.includes('/stoneage-light/')) {
-        registration.unregister().then(() => {
-          console.log('Outdated root ServiceWorker unregistered:', registration.scope);
-        });
+        registration.unregister();
       }
     }
   });

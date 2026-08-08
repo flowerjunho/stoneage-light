@@ -45,6 +45,7 @@ export default defineConfig({
       workbox: {
         skipWaiting: true,
         clientsClaim: true,
+        cleanupOutdatedCaches: true,
         globPatterns: ['**/*.{js,css,html,ico,png,jpg,jpeg,svg,webp,gif,woff,woff2}'],
         maximumFileSizeToCacheInBytes: 10 * 1024 * 1024, // 10MB로 증가
         // 커스텀 SW 코드를 메인 SW에 추가
