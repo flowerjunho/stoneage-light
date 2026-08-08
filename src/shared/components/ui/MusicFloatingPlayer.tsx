@@ -56,6 +56,9 @@ const MusicFloatingPlayer: React.FC = () => {
   const [hasFilterButton, setHasFilterButton] = useState(false);
 
   const audioRef = useRef<HTMLAudioElement | null>(null);
+  const audioCtxRef = useRef<AudioContext | null>(null);
+  // 최초 unmute 여부 추적 (muted autoplay → 첫 상호작용 시 unmute)
+  const hasUnmutedRef = useRef(false);
   const isPlayingRef = useRef(isPlaying);
   const lastPathRef = useRef<string>(location.pathname);
 
@@ -86,49 +89,64 @@ const MusicFloatingPlayer: React.FC = () => {
 
         const savedState = localStorage.getItem(BGM_STATE_KEY);
         if (savedState !== 'PAUSED') {
+          // 무음 상태 유지하며 src만 교체 (이미 unmute됐으면 소리 있게)
+          audio.muted = !hasUnmutedRef.current;
           audio.play().then(() => setIsPlaying(true)).catch(() => {});
         }
       }
     }
   }, [location.pathname]);
 
-  // 3. 초고속 오디오 강제 가동 함수 (Web Audio Context + HTML5 Audio)
-  const forceStartAudio = useCallback(() => {
+  // 3-a. 무음 자동재생: 브라우저는 muted autoplay를 항상 허용
+  //      paused 상태일 때만 play() 호출
+  const startMutedPlayback = useCallback(() => {
     const savedState = localStorage.getItem(BGM_STATE_KEY);
     if (savedState === 'PAUSED') return;
 
-    // Web Audio Context 활성화
+    const audio = audioRef.current;
+    if (!audio || !audio.paused) return;
+
+    audio.muted = !hasUnmutedRef.current; // 이미 unmute됐으면 소리 있게
+    audio.volume = 1.0;
+    audio.play()
+      .then(() => setIsPlaying(true))
+      .catch(() => {});
+  }, []);
+
+  // 3-b. unmute: 첫 상호작용 시 소리 활성화
+  //      audio.muted = false는 user gesture 없이 가능 (이미 재생 중인 오디오라서)
+  //      scroll/wheel 포함 모든 이벤트에서 호출 가능
+  const unmute = useCallback(() => {
+    if (hasUnmutedRef.current) return;
+    const savedState = localStorage.getItem(BGM_STATE_KEY);
+    if (savedState === 'PAUSED') return;
+
+    hasUnmutedRef.current = true;
+
+    const audio = audioRef.current;
+    if (!audio) return;
+
+    // AudioContext 최초 1회 생성 후 resume
     try {
       const AudioCtx = window.AudioContext || (window as any).webkitAudioContext;
-      if (AudioCtx) {
-        const ctx = new AudioCtx();
-        if (ctx.state === 'suspended') {
-          ctx.resume();
-        }
+      if (AudioCtx && !audioCtxRef.current) {
+        audioCtxRef.current = new AudioCtx();
+      }
+      if (audioCtxRef.current?.state === 'suspended') {
+        audioCtxRef.current.resume();
       }
     } catch {
       // 무시
     }
 
-    const audio = audioRef.current;
-    if (!audio) return;
-
     audio.muted = false;
-    audio.volume = 1.0;
-
-    const promise = audio.play();
-    if (promise !== undefined) {
-      promise
-        .then(() => {
-          setIsPlaying(true);
-        })
-        .catch(() => {
-          // 브라우저 거부 시 무시
-        });
+    // muted autoplay도 실패한 경우(드문 경우) 여기서 play() 재시도
+    if (audio.paused) {
+      audio.play().then(() => setIsPlaying(true)).catch(() => {});
     }
   }, []);
 
-  // 4. 진입 시 100ms 간격 자동 재생 시도
+  // 4. 진입 시 무음 자동재생 시도 (최대 3초, 재생 성공 시 인터벌 중단)
   useEffect(() => {
     const savedState = localStorage.getItem(BGM_STATE_KEY);
     if (savedState === 'PAUSED') {
@@ -136,35 +154,35 @@ const MusicFloatingPlayer: React.FC = () => {
       return;
     }
 
-    forceStartAudio();
+    startMutedPlayback();
 
+    let attempts = 0;
     const interval = setInterval(() => {
       const state = localStorage.getItem(BGM_STATE_KEY);
-      if (state === 'PAUSED') {
+      if (state === 'PAUSED' || (audioRef.current && !audioRef.current.paused) || attempts >= 6) {
         clearInterval(interval);
         return;
       }
-      forceStartAudio();
-    }, 100);
+      attempts++;
+      startMutedPlayback();
+    }, 500);
 
     return () => clearInterval(interval);
-  }, [currentSrc, forceStartAudio]);
+  }, [currentSrc, startMutedPlayback]);
 
   // 5. 한 곡이 종료되었을 때 다음 트랙 처리
   const handleTrackEnded = useCallback(() => {
     if (currentSrc === LOGIN_BGM) {
-      // stone_login.mp3가 끝나면 1번 곡(stone1.mp3)으로 전환되어 계속 순환
       setCurrentSrc(PLAYLIST[0]);
       setPlaylistIndex(0);
     } else {
-      // 일반 트랙인 경우 다음 번호 트랙으로 (10번 후에는 1번으로 순환)
       const nextIndex = (playlistIndex + 1) % PLAYLIST.length;
       setPlaylistIndex(nextIndex);
       setCurrentSrc(PLAYLIST[nextIndex]);
     }
   }, [currentSrc, playlistIndex]);
 
-  // 6. currentSrc 변경 시 음서 로드 및 계속 재생
+  // 6. currentSrc 변경 시 오디오 로드 및 재생 (unmute 상태 유지)
   useEffect(() => {
     const audio = audioRef.current;
     if (!audio) return;
@@ -173,44 +191,30 @@ const MusicFloatingPlayer: React.FC = () => {
     if (savedState === 'PAUSED') return;
 
     audio.src = currentSrc;
-    audio.muted = false;
+    audio.muted = !hasUnmutedRef.current;
     audio.volume = 1.0;
-    audio.play().then(() => {
-      setIsPlaying(true);
-    }).catch(() => {});
+    audio.play().then(() => setIsPlaying(true)).catch(() => {});
   }, [currentSrc]);
 
-  // 7. Non-blocking 전역 캡처 리스너: touchstart, scroll, wheel, click 등 모든 반응에 즉각 반응
+  // 7. 전역 제스처 이벤트 리스너: 첫 click/touch/key 시 play() + unmute
   useEffect(() => {
-    const handleNonBlockingInteraction = () => {
-      forceStartAudio();
+    const handleGesture = () => {
+      startMutedPlayback();
+      unmute();
     };
 
-    const events = [
-      'touchstart', // 손가락 닿는 0.01초 순간
-      'touchmove',
-      'touchend',
-      'scroll',     // 화면 스크롤
-      'wheel',      // 마우스 휠
-      'click',
-      'mousedown',
-      'mousemove',
-      'pointerdown',
-      'keydown',
-    ];
+    const gestureEvents = ['touchstart', 'touchend', 'click', 'mousedown', 'pointerdown', 'keydown'];
 
-    events.forEach(event => {
-      window.addEventListener(event, handleNonBlockingInteraction, { passive: true, capture: true });
-      document.addEventListener(event, handleNonBlockingInteraction, { passive: true, capture: true });
+    gestureEvents.forEach(event => {
+      window.addEventListener(event, handleGesture, { passive: true, capture: true });
     });
 
     return () => {
-      events.forEach(event => {
-        window.removeEventListener(event, handleNonBlockingInteraction, { capture: true });
-        document.removeEventListener(event, handleNonBlockingInteraction, { capture: true });
+      gestureEvents.forEach(event => {
+        window.removeEventListener(event, handleGesture, { capture: true });
       });
     };
-  }, [forceStartAudio]);
+  }, [startMutedPlayback, unmute]);
 
   // 8. 화면에 필터 버튼 존재 여부 감지 (위치 동적 조절)
   useEffect(() => {
@@ -236,7 +240,9 @@ const MusicFloatingPlayer: React.FC = () => {
       localStorage.setItem(BGM_STATE_KEY, 'PAUSED');
     } else {
       localStorage.setItem(BGM_STATE_KEY, 'PLAYING');
-      forceStartAudio();
+      hasUnmutedRef.current = true; // 버튼 클릭 = 명시적 user gesture → 바로 소리 있게
+      audio.muted = false;
+      startMutedPlayback();
     }
   };
 

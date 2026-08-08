@@ -55,7 +55,7 @@ export default defineConfig({
             handler: 'NetworkFirst',
             options: {
               cacheName: 'external-images',
-              networkTimeoutSeconds: 3,
+              networkTimeoutSeconds: 10,
               expiration: {
                 maxEntries: 500,
                 maxAgeSeconds: 60 * 60 * 24 * 30, // 30일

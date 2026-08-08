@@ -4,7 +4,7 @@ import type { Pet } from '@/shared/types';
 import { isFavorite, toggleFavorite, addFavoriteChangeListener } from '@/shared/utils/favorites';
 import PetBoardingModal from '@/features/boarding/components/PetBoardingModal';
 import { EventTracker } from '@/shared/utils/eventTracker';
-import { handleImageErrorWithFallback, getPetImageUrl } from '@/shared/utils/imageUtils';
+import { getPetImageUrl } from '@/shared/utils/imageUtils';
 
 interface PetCardProps {
   pet: Pet;
@@ -20,6 +20,7 @@ const PetCard: React.FC<PetCardProps> = ({ pet }) => {
   const [isFav, setIsFav] = useState(() => isFavorite(pet));
   const [isAnimating, setIsAnimating] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [imageError, setImageError] = useState(false);
   const [showToast, setShowToast] = useState(false);
   const [toastMessage, setToastMessage] = useState('링크가 복사되었습니다');
   const [isHovered, setIsHovered] = useState(false);
@@ -703,13 +704,13 @@ const PetCard: React.FC<PetCardProps> = ({ pet }) => {
                            border border-border/50
                            transition-transform duration-500 group-hover/image:scale-105"
               >
-                {pet.imageLink ? (
+                {pet.imageLink && !imageError ? (
                   <img
                     src={getPetImageUrl(pet.imageLink)}
                     alt={pet.name}
                     className="w-full h-full object-contain p-3 transition-transform duration-500 group-hover/image:scale-110"
                     loading="lazy"
-                    onError={e => handleImageErrorWithFallback(e)}
+                    onError={() => setImageError(true)}
                   />
                 ) : (
                   <div className="w-full h-full flex items-center justify-center text-text-muted text-xs">
