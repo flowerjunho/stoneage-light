@@ -1,9 +1,333 @@
 {
-  "lastUpdated": "2026-10-15T23:08:02.029Z",
-  "totalCount": 759,
+  "lastUpdated": "2026-10-28T06:41:44.641Z",
+  "totalCount": 770,
   "pets": [
     {
+      "id": "770",
+      "name": "풍마(각)",
+      "source": "페트각성",
+      "imageLink": "/pets/pet_pungma_gak.webp",
+      "elementStats": {
+        "earth": 0,
+        "water": 0,
+        "fire": 1,
+        "wind": 9
+      },
+      "baseStats": {
+        "attack": 12,
+        "defense": 6,
+        "agility": 9,
+        "vitality": 58
+      },
+      "growthStats": {
+        "attack": "2.340",
+        "defense": "1.272",
+        "agility": "1.871",
+        "vitality": "11.034"
+      },
+      "rideable": "탑승불가",
+      "totalGrowth": "5.483",
+      "grade": "일반등급"
+    },
+    {
+      "id": "769",
+      "name": "라이비(환)",
+      "source": "페트환생",
+      "imageLink": "/pets/pet_raibi_hwan.webp",
+      "elementStats": {
+        "earth": 0,
+        "water": 5,
+        "fire": 5,
+        "wind": 0
+      },
+      "baseStats": {
+        "attack": 12,
+        "defense": 5,
+        "agility": 9,
+        "vitality": 54
+      },
+      "growthStats": {
+        "attack": "2.401",
+        "defense": "1.034",
+        "agility": "1.816",
+        "vitality": "10.286"
+      },
+      "rideable": "탑승불가",
+      "totalGrowth": "5.252",
+      "grade": "일반등급"
+    },
+    {
+      "id": "768",
+      "name": "레이비(환)",
+      "source": "페트환생",
+      "imageLink": "/pets/pet_reibi_hwan.webp",
+      "elementStats": {
+        "earth": 0,
+        "water": 0,
+        "fire": 5,
+        "wind": 5
+      },
+      "baseStats": {
+        "attack": 11,
+        "defense": 5,
+        "agility": 10,
+        "vitality": 53
+      },
+      "growthStats": {
+        "attack": "2.218",
+        "defense": "1.020",
+        "agility": "2.054",
+        "vitality": "10.136"
+      },
+      "rideable": "탑승불가",
+      "totalGrowth": "5.293",
+      "grade": "일반등급"
+    },
+    {
+      "id": "767",
+      "name": "청모(환)",
+      "source": "페트환생",
+      "imageLink": "/pets/pet_cheongmo_hwan.webp",
+      "elementStats": {
+        "earth": 0,
+        "water": 8,
+        "fire": 2,
+        "wind": 0
+      },
+      "baseStats": {
+        "attack": 12,
+        "defense": 7,
+        "agility": 9,
+        "vitality": 65
+      },
+      "growthStats": {
+        "attack": "2.184",
+        "defense": "1.367",
+        "agility": "1.728",
+        "vitality": "11.939"
+      },
+      "rideable": "탑승불가",
+      "totalGrowth": "5.279",
+      "grade": "일반등급"
+    },
+    {
+      "id": "766",
+      "name": "홍모(환)",
+      "source": "페트환생",
+      "imageLink": "/pets/pet_hongmo_hwan.webp",
+      "elementStats": {
+        "earth": 0,
+        "water": 2,
+        "fire": 8,
+        "wind": 0
+      },
+      "baseStats": {
+        "attack": 13,
+        "defense": 6,
+        "agility": 9,
+        "vitality": 61
+      },
+      "growthStats": {
+        "attack": "2.333",
+        "defense": "1.224",
+        "agility": "1.728",
+        "vitality": "10.850"
+      },
+      "rideable": "탑승불가",
+      "totalGrowth": "5.286",
+      "grade": "일반등급"
+    },
+    {
+      "id": "765",
+      "name": "테이토스",
+      "source": "레이드보상",
+      "imageLink": "/pets/pet_teitoseu.webp",
+      "elementStats": {
+        "earth": 0,
+        "water": 8,
+        "fire": 2,
+        "wind": 0
+      },
+      "baseStats": {
+        "attack": 11,
+        "defense": 12,
+        "agility": 2,
+        "vitality": 63
+      },
+      "growthStats": {
+        "attack": "2.197",
+        "defense": "2.456",
+        "agility": "0.537",
+        "vitality": "12.041"
+      },
+      "rideable": "탑승불가",
+      "totalGrowth": "5.190",
+      "grade": "일반등급"
+    },
+    {
+      "id": "764",
+      "name": "테이토스(환)",
+      "source": "페트환생",
+      "imageLink": "/pets/pet_teitoseu_hwan.webp",
+      "elementStats": {
+        "earth": 0,
+        "water": 8,
+        "fire": 2,
+        "wind": 0
+      },
+      "baseStats": {
+        "attack": 11,
+        "defense": 12,
+        "agility": 2,
+        "vitality": 63
+      },
+      "growthStats": {
+        "attack": "2.197",
+        "defense": "2.456",
+        "agility": "0.537",
+        "vitality": "12.041"
+      },
+      "rideable": "탑승불가",
+      "totalGrowth": "5.190",
+      "grade": "일반등급"
+    },
+    {
+      "id": "763",
+      "name": "다크론(환)",
+      "source": "페트환생",
+      "imageLink": "/pets/pet_dakeuron_hwan.webp",
+      "elementStats": {
+        "earth": 0,
+        "water": 5,
+        "fire": 5,
+        "wind": 0
+      },
+      "baseStats": {
+        "attack": 12,
+        "defense": 7,
+        "agility": 9,
+        "vitality": 56
+      },
+      "growthStats": {
+        "attack": "2.231",
+        "defense": "1.286",
+        "agility": "1.673",
+        "vitality": "10.238"
+      },
+      "rideable": "탑승불가",
+      "totalGrowth": "5.190",
+      "grade": "일반등급"
+    },
+    {
+      "id": "762",
+      "name": "풍고래",
+      "source": "맘모스쿠폰",
+      "imageLink": "/pets/pet_punggorae.webp",
+      "elementStats": {
+        "earth": 0,
+        "water": 0,
+        "fire": 0,
+        "wind": 10
+      },
+      "baseStats": {
+        "attack": 10,
+        "defense": 5,
+        "agility": 7,
+        "vitality": 45
+      },
+      "growthStats": {
+        "attack": "2.204",
+        "defense": "1.095",
+        "agility": "1.680",
+        "vitality": "9.850"
+      },
+      "rideable": "탑승불가",
+      "totalGrowth": "4.980",
+      "grade": "일반등급"
+    },
+    {
+      "id": "761",
+      "name": "풍고래(환)",
+      "source": "만모스쿠폰",
+      "imageLink": "/pets/pet_punggorae_hwan.webp",
+      "elementStats": {
+        "earth": 0,
+        "water": 0,
+        "fire": 0,
+        "wind": 10
+      },
+      "baseStats": {
+        "attack": 10,
+        "defense": 5,
+        "agility": 8,
+        "vitality": 48
+      },
+      "growthStats": {
+        "attack": "2.327",
+        "defense": "1.218",
+        "agility": "1.769",
+        "vitality": "10.517"
+      },
+      "rideable": "탑승불가",
+      "totalGrowth": "5.313",
+      "grade": "일반등급"
+    },
+    {
+      "id": "760",
+      "name": "화고래",
+      "source": "만모스쿠폰",
+      "imageLink": "/pets/pet_hwagorae.webp",
+      "elementStats": {
+        "earth": 0,
+        "water": 0,
+        "fire": 10,
+        "wind": 0
+      },
+      "baseStats": {
+        "attack": 10,
+        "defense": 4,
+        "agility": 7,
+        "vitality": 43
+      },
+      "growthStats": {
+        "attack": "2.245",
+        "defense": "1.102",
+        "agility": "1.633",
+        "vitality": "9.850"
+      },
+      "rideable": "탑승불가",
+      "totalGrowth": "4.980",
+      "grade": "일반등급"
+    },
+    {
       "id": "759",
+      "name": "화고래(환)",
+      "source": "만모스쿠폰",
+      "imageLink": "/pets/pet_hwagorae_hwan.webp",
+      "elementStats": {
+        "earth": 0,
+        "water": 0,
+        "fire": 10,
+        "wind": 0
+      },
+      "baseStats": {
+        "attack": 10,
+        "defense": 5,
+        "agility": 7,
+        "vitality": 46
+      },
+      "growthStats": {
+        "attack": "2.367",
+        "defense": "1.218",
+        "agility": "1.728",
+        "vitality": "10.517"
+      },
+      "rideable": "탑승불가",
+      "totalGrowth": "5.313",
+      "grade": "일반등급"
+    },
+    {
+      "id": "758",
       "name": "풍백(각)",
       "source": "페트 각성",
       "imageLink": "/pets/pet_pungbaek_gak.webp",
@@ -30,7 +354,7 @@
       "grade": "일반 등급"
     },
     {
-      "id": "758",
+      "id": "757",
       "name": "흑풍(각)",
       "source": "페트 각성",
       "imageLink": "/pets/pet_heukpung_gak.webp",
@@ -57,7 +381,7 @@
       "grade": "일반 등급"
     },
     {
-      "id": "757",
+      "id": "756",
       "name": "지고래",
       "source": "전포 상점",
       "imageLink": "/pets/pet_jigorae.webp",
@@ -84,7 +408,7 @@
       "grade": "일반 등급"
     },
     {
-      "id": "756",
+      "id": "755",
       "name": "지고래(환)",
       "source": "페트 환생",
       "imageLink": "/pets/pet_jigorae_hwan.webp",
@@ -111,7 +435,7 @@
       "grade": "일반 등급"
     },
     {
-      "id": "755",
+      "id": "754",
       "name": "수고래",
       "source": "전포 상점",
       "imageLink": "/pets/pet_sugorae.webp",
@@ -138,7 +462,7 @@
       "grade": "일반 등급"
     },
     {
-      "id": "754",
+      "id": "753",
       "name": "수고래(환)",
       "source": "페트 환생",
       "imageLink": "/pets/pet_sugorae_hwan.webp",
@@ -165,7 +489,7 @@
       "grade": "일반 등급"
     },
     {
-      "id": "753",
+      "id": "752",
       "name": "리오라",
       "source": "후원 보상",
       "imageLink": "/pets/pet_riora.webp",
@@ -192,7 +516,7 @@
       "grade": "일반 등급"
     },
     {
-      "id": "752",
+      "id": "751",
       "name": "리오라(환)",
       "source": "페트 환생",
       "imageLink": "/pets/pet_riora_hwan.webp",
@@ -219,7 +543,7 @@
       "grade": "일반 등급"
     },
     {
-      "id": "751",
+      "id": "750",
       "name": "셀리스",
       "source": "후원 보상",
       "imageLink": "/pets/pet_selriseu.webp",
@@ -246,7 +570,7 @@
       "grade": "일반 등급"
     },
     {
-      "id": "750",
+      "id": "749",
       "name": "셀리스(환)",
       "source": "페트 환생",
       "imageLink": "/pets/pet_selriseu_hwan.webp",
@@ -273,7 +597,7 @@
       "grade": "일반 등급"
     },
     {
-      "id": "749",
+      "id": "748",
       "name": "타스무미(환)",
       "source": "페트 환생",
       "imageLink": "/pets/pet_taseumumi_hwan.webp",
@@ -300,7 +624,7 @@
       "grade": "일반 등급"
     },
     {
-      "id": "748",
+      "id": "747",
       "name": "오시모미(환)",
       "source": "페트 환생",
       "imageLink": "/pets/pet_osimomi_hwan.webp",
@@ -327,7 +651,7 @@
       "grade": "일반 등급"
     },
     {
-      "id": "747",
+      "id": "746",
       "name": "주니무미",
       "source": "레이드",
       "imageLink": "/pets/pet_junimumi.webp",
@@ -354,7 +678,7 @@
       "grade": "일반 등급"
     },
     {
-      "id": "746",
+      "id": "745",
       "name": "주니무미(환)",
       "source": "페트 환생",
       "imageLink": "/pets/pet_junimumi_hwan.webp",
@@ -381,7 +705,7 @@
       "grade": "일반 등급"
     },
     {
-      "id": "745",
+      "id": "744",
       "name": "에르모미(환)",
       "source": "페트 환생",
       "imageLink": "/pets/pet_ereumomi_hwan.webp",
@@ -408,7 +732,7 @@
       "grade": "일반 등급"
     },
     {
-      "id": "744",
+      "id": "743",
       "name": "라이쿠스(환)",
       "source": "페트 환생",
       "imageLink": "/pets/pet_raikuseu_hwan.webp",
@@ -435,7 +759,7 @@
       "grade": "일반 등급"
     },
     {
-      "id": "743",
+      "id": "742",
       "name": "라비",
       "source": "한가위 이벤트",
       "imageLink": "/pets/pet_rabi.webp",
@@ -462,7 +786,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "742",
+      "id": "741",
       "name": "라비(환)",
       "source": "페트환생",
       "imageLink": "/pets/pet_rabi_hwan.webp",
@@ -489,7 +813,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "741",
+      "id": "740",
       "name": "해로스",
       "source": "후원 보상",
       "imageLink": "/pets/pet_haeroseu.webp",
@@ -516,7 +840,7 @@
       "grade": "일반 등급"
     },
     {
-      "id": "740",
+      "id": "739",
       "name": "해로스(환)",
       "source": "페트 환생",
       "imageLink": "/pets/pet_haeroseu_hwan.webp",
@@ -543,7 +867,7 @@
       "grade": "일반 등급"
     },
     {
-      "id": "739",
+      "id": "738",
       "name": "카무르",
       "source": "빕 상점",
       "imageLink": "/pets/pet_kamureu.webp",
@@ -570,7 +894,7 @@
       "grade": "일반 등급"
     },
     {
-      "id": "738",
+      "id": "737",
       "name": "카무르(환)",
       "source": "페트 환생",
       "imageLink": "/pets/pet_kamureu_hwan.webp",
@@ -597,7 +921,7 @@
       "grade": "일반 등급"
     },
     {
-      "id": "737",
+      "id": "736",
       "name": "청기룡",
       "source": "전투상점",
       "imageLink": "/pets/pet_cheonggiryong.webp",
@@ -624,7 +948,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "736",
+      "id": "735",
       "name": "청기룡(환)",
       "source": "페트환생",
       "imageLink": "/pets/pet_cheonggiryong_hwan.webp",
@@ -651,7 +975,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "735",
+      "id": "734",
       "name": "아리(환)",
       "source": "페트환생",
       "imageLink": "/pets/pet_ari_hwan.webp",
@@ -678,7 +1002,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "734",
+      "id": "733",
       "name": "깜아리(환)",
       "source": "페트환생",
       "imageLink": "/pets/pet_kkamari_hwan.webp",
@@ -705,7 +1029,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "733",
+      "id": "732",
       "name": "홍아리(환)",
       "source": "페트환생",
       "imageLink": "/pets/pet_hongari_hwan.webp",
@@ -732,7 +1056,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "732",
+      "id": "731",
       "name": "그린고르(환)",
       "source": "페트환생",
       "imageLink": "/pets/pet_geuringoreu_hwan.webp",
@@ -759,7 +1083,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "731",
+      "id": "730",
       "name": "카가로스(환)",
       "source": "페트환생",
       "imageLink": "/pets/pet_kagaroseu_hwan.webp",
@@ -786,7 +1110,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "730",
+      "id": "729",
       "name": "아리온",
       "source": "라돈타 보상",
       "imageLink": "/pets/pet_arion.webp",
@@ -813,7 +1137,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "729",
+      "id": "728",
       "name": "아르굴",
       "source": "페트 진화",
       "imageLink": "/pets/pet_areugul.webp",
@@ -840,7 +1164,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "728",
+      "id": "727",
       "name": "헷지",
       "source": "빕 상점",
       "imageLink": "/pets/pet_hetji.webp",
@@ -867,7 +1191,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "727",
+      "id": "726",
       "name": "헷지(환)",
       "source": "페트환생",
       "imageLink": "/pets/pet_hetji_hwan.webp",
@@ -894,7 +1218,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "726",
+      "id": "725",
       "name": "리바이어던(환)",
       "source": "페트환생",
       "imageLink": "/pets/pet_ribaieodeon_hwan.webp",
@@ -921,7 +1245,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "725",
+      "id": "724",
       "name": "그린바로스(환)",
       "source": "페트 환생",
       "imageLink": "/pets/pet_geurinbaroseu_hwan.webp",
@@ -948,7 +1272,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "724",
+      "id": "723",
       "name": "그리프스(각)",
       "source": "페트 각성",
       "imageLink": "/pets/pet_geuripeuseu_gak.webp",
@@ -975,7 +1299,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "723",
+      "id": "722",
       "name": "타르톤",
       "source": "지옥문",
       "imageLink": "/pets/pet_tareuton.webp",
@@ -1002,7 +1326,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "722",
+      "id": "721",
       "name": "카르벤",
       "source": "후원",
       "imageLink": "/pets/pet_kareuben.webp",
@@ -1029,7 +1353,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "721",
+      "id": "720",
       "name": "카르벤(환)",
       "source": "페트 환생",
       "imageLink": "/pets/pet_kareuben_hwan.webp",
@@ -1056,7 +1380,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "720",
+      "id": "719",
       "name": "보로(각)",
       "source": "페트 각성",
       "imageLink": "/pets/pet_boro_gak.webp",
@@ -1083,7 +1407,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "719",
+      "id": "718",
       "name": "티렉스(환)",
       "source": "페트 환생",
       "imageLink": "/pets/pet_tirekseu_hwan.webp",
@@ -1110,7 +1434,7 @@
       "grade": "일반 페트등급"
     },
     {
-      "id": "718",
+      "id": "717",
       "name": "아비시니안(환)",
       "source": "페트 환생",
       "imageLink": "/pets/pet_abisinian_hwan.webp",
@@ -1137,7 +1461,7 @@
       "grade": "일반 페트등급"
     },
     {
-      "id": "717",
+      "id": "716",
       "name": "페루루(환)",
       "source": "페트 환생",
       "imageLink": "/pets/pet_peruru_hwan.webp",
@@ -1164,7 +1488,7 @@
       "grade": "일반 페트등급"
     },
     {
-      "id": "716",
+      "id": "715",
       "name": "고루루(환)",
       "source": "페트 환생",
       "imageLink": "/pets/pet_goruru_hwan.webp",
@@ -1191,7 +1515,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "715",
+      "id": "714",
       "name": "하르가(환)",
       "source": "페트 환생",
       "imageLink": "/pets/pet_hareuga_hwan.webp",
@@ -1218,7 +1542,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "714",
+      "id": "713",
       "name": "하르가",
       "source": "기타",
       "imageLink": "/pets/pet_hareuga.webp",
@@ -1245,7 +1569,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "713",
+      "id": "712",
       "name": "포일론",
       "source": "지옥문",
       "imageLink": "/pets/pet_poilron.webp",
@@ -1272,7 +1596,7 @@
       "grade": "일반 등급"
     },
     {
-      "id": "712",
+      "id": "711",
       "name": "헬베로스",
       "source": "기타",
       "imageLink": "/pets/pet_helberoseu.webp",
@@ -1299,7 +1623,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "711",
+      "id": "710",
       "name": "메가프라키(환)",
       "source": "페트 환생",
       "imageLink": "/pets/pet_megapeuraki_hwan.webp",
@@ -1326,7 +1650,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "710",
+      "id": "709",
       "name": "기린(환)",
       "source": "페트 환생",
       "imageLink": "/pets/pet_girin_hwan.webp",
@@ -1353,7 +1677,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "709",
+      "id": "708",
       "name": "아마란스(각)",
       "source": "페트 각성",
       "imageLink": "/pets/pet_amaranseu_gak.webp",
@@ -1380,7 +1704,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "708",
+      "id": "707",
       "name": "로데오",
       "source": "네메시스 보상",
       "imageLink": "/pets/pet_rodeo.webp",
@@ -1407,7 +1731,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "707",
+      "id": "706",
       "name": "로데오(환)",
       "source": "페트 환생",
       "imageLink": "/pets/pet_rodeo_hwan.webp",
@@ -1434,7 +1758,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "706",
+      "id": "705",
       "name": "청룡(변종)",
       "source": "페트 변종",
       "imageLink": "/pets/pet_cheongryong_byeonjong.webp",
@@ -1461,7 +1785,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "705",
+      "id": "704",
       "name": "청룡(각)",
       "source": "페트 각성",
       "imageLink": "/pets/pet_cheongryong_gak.webp",
@@ -1488,7 +1812,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "704",
+      "id": "703",
       "name": "(신)백호(환)",
       "source": "패트 환생",
       "imageLink": "/pets/pet_shinbaekho_hwan.webp",
@@ -1515,7 +1839,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "703",
+      "id": "702",
       "name": "(신)백호",
       "source": "퀘스트",
       "imageLink": "/pets/pet_shinbaekho.webp",
@@ -1542,7 +1866,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "702",
+      "id": "701",
       "name": "시어룬(환)",
       "source": "패트 환생",
       "imageLink": "/pets/pet_sieorun_hwan.webp",
@@ -1569,7 +1893,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "701",
+      "id": "700",
       "name": "리어룬(환)",
       "source": "패트 환생",
       "imageLink": "/pets/pet_rieorun_hwan.webp",
@@ -1596,7 +1920,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "700",
+      "id": "699",
       "name": "격수(환)",
       "source": "패트 환생",
       "imageLink": "/pets/pet_gyeksu_hwan.webp",
@@ -1623,7 +1947,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "699",
+      "id": "698",
       "name": "격수",
       "source": "빕 상점",
       "imageLink": "/pets/pet_gyeksu.webp",
@@ -1650,7 +1974,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "698",
+      "id": "697",
       "name": "싸가트(환)",
       "source": "페트 환생",
       "imageLink": "/pets/pet_ssagateu_hwan.webp",
@@ -1677,7 +2001,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "697",
+      "id": "696",
       "name": "싸가트",
       "source": "천하 제일 듀얼",
       "imageLink": "/pets/pet_ssagateu.webp",
@@ -1704,7 +2028,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "696",
+      "id": "695",
       "name": "풍복어(신)",
       "source": "풍복어 변신",
       "imageLink": "/pets/pet_pungbokeo_shin.webp",
@@ -1731,7 +2055,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "695",
+      "id": "694",
       "name": "화복어(신)",
       "source": "화복어 변신",
       "imageLink": "/pets/pet_hwabokeo_shin.webp",
@@ -1758,7 +2082,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "694",
+      "id": "693",
       "name": "수복어(신)",
       "source": "수복어 변신",
       "imageLink": "/pets/pet_subokeo_shin.webp",
@@ -1785,7 +2109,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "693",
+      "id": "692",
       "name": "지복어(신)",
       "source": "지복어 변신",
       "imageLink": "/pets/pet_jibokeo_shin.webp",
@@ -1812,7 +2136,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "692",
+      "id": "691",
       "name": "풍복어(환)",
       "source": "패트 환생",
       "imageLink": "/pets/pet_pungbokeo_hwan.webp",
@@ -1839,7 +2163,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "691",
+      "id": "690",
       "name": "풍복어",
       "source": "맘모스 쿠폰",
       "imageLink": "/pets/pet_pungbokeo.webp",
@@ -1866,7 +2190,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "690",
+      "id": "689",
       "name": "화복어(환)",
       "source": "패트 환생",
       "imageLink": "/pets/pet_hwabokeo_hwan.webp",
@@ -1893,7 +2217,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "689",
+      "id": "688",
       "name": "화복어",
       "source": "맘모스 쿠폰",
       "imageLink": "/pets/pet_hwabokeo.webp",
@@ -1920,7 +2244,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "688",
+      "id": "687",
       "name": "수복어(환)",
       "source": "패트 환생",
       "imageLink": "/pets/pet_subokeo_hwan.webp",
@@ -1947,7 +2271,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "687",
+      "id": "686",
       "name": "수복어",
       "source": "맘모스 쿠폰",
       "imageLink": "/pets/pet_subokeo.webp",
@@ -1974,7 +2298,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "686",
+      "id": "685",
       "name": "지복어(환)",
       "source": "패트 환생",
       "imageLink": "/pets/pet_jibokeo_hwan.webp",
@@ -2001,7 +2325,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "685",
+      "id": "684",
       "name": "지복어",
       "source": "맘모스 쿠폰",
       "imageLink": "/pets/pet_jibokeo.webp",
@@ -2028,7 +2352,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "684",
+      "id": "683",
       "name": "모사크(환)",
       "source": "패트 환생",
       "imageLink": "/pets/pet_mosakeu_hwan.webp",
@@ -2055,7 +2379,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "683",
+      "id": "682",
       "name": "흑호(환)",
       "source": "패트 환생",
       "imageLink": "/pets/pet_heukho_hwan.webp",
@@ -2082,7 +2406,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "682",
+      "id": "681",
       "name": "청호(환)",
       "source": "패트 환생",
       "imageLink": "/pets/pet_cheongho_hwan.webp",
@@ -2109,7 +2433,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "681",
+      "id": "680",
       "name": "이블티거(환)",
       "source": "패트 환생",
       "imageLink": "/pets/pet_ibeultigeo_hwan.webp",
@@ -2136,7 +2460,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "680",
+      "id": "679",
       "name": "황호(환)",
       "source": "패트 환생",
       "imageLink": "/pets/pet_hwangho_hwan.webp",
@@ -2163,7 +2487,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "679",
+      "id": "678",
       "name": "기계풍말(환)",
       "source": "패트 환생",
       "imageLink": "/pets/pet_gigyepungmal_hwan.webp",
@@ -2190,7 +2514,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "678",
+      "id": "677",
       "name": "기계풍말",
       "source": "후원 보상",
       "imageLink": "/pets/pet_gigyepungmal.webp",
@@ -2217,7 +2541,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "677",
+      "id": "676",
       "name": "기계화말(환)",
       "source": "패트 환생",
       "imageLink": "/pets/pet_gigyehwamal_hwan.webp",
@@ -2244,7 +2568,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "676",
+      "id": "675",
       "name": "기계화말",
       "source": "후원 보상",
       "imageLink": "/pets/pet_gigyehwamal.webp",
@@ -2271,7 +2595,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "675",
+      "id": "674",
       "name": "기계수말(환)",
       "source": "패트 환생",
       "imageLink": "/pets/pet_gigyesumal_hwan.webp",
@@ -2298,7 +2622,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "674",
+      "id": "673",
       "name": "기계수말",
       "source": "후원 보상",
       "imageLink": "/pets/pet_gigyesumal.webp",
@@ -2325,7 +2649,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "673",
+      "id": "672",
       "name": "기계지말(환)",
       "source": "패트 환생",
       "imageLink": "/pets/pet_gigyejimal_hwan.webp",
@@ -2352,7 +2676,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "672",
+      "id": "671",
       "name": "기계지말",
       "source": "후원 보상",
       "imageLink": "/pets/pet_gigyejimal.webp",
@@ -2379,7 +2703,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "671",
+      "id": "670",
       "name": "주작(변종)",
       "source": "주작 변종",
       "imageLink": "/pets/pet_jujak_byeonjong.webp",
@@ -2406,7 +2730,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "670",
+      "id": "669",
       "name": "주작(각)",
       "source": "주작 각성",
       "imageLink": "/pets/pet_jujak_gak.webp",
@@ -2433,7 +2757,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "669",
+      "id": "668",
       "name": "지발리(환)",
       "source": "페트 환생",
       "imageLink": "/pets/pet_jibalri_hwan.webp",
@@ -2460,7 +2784,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "668",
+      "id": "667",
       "name": "파르체(환)",
       "source": "페트 환생",
       "imageLink": "/pets/pet_pareuche_hwan.webp",
@@ -2487,7 +2811,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "667",
+      "id": "666",
       "name": "샤르체(환)",
       "source": "페트 환생",
       "imageLink": "/pets/pet_syareuche_hwan.webp",
@@ -2514,7 +2838,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "666",
+      "id": "665",
       "name": "슈발리(환)",
       "source": "페트 환생",
       "imageLink": "/pets/pet_syubalri_hwan.webp",
@@ -2541,7 +2865,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "665",
+      "id": "664",
       "name": "암흑천마",
       "source": "충전 보상",
       "imageLink": "/pets/pet_amheukcheonma.webp",
@@ -2568,7 +2892,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "664",
+      "id": "663",
       "name": "암흑천마(환)",
       "source": "페트환생",
       "imageLink": "/pets/pet_amheukcheonma_hwan.webp",
@@ -2595,7 +2919,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "663",
+      "id": "662",
       "name": "메가호크(변종)",
       "source": "변종",
       "imageLink": "/pets/pet_megahokeu_byeonjong.webp",
@@ -2622,7 +2946,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "662",
+      "id": "661",
       "name": "메가호크(각)",
       "source": "각성",
       "imageLink": "/pets/pet_megahokeu_gak.webp",
@@ -2649,7 +2973,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "661",
+      "id": "660",
       "name": "메가카키(환)",
       "source": "패트 환생",
       "imageLink": "/pets/pet_megakaki_hwan.webp",
@@ -2676,7 +3000,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "660",
+      "id": "659",
       "name": "메가호크(환)",
       "source": "패트 환생",
       "imageLink": "/pets/pet_megahokeu_hwan.webp",
@@ -2703,7 +3027,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "659",
+      "id": "658",
       "name": "현무(변종)",
       "source": "현무 변종",
       "imageLink": "/pets/pet_hyenmu_byeonjong.webp",
@@ -2730,7 +3054,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "658",
+      "id": "657",
       "name": "현무(각)",
       "source": "현무 각성",
       "imageLink": "/pets/pet_hyenmu_gak.gif",
@@ -2757,7 +3081,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "657",
+      "id": "656",
       "name": "코발스(환)",
       "source": "패트 환생",
       "imageLink": "/pets/pet_kobalseu_hwan.webp",
@@ -2784,7 +3108,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "656",
+      "id": "655",
       "name": "현무(환)",
       "source": "패트 환생",
       "imageLink": "/pets/pet_hyenmu_hwan.webp",
@@ -2811,7 +3135,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "655",
+      "id": "654",
       "name": "메가리스키(환)",
       "source": "패트 환생",
       "imageLink": "/pets/pet_megariseuki_hwan.webp",
@@ -2838,7 +3162,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "654",
+      "id": "653",
       "name": "메이란스(환)",
       "source": "패트 환생",
       "imageLink": "/pets/pet_meiranseu_hwan.webp",
@@ -2865,7 +3189,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "653",
+      "id": "652",
       "name": "현무",
       "source": "현무의 영혼석 20개",
       "imageLink": "/pets/pet_hyenmu.webp",
@@ -2892,7 +3216,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "652",
+      "id": "651",
       "name": "백호(환)",
       "source": "패트 환생",
       "imageLink": "/pets/pet_baekho_hwan.webp",
@@ -2919,7 +3243,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "651",
+      "id": "650",
       "name": "모사크",
       "source": "출석 이벤트",
       "imageLink": "/pets/pet_mosakeu.webp",
@@ -2946,7 +3270,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "650",
+      "id": "649",
       "name": "은하다이노(환)",
       "source": "페트 환생",
       "imageLink": "/pets/pet_eunhadaino_hwan.gif",
@@ -2973,7 +3297,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "649",
+      "id": "648",
       "name": "은하다이노",
       "source": "스톤 상점",
       "imageLink": "/pets/pet_eunhadaino.gif",
@@ -3000,7 +3324,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "648",
+      "id": "647",
       "name": "산타로비(환)",
       "source": "페트 환생",
       "imageLink": "/pets/pet_santarobi_hwan.webp",
@@ -3027,7 +3351,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "647",
+      "id": "646",
       "name": "산타링코(환)",
       "source": "페트 환생",
       "imageLink": "/pets/pet_santaringko_hwan.webp",
@@ -3054,7 +3378,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "646",
+      "id": "645",
       "name": "산타로스(환)",
       "source": "페트 환생",
       "imageLink": "/pets/pet_santaroseu_hwan.webp",
@@ -3081,7 +3405,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "645",
+      "id": "644",
       "name": "산타베르가(환)",
       "source": "페트 환생",
       "imageLink": "/pets/pet_santabereuga_hwan.webp",
@@ -3108,7 +3432,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "644",
+      "id": "643",
       "name": "키오아치(환)",
       "source": "페트 환생",
       "imageLink": "/pets/pet_kioachi_hwan.webp",
@@ -3135,7 +3459,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "643",
+      "id": "642",
       "name": "키오아치",
       "source": "이벤트",
       "imageLink": "/pets/pet_kioachi.webp",
@@ -3162,7 +3486,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "642",
+      "id": "641",
       "name": "돌북이(환)",
       "source": "포획",
       "imageLink": "/pets/pet_dolbuki_hwan.webp",
@@ -3189,7 +3513,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "641",
+      "id": "640",
       "name": "레드프라키(환)",
       "source": "페트 환생",
       "imageLink": "/pets/pet_redeupeuraki_hwan.webp",
@@ -3216,7 +3540,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "640",
+      "id": "639",
       "name": "레드프라키",
       "source": "상점",
       "imageLink": "/pets/pet_redeupeuraki.webp",
@@ -3243,7 +3567,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "639",
+      "id": "638",
       "name": "메카다이노(환)",
       "source": "페트 환생",
       "imageLink": "/pets/pet_mekadaino_hwan.webp",
@@ -3270,7 +3594,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "638",
+      "id": "637",
       "name": "메카다이노",
       "source": "충전보상",
       "imageLink": "/pets/pet_mekadaino.webp",
@@ -3297,7 +3621,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "637",
+      "id": "636",
       "name": "해빙룡(환)",
       "source": "페트 환생",
       "imageLink": "/pets/pet_haebingryong_hwan.webp",
@@ -3324,7 +3648,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "636",
+      "id": "635",
       "name": "해빙룡",
       "source": "1주년 이벤트 펫 - 맘쿠 특등상 (기간 제한)",
       "imageLink": "/pets/pet_haebingryong.webp",
@@ -3351,7 +3675,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "635",
+      "id": "634",
       "name": "기계환룡(환)",
       "source": "페트 환생",
       "imageLink": "/pets/pet_gigyehwanryong_hwan.gif",
@@ -3378,7 +3702,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "634",
+      "id": "633",
       "name": "기계환룡",
       "source": "충전보상",
       "imageLink": "/pets/pet_gigyehwanryong.gif",
@@ -3405,7 +3729,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "633",
+      "id": "632",
       "name": "화마(각)",
       "source": "페트 각성",
       "imageLink": "/pets/pet_hwama_gak.webp",
@@ -3432,7 +3756,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "632",
+      "id": "631",
       "name": "홍모",
       "source": "맘모스쿠폰",
       "imageLink": "/pets/pet_hongmo.webp",
@@ -3459,7 +3783,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "631",
+      "id": "630",
       "name": "청모",
       "source": "금화상점",
       "imageLink": "/pets/pet_cheongmo.webp",
@@ -3486,7 +3810,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "630",
+      "id": "629",
       "name": "뇌호(변종)",
       "source": "변종",
       "imageLink": "/pets/pet_noeho_byeonjong.webp",
@@ -3513,7 +3837,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "629",
+      "id": "628",
       "name": "백호(각)",
       "source": "페트각성",
       "imageLink": "/pets/pet_baekho_gak.webp",
@@ -3540,7 +3864,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "628",
+      "id": "627",
       "name": "레이비",
       "source": "금화상점",
       "imageLink": "/pets/pet_reibi.webp",
@@ -3559,7 +3883,7 @@
       "growthStats": {
         "attack": "2.166",
         "defense": "1.016",
-        "agility": "2.058",
+        "agility": "2.054",
         "vitality": "9.911"
       },
       "rideable": "탑승불가",
@@ -3567,7 +3891,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "627",
+      "id": "626",
       "name": "라이비",
       "source": "금화상점",
       "imageLink": "/pets/pet_raibi.webp",
@@ -3594,7 +3918,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "626",
+      "id": "625",
       "name": "테이론(환)",
       "source": "페트환생",
       "imageLink": "/pets/pet_teiron_hwan.webp",
@@ -3621,7 +3945,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "625",
+      "id": "624",
       "name": "테이론",
       "source": "충전보상",
       "imageLink": "/pets/pet_teiron.webp",
@@ -3648,7 +3972,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "624",
+      "id": "623",
       "name": "지발리",
       "source": "환생보상",
       "imageLink": "/pets/pet_jibalri.webp",
@@ -3675,7 +3999,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "623",
+      "id": "622",
       "name": "파르체",
       "source": "환생보상",
       "imageLink": "/pets/pet_pareuche.webp",
@@ -3702,7 +4026,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "622",
+      "id": "621",
       "name": "샤르체",
       "source": "환생보상",
       "imageLink": "/pets/pet_syareuche.webp",
@@ -3729,7 +4053,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "621",
+      "id": "620",
       "name": "슈발리",
       "source": "환생보상",
       "imageLink": "/pets/pet_syubalri.webp",
@@ -3756,7 +4080,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "620",
+      "id": "619",
       "name": "카루(각성)",
       "source": "카루 각성",
       "imageLink": "/pets/pet_karu_gakseong.webp",
@@ -3783,7 +4107,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "619",
+      "id": "618",
       "name": "기노(각)",
       "source": "기노 각성",
       "imageLink": "/pets/pet_gino_gak.webp",
@@ -3810,7 +4134,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "618",
+      "id": "617",
       "name": "기로(각)",
       "source": "기로 각성",
       "imageLink": "/pets/pet_giro_gak.webp",
@@ -3837,7 +4161,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "617",
+      "id": "616",
       "name": "비노(각)",
       "source": "비노 각성",
       "imageLink": "/pets/pet_bino_gak.webp",
@@ -3864,7 +4188,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "616",
+      "id": "615",
       "name": "르돈(각)",
       "source": "르돈 각성",
       "imageLink": "/pets/pet_reudon_gak.webp",
@@ -3891,7 +4215,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "615",
+      "id": "614",
       "name": "금호(변종)",
       "source": "변종",
       "imageLink": "/pets/pet_geumho_byeonjong.webp",
@@ -3918,7 +4242,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "614",
+      "id": "613",
       "name": "천 룡(환)",
       "source": "페트 환생",
       "imageLink": "/pets/pet_cheon_ryong_hwan.webp",
@@ -3945,7 +4269,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "613",
+      "id": "612",
       "name": "금호(각)",
       "source": "페트 각성",
       "imageLink": "/pets/pet_geumho_gak.webp",
@@ -3972,7 +4296,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "612",
+      "id": "611",
       "name": "메가기룡(환)",
       "source": "페트 환생",
       "imageLink": "/pets/pet_megagiryong_hwan.webp",
@@ -3999,7 +4323,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "611",
+      "id": "610",
       "name": "메가기룡",
       "source": "듀얼 보상",
       "imageLink": "/pets/pet_megagiryong.webp",
@@ -4026,7 +4350,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "610",
+      "id": "609",
       "name": "풍운룡(환)",
       "source": "페트 환생",
       "imageLink": "/pets/pet_pungunryong_hwan.webp",
@@ -4053,7 +4377,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "609",
+      "id": "608",
       "name": "호크(환)",
       "source": "페트환생",
       "imageLink": "/pets/pet_hokeu_hwan.gif",
@@ -4080,7 +4404,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "608",
+      "id": "607",
       "name": "스콜(환)",
       "source": "페트환생",
       "imageLink": "/pets/pet_seukol_hwan.gif",
@@ -4107,7 +4431,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "607",
+      "id": "606",
       "name": "펜릭스(환)",
       "source": "페트환생",
       "imageLink": "/pets/pet_penrikseu_hwan.gif",
@@ -4134,7 +4458,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "606",
+      "id": "605",
       "name": "펜리(환)",
       "source": "페트환생",
       "imageLink": "/pets/pet_penri_hwan.gif",
@@ -4161,7 +4485,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "605",
+      "id": "604",
       "name": "스콜",
       "source": "매우낮은 확률의 맘모스쿠폰",
       "imageLink": "/pets/pet_seukol.gif",
@@ -4188,7 +4512,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "604",
+      "id": "603",
       "name": "펜릭스",
       "source": "정령왕의 방 클리어 랜덤 보상",
       "imageLink": "/pets/pet_penrikseu.gif",
@@ -4215,7 +4539,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "603",
+      "id": "602",
       "name": "펜리",
       "source": "충전보상",
       "imageLink": "/pets/pet_penri.gif",
@@ -4242,7 +4566,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "602",
+      "id": "601",
       "name": "메이란스",
       "source": "후원보상",
       "imageLink": "/pets/pet_meiranseu.webp",
@@ -4269,7 +4593,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "601",
+      "id": "600",
       "name": "노가(각)",
       "source": "노르곤 각성",
       "imageLink": "/pets/pet_noga_gak.webp",
@@ -4296,7 +4620,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "600",
+      "id": "599",
       "name": "루가(각)",
       "source": "오르곤 각성",
       "imageLink": "/pets/pet_ruga_gak.webp",
@@ -4323,7 +4647,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "599",
+      "id": "598",
       "name": "오가(각)",
       "source": "오가로스 각성",
       "imageLink": "/pets/pet_oga_gak.webp",
@@ -4350,7 +4674,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "598",
+      "id": "597",
       "name": "모가(각)",
       "source": "모가로스 각성",
       "imageLink": "/pets/pet_moga_gak.webp",
@@ -4377,7 +4701,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "597",
+      "id": "596",
       "name": "흑카키(환)",
       "source": "페트환생",
       "imageLink": "/pets/pet_heukkaki_hwan.gif",
@@ -4404,7 +4728,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "596",
+      "id": "595",
       "name": "본드래곤(환)",
       "source": "페트환생",
       "imageLink": "/pets/pet_bondeuraegon_hwan.gif",
@@ -4431,7 +4755,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "595",
+      "id": "594",
       "name": "메피노(환)",
       "source": "패트 환생",
       "imageLink": "/pets/pet_mepino_hwan.gif",
@@ -4458,7 +4782,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "594",
+      "id": "593",
       "name": "골드골로스(환)",
       "source": "페트환생",
       "imageLink": "/pets/pet_goldeugolroseu_hwan.gif",
@@ -4485,7 +4809,7 @@
       "grade": "1등급"
     },
     {
-      "id": "593",
+      "id": "592",
       "name": "초크론(환)",
       "source": "페트환생",
       "imageLink": "/pets/pet_chokeuron_hwan.gif",
@@ -4512,7 +4836,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "592",
+      "id": "591",
       "name": "아이스만모(환)",
       "source": "페트환생",
       "imageLink": "/pets/pet_aiseumanmo_hwan.gif",
@@ -4539,7 +4863,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "591",
+      "id": "590",
       "name": "예르체(환)",
       "source": "페트환생",
       "imageLink": "/pets/pet_yereuche_hwan.webp",
@@ -4566,7 +4890,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "590",
+      "id": "589",
       "name": "토우트(환)",
       "source": "페트환생",
       "imageLink": "/pets/pet_touteu_hwan.gif",
@@ -4593,7 +4917,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "589",
+      "id": "588",
       "name": "흑우트(환)",
       "source": "페트환생",
       "imageLink": "/pets/pet_heukuteu_hwan.gif",
@@ -4620,7 +4944,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "588",
+      "id": "587",
       "name": "테이루스(환)",
       "source": "페트환생",
       "imageLink": "/pets/pet_teiruseu_hwan.webp",
@@ -4647,7 +4971,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "587",
+      "id": "586",
       "name": "테이루스",
       "source": "충전보상",
       "imageLink": "/pets/pet_teiruseu.webp",
@@ -4674,7 +4998,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "586",
+      "id": "585",
       "name": "아리",
       "source": "이벤트 및 금화",
       "imageLink": "/pets/pet_ari.webp",
@@ -4701,7 +5025,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "585",
+      "id": "584",
       "name": "깜아리",
       "source": "이벤트 및 금화",
       "imageLink": "/pets/pet_kkamari.webp",
@@ -4728,7 +5052,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "584",
+      "id": "583",
       "name": "홍아리",
       "source": "이벤트 및 금화",
       "imageLink": "/pets/pet_hongari.webp",
@@ -4755,7 +5079,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "583",
+      "id": "582",
       "name": "흑주작(환)",
       "source": "페트 환생",
       "imageLink": "/pets/pet_heukjujak_hwan.gif",
@@ -4782,7 +5106,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "582",
+      "id": "581",
       "name": "골드 테이노스(환)",
       "source": "페트 환생",
       "imageLink": "/pets/pet_goldeu_teinoseu_hwan.webp",
@@ -4809,7 +5133,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "581",
+      "id": "580",
       "name": "골드 테이노스",
       "source": "천하제일 무술대회 1등보상",
       "imageLink": "/pets/pet_goldeu_teinoseu.webp",
@@ -4836,7 +5160,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "580",
+      "id": "579",
       "name": "아스타로(환)",
       "source": "페트환생",
       "imageLink": "/pets/pet_aseutaro_hwan.gif",
@@ -4863,7 +5187,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "579",
+      "id": "578",
       "name": "블랙테이노스(환)",
       "source": "페트환생",
       "imageLink": "/pets/pet_beulraekteinoseu_hwan.webp",
@@ -4890,7 +5214,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "578",
+      "id": "577",
       "name": "샤크라이(환)",
       "source": "페트환생",
       "imageLink": "/pets/pet_syakeurai_hwan.gif",
@@ -4917,7 +5241,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "577",
+      "id": "576",
       "name": "샤크라(환)",
       "source": "페트환생",
       "imageLink": "/pets/pet_syakeura_hwan.gif",
@@ -4944,7 +5268,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "576",
+      "id": "575",
       "name": "청룡(환)",
       "source": "페트환생",
       "imageLink": "/pets/pet_cheongryong_hwan.webp",
@@ -4971,7 +5295,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "575",
+      "id": "574",
       "name": "베가(환)",
       "source": "페트환생",
       "imageLink": "/pets/pet_bega_hwan.gif",
@@ -4998,7 +5322,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "574",
+      "id": "573",
       "name": "프로돈(환)",
       "source": "페트환생",
       "imageLink": "/pets/pet_peurodon_hwan.gif",
@@ -5025,7 +5349,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "573",
+      "id": "572",
       "name": "메카 카키(환)",
       "source": "페트환생",
       "imageLink": "/pets/pet_meka_kaki_hwan.gif",
@@ -5052,7 +5376,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "572",
+      "id": "571",
       "name": "메가 카키",
       "source": "레이드 보상",
       "imageLink": "/pets/pet_mega_kaki.gif",
@@ -5079,7 +5403,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "571",
+      "id": "570",
       "name": "메가르곤(환)",
       "source": "페트환생",
       "imageLink": "/pets/pet_megareugon_hwan.webp",
@@ -5106,7 +5430,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "570",
+      "id": "569",
       "name": "메가흑곤(환)",
       "source": "페트환생",
       "imageLink": "/pets/pet_megaheukgon_hwan.webp",
@@ -5133,7 +5457,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "569",
+      "id": "568",
       "name": "마아곤",
       "source": "이벤트 보상",
       "imageLink": "/pets/pet_maagon.webp",
@@ -5160,7 +5484,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "568",
+      "id": "567",
       "name": "그린바로스",
       "source": "지옥문 보상",
       "imageLink": "/pets/pet_geurinbaroseu.webp",
@@ -5187,7 +5511,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "567",
+      "id": "566",
       "name": "메가르곤",
       "source": "충전보상",
       "imageLink": "/pets/pet_megareugon.webp",
@@ -5214,7 +5538,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "566",
+      "id": "565",
       "name": "메가흑곤",
       "source": "충전보상",
       "imageLink": "/pets/pet_megaheukgon.webp",
@@ -5241,7 +5565,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "565",
+      "id": "564",
       "name": "메가리스키",
       "source": "맘모스쿠폰 100회",
       "imageLink": "/pets/pet_megariseuki.webp",
@@ -5268,7 +5592,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "564",
+      "id": "563",
       "name": "메가갈푸스(환)",
       "source": "페트환생",
       "imageLink": "/pets/pet_megagalpuseu_hwan.webp",
@@ -5295,7 +5619,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "563",
+      "id": "562",
       "name": "디어룬(환)",
       "source": "페트환생",
       "imageLink": "/pets/pet_dieorun_hwan.gif",
@@ -5322,7 +5646,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "562",
+      "id": "561",
       "name": "지주작(환)",
       "source": "페트환생",
       "imageLink": "/pets/pet_jijujak_hwan.webp",
@@ -5349,7 +5673,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "561",
+      "id": "560",
       "name": "지주작",
       "source": "충전보상",
       "imageLink": "/pets/pet_jijujak.webp",
@@ -5376,7 +5700,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "560",
+      "id": "559",
       "name": "가스트(환)",
       "source": "페트환생",
       "imageLink": "/pets/pet_gaseuteu_hwan.gif",
@@ -5403,7 +5727,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "559",
+      "id": "558",
       "name": "게이블(환)",
       "source": "페트환생",
       "imageLink": "/pets/pet_geibeul_hwan.gif",
@@ -5430,7 +5754,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "558",
+      "id": "557",
       "name": "테라탄(환)",
       "source": "페트환생",
       "imageLink": "/pets/pet_teratan_hwan.gif",
@@ -5457,7 +5781,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "557",
+      "id": "556",
       "name": "페가수스(환)",
       "source": "페트환생",
       "imageLink": "/pets/pet_pegasuseu_hwan.gif",
@@ -5484,7 +5808,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "556",
+      "id": "555",
       "name": "암흑골로스(환)",
       "source": "페트환생",
       "imageLink": "/pets/pet_amheukgolroseu_hwan.gif",
@@ -5511,7 +5835,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "555",
+      "id": "554",
       "name": "화이트드래곤(진)",
       "source": "페트진화",
       "imageLink": "/pets/pet_hwaiteudeuraegon_jin.webp",
@@ -5538,7 +5862,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "554",
+      "id": "553",
       "name": "화이트드래곤",
       "source": "충전보상",
       "imageLink": "/pets/pet_hwaiteudeuraegon.webp",
@@ -5565,7 +5889,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "553",
+      "id": "552",
       "name": "메가갈푸스",
       "source": "충전보상",
       "imageLink": "/pets/pet_megagalpuseu.webp",
@@ -5592,7 +5916,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "552",
+      "id": "551",
       "name": "메가프라키",
       "source": "맘모스쿠폰",
       "imageLink": "/pets/pet_megapeuraki.webp",
@@ -5619,7 +5943,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "551",
+      "id": "550",
       "name": "리바이어던",
       "source": "후르도 1등 복권",
       "imageLink": "/pets/pet_ribaieodeon.gif",
@@ -5646,7 +5970,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "550",
+      "id": "549",
       "name": "흑카키",
       "source": "쟈쟈 1등복권 페트",
       "imageLink": "/pets/pet_heukkaki.webp",
@@ -5673,7 +5997,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "549",
+      "id": "548",
       "name": "블랙드래곤(환)",
       "source": "페트환생",
       "imageLink": "/pets/pet_beulraekdeuraegon_hwan.webp",
@@ -5700,7 +6024,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "548",
+      "id": "547",
       "name": "블랙드래곤",
       "source": "일반페트",
       "imageLink": "/pets/pet_beulraekdeuraegon.webp",
@@ -5727,7 +6051,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "547",
+      "id": "546",
       "name": "크루거(환)",
       "source": "페트환생",
       "imageLink": "/pets/pet_keurugeo_hwan.gif",
@@ -5754,7 +6078,7 @@
       "grade": "일반등등급"
     },
     {
-      "id": "546",
+      "id": "545",
       "name": "이구로스(환)",
       "source": "페트환생",
       "imageLink": "/pets/pet_iguroseu_hwan.gif",
@@ -5781,7 +6105,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "545",
+      "id": "544",
       "name": "부루마루(환)",
       "source": "페트환생",
       "imageLink": "/pets/pet_burumaru_hwan.gif",
@@ -5808,7 +6132,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "544",
+      "id": "543",
       "name": "하루마루(환)",
       "source": "페트환생",
       "imageLink": "/pets/pet_harumaru_hwan.gif",
@@ -5835,7 +6159,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "543",
+      "id": "542",
       "name": "구루마루(환)",
       "source": "페트환생",
       "imageLink": "/pets/pet_gurumaru_hwan.gif",
@@ -5862,7 +6186,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "542",
+      "id": "541",
       "name": "아르마루(환)",
       "source": "페트환생",
       "imageLink": "/pets/pet_areumaru_hwan.gif",
@@ -5889,7 +6213,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "541",
+      "id": "540",
       "name": "도철(환)",
       "source": "페트환생",
       "imageLink": "/pets/pet_docheol_hwan.gif",
@@ -5916,7 +6240,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "540",
+      "id": "539",
       "name": "흑갈푸스(환)",
       "source": "페트환생",
       "imageLink": "/pets/pet_heukgalpuseu_hwan.gif",
@@ -5943,7 +6267,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "539",
+      "id": "538",
       "name": "치크론(환)",
       "source": "페트환생",
       "imageLink": "/pets/pet_chikeuron_hwan.gif",
@@ -5970,7 +6294,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "538",
+      "id": "537",
       "name": "그란푸스",
       "source": "페트진화",
       "imageLink": "/pets/pet_geuranpuseu.gif",
@@ -5997,7 +6321,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "537",
+      "id": "536",
       "name": "로즈란스",
       "source": "페트진화",
       "imageLink": "/pets/pet_rojeuranseu.gif",
@@ -6024,7 +6348,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "536",
+      "id": "535",
       "name": "SD언딘(진)",
       "source": "페트진화",
       "imageLink": "/pets/pet_sdeondin_jin.webp",
@@ -6051,7 +6375,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "535",
+      "id": "534",
       "name": "로즈란",
       "source": "듀얼",
       "imageLink": "/pets/pet_rojeuran.gif",
@@ -6078,7 +6402,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "534",
+      "id": "533",
       "name": "리오다",
       "source": "듀얼",
       "imageLink": "/pets/pet_rioda.gif",
@@ -6105,7 +6429,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "533",
+      "id": "532",
       "name": "치크론",
       "source": "금화상점",
       "imageLink": "/pets/pet_chikeuron.gif",
@@ -6132,7 +6456,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "532",
+      "id": "531",
       "name": "초크론",
       "source": "금화상점",
       "imageLink": "/pets/pet_chokeuron.gif",
@@ -6159,7 +6483,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "531",
+      "id": "530",
       "name": "리어룬",
       "source": "라돈타 80층",
       "imageLink": "/pets/pet_rieorun.gif",
@@ -6186,7 +6510,7 @@
       "grade": "일반등등급"
     },
     {
-      "id": "530",
+      "id": "529",
       "name": "시어룬",
       "source": "라돈타 70층",
       "imageLink": "/pets/pet_sieorun.gif",
@@ -6213,7 +6537,7 @@
       "grade": "일반등등급"
     },
     {
-      "id": "529",
+      "id": "528",
       "name": "블랙테이노스",
       "source": "맘모스쿠폰 100회",
       "imageLink": "/pets/pet_beulraekteinoseu.webp",
@@ -6240,7 +6564,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "528",
+      "id": "527",
       "name": "어린풍백(환)",
       "source": "어린풍백 환생",
       "imageLink": "/pets/pet_eorinpungbaek_hwan.gif",
@@ -6267,7 +6591,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "527",
+      "id": "526",
       "name": "어린현무",
       "source": "전투포인트상점",
       "imageLink": "/pets/pet_eorinhyenmu.gif",
@@ -6294,7 +6618,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "526",
+      "id": "525",
       "name": "어린현무(환)",
       "source": "어린현무 환생",
       "imageLink": "/pets/pet_eorinhyenmu_hwan.gif",
@@ -6321,7 +6645,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "525",
+      "id": "524",
       "name": "메가만모",
       "source": "맘모스쿠폰",
       "imageLink": "/pets/pet_megamanmo.webp",
@@ -6348,7 +6672,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "524",
+      "id": "523",
       "name": "이무기(환)",
       "source": "페트 환생",
       "imageLink": "/pets/pet_imugi_hwan.webp",
@@ -6375,7 +6699,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "523",
+      "id": "522",
       "name": "이무기",
       "source": "맘모스쿠폰 100회",
       "imageLink": "/pets/pet_imugi.webp",
@@ -6402,7 +6726,7 @@
       "grade": "일반페트등급"
     },
     {
-      "id": "522",
+      "id": "521",
       "name": "메가만모(환)",
       "source": "페트환생",
       "imageLink": "/pets/pet_megamanmo_hwan.webp",
@@ -6429,7 +6753,7 @@
       "grade": "일반페트등급"
     },
     {
-      "id": "521",
+      "id": "520",
       "name": "흑풍(환)",
       "source": "페트 환생",
       "imageLink": "/pets/pet_heukpung_hwan.gif",
@@ -6456,7 +6780,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "520",
+      "id": "519",
       "name": "파아란(환)",
       "source": "페트환생",
       "imageLink": "/pets/pet_paaran_hwan.gif",
@@ -6483,7 +6807,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "519",
+      "id": "518",
       "name": "히파(환)",
       "source": "페트환생",
       "imageLink": "/pets/pet_hipa_hwan.gif",
@@ -6510,7 +6834,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "518",
+      "id": "517",
       "name": "키파(환)",
       "source": "페트환생",
       "imageLink": "/pets/pet_kipa_hwan.gif",
@@ -6537,7 +6861,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "517",
+      "id": "516",
       "name": "테라로스(환)",
       "source": "페트환생",
       "imageLink": "/pets/pet_teraroseu_hwan.gif",
@@ -6564,7 +6888,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "516",
+      "id": "515",
       "name": "테라비스(환)",
       "source": "페트환생",
       "imageLink": "/pets/pet_terabiseu_hwan.gif",
@@ -6591,7 +6915,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "515",
+      "id": "514",
       "name": "아이스드래곤",
       "source": "페트진화",
       "imageLink": "/pets/pet_aiseudeuraegon.gif",
@@ -6618,7 +6942,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "514",
+      "id": "513",
       "name": "SD언딘(환)",
       "source": "SD언딘 환생",
       "imageLink": "/pets/pet_sdeondin_hwan.gif",
@@ -6645,7 +6969,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "513",
+      "id": "512",
       "name": "SD언딘",
       "source": "충전보상",
       "imageLink": "/pets/pet_sdeondin.gif",
@@ -6672,7 +6996,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "512",
+      "id": "511",
       "name": "(구)청룡",
       "source": "정기듀얼 우승보상",
       "imageLink": "/pets/pet_gu_cheongryong.webp",
@@ -6699,7 +7023,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "511",
+      "id": "510",
       "name": "테이노스(각)",
       "source": "변종 테이노스에서 각성",
       "imageLink": "/pets/pet_teinoseu_gak.webp",
@@ -6726,7 +7050,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "510",
+      "id": "509",
       "name": "지늑인(각)",
       "source": "늑인 각성",
       "imageLink": "/pets/pet_jineukin_gak.gif",
@@ -6753,7 +7077,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "509",
+      "id": "508",
       "name": "나비드래곤",
       "source": "후원보상페트",
       "imageLink": "/pets/pet_nabideuraegon.gif",
@@ -6780,7 +7104,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "508",
+      "id": "507",
       "name": "싸이클론",
       "source": "금화상점",
       "imageLink": "/pets/pet_ssaikeulron.gif",
@@ -6807,7 +7131,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "507",
+      "id": "506",
       "name": "푸타카",
       "source": "이상한사랑 (A)보상",
       "imageLink": "/pets/pet_putaka.gif",
@@ -6834,7 +7158,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "506",
+      "id": "505",
       "name": "다크무이",
       "source": "초희귀 페트 필드포획",
       "imageLink": "/pets/pet_dakeumui.gif",
@@ -6861,7 +7185,7 @@
       "grade": "일반페트등급"
     },
     {
-      "id": "505",
+      "id": "504",
       "name": "아비시니안",
       "source": "샴기르 마을 1등복권 보상",
       "imageLink": "/pets/pet_abisinian.gif",
@@ -6888,7 +7212,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "504",
+      "id": "503",
       "name": "사르굴",
       "source": "사리온 진화",
       "imageLink": "/pets/pet_sareugul.gif",
@@ -6915,7 +7239,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "503",
+      "id": "502",
       "name": "청룡",
       "source": "전투포인트상점",
       "imageLink": "/pets/pet_cheongryong.webp",
@@ -6942,7 +7266,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "502",
+      "id": "501",
       "name": "사리온",
       "source": "라돈타전리품",
       "imageLink": "/pets/pet_sarion.webp",
@@ -6969,7 +7293,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "501",
+      "id": "500",
       "name": "금조",
       "source": "페트진화",
       "imageLink": "/pets/pet_geumjo.webp",
@@ -6996,7 +7320,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "500",
+      "id": "499",
       "name": "어린금조",
       "source": "이벤트페트",
       "imageLink": "/pets/pet_eoringeumjo.webp",
@@ -7023,7 +7347,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "499",
+      "id": "498",
       "name": "실버우리(환)",
       "source": "페트환생",
       "imageLink": "/pets/pet_silbeouri_hwan.gif",
@@ -7050,7 +7374,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "498",
+      "id": "497",
       "name": "타이혼(환)",
       "source": "페트환생",
       "imageLink": "/pets/pet_taihon_hwan.webp",
@@ -7077,7 +7401,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "497",
+      "id": "496",
       "name": "돌가로스(환)",
       "source": "페트환생",
       "imageLink": "/pets/pet_dolgaroseu_hwan.webp",
@@ -7104,7 +7428,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "496",
+      "id": "495",
       "name": "비트로스(환)",
       "source": "페트환생",
       "imageLink": "/pets/pet_biteuroseu_hwan.webp",
@@ -7131,7 +7455,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "495",
+      "id": "494",
       "name": "가가로스(환)",
       "source": "페트환생",
       "imageLink": "/pets/pet_gagaroseu_hwan.webp",
@@ -7158,7 +7482,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "494",
+      "id": "493",
       "name": "메가로스(환)",
       "source": "페트환생",
       "imageLink": "/pets/pet_megaroseu_hwan.webp",
@@ -7185,7 +7509,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "493",
+      "id": "492",
       "name": "어린풍백",
       "source": "전투포인트상점",
       "imageLink": "/pets/pet_eorinpungbaek.gif",
@@ -7212,7 +7536,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "492",
+      "id": "491",
       "name": "파이어노르",
       "source": "파이어노르",
       "imageLink": "/pets/pet_paieonoreu.gif",
@@ -7239,7 +7563,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "491",
+      "id": "490",
       "name": "흑룡(환)",
       "source": "페트환생",
       "imageLink": "/pets/pet_heukryong_hwan.gif",
@@ -7266,7 +7590,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "490",
+      "id": "489",
       "name": "테로노돈(환)",
       "source": "페트환생",
       "imageLink": "/pets/pet_teronodon_hwan.gif",
@@ -7293,7 +7617,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "489",
+      "id": "488",
       "name": "베가",
       "source": "영혼석",
       "imageLink": "/pets/pet_bega.gif",
@@ -7320,7 +7644,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "488",
+      "id": "487",
       "name": "청주작",
       "source": "어린 청주작 진화",
       "imageLink": "/pets/pet_cheongjujak.gif",
@@ -7347,7 +7671,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "487",
+      "id": "486",
       "name": "어린 청주작",
       "source": "지원페트",
       "imageLink": "/pets/pet_eorin_cheongjujak.gif",
@@ -7374,7 +7698,7 @@
       "grade": "일반 등급"
     },
     {
-      "id": "486",
+      "id": "485",
       "name": "아스타로",
       "source": "맘모스 쿠폰 50회차",
       "imageLink": "/pets/pet_aseutaro.gif",
@@ -7401,7 +7725,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "485",
+      "id": "484",
       "name": "메가북이(환)",
       "source": "메가북이 환생",
       "imageLink": "/pets/pet_megabuki_hwan.gif",
@@ -7428,7 +7752,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "484",
+      "id": "483",
       "name": "레피온(환)",
       "source": "레피온 환생",
       "imageLink": "/pets/pet_repion_hwan.gif",
@@ -7455,7 +7779,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "483",
+      "id": "482",
       "name": "라고고(환)",
       "source": "라고고 환생",
       "imageLink": "/pets/pet_ragogo_hwan.webp",
@@ -7482,7 +7806,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "482",
+      "id": "481",
       "name": "볼케(환)",
       "source": "볼케 환",
       "imageLink": "/pets/pet_bolke_hwan.gif",
@@ -7509,7 +7833,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "481",
+      "id": "480",
       "name": "신백호(환)",
       "source": "신백호 환",
       "imageLink": "/pets/pet_sinbaekho_hwan.gif",
@@ -7536,7 +7860,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "480",
+      "id": "479",
       "name": "헤티루SD(환)",
       "source": "헤티루SD환생",
       "imageLink": "/pets/pet_hetirusd_hwan.gif",
@@ -7563,7 +7887,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "479",
+      "id": "478",
       "name": "헤티소SD(환)",
       "source": "헤티소SD환",
       "imageLink": "/pets/pet_hetisosd_hwan.gif",
@@ -7590,7 +7914,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "478",
+      "id": "477",
       "name": "헤티아SD(환)",
       "source": "헤티아SD 환생",
       "imageLink": "/pets/pet_hetiasd_hwan.gif",
@@ -7617,7 +7941,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "477",
+      "id": "476",
       "name": "헤티르SD(환)",
       "source": "헤티르 환생",
       "imageLink": "/pets/pet_hetireusd_hwan.gif",
@@ -7644,7 +7968,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "476",
+      "id": "475",
       "name": "테르가(환)",
       "source": "테르가 환생",
       "imageLink": "/pets/pet_tereuga_hwan.gif",
@@ -7671,7 +7995,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "475",
+      "id": "474",
       "name": "호크",
       "source": "호크",
       "imageLink": "/pets/pet_hokeu.gif",
@@ -7698,7 +8022,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "474",
+      "id": "473",
       "name": "천호(환)",
       "source": "페트환생",
       "imageLink": "/pets/pet_cheonho_hwan.gif",
@@ -7725,7 +8049,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "473",
+      "id": "472",
       "name": "주작(환)",
       "source": "주작 환생",
       "imageLink": "/pets/pet_jujak_hwan.gif",
@@ -7752,7 +8076,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "472",
+      "id": "471",
       "name": "풍백(환)",
       "source": "풍백 환생",
       "imageLink": "/pets/pet_pungbaek_hwan.gif",
@@ -7779,7 +8103,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "471",
+      "id": "470",
       "name": "볼케",
       "source": "온천랜드퀘스트",
       "imageLink": "/pets/pet_bolke.gif",
@@ -7806,7 +8130,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "470",
+      "id": "469",
       "name": "풍운룡",
       "source": "후원보상",
       "imageLink": "/pets/pet_pungunryong.webp",
@@ -7833,7 +8157,7 @@
       "grade": "일반페트등급"
     },
     {
-      "id": "469",
+      "id": "468",
       "name": "천 룡",
       "source": "후원보상",
       "imageLink": "/pets/pet_cheon_ryong.webp",
@@ -7860,7 +8184,7 @@
       "grade": "일반 등급"
     },
     {
-      "id": "468",
+      "id": "467",
       "name": "실버로스",
       "source": "만모 포획처(희귀)",
       "imageLink": "/pets/pet_silbeoroseu.gif",
@@ -7887,7 +8211,7 @@
       "grade": "일반페트등급"
     },
     {
-      "id": "467",
+      "id": "466",
       "name": "노라돈",
       "source": "고르돈 포획처(희귀)",
       "imageLink": "/pets/pet_noradon.gif",
@@ -7914,7 +8238,7 @@
       "grade": "일반페트등급"
     },
     {
-      "id": "466",
+      "id": "465",
       "name": "페루루",
       "source": "금화상점",
       "imageLink": "/pets/pet_peruru.gif",
@@ -7941,7 +8265,7 @@
       "grade": "일반페트등급"
     },
     {
-      "id": "465",
+      "id": "464",
       "name": "고루루",
       "source": "고르고르 포획처(희귀)",
       "imageLink": "/pets/pet_goruru.gif",
@@ -7968,7 +8292,7 @@
       "grade": "일반페트등급"
     },
     {
-      "id": "464",
+      "id": "463",
       "name": "암흑골로스",
       "source": "한정판매",
       "imageLink": "/pets/pet_amheukgolroseu.gif",
@@ -7995,7 +8319,7 @@
       "grade": "일반등등급"
     },
     {
-      "id": "463",
+      "id": "462",
       "name": "에르모미",
       "source": "레이드보",
       "imageLink": "/pets/pet_ereumomi.gif",
@@ -8022,7 +8346,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "462",
+      "id": "461",
       "name": "흑호",
       "source": "오랑",
       "imageLink": "/pets/pet_heukho.gif",
@@ -8049,7 +8373,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "461",
+      "id": "460",
       "name": "이블티거",
       "source": "오랑",
       "imageLink": "/pets/pet_ibeultigeo.gif",
@@ -8076,7 +8400,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "460",
+      "id": "459",
       "name": "청호",
       "source": "오랑",
       "imageLink": "/pets/pet_cheongho.gif",
@@ -8103,7 +8427,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "459",
+      "id": "458",
       "name": "황호",
       "source": "오랑",
       "imageLink": "/pets/pet_hwangho.gif",
@@ -8130,7 +8454,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "458",
+      "id": "457",
       "name": "흑풍",
       "source": "맘모스쿠폰",
       "imageLink": "/pets/pet_heukpung.gif",
@@ -8157,7 +8481,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "457",
+      "id": "456",
       "name": "토우트",
       "source": "맘모스쿠폰",
       "imageLink": "/pets/pet_touteu.gif",
@@ -8184,7 +8508,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "456",
+      "id": "455",
       "name": "흑우트",
       "source": "맘모스쿠폰",
       "imageLink": "/pets/pet_heukuteu.gif",
@@ -8211,7 +8535,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "455",
+      "id": "454",
       "name": "샤베르(진)",
       "source": "페트진화",
       "imageLink": "/pets/pet_syabereu_jin.gif",
@@ -8238,7 +8562,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "454",
+      "id": "453",
       "name": "도철",
       "source": "듀얼상점",
       "imageLink": "/pets/pet_docheol.gif",
@@ -8265,7 +8589,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "453",
+      "id": "452",
       "name": "파아란",
       "source": "이벤트보상",
       "imageLink": "/pets/pet_paaran.gif",
@@ -8292,7 +8616,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "452",
+      "id": "451",
       "name": "풍백",
       "source": "풍백의 영혼석",
       "imageLink": "/pets/pet_pungbaek.gif",
@@ -8319,7 +8643,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "451",
+      "id": "450",
       "name": "오시모미",
       "source": "레이드보상",
       "imageLink": "/pets/pet_osimomi.gif",
@@ -8346,7 +8670,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "450",
+      "id": "449",
       "name": "타스무미",
       "source": "레이드보상",
       "imageLink": "/pets/pet_taseumumi.gif",
@@ -8373,7 +8697,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "449",
+      "id": "448",
       "name": "테르가",
       "source": "맘쿠 50회 확정",
       "imageLink": "/pets/pet_tereuga.gif",
@@ -8400,7 +8724,7 @@
       "grade": "테르가등급"
     },
     {
-      "id": "448",
+      "id": "447",
       "name": "그리스네",
       "source": "레이드획득",
       "imageLink": "/pets/pet_geuriseune.gif",
@@ -8427,7 +8751,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "447",
+      "id": "446",
       "name": "켄타르",
       "source": "레이드보상",
       "imageLink": "/pets/pet_kentareu.gif",
@@ -8454,7 +8778,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "446",
+      "id": "445",
       "name": "환생얼룩우리",
       "source": "환생보상",
       "imageLink": "/pets/pet_hwansaengeolrukuri.gif",
@@ -8481,7 +8805,7 @@
       "grade": "1등급"
     },
     {
-      "id": "445",
+      "id": "444",
       "name": "메가로스",
       "source": "+",
       "imageLink": "/pets/pet_megaroseu.gif",
@@ -8508,7 +8832,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "444",
+      "id": "443",
       "name": "도라비스(환)",
       "source": "페트환생",
       "imageLink": "/pets/pet_dorabiseu_hwan.gif",
@@ -8535,7 +8859,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "443",
+      "id": "442",
       "name": "우라노스",
       "source": "언딘 전리품 확률 보",
       "imageLink": "/pets/pet_uranoseu.gif",
@@ -8562,7 +8886,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "442",
+      "id": "441",
       "name": "파베로스(환)",
       "source": "페트환생",
       "imageLink": "/pets/pet_paberoseu_hwan.gif",
@@ -8589,7 +8913,7 @@
       "grade": "일반등등급"
     },
     {
-      "id": "441",
+      "id": "440",
       "name": "바우트(환)",
       "source": "페트환생",
       "imageLink": "/pets/pet_bauteu_hwan.gif",
@@ -8616,7 +8940,7 @@
       "grade": "일반등등급"
     },
     {
-      "id": "440",
+      "id": "439",
       "name": "샤크론(환)",
       "source": "페트환생",
       "imageLink": "/pets/pet_syakeuron_hwan.gif",
@@ -8643,7 +8967,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "439",
+      "id": "438",
       "name": "카우거(환)",
       "source": "페트환생",
       "imageLink": "/pets/pet_kaugeo_hwan.gif",
@@ -8670,7 +8994,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "438",
+      "id": "437",
       "name": "골드테라곤(환)",
       "source": "페트환",
       "imageLink": "/pets/pet_goldeuteragon_hwan.gif",
@@ -8697,7 +9021,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "437",
+      "id": "436",
       "name": "카르곤(환)",
       "source": "페트환생",
       "imageLink": "/pets/pet_kareugon_hwan.gif",
@@ -8724,7 +9048,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "436",
+      "id": "435",
       "name": "카르곤",
       "source": "-",
       "imageLink": "/pets/pet_kareugon.webp",
@@ -8751,7 +9075,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "435",
+      "id": "434",
       "name": "테라곤(환)",
       "source": "페트환생",
       "imageLink": "/pets/pet_teragon_hwan.gif",
@@ -8778,7 +9102,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "434",
+      "id": "433",
       "name": "델푸스(환)",
       "source": "페트환생",
       "imageLink": "/pets/pet_delpuseu_hwan.gif",
@@ -8805,7 +9129,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "433",
+      "id": "432",
       "name": "울푸스(환)",
       "source": "페트환생",
       "imageLink": "/pets/pet_ulpuseu_hwan.gif",
@@ -8832,7 +9156,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "432",
+      "id": "431",
       "name": "갈푸스(환)",
       "source": "페트환생",
       "imageLink": "/pets/pet_galpuseu_hwan.gif",
@@ -8859,7 +9183,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "431",
+      "id": "430",
       "name": "프리토스(환)",
       "source": "페트환생",
       "imageLink": "/pets/pet_peuritoseu_hwan.gif",
@@ -8886,7 +9210,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "430",
+      "id": "429",
       "name": "프라키토스(환)",
       "source": "페트환생",
       "imageLink": "/pets/pet_peurakitoseu_hwan.gif",
@@ -8913,7 +9237,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "429",
+      "id": "428",
       "name": "다이노스(환)",
       "source": "페트환생",
       "imageLink": "/pets/pet_dainoseu_hwan.gif",
@@ -8940,7 +9264,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "428",
+      "id": "427",
       "name": "다이노(환)",
       "source": "페트환생",
       "imageLink": "/pets/pet_daino_hwan.gif",
@@ -8967,7 +9291,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "427",
+      "id": "426",
       "name": "마모나스(환)",
       "source": "페트환생",
       "imageLink": "/pets/pet_mamonaseu_hwan.gif",
@@ -8994,7 +9318,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "426",
+      "id": "425",
       "name": "만모로스(환)",
       "source": "페트환생",
       "imageLink": "/pets/pet_manmoroseu_hwan.gif",
@@ -9021,7 +9345,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "425",
+      "id": "424",
       "name": "만모르(환)",
       "source": "페트환생",
       "imageLink": "/pets/pet_manmoreu_hwan.gif",
@@ -9048,7 +9372,7 @@
       "grade": "일반등등급"
     },
     {
-      "id": "424",
+      "id": "423",
       "name": "만모(환)",
       "source": "페트환생",
       "imageLink": "/pets/pet_manmo_hwan.gif",
@@ -9075,7 +9399,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "423",
+      "id": "422",
       "name": "지가로스(환)",
       "source": "페트환생",
       "imageLink": "/pets/pet_jigaroseu_hwan.gif",
@@ -9102,7 +9426,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "422",
+      "id": "421",
       "name": "칼로스(환)",
       "source": "페트환생",
       "imageLink": "/pets/pet_kalroseu_hwan.gif",
@@ -9129,7 +9453,7 @@
       "grade": "일반등등급"
     },
     {
-      "id": "421",
+      "id": "420",
       "name": "카키(환)",
       "source": "페트환생",
       "imageLink": "/pets/pet_kaki_hwan.webp",
@@ -9156,7 +9480,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "420",
+      "id": "419",
       "name": "호르쿠(환)",
       "source": "페트환생",
       "imageLink": "/pets/pet_horeuku_hwan.webp",
@@ -9183,7 +9507,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "419",
+      "id": "418",
       "name": "쿠쿠(환)",
       "source": "페트환생",
       "imageLink": "/pets/pet_kuku_hwan.webp",
@@ -9210,7 +9534,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "418",
+      "id": "417",
       "name": "타키(환)",
       "source": "페트환생",
       "imageLink": "/pets/pet_taki_hwan.webp",
@@ -9237,7 +9561,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "417",
+      "id": "416",
       "name": "아마란스",
       "source": "아마란진화",
       "imageLink": "/pets/pet_amaranseu.gif",
@@ -9264,7 +9588,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "416",
+      "id": "415",
       "name": "그리프스",
       "source": "고오다진",
       "imageLink": "/pets/pet_geuripeuseu.gif",
@@ -9291,7 +9615,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "415",
+      "id": "414",
       "name": "풍마(변종)",
       "source": "페트진",
       "imageLink": "/pets/pet_pungma_byeonjong.gif",
@@ -9318,7 +9642,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "414",
+      "id": "413",
       "name": "화마(변종)",
       "source": "페트진화",
       "imageLink": "/pets/pet_hwama_byeonjong.gif",
@@ -9345,7 +9669,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "413",
+      "id": "412",
       "name": "수마(변종)",
       "source": "페트진화",
       "imageLink": "/pets/pet_suma_byeonjong.gif",
@@ -9372,7 +9696,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "412",
+      "id": "411",
       "name": "지마(변종)",
       "source": "페트진화",
       "imageLink": "/pets/pet_jima_byeonjong.gif",
@@ -9399,7 +9723,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "411",
+      "id": "410",
       "name": "막쿠마(진)",
       "source": "페트진화",
       "imageLink": "/pets/pet_makkuma_jin.gif",
@@ -9426,7 +9750,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "410",
+      "id": "409",
       "name": "막쿠마",
       "source": "-",
       "imageLink": "/pets/pet_makkuma.gif",
@@ -9453,7 +9777,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "409",
+      "id": "408",
       "name": "한가름(진)",
       "source": "-",
       "imageLink": "/pets/pet_hangareum_jin.gif",
@@ -9480,7 +9804,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "408",
+      "id": "407",
       "name": "한가름",
       "source": "-",
       "imageLink": "/pets/pet_hangareum.gif",
@@ -9507,7 +9831,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "407",
+      "id": "406",
       "name": "설표",
       "source": "금화상점",
       "imageLink": "/pets/pet_seolpyo.gif",
@@ -9534,7 +9858,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "406",
+      "id": "405",
       "name": "설표(환)",
       "source": "페트환",
       "imageLink": "/pets/pet_seolpyo_hwan.gif",
@@ -9561,7 +9885,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "405",
+      "id": "404",
       "name": "도르도르(진)",
       "source": "페트진화",
       "imageLink": "/pets/pet_doreudoreu_jin.gif",
@@ -9588,7 +9912,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "404",
+      "id": "403",
       "name": "고르고르(진)",
       "source": "페트진화",
       "imageLink": "/pets/pet_goreugoreu_jin.gif",
@@ -9615,7 +9939,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "403",
+      "id": "402",
       "name": "골드 골로스",
       "source": "맘모스쿠폰",
       "imageLink": "/pets/pet_goldeu_golroseu.gif",
@@ -9642,7 +9966,7 @@
       "grade": "1등급"
     },
     {
-      "id": "402",
+      "id": "401",
       "name": "메가고르돈",
       "source": "헤메라의 파편 진화",
       "imageLink": "/pets/pet_megagoreudon.webp",
@@ -9669,7 +9993,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "401",
+      "id": "400",
       "name": "지옥갈푸스",
       "source": "헤메라의 파편 진화",
       "imageLink": "/pets/pet_jiokgalpuseu.webp",
@@ -9696,7 +10020,7 @@
       "grade": "일반페트등급"
     },
     {
-      "id": "400",
+      "id": "399",
       "name": "지마(진)",
       "source": "페트진화",
       "imageLink": "/pets/pet_jima_jin.gif",
@@ -9723,7 +10047,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "399",
+      "id": "398",
       "name": "화마(진)",
       "source": "페트진화",
       "imageLink": "/pets/pet_hwama_jin.gif",
@@ -9750,7 +10074,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "398",
+      "id": "397",
       "name": "수마(진)",
       "source": "페트진화",
       "imageLink": "/pets/pet_suma_jin.gif",
@@ -9777,7 +10101,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "397",
+      "id": "396",
       "name": "풍마(진)",
       "source": "페트진화",
       "imageLink": "/pets/pet_pungma_jin.gif",
@@ -9804,7 +10128,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "396",
+      "id": "395",
       "name": "풍마",
       "source": "맘모스쿠폰",
       "imageLink": "/pets/pet_pungma.gif",
@@ -9831,7 +10155,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "395",
+      "id": "394",
       "name": "수마",
       "source": "맘모스쿠폰",
       "imageLink": "/pets/pet_suma.gif",
@@ -9858,7 +10182,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "394",
+      "id": "393",
       "name": "지마",
       "source": "맘모스쿠폰",
       "imageLink": "/pets/pet_jima.gif",
@@ -9885,7 +10209,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "393",
+      "id": "392",
       "name": "화마",
       "source": "맘모스쿠폰",
       "imageLink": "/pets/pet_hwama.gif",
@@ -9912,7 +10236,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "392",
+      "id": "391",
       "name": "파이어 킹 드래곤",
       "source": "후원보상",
       "imageLink": "/pets/pet_paieo_king_deuraegon.gif",
@@ -9939,7 +10263,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "391",
+      "id": "390",
       "name": "레드 드래곤",
       "source": "후원보상",
       "imageLink": "/pets/pet_redeu_deuraegon.gif",
@@ -9966,7 +10290,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "390",
+      "id": "389",
       "name": "어린 레드 드래곤",
       "source": "후원보상페트",
       "imageLink": "/pets/pet_eorin_redeu_deuraegon.gif",
@@ -9993,7 +10317,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "389",
+      "id": "388",
       "name": "고로",
       "source": "환수강림 랜덤주머니",
       "imageLink": "/pets/pet_goro.gif",
@@ -10020,7 +10344,7 @@
       "grade": "1등급"
     },
     {
-      "id": "388",
+      "id": "387",
       "name": "로코",
       "source": "환수강림 랜덤주머니",
       "imageLink": "/pets/pet_roko.gif",
@@ -10047,7 +10371,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "387",
+      "id": "386",
       "name": "키로",
       "source": "환수강림 랜덤주머니",
       "imageLink": "/pets/pet_kiro.gif",
@@ -10074,7 +10398,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "386",
+      "id": "385",
       "name": "크루거",
       "source": "환수강림 랜덤주머니",
       "imageLink": "/pets/pet_keurugeo.gif",
@@ -10101,7 +10425,7 @@
       "grade": "1등급"
     },
     {
-      "id": "385",
+      "id": "384",
       "name": "샤우트",
       "source": "환수강림 랜덤주머니",
       "imageLink": "/pets/pet_syauteu.gif",
@@ -10128,7 +10452,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "384",
+      "id": "383",
       "name": "레오딘",
       "source": "재활용상점",
       "imageLink": "/pets/pet_reodin.webp",
@@ -10155,7 +10479,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "383",
+      "id": "382",
       "name": "메가북이",
       "source": "맘모스쿠폰 50회 확정",
       "imageLink": "/pets/pet_megabuki.gif",
@@ -10182,7 +10506,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "382",
+      "id": "381",
       "name": "카가로스",
       "source": "스톤 상점",
       "imageLink": "/pets/pet_kagaroseu.gif",
@@ -10209,7 +10533,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "381",
+      "id": "380",
       "name": "초르초르(환)",
       "source": "페트환생",
       "imageLink": "/pets/pet_choreuchoreu_hwan.gif",
@@ -10236,7 +10560,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "380",
+      "id": "379",
       "name": "초르초르(진)",
       "source": "페트진화",
       "imageLink": "/pets/pet_choreuchoreu_jin.gif",
@@ -10263,7 +10587,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "379",
+      "id": "378",
       "name": "베라라(환)",
       "source": "페트환생",
       "imageLink": "/pets/pet_berara_hwan.gif",
@@ -10290,7 +10614,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "378",
+      "id": "377",
       "name": "베라라(진)",
       "source": "페트진화",
       "imageLink": "/pets/pet_berara_jin.gif",
@@ -10317,7 +10641,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "377",
+      "id": "376",
       "name": "페트(환)",
       "source": "페트환생",
       "imageLink": "/pets/pet_peteu_hwan.gif",
@@ -10344,7 +10668,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "376",
+      "id": "375",
       "name": "설표(진)",
       "source": "페트진화",
       "imageLink": "/pets/pet_seolpyo_jin.gif",
@@ -10371,7 +10695,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "375",
+      "id": "374",
       "name": "도르도르(환)",
       "source": "페트환생",
       "imageLink": "/pets/pet_doreudoreu_hwan.gif",
@@ -10398,7 +10722,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "374",
+      "id": "373",
       "name": "골로스(환)",
       "source": "페트환생",
       "imageLink": "/pets/pet_golroseu_hwan.gif",
@@ -10425,7 +10749,7 @@
       "grade": "1등급"
     },
     {
-      "id": "373",
+      "id": "372",
       "name": "골로스(진)",
       "source": "페트진화",
       "imageLink": "/pets/pet_golroseu_jin.gif",
@@ -10452,7 +10776,7 @@
       "grade": "1등급"
     },
     {
-      "id": "372",
+      "id": "371",
       "name": "골로스",
       "source": "보상페트",
       "imageLink": "/pets/pet_golroseu.webp",
@@ -10479,7 +10803,7 @@
       "grade": "1등급"
     },
     {
-      "id": "371",
+      "id": "370",
       "name": "검호(진)",
       "source": "페트진화",
       "imageLink": "/pets/pet_geomho_jin.gif",
@@ -10506,7 +10830,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "370",
+      "id": "369",
       "name": "검호(환)",
       "source": "페트환생",
       "imageLink": "/pets/pet_geomho_hwan.gif",
@@ -10528,12 +10852,12 @@
         "agility": "1.632",
         "vitality": "10.337"
       },
-      "rideable": "탑승가능",
+      "rideable": "탑승불가",
       "totalGrowth": "5.112",
       "grade": "일반등급"
     },
     {
-      "id": "369",
+      "id": "368",
       "name": "검호",
       "source": "'",
       "imageLink": "/pets/pet_geomho.gif",
@@ -10555,12 +10879,12 @@
         "agility": "1.616",
         "vitality": "10.079"
       },
-      "rideable": "탑승가능",
+      "rideable": "탑승불가",
       "totalGrowth": "4.947",
       "grade": "일반등급"
     },
     {
-      "id": "368",
+      "id": "367",
       "name": "모가로스(환)",
       "source": "페트환생",
       "imageLink": "/pets/pet_mogaroseu_hwan.gif",
@@ -10587,7 +10911,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "367",
+      "id": "366",
       "name": "모가로스(진)",
       "source": "페트진화",
       "imageLink": "/pets/pet_mogaroseu_jin.gif",
@@ -10614,7 +10938,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "366",
+      "id": "365",
       "name": "오르곤(환)",
       "source": "페트환생",
       "imageLink": "/pets/pet_oreugon_hwan.gif",
@@ -10641,7 +10965,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "365",
+      "id": "364",
       "name": "오르곤(진)",
       "source": "페트진화",
       "imageLink": "/pets/pet_oreugon_jin.gif",
@@ -10668,7 +10992,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "364",
+      "id": "363",
       "name": "오가로스(환)",
       "source": "페트환생",
       "imageLink": "/pets/pet_ogaroseu_hwan.gif",
@@ -10695,7 +11019,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "363",
+      "id": "362",
       "name": "오가로스(진)",
       "source": "페트진화",
       "imageLink": "/pets/pet_ogaroseu_jin.gif",
@@ -10722,7 +11046,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "362",
+      "id": "361",
       "name": "고르고르(환)",
       "source": "페트환생",
       "imageLink": "/pets/pet_goreugoreu_hwan.webp",
@@ -10749,7 +11073,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "361",
+      "id": "360",
       "name": "오투투(환)",
       "source": "페트환생",
       "imageLink": "/pets/pet_otutu_hwan.webp",
@@ -10776,7 +11100,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "360",
+      "id": "359",
       "name": "오투투(진)",
       "source": "페트진화",
       "imageLink": "/pets/pet_otutu_jin.gif",
@@ -10803,7 +11127,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "359",
+      "id": "358",
       "name": "투투(환)",
       "source": "페트환생",
       "imageLink": "/pets/pet_tutu_hwan.webp",
@@ -10830,7 +11154,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "358",
+      "id": "357",
       "name": "투투(진)",
       "source": "페트진화",
       "imageLink": "/pets/pet_tutu_jin.gif",
@@ -10857,7 +11181,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "357",
+      "id": "356",
       "name": "우푸(환)",
       "source": "페트환생",
       "imageLink": "/pets/pet_upu_hwan.gif",
@@ -10884,7 +11208,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "356",
+      "id": "355",
       "name": "우푸(진)",
       "source": "페트진화",
       "imageLink": "/pets/pet_upu_jin.webp",
@@ -10911,7 +11235,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "355",
+      "id": "354",
       "name": "푸푸(환)",
       "source": "페트환생",
       "imageLink": "/pets/pet_pupu_hwan.webp",
@@ -10938,7 +11262,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "354",
+      "id": "353",
       "name": "푸푸(진)",
       "source": "페트진화",
       "imageLink": "/pets/pet_pupu_jin.gif",
@@ -10965,7 +11289,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "353",
+      "id": "352",
       "name": "해룡",
       "source": "재활용상점",
       "imageLink": "/pets/pet_haeryong.gif",
@@ -10992,7 +11316,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "352",
+      "id": "351",
       "name": "사이록스",
       "source": "금화상점",
       "imageLink": "/pets/pet_sairokseu.gif",
@@ -11019,7 +11343,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "351",
+      "id": "350",
       "name": "크루저",
       "source": "재활용상점",
       "imageLink": "/pets/pet_keurujeo.gif",
@@ -11046,7 +11370,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "350",
+      "id": "349",
       "name": "카이저",
       "source": "재활용상점",
       "imageLink": "/pets/pet_kaijeo.gif",
@@ -11073,7 +11397,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "349",
+      "id": "348",
       "name": "봉봉",
       "source": "재활용상점",
       "imageLink": "/pets/pet_bongbong.gif",
@@ -11100,7 +11424,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "348",
+      "id": "347",
       "name": "티렉스",
       "source": "재활용상점",
       "imageLink": "/pets/pet_tirekseu.gif",
@@ -11127,7 +11451,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "347",
+      "id": "346",
       "name": "쿠오코마",
       "source": "재활용상점",
       "imageLink": "/pets/pet_kuokoma.gif",
@@ -11154,7 +11478,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "346",
+      "id": "345",
       "name": "하루마루",
       "source": "재활용상점",
       "imageLink": "/pets/pet_harumaru.gif",
@@ -11181,7 +11505,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "345",
+      "id": "344",
       "name": "고르가르",
       "source": "재활용상점",
       "imageLink": "/pets/pet_goreugareu.gif",
@@ -11208,7 +11532,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "344",
+      "id": "343",
       "name": "베르가르",
       "source": "재활용상점",
       "imageLink": "/pets/pet_bereugareu.gif",
@@ -11235,7 +11559,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "343",
+      "id": "342",
       "name": "파르곤",
       "source": "재활용상점",
       "imageLink": "/pets/pet_pareugon.gif",
@@ -11262,7 +11586,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "342",
+      "id": "341",
       "name": "지가로스",
       "source": "재활용상점",
       "imageLink": "/pets/pet_jigaroseu.gif",
@@ -11289,7 +11613,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "341",
+      "id": "340",
       "name": "칼로스",
       "source": "재활용상점",
       "imageLink": "/pets/pet_kalroseu.gif",
@@ -11316,7 +11640,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "340",
+      "id": "339",
       "name": "블루문",
       "source": "재활용상점",
       "imageLink": "/pets/pet_beulrumun.gif",
@@ -11343,7 +11667,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "339",
+      "id": "338",
       "name": "백여우",
       "source": "재활용상점",
       "imageLink": "/pets/pet_baekyeu.gif",
@@ -11370,7 +11694,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "338",
+      "id": "337",
       "name": "블랙펄",
       "source": "재활용상점",
       "imageLink": "/pets/pet_beulraekpeol.gif",
@@ -11397,7 +11721,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "337",
+      "id": "336",
       "name": "핑코",
       "source": "재활용상점",
       "imageLink": "/pets/pet_pingko.gif",
@@ -11424,7 +11748,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "336",
+      "id": "335",
       "name": "샤크라이",
       "source": "재활용상점",
       "imageLink": "/pets/pet_syakeurai.gif",
@@ -11451,7 +11775,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "335",
+      "id": "334",
       "name": "샤크라",
       "source": "재활용상점",
       "imageLink": "/pets/pet_syakeura.gif",
@@ -11478,7 +11802,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "334",
+      "id": "333",
       "name": "파피온",
       "source": "재활용상점",
       "imageLink": "/pets/pet_papion.gif",
@@ -11505,7 +11829,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "333",
+      "id": "332",
       "name": "데빌바로스",
       "source": "재활용상점",
       "imageLink": "/pets/pet_debilbaroseu.gif",
@@ -11532,7 +11856,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "332",
+      "id": "331",
       "name": "다크론",
       "source": "재활용상점",
       "imageLink": "/pets/pet_dakeuron.gif",
@@ -11559,7 +11883,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "331",
+      "id": "330",
       "name": "레피온",
       "source": "재활용상점",
       "imageLink": "/pets/pet_repion.gif",
@@ -11586,7 +11910,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "330",
+      "id": "329",
       "name": "이구로스",
       "source": "재활용상점",
       "imageLink": "/pets/pet_iguroseu.gif",
@@ -11613,7 +11937,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "329",
+      "id": "328",
       "name": "구루마루",
       "source": "재활용상점",
       "imageLink": "/pets/pet_gurumaru.gif",
@@ -11640,7 +11964,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "328",
+      "id": "327",
       "name": "팔케온",
       "source": "재활용상점",
       "imageLink": "/pets/pet_palkeon.gif",
@@ -11667,7 +11991,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "327",
+      "id": "326",
       "name": "마그북",
       "source": "금화페트",
       "imageLink": "/pets/pet_mageubuk.gif",
@@ -11694,7 +12018,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "326",
+      "id": "325",
       "name": "천호",
       "source": "통합 듀얼 1등 보상",
       "imageLink": "/pets/pet_cheonho.gif",
@@ -11721,7 +12045,7 @@
       "grade": "일반 등급"
     },
     {
-      "id": "325",
+      "id": "324",
       "name": "테라로스",
       "source": "기간한정",
       "imageLink": "/pets/pet_teraroseu.gif",
@@ -11748,7 +12072,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "324",
+      "id": "323",
       "name": "테라비스",
       "source": "기간한정",
       "imageLink": "/pets/pet_terabiseu.gif",
@@ -11775,7 +12099,7 @@
       "grade": "일반등등급"
     },
     {
-      "id": "323",
+      "id": "322",
       "name": "헤티르SD",
       "source": "오류 보상",
       "imageLink": "/pets/pet_hetireusd.gif",
@@ -11802,7 +12126,7 @@
       "grade": "일반 등급"
     },
     {
-      "id": "322",
+      "id": "321",
       "name": "헤티아SD",
       "source": "오류 보상",
       "imageLink": "/pets/pet_hetiasd.gif",
@@ -11829,7 +12153,7 @@
       "grade": "일반 등급"
     },
     {
-      "id": "321",
+      "id": "320",
       "name": "헤티소SD",
       "source": "오류 보상",
       "imageLink": "/pets/pet_hetisosd.gif",
@@ -11856,7 +12180,7 @@
       "grade": "일반 등급"
     },
     {
-      "id": "320",
+      "id": "319",
       "name": "헤티루SD",
       "source": "오류 보상",
       "imageLink": "/pets/pet_hetirusd.gif",
@@ -11883,7 +12207,7 @@
       "grade": "일반 등급"
     },
     {
-      "id": "319",
+      "id": "318",
       "name": "노르",
       "source": "페트진화(변종)",
       "imageLink": "/pets/pet_noreu.webp",
@@ -11910,7 +12234,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "318",
+      "id": "317",
       "name": "노르가르",
       "source": "재활용상점",
       "imageLink": "/pets/pet_noreugareu.gif",
@@ -11937,7 +12261,7 @@
       "grade": "일반등등급"
     },
     {
-      "id": "317",
+      "id": "316",
       "name": "노르노르(환)",
       "source": "페트환생",
       "imageLink": "/pets/pet_noreunoreu_hwan.webp",
@@ -11964,7 +12288,7 @@
       "grade": "2등급"
     },
     {
-      "id": "316",
+      "id": "315",
       "name": "노르노르(진)",
       "source": "페트진화",
       "imageLink": "/pets/pet_noreunoreu_jin.gif",
@@ -11991,7 +12315,7 @@
       "grade": "일반등등급"
     },
     {
-      "id": "315",
+      "id": "314",
       "name": "노르곤(환)",
       "source": "페트환생",
       "imageLink": "/pets/pet_noreugon_hwan.gif",
@@ -12018,7 +12342,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "314",
+      "id": "313",
       "name": "카르노스",
       "source": "접속,레벨보상",
       "imageLink": "/pets/pet_kareunoseu.gif",
@@ -12045,7 +12369,7 @@
       "grade": "일반등등급"
     },
     {
-      "id": "313",
+      "id": "312",
       "name": "카루(변종)",
       "source": "진화의 열매(카루)",
       "imageLink": "/pets/pet_karu_byeonjong.gif",
@@ -12072,7 +12396,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "312",
+      "id": "311",
       "name": "카루(진)",
       "source": "진화의 열매(카루)",
       "imageLink": "/pets/pet_karu_jin.gif",
@@ -12099,7 +12423,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "311",
+      "id": "310",
       "name": "그루(변종)",
       "source": "진화의 열매(그루)",
       "imageLink": "/pets/pet_geuru_byeonjong.gif",
@@ -12126,7 +12450,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "310",
+      "id": "309",
       "name": "그루(진)",
       "source": "진화의 열매(그루)",
       "imageLink": "/pets/pet_geuru_jin.gif",
@@ -12153,7 +12477,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "309",
+      "id": "308",
       "name": "이루(변종)",
       "source": "진화의 열매(이루)",
       "imageLink": "/pets/pet_iru_byeonjong.gif",
@@ -12180,7 +12504,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "308",
+      "id": "307",
       "name": "이루(진)",
       "source": "진화의 열매(이루)",
       "imageLink": "/pets/pet_iru_jin.gif",
@@ -12207,7 +12531,7 @@
       "grade": "일반등등급"
     },
     {
-      "id": "307",
+      "id": "306",
       "name": "요루(변종)",
       "source": "진화의 열매(요루)",
       "imageLink": "/pets/pet_yoru_byeonjong.gif",
@@ -12234,7 +12558,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "306",
+      "id": "305",
       "name": "요루(진)",
       "source": "진화의 열매(요루)",
       "imageLink": "/pets/pet_yoru_jin.gif",
@@ -12261,7 +12585,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "305",
+      "id": "304",
       "name": "베르푸스(환)",
       "source": "페트환생",
       "imageLink": "/pets/pet_bereupuseu_hwan.gif",
@@ -12288,7 +12612,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "304",
+      "id": "303",
       "name": "샤베르(환)",
       "source": "페트환생",
       "imageLink": "/pets/pet_syabereu_hwan.gif",
@@ -12315,7 +12639,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "303",
+      "id": "302",
       "name": "베르",
       "source": "페트진화(변종)",
       "imageLink": "/pets/pet_bereu.gif",
@@ -12342,7 +12666,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "302",
+      "id": "301",
       "name": "베르가(진)",
       "source": "페트진화",
       "imageLink": "/pets/pet_bereuga_jin.gif",
@@ -12369,7 +12693,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "301",
+      "id": "300",
       "name": "베르가(환)",
       "source": "페트환생",
       "imageLink": "/pets/pet_bereuga_hwan.webp",
@@ -12396,7 +12720,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "300",
+      "id": "299",
       "name": "베루루르",
       "source": "재활용상점",
       "imageLink": "/pets/pet_berurureu.gif",
@@ -12423,7 +12747,7 @@
       "grade": "일반등등급"
     },
     {
-      "id": "299",
+      "id": "298",
       "name": "베루루(환)",
       "source": "페트환생",
       "imageLink": "/pets/pet_beruru_hwan.gif",
@@ -12450,7 +12774,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "298",
+      "id": "297",
       "name": "베루루(진)",
       "source": "페트진화",
       "imageLink": "/pets/pet_beruru_jin.gif",
@@ -12477,7 +12801,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "297",
+      "id": "296",
       "name": "베루",
       "source": "페트진화(변종)",
       "imageLink": "/pets/pet_beru.gif",
@@ -12504,7 +12828,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "296",
+      "id": "295",
       "name": "반보로(환)",
       "source": "페트 환생",
       "imageLink": "/pets/pet_banboro_hwan.webp",
@@ -12531,7 +12855,7 @@
       "grade": "일반 등급"
     },
     {
-      "id": "295",
+      "id": "294",
       "name": "반보로(진)",
       "source": "페트 진화",
       "imageLink": "/pets/pet_banboro_jin.gif",
@@ -12558,7 +12882,7 @@
       "grade": "일반 등급"
     },
     {
-      "id": "294",
+      "id": "293",
       "name": "보로",
       "source": "페트 진화(변종)",
       "imageLink": "/pets/pet_boro.gif",
@@ -12585,7 +12909,7 @@
       "grade": "일반 등급"
     },
     {
-      "id": "293",
+      "id": "292",
       "name": "기로",
       "source": "페트 진화(변종)",
       "imageLink": "/pets/pet_giro.gif",
@@ -12612,7 +12936,7 @@
       "grade": "일반 등급"
     },
     {
-      "id": "292",
+      "id": "291",
       "name": "반기노(환)",
       "source": "페트 환생",
       "imageLink": "/pets/pet_bangino_hwan.gif",
@@ -12639,7 +12963,7 @@
       "grade": "일반 등등급"
     },
     {
-      "id": "291",
+      "id": "290",
       "name": "반기노(진)",
       "source": "페트 진화",
       "imageLink": "/pets/pet_bangino_jin.gif",
@@ -12666,7 +12990,7 @@
       "grade": "일반 등급"
     },
     {
-      "id": "290",
+      "id": "289",
       "name": "기노",
       "source": "페트 진화(변종)",
       "imageLink": "/pets/pet_gino.gif",
@@ -12693,7 +13017,7 @@
       "grade": "일반 등등급"
     },
     {
-      "id": "289",
+      "id": "288",
       "name": "리비노(환)",
       "source": "페트 환생",
       "imageLink": "/pets/pet_ribino_hwan.webp",
@@ -12720,7 +13044,7 @@
       "grade": "일반 등등급"
     },
     {
-      "id": "288",
+      "id": "287",
       "name": "리비노(진)",
       "source": "페트 진화",
       "imageLink": "/pets/pet_ribino_jin.gif",
@@ -12747,7 +13071,7 @@
       "grade": "일반 등등급"
     },
     {
-      "id": "287",
+      "id": "286",
       "name": "비노",
       "source": "페트 진화(변종)",
       "imageLink": "/pets/pet_bino.gif",
@@ -12774,7 +13098,7 @@
       "grade": "일반 등등급"
     },
     {
-      "id": "286",
+      "id": "285",
       "name": "부르돈(환)",
       "source": "페트 환생",
       "imageLink": "/pets/pet_bureudon_hwan.webp",
@@ -12801,7 +13125,7 @@
       "grade": "일반 등급"
     },
     {
-      "id": "285",
+      "id": "284",
       "name": "부르돈(진)",
       "source": "페트 진화",
       "imageLink": "/pets/pet_bureudon_jin.gif",
@@ -12828,7 +13152,7 @@
       "grade": "일반 등등급"
     },
     {
-      "id": "284",
+      "id": "283",
       "name": "르돈",
       "source": "페트 진화(변종)",
       "imageLink": "/pets/pet_reudon.gif",
@@ -12855,7 +13179,7 @@
       "grade": "일반 등등급"
     },
     {
-      "id": "283",
+      "id": "282",
       "name": "디어룬",
       "source": "맘모스쿠폰 2회차(50회 확정보상)",
       "imageLink": "/pets/pet_dieorun.gif",
@@ -12882,7 +13206,7 @@
       "grade": "일반 등등급"
     },
     {
-      "id": "282",
+      "id": "281",
       "name": "테이노스(변종)",
       "source": "테이노스 진화",
       "imageLink": "/pets/pet_teinoseu_byeonjong.gif",
@@ -12909,7 +13233,7 @@
       "grade": "일반 등등급"
     },
     {
-      "id": "281",
+      "id": "280",
       "name": "테이노스(진)",
       "source": "테이노스 진화",
       "imageLink": "/pets/pet_teinoseu_jin.gif",
@@ -12936,7 +13260,7 @@
       "grade": "일반 등등급"
     },
     {
-      "id": "280",
+      "id": "279",
       "name": "테이노스",
       "source": "후원 보상 페트",
       "imageLink": "/pets/pet_teinoseu.gif",
@@ -12963,7 +13287,7 @@
       "grade": "일반 등등급"
     },
     {
-      "id": "279",
+      "id": "278",
       "name": "얀기로(환)",
       "source": "얀기로 환생",
       "imageLink": "/pets/pet_yangiro_hwan.webp",
@@ -12990,7 +13314,7 @@
       "grade": "일반 등등급"
     },
     {
-      "id": "278",
+      "id": "277",
       "name": "메가호크",
       "source": "금화 보상",
       "imageLink": "/pets/pet_megahokeu.webp",
@@ -13017,7 +13341,7 @@
       "grade": "일반 등급"
     },
     {
-      "id": "277",
+      "id": "276",
       "name": "그램고르",
       "source": "얼음성 포인트 상점",
       "imageLink": "/pets/pet_geuraemgoreu.gif",
@@ -13044,7 +13368,7 @@
       "grade": "일반 등급"
     },
     {
-      "id": "276",
+      "id": "275",
       "name": "그루",
       "source": "후원 보상",
       "imageLink": "/pets/pet_geuru.gif",
@@ -13071,7 +13395,7 @@
       "grade": "일반 등급"
     },
     {
-      "id": "275",
+      "id": "274",
       "name": "이루",
       "source": "후원 보상",
       "imageLink": "/pets/pet_iru.gif",
@@ -13098,7 +13422,7 @@
       "grade": "일반 등급"
     },
     {
-      "id": "274",
+      "id": "273",
       "name": "요루",
       "source": "후원 보상",
       "imageLink": "/pets/pet_yoru.gif",
@@ -13125,7 +13449,7 @@
       "grade": "일반 등급"
     },
     {
-      "id": "273",
+      "id": "272",
       "name": "카루",
       "source": "후원 보상",
       "imageLink": "/pets/pet_karu.gif",
@@ -13152,7 +13476,7 @@
       "grade": "일반 등급"
     },
     {
-      "id": "272",
+      "id": "271",
       "name": "토라",
       "source": "공간의 탑",
       "imageLink": "/pets/pet_tora.gif",
@@ -13179,7 +13503,7 @@
       "grade": "일반 등급"
     },
     {
-      "id": "271",
+      "id": "270",
       "name": "골드로비",
       "source": "마함마의 트로피",
       "imageLink": "/pets/pet_goldeurobi.gif",
@@ -13206,7 +13530,7 @@
       "grade": "일반 등급"
     },
     {
-      "id": "270",
+      "id": "269",
       "name": "기로아치",
       "source": "필드 포획",
       "imageLink": "/pets/pet_giroachi.gif",
@@ -13233,7 +13557,7 @@
       "grade": "일반 등급"
     },
     {
-      "id": "269",
+      "id": "268",
       "name": "주작",
       "source": "주작의 영혼석 20개",
       "imageLink": "/pets/pet_jujak.gif",
@@ -13260,7 +13584,7 @@
       "grade": "일반 등급"
     },
     {
-      "id": "268",
+      "id": "267",
       "name": "프로돈",
       "source": "필드 포획",
       "imageLink": "/pets/pet_peurodon.gif",
@@ -13287,7 +13611,7 @@
       "grade": "일반 등급"
     },
     {
-      "id": "267",
+      "id": "266",
       "name": "기비노",
       "source": "필드 포획",
       "imageLink": "/pets/pet_gibino.gif",
@@ -13314,7 +13638,7 @@
       "grade": "일반 등급"
     },
     {
-      "id": "266",
+      "id": "265",
       "name": "샤베르",
       "source": "스톤 상점",
       "imageLink": "/pets/pet_syabereu.gif",
@@ -13341,7 +13665,7 @@
       "grade": "일반 등급"
     },
     {
-      "id": "265",
+      "id": "264",
       "name": "바로스",
       "source": "도티의 눈을 뜨게 하자",
       "imageLink": "/pets/pet_baroseu.gif",
@@ -13368,7 +13692,7 @@
       "grade": "일반 등급"
     },
     {
-      "id": "264",
+      "id": "263",
       "name": "기린",
       "source": "스톤 상점",
       "imageLink": "/pets/pet_girin.gif",
@@ -13395,7 +13719,7 @@
       "grade": "일반 등급"
     },
     {
-      "id": "263",
+      "id": "262",
       "name": "부루마루",
       "source": "이벤트 듀얼 보상",
       "imageLink": "/pets/pet_burumaru.gif",
@@ -13422,7 +13746,7 @@
       "grade": "일반 등급"
     },
     {
-      "id": "262",
+      "id": "261",
       "name": "아코로비",
       "source": "필드 포획",
       "imageLink": "/pets/pet_akorobi.gif",
@@ -13449,7 +13773,7 @@
       "grade": "일반 등급"
     },
     {
-      "id": "261",
+      "id": "260",
       "name": "그린고르",
       "source": "하이하모 신전 진입",
       "imageLink": "/pets/pet_geuringoreu.gif",
@@ -13476,7 +13800,7 @@
       "grade": "일반 등급"
     },
     {
-      "id": "260",
+      "id": "259",
       "name": "키파",
       "source": "포우렌 섬의 황금나무",
       "imageLink": "/pets/pet_kipa.gif",
@@ -13503,7 +13827,7 @@
       "grade": "일반 등급"
     },
     {
-      "id": "259",
+      "id": "258",
       "name": "초르초르",
       "source": "홍보 이벤트",
       "imageLink": "/pets/pet_choreuchoreu.gif",
@@ -13530,7 +13854,7 @@
       "grade": "일반 등급"
     },
     {
-      "id": "258",
+      "id": "257",
       "name": "스노밍코",
       "source": "필드 포획",
       "imageLink": "/pets/pet_seunomingko.gif",
@@ -13557,7 +13881,7 @@
       "grade": "일반 등급"
     },
     {
-      "id": "257",
+      "id": "256",
       "name": "킹크랩",
       "source": "필드 포획",
       "imageLink": "/pets/pet_kingkeuraep.gif",
@@ -13584,7 +13908,7 @@
       "grade": "일반 등급"
     },
     {
-      "id": "256",
+      "id": "255",
       "name": "크랩",
       "source": "필드 포획",
       "imageLink": "/pets/pet_keuraep.gif",
@@ -13611,7 +13935,7 @@
       "grade": "일반 등급"
     },
     {
-      "id": "255",
+      "id": "254",
       "name": "쿠로로",
       "source": "초기 지원 페트",
       "imageLink": "/pets/pet_kuroro.gif",
@@ -13638,7 +13962,7 @@
       "grade": "일반 등급"
     },
     {
-      "id": "254",
+      "id": "253",
       "name": "해치",
       "source": "전투 포인트 상점",
       "imageLink": "/pets/pet_haechi.gif",
@@ -13665,7 +13989,7 @@
       "grade": "일반 등급"
     },
     {
-      "id": "253",
+      "id": "252",
       "name": "해태",
       "source": "전투 포인트 상점",
       "imageLink": "/pets/pet_haetae.gif",
@@ -13692,7 +14016,7 @@
       "grade": "일반 등급"
     },
     {
-      "id": "252",
+      "id": "251",
       "name": "흑룡",
       "source": "얼음성 상점",
       "imageLink": "/pets/pet_heukryong.gif",
@@ -13719,7 +14043,7 @@
       "grade": "일반 등급"
     },
     {
-      "id": "251",
+      "id": "250",
       "name": "흑기린",
       "source": "얼음성 상점",
       "imageLink": "/pets/pet_heukgirin.gif",
@@ -13746,7 +14070,7 @@
       "grade": "일반 등급"
     },
     {
-      "id": "250",
+      "id": "249",
       "name": "피피아",
       "source": "필드 포획",
       "imageLink": "/pets/pet_pipia.gif",
@@ -13773,7 +14097,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "249",
+      "id": "248",
       "name": "포루나",
       "source": "필드 포획",
       "imageLink": "/pets/pet_poruna.gif",
@@ -13800,7 +14124,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "248",
+      "id": "247",
       "name": "포레스트크랩",
       "source": "필드 포획",
       "imageLink": "/pets/pet_poreseuteukeuraep.gif",
@@ -13827,7 +14151,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "247",
+      "id": "246",
       "name": "호르카",
       "source": "얼음성 포인트 상점",
       "imageLink": "/pets/pet_horeuka.gif",
@@ -13854,7 +14178,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "246",
+      "id": "245",
       "name": "타키온",
       "source": "얼음성 포인트 상점",
       "imageLink": "/pets/pet_takion.gif",
@@ -13881,7 +14205,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "245",
+      "id": "244",
       "name": "라이쿠스",
       "source": "얼음성 포인트 상점",
       "imageLink": "/pets/pet_raikuseu.gif",
@@ -13908,7 +14232,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "244",
+      "id": "243",
       "name": "메피노",
       "source": "얼음성 포인트 상점",
       "imageLink": "/pets/pet_mepino.gif",
@@ -13935,7 +14259,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "243",
+      "id": "242",
       "name": "아르마루",
       "source": "얼음성 포인트 상점",
       "imageLink": "/pets/pet_areumaru.gif",
@@ -13962,7 +14286,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "242",
+      "id": "241",
       "name": "테로노돈",
       "source": "얼음성 포인트 상점",
       "imageLink": "/pets/pet_teronodon.gif",
@@ -13989,7 +14313,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "241",
+      "id": "240",
       "name": "크로아치",
       "source": "얼음성 포인트 상점",
       "imageLink": "/pets/pet_keuroachi.gif",
@@ -14016,7 +14340,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "240",
+      "id": "239",
       "name": "킹고르",
       "source": "재활용상점, 금화상점",
       "imageLink": "/pets/pet_kinggoreu.gif",
@@ -14043,7 +14367,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "239",
+      "id": "238",
       "name": "본드래곤",
       "source": "재활용상점",
       "imageLink": "/pets/pet_bondeuraegon.gif",
@@ -14070,7 +14394,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "238",
+      "id": "237",
       "name": "스피노",
       "source": "재활용상점",
       "imageLink": "/pets/pet_seupino.gif",
@@ -14097,7 +14421,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "237",
+      "id": "236",
       "name": "마루아치",
       "source": "재활용상점",
       "imageLink": "/pets/pet_maruachi.gif",
@@ -14124,7 +14448,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "236",
+      "id": "235",
       "name": "흑주작",
       "source": "-",
       "imageLink": "/pets/pet_heukjujak.gif",
@@ -14151,7 +14475,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "235",
+      "id": "234",
       "name": "라그노스",
       "source": "스톤 상점",
       "imageLink": "/pets/pet_rageunoseu.gif",
@@ -14178,7 +14502,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "234",
+      "id": "233",
       "name": "크로톤",
       "source": "스톤 상점",
       "imageLink": "/pets/pet_keuroton.gif",
@@ -14205,7 +14529,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "233",
+      "id": "232",
       "name": "백호",
       "source": "백호의 영혼석 20개",
       "imageLink": "/pets/pet_baekho.gif",
@@ -14232,7 +14556,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "232",
+      "id": "231",
       "name": "흑갈푸스",
       "source": "레이드 보상",
       "imageLink": "/pets/pet_heukgalpuseu.gif",
@@ -14259,7 +14583,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "231",
+      "id": "230",
       "name": "브라키우스",
       "source": "필드 포획",
       "imageLink": "/pets/pet_beurakiuseu.gif",
@@ -14286,7 +14610,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "230",
+      "id": "229",
       "name": "화이트링",
       "source": "필드 포획",
       "imageLink": "/pets/pet_hwaiteuring.gif",
@@ -14313,7 +14637,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "229",
+      "id": "228",
       "name": "하트링",
       "source": "필드 포획",
       "imageLink": "/pets/pet_hateuring.gif",
@@ -14340,7 +14664,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "228",
+      "id": "227",
       "name": "페가수스",
       "source": "듀얼 상점",
       "imageLink": "/pets/pet_pegasuseu.gif",
@@ -14367,7 +14691,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "227",
+      "id": "226",
       "name": "가스트",
       "source": "듀얼 상점",
       "imageLink": "/pets/pet_gaseuteu.gif",
@@ -14394,7 +14718,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "226",
+      "id": "225",
       "name": "게이블",
       "source": "듀얼 상점",
       "imageLink": "/pets/pet_geibeul.gif",
@@ -14421,7 +14745,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "225",
+      "id": "224",
       "name": "테라탄",
       "source": "듀얼 상점",
       "imageLink": "/pets/pet_teratan.gif",
@@ -14448,7 +14772,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "224",
+      "id": "223",
       "name": "복우리",
       "source": "스톤 상점",
       "imageLink": "/pets/pet_bokuri.gif",
@@ -14475,7 +14799,7 @@
       "grade": "일반 등급"
     },
     {
-      "id": "223",
+      "id": "222",
       "name": "히파",
       "source": "재활용상점, 금화상점",
       "imageLink": "/pets/pet_hipa.gif",
@@ -14502,7 +14826,7 @@
       "grade": "일반 등급"
     },
     {
-      "id": "222",
+      "id": "221",
       "name": "아이스만모",
       "source": "재활용상점, 금화상점",
       "imageLink": "/pets/pet_aiseumanmo.gif",
@@ -14529,7 +14853,7 @@
       "grade": "일반 등급"
     },
     {
-      "id": "221",
+      "id": "220",
       "name": "베라라",
       "source": "필드 포획",
       "imageLink": "/pets/pet_berara.gif",
@@ -14556,7 +14880,7 @@
       "grade": "일반 등급"
     },
     {
-      "id": "220",
+      "id": "219",
       "name": "펠타리오",
       "source": "퀘스트",
       "imageLink": "/pets/pet_peltario.gif",
@@ -14583,7 +14907,7 @@
       "grade": "일반 등급"
     },
     {
-      "id": "219",
+      "id": "218",
       "name": "도르도르",
       "source": "필드 포획",
       "imageLink": "/pets/pet_doreudoreu.gif",
@@ -14610,7 +14934,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "218",
+      "id": "217",
       "name": "바우트",
       "source": "재활용상점, 금화상점",
       "imageLink": "/pets/pet_bauteu.gif",
@@ -14637,7 +14961,7 @@
       "grade": "일반 등급"
     },
     {
-      "id": "217",
+      "id": "216",
       "name": "샤크론",
       "source": "재활용상점, 금화상점",
       "imageLink": "/pets/pet_syakeuron.gif",
@@ -14664,7 +14988,7 @@
       "grade": "일반 등급"
     },
     {
-      "id": "216",
+      "id": "215",
       "name": "파베로스",
       "source": "재활용상점",
       "imageLink": "/pets/pet_paberoseu.gif",
@@ -14691,7 +15015,7 @@
       "grade": "일반 등급"
     },
     {
-      "id": "215",
+      "id": "214",
       "name": "카우거",
       "source": "재활용상점, 금화상점",
       "imageLink": "/pets/pet_kaugeo.gif",
@@ -14718,7 +15042,7 @@
       "grade": "일반 등급"
     },
     {
-      "id": "214",
+      "id": "213",
       "name": "베르푸스",
       "source": "일일 레이드 보상",
       "imageLink": "/pets/pet_bereupuseu.gif",
@@ -14745,7 +15069,7 @@
       "grade": "일반 등급"
     },
     {
-      "id": "213",
+      "id": "212",
       "name": "델푸스",
       "source": "일일 레이드 보상",
       "imageLink": "/pets/pet_delpuseu.gif",
@@ -14772,7 +15096,7 @@
       "grade": "일반 등급"
     },
     {
-      "id": "212",
+      "id": "211",
       "name": "울푸스",
       "source": "일일 레이드 보상",
       "imageLink": "/pets/pet_ulpuseu.gif",
@@ -14799,7 +15123,7 @@
       "grade": "일반 등급"
     },
     {
-      "id": "211",
+      "id": "210",
       "name": "갈푸스",
       "source": "일일 레이드 보상",
       "imageLink": "/pets/pet_galpuseu.gif",
@@ -14826,7 +15150,7 @@
       "grade": "일반 등급"
     },
     {
-      "id": "210",
+      "id": "209",
       "name": "부르보",
       "source": "필드 포획",
       "imageLink": "/pets/pet_bureubo.gif",
@@ -14853,7 +15177,7 @@
       "grade": "일반 등급"
     },
     {
-      "id": "209",
+      "id": "208",
       "name": "타르노로스",
       "source": "필드 포획",
       "imageLink": "/pets/pet_tareunoroseu.gif",
@@ -14880,7 +15204,7 @@
       "grade": "일반 등급"
     },
     {
-      "id": "208",
+      "id": "207",
       "name": "다이노로스",
       "source": "필드 포획",
       "imageLink": "/pets/pet_dainoroseu.gif",
@@ -14907,7 +15231,7 @@
       "grade": "일반 등급"
     },
     {
-      "id": "207",
+      "id": "206",
       "name": "아리노스",
       "source": "필드 포획",
       "imageLink": "/pets/pet_arinoseu.gif",
@@ -14934,7 +15258,7 @@
       "grade": "일반 등급"
     },
     {
-      "id": "206",
+      "id": "205",
       "name": "아토라지",
       "source": "필드 포획",
       "imageLink": "/pets/pet_atoraji.gif",
@@ -14961,7 +15285,7 @@
       "grade": "일반 등급"
     },
     {
-      "id": "205",
+      "id": "204",
       "name": "스토라지",
       "source": "필드 포획",
       "imageLink": "/pets/pet_seutoraji.gif",
@@ -14988,7 +15312,7 @@
       "grade": "일반 등급"
     },
     {
-      "id": "204",
+      "id": "203",
       "name": "반기노",
       "source": "오형제 / 필드 포획",
       "imageLink": "/pets/pet_bangino.gif",
@@ -15015,7 +15339,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "203",
+      "id": "202",
       "name": "노르곤",
       "source": "금화상점",
       "imageLink": "/pets/pet_noreugon.gif",
@@ -15042,7 +15366,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "202",
+      "id": "201",
       "name": "문울프",
       "source": "접속,레벨보상",
       "imageLink": "/pets/pet_munulpeu.webp",
@@ -15069,7 +15393,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "201",
+      "id": "200",
       "name": "코리토르스",
       "source": "필드 포획",
       "imageLink": "/pets/pet_koritoreuseu.webp",
@@ -15096,7 +15420,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "200",
+      "id": "199",
       "name": "란베르스",
       "source": "필드 포획",
       "imageLink": "/pets/pet_ranbereuseu.webp",
@@ -15123,7 +15447,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "199",
+      "id": "198",
       "name": "바로로크스",
       "source": "필드 포획",
       "imageLink": "/pets/pet_barorokeuseu.webp",
@@ -15150,7 +15474,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "198",
+      "id": "197",
       "name": "타이혼",
       "source": "샴기르 복권 1등",
       "imageLink": "/pets/pet_taihon.webp",
@@ -15177,7 +15501,7 @@
       "grade": "1등급"
     },
     {
-      "id": "197",
+      "id": "196",
       "name": "라이혼",
       "source": "A코스 랜덤 획득",
       "imageLink": "/pets/pet_raihon.webp",
@@ -15204,7 +15528,7 @@
       "grade": "2등급"
     },
     {
-      "id": "196",
+      "id": "195",
       "name": "라나프",
       "source": "D코스 랜덤 획득",
       "imageLink": "/pets/pet_ranapeu.webp",
@@ -15231,7 +15555,7 @@
       "grade": "2등급"
     },
     {
-      "id": "195",
+      "id": "194",
       "name": "모나시프",
       "source": "채석장의 비밀",
       "imageLink": "/pets/pet_monasipeu.webp",
@@ -15258,7 +15582,7 @@
       "grade": "2등급"
     },
     {
-      "id": "194",
+      "id": "193",
       "name": "모가로스",
       "source": "퀴즈 마스터 이벤트",
       "imageLink": "/pets/pet_mogaroseu.webp",
@@ -15285,7 +15609,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "193",
+      "id": "192",
       "name": "오르곤",
       "source": "용왕 모가로스 퀘스트",
       "imageLink": "/pets/pet_oreugon.webp",
@@ -15312,7 +15636,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "192",
+      "id": "191",
       "name": "오가로스",
       "source": "필드 포획",
       "imageLink": "/pets/pet_ogaroseu.webp",
@@ -15339,7 +15663,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "191",
+      "id": "190",
       "name": "쥬키",
       "source": "B코스 랜덤 획득",
       "imageLink": "/pets/pet_jyuki.webp",
@@ -15366,7 +15690,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "190",
+      "id": "189",
       "name": "카키",
       "source": "필드 포획",
       "imageLink": "/pets/pet_kaki.webp",
@@ -15393,7 +15717,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "189",
+      "id": "188",
       "name": "호르쿠",
       "source": "필드 포획",
       "imageLink": "/pets/pet_horeuku.webp",
@@ -15420,7 +15744,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "188",
+      "id": "187",
       "name": "쿠쿠",
       "source": "필드 포획",
       "imageLink": "/pets/pet_kuku.webp",
@@ -15447,7 +15771,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "187",
+      "id": "186",
       "name": "타키",
       "source": "필드 포획",
       "imageLink": "/pets/pet_taki.webp",
@@ -15474,7 +15798,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "186",
+      "id": "185",
       "name": "골드테라곤",
       "source": "A코스 랜덤 획득",
       "imageLink": "/pets/pet_goldeuteragon.webp",
@@ -15501,7 +15825,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "185",
+      "id": "184",
       "name": "푸테라",
       "source": "A코스 확률 획득",
       "imageLink": "/pets/pet_putera.webp",
@@ -15528,7 +15852,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "184",
+      "id": "183",
       "name": "도라비스",
       "source": "카난 이벤트",
       "imageLink": "/pets/pet_dorabiseu.webp",
@@ -15555,7 +15879,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "183",
+      "id": "182",
       "name": "포이비스",
       "source": "필드 포획",
       "imageLink": "/pets/pet_poibiseu.webp",
@@ -15582,7 +15906,7 @@
       "grade": "일반페트등급"
     },
     {
-      "id": "182",
+      "id": "181",
       "name": "테라곤",
       "source": "C코스 랜덤 획득",
       "imageLink": "/pets/pet_teragon.webp",
@@ -15609,7 +15933,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "181",
+      "id": "180",
       "name": "만모로스",
       "source": "필드 포획",
       "imageLink": "/pets/pet_manmoroseu.webp",
@@ -15636,7 +15960,7 @@
       "grade": "일반페트등급"
     },
     {
-      "id": "180",
+      "id": "179",
       "name": "마모나스",
       "source": "필드 포획",
       "imageLink": "/pets/pet_mamonaseu.webp",
@@ -15663,7 +15987,7 @@
       "grade": "일반페트등급"
     },
     {
-      "id": "179",
+      "id": "178",
       "name": "만모르",
       "source": "필드 포획",
       "imageLink": "/pets/pet_manmoreu.webp",
@@ -15690,7 +16014,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "178",
+      "id": "177",
       "name": "만모",
       "source": "필드 포획",
       "imageLink": "/pets/pet_manmo.webp",
@@ -15717,7 +16041,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "177",
+      "id": "176",
       "name": "노라키토스",
       "source": "C코스 랜덤 획득",
       "imageLink": "/pets/pet_norakitoseu.webp",
@@ -15744,7 +16068,7 @@
       "grade": "일반페트등급"
     },
     {
-      "id": "176",
+      "id": "175",
       "name": "푸비토스",
       "source": "C코스 랜덤 획득",
       "imageLink": "/pets/pet_pubitoseu.webp",
@@ -15771,7 +16095,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "175",
+      "id": "174",
       "name": "프리토스",
       "source": "후르도 복권 1등",
       "imageLink": "/pets/pet_peuritoseu.webp",
@@ -15798,7 +16122,7 @@
       "grade": "1등급"
     },
     {
-      "id": "174",
+      "id": "173",
       "name": "프라키토스",
       "source": "필드 포획",
       "imageLink": "/pets/pet_peurakitoseu.webp",
@@ -15825,7 +16149,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "173",
+      "id": "172",
       "name": "다이노스",
       "source": "필드 포획",
       "imageLink": "/pets/pet_dainoseu.webp",
@@ -15852,7 +16176,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "172",
+      "id": "171",
       "name": "다이노",
       "source": "C코스 랜덤 보상",
       "imageLink": "/pets/pet_daino.webp",
@@ -15879,7 +16203,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "171",
+      "id": "170",
       "name": "루보스",
       "source": "A코스 랜덤 보상",
       "imageLink": "/pets/pet_ruboseu.webp",
@@ -15906,7 +16230,7 @@
       "grade": "일반페트등급"
     },
     {
-      "id": "170",
+      "id": "169",
       "name": "씨보스",
       "source": "필드 포획",
       "imageLink": "/pets/pet_ssiboseu.webp",
@@ -15933,7 +16257,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "169",
+      "id": "168",
       "name": "무이",
       "source": "필드포획",
       "imageLink": "/pets/pet_mui.webp",
@@ -15960,7 +16284,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "168",
+      "id": "167",
       "name": "루이",
       "source": "필드 포획",
       "imageLink": "/pets/pet_rui.webp",
@@ -15987,7 +16311,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "167",
+      "id": "166",
       "name": "돌가로스",
       "source": "B코스 랜덤 보상",
       "imageLink": "/pets/pet_dolgaroseu.webp",
@@ -16014,7 +16338,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "166",
+      "id": "165",
       "name": "가가로스",
       "source": "필드 포획",
       "imageLink": "/pets/pet_gagaroseu.webp",
@@ -16041,7 +16365,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "165",
+      "id": "164",
       "name": "비트로스",
       "source": "필드 포획",
       "imageLink": "/pets/pet_biteuroseu.webp",
@@ -16068,7 +16392,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "164",
+      "id": "163",
       "name": "기가로스",
       "source": "미정",
       "imageLink": "/pets/pet_gigaroseu.webp",
@@ -16095,7 +16419,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "163",
+      "id": "162",
       "name": "쟈하드",
       "source": "쟈쟈 복권 1등",
       "imageLink": "/pets/pet_jyahadeu.webp",
@@ -16122,7 +16446,7 @@
       "grade": "1등급"
     },
     {
-      "id": "162",
+      "id": "161",
       "name": "판지",
       "source": "필드 포획",
       "imageLink": "/pets/pet_panji.webp",
@@ -16149,7 +16473,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "161",
+      "id": "160",
       "name": "쟈그",
       "source": "필드 포획",
       "imageLink": "/pets/pet_jyageu.webp",
@@ -16176,7 +16500,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "160",
+      "id": "159",
       "name": "쟈그라",
       "source": "필드 포획",
       "imageLink": "/pets/pet_jyageura.webp",
@@ -16203,7 +16527,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "159",
+      "id": "158",
       "name": "고반케스",
       "source": "필드 포획",
       "imageLink": "/pets/pet_gobankeseu.webp",
@@ -16230,7 +16554,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "158",
+      "id": "157",
       "name": "코발스",
       "source": "B코스 랜덤 보상",
       "imageLink": "/pets/pet_kobalseu.webp",
@@ -16257,7 +16581,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "157",
+      "id": "156",
       "name": "토르프스",
       "source": "A코스 랜덤 보상",
       "imageLink": "/pets/pet_toreupeuseu.webp",
@@ -16284,7 +16608,7 @@
       "grade": "일반페트등급"
     },
     {
-      "id": "156",
+      "id": "155",
       "name": "토리케라",
       "source": "필드 포획",
       "imageLink": "/pets/pet_torikera.webp",
@@ -16311,7 +16635,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "155",
+      "id": "154",
       "name": "펜타스",
       "source": "필드 포획",
       "imageLink": "/pets/pet_pentaseu.webp",
@@ -16338,7 +16662,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "154",
+      "id": "153",
       "name": "토리노프스",
       "source": "필드 포획",
       "imageLink": "/pets/pet_torinopeuseu.webp",
@@ -16365,7 +16689,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "153",
+      "id": "152",
       "name": "노르노르",
       "source": "마리너스 복권 1등",
       "imageLink": "/pets/pet_noreunoreu.webp",
@@ -16392,7 +16716,7 @@
       "grade": "1등급"
     },
     {
-      "id": "152",
+      "id": "151",
       "name": "고르고르",
       "source": "필드 포획",
       "imageLink": "/pets/pet_goreugoreu.webp",
@@ -16419,7 +16743,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "151",
+      "id": "150",
       "name": "베루루",
       "source": "필드 포획",
       "imageLink": "/pets/pet_beruru.webp",
@@ -16446,7 +16770,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "150",
+      "id": "149",
       "name": "베르가",
       "source": "필드 포획",
       "imageLink": "/pets/pet_bereuga.webp",
@@ -16473,7 +16797,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "149",
+      "id": "148",
       "name": "카우",
       "source": "필드 포획",
       "imageLink": "/pets/pet_kau.webp",
@@ -16500,7 +16824,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "148",
+      "id": "147",
       "name": "바우",
       "source": "필드 포획",
       "imageLink": "/pets/pet_bau.webp",
@@ -16527,7 +16851,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "147",
+      "id": "146",
       "name": "바카",
       "source": "필드 포획",
       "imageLink": "/pets/pet_baka.webp",
@@ -16554,7 +16878,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "146",
+      "id": "145",
       "name": "카쿠",
       "source": "필드 포획",
       "imageLink": "/pets/pet_kaku.webp",
@@ -16581,7 +16905,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "145",
+      "id": "144",
       "name": "토로쟈",
       "source": "필드 포획",
       "imageLink": "/pets/pet_torojya.webp",
@@ -16608,7 +16932,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "144",
+      "id": "143",
       "name": "쿠보",
       "source": "쿠오산 공룡박사",
       "imageLink": "/pets/pet_kubo.webp",
@@ -16635,7 +16959,7 @@
       "grade": "2등급"
     },
     {
-      "id": "143",
+      "id": "142",
       "name": "포보",
       "source": "필드 포획",
       "imageLink": "/pets/pet_pobo.webp",
@@ -16662,7 +16986,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "142",
+      "id": "141",
       "name": "휴보",
       "source": "황금색 페트(카난)",
       "imageLink": "/pets/pet_hyubo.webp",
@@ -16689,7 +17013,7 @@
       "grade": "2등급"
     },
     {
-      "id": "141",
+      "id": "140",
       "name": "고르고",
       "source": "필드 포획",
       "imageLink": "/pets/pet_goreugo.webp",
@@ -16716,7 +17040,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "140",
+      "id": "139",
       "name": "투르돈",
       "source": "B코스 / 필드",
       "imageLink": "/pets/pet_tureudon.webp",
@@ -16743,7 +17067,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "139",
+      "id": "138",
       "name": "기라돈",
       "source": "필드 포획",
       "imageLink": "/pets/pet_giradon.webp",
@@ -16770,7 +17094,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "138",
+      "id": "137",
       "name": "고르돈",
       "source": "필드 포획",
       "imageLink": "/pets/pet_goreudon.webp",
@@ -16797,7 +17121,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "137",
+      "id": "136",
       "name": "골드카비트",
       "source": "필드 포획",
       "imageLink": "/pets/pet_goldeukabiteu.webp",
@@ -16824,7 +17148,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "136",
+      "id": "135",
       "name": "큐이",
       "source": "필드 포획",
       "imageLink": "/pets/pet_kyui.webp",
@@ -16851,7 +17175,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "135",
+      "id": "134",
       "name": "케이비",
       "source": "초기 지원",
       "imageLink": "/pets/pet_keibi.webp",
@@ -16878,7 +17202,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "134",
+      "id": "133",
       "name": "카비트",
       "source": "필드 포획",
       "imageLink": "/pets/pet_kabiteu.webp",
@@ -16905,7 +17229,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "133",
+      "id": "132",
       "name": "리스키",
       "source": "필드 포획",
       "imageLink": "/pets/pet_riseuki.webp",
@@ -16932,7 +17256,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "132",
+      "id": "131",
       "name": "포링",
       "source": "필드 포획",
       "imageLink": "/pets/pet_poring.webp",
@@ -16959,7 +17283,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "131",
+      "id": "130",
       "name": "쿠쿠르",
       "source": "초기 지원",
       "imageLink": "/pets/pet_kukureu.webp",
@@ -16986,7 +17310,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "130",
+      "id": "129",
       "name": "쿠링",
       "source": "필드 포획",
       "imageLink": "/pets/pet_kuring.webp",
@@ -17013,7 +17337,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "129",
+      "id": "128",
       "name": "부르돈",
       "source": "오형제 / 필드",
       "imageLink": "/pets/pet_bureudon.webp",
@@ -17040,7 +17364,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "128",
+      "id": "127",
       "name": "반보로",
       "source": "오형제 / 필드",
       "imageLink": "/pets/pet_banboro.webp",
@@ -17067,7 +17391,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "127",
+      "id": "126",
       "name": "얀기로",
       "source": "오형제 / 필드",
       "imageLink": "/pets/pet_yangiro.webp",
@@ -17094,7 +17418,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "126",
+      "id": "125",
       "name": "리비노",
       "source": "오형제 / 필드",
       "imageLink": "/pets/pet_ribino.webp",
@@ -17121,7 +17445,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "125",
+      "id": "124",
       "name": "카르기안",
       "source": "필드 포획",
       "imageLink": "/pets/pet_kareugian.webp",
@@ -17148,7 +17472,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "124",
+      "id": "123",
       "name": "쿠타스",
       "source": "D코스 , 필드 포획",
       "imageLink": "/pets/pet_kutaseu.webp",
@@ -17175,7 +17499,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "123",
+      "id": "122",
       "name": "아이카스",
       "source": "필드 포획",
       "imageLink": "/pets/pet_aikaseu.webp",
@@ -17202,7 +17526,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "122",
+      "id": "121",
       "name": "램가스",
       "source": "C코스 랜덤 보상",
       "imageLink": "/pets/pet_raemgaseu.webp",
@@ -17229,7 +17553,7 @@
       "grade": "2등급"
     },
     {
-      "id": "121",
+      "id": "120",
       "name": "로기안",
       "source": "필드 포획",
       "imageLink": "/pets/pet_rogian.webp",
@@ -17256,7 +17580,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "120",
+      "id": "119",
       "name": "코로카스",
       "source": "필드 포획",
       "imageLink": "/pets/pet_korokaseu.webp",
@@ -17283,7 +17607,7 @@
       "grade": "일반등급"
     },
     {
-      "id": "119",
+      "id": "118",
       "name": "쿠카스",
       "source": "필드 포획",
       "imageLink": "/pets/pet_kukaseu.webp",
@@ -19926,33 +20250,6 @@
       },
       "rideable": "탑승불가",
       "totalGrowth": "4.861",
-      "grade": "일반등급"
-    },
-    {
-      "id": "835",
-      "name": "테이토스",
-      "source": "이벤트듀얼순위권",
-      "imageLink": "",
-      "elementStats": {
-        "earth": 0,
-        "water": 8,
-        "fire": 2,
-        "wind": 0
-      },
-      "baseStats": {
-        "attack": 11,
-        "defense": 12,
-        "agility": 2,
-        "vitality": 62
-      },
-      "growthStats": {
-        "attack": "2.090",
-        "defense": "2.345",
-        "agility": "0.449",
-        "vitality": "11.757"
-      },
-      "rideable": "탑승가능",
-      "totalGrowth": "4.885",
       "grade": "일반등급"
     },
     {
